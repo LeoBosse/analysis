@@ -1,0 +1,33 @@
+
+ ******************************************************
+ *              IGRF SYNTHESIS PROGRAM                *
+ *                                                    *
+ * A program for the computation of geomagnetic       *
+ * field elements from the International Geomagnetic  *
+ * Reference Field (12th generation) as revised in    *
+ * December 2014 by the IAGA Working Group V-MOD.     *
+ *                                                    *
+ * It is valid for dates from 1900.0 to 2020.0,       *
+ * values up to 2025.0 will be computed but with      *
+ * reduced accuracy. Values for dates before 1945.0   *
+ * and after 2010.0 are non-definitive, otherwise the *
+ * values are definitive.                             *
+ *                                                    *
+ * Susan Macmillan          British Geological Survey *
+ *                           IAGA Working Group V-MOD *
+ ******************************************************
+
+ Enter name of output file (30 characters maximum)
+ or press "Return" for output to screen
+ Enter value for coordinate system:
+ 1 - geodetic (shape of Earth is approximated by a spheroid)
+ 2 - geocentric (shape of Earth is approximated by a sphere)
+ Choose an option:
+ 1 - values at one or more locations & dates
+ 2 - values at yearly intervals at one location
+ 3 - values on a latitude/longitude grid at one date
+ Enter value for format of latitudes and longitudes:
+ 1 - in degrees & minutes
+ 2 - in decimal degrees
+ Enter date in years A.D.
+ Enter radial distance in km (>3485 km)

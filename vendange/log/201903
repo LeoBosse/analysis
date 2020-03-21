@@ -1,0 +1,1618 @@
+['./vendange.py', 'ptcu/20190307_Skibotn/br_a164_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['br', 'a164', 'e45']
+ptcu 20190307 Skibotn br 164.0 45.0 
+2019-03-07 21:09:04
+2019-03-07 21:09:04 21:09:04
+0:00:00 0:42:13.878000 0:00:00 0:42:13.344000
+0 bad rotations in 4744
+0 bad rotations in 4744
+0 bad rotations in 4744
+DEBUG TIME LISTS:  1551989344.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:42:13.344000 2019-03-07 21:09:04 2019-03-07 21:51:17.344000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'br_a164_e45']
+DoLP min: 0.9608578638402541
+DoLP max: 2.6093093214753775
+DoLP stddev: 0.41217116048369346
+AoLP stddev: 14.301502054332996
+AoBlos: -33.066208037136384
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_a164_e45/20190307_skibotn_br_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 21:09:04 2019-03-07 21:51:17.344000
+8640
+253
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_a164_e45/20190307_skibotn_br_a164_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_a164_e45/20190307_skibotn_br_a164_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_a164_e45/20190307_skibotn_br_a164_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/br_a164_e90', '-s', 'False']
+WARNING: No observation info in the input file.
+['br', 'a164', 'e90']
+ptcu 20190307 Skibotn br 164.0 90.0 
+2019-03-07 21:54:06
+2019-03-07 21:54:06 21:54:06
+0:00:00 0:33:18.360000 0:00:00 0:33:18.020000
+9 bad rotations in 3744
+9 bad rotations in 3744
+9 bad rotations in 3744
+DEBUG TIME LISTS:  1551992046.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:33:18.020000 2019-03-07 21:54:06 2019-03-07 22:27:24.020000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'br_a164_e90']
+DoLP min: 0.09410989320612938
+DoLP max: 2.130826054396239
+DoLP stddev: 0.365706046416113
+AoLP stddev: 8.409033747360182
+AoBlos: -11.886568766971822
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_a164_e90/20190307_skibotn_br_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 21:54:06 2019-03-07 22:27:24.020000
+8640
+200
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_a164_e90/20190307_skibotn_br_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_a164_e90/20190307_skibotn_br_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_a164_e90/20190307_skibotn_br_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/br_rot_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['br', 'rot', 'e45']
+ptcu 20190307 Skibotn br 0.0 45.0 _rot
+2019-03-08 02:12:18
+2019-03-08 02:12:18 02:12:18
+0:00:00 0:07:18.592000 0:00:00 0:07:18.055000
+0 bad rotations in 813
+0 bad rotations in 813
+0 bad rotations in 813
+DEBUG TIME LISTS:  1552007538.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:18.055000 2019-03-08 02:12:18 2019-03-08 02:19:36.055000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'br_rot_e45']
+DoLP min: 0.2312602077924475
+DoLP max: 6.350692507388625
+DoLP stddev: 1.3630947474157349
+AoLP stddev: 36.236961778416195
+AoBlos: -55.32420041724762
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_rot_e45/20190307_skibotn_br_rot_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 02:12:18 2019-03-08 02:19:36.055000
+8640
+0
+WARNING: GeoMag Data has no time list...
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_rot_e45/20190307_skibotn_br_rot_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_rot_e45/20190307_skibotn_br_rot_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/br_rot_e45/20190307_skibotn_br_rot_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/mr_a90_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['mr', 'a90', 'e45']
+ptcu 20190307 Skibotn mr 90.0 45.0 
+2019-03-08 00:42:19
+2019-03-08 00:42:19 00:42:19
+0:00:00 0:17:25.791000 0:00:00 0:17:25.258000
+0 bad rotations in 1958
+0 bad rotations in 1958
+0 bad rotations in 1958
+DEBUG TIME LISTS:  1552002139.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:17:25.258000 2019-03-08 00:42:19 2019-03-08 00:59:44.258000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'mr_a90_e45']
+DoLP min: 0.7632236987963597
+DoLP max: 1.9174564613268754
+DoLP stddev: 0.19602181272273536
+AoLP stddev: 7.500375008054884
+AoBlos: 133.28429335532778
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_a90_e45/20190307_skibotn_mr_a90_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 00:42:19 2019-03-08 00:59:44.258000
+8640
+0
+WARNING: GeoMag Data has no time list...
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_a90_e45/20190307_skibotn_mr_a90_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_a90_e45/20190307_skibotn_mr_a90_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_a90_e45/20190307_skibotn_mr_a90_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/mr_a164_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['mr', 'a164', 'e45']
+ptcu 20190307 Skibotn mr 164.0 45.0 
+2019-03-07 23:14:49
+2019-03-07 23:14:49 23:14:49
+0:00:00 0:49:58.116000 0:00:00 0:49:57.738000
+25 bad rotations in 5623
+25 bad rotations in 5623
+25 bad rotations in 5623
+DEBUG TIME LISTS:  1551996889.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:49:57.738000 2019-03-07 23:14:49 2019-03-08 00:04:46.738000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'mr_a164_e45']
+DoLP min: 0.3862105581782407
+DoLP max: 5.135300312967361
+DoLP stddev: 0.9650410668946177
+AoLP stddev: 8.320284727272943
+AoBlos: -33.066208037136384
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_a164_e45/20190307_skibotn_mr_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+Traceback (most recent call last):
+  File "./vendange.py", line 50, in <module>
+    mag_data = MagData(bottle)
+  File "/home/bossel/These/Analysis/src/MagData.py", line 35, in __init__
+    end_date = bottle.aDateTime("end")
+AttributeError: 'PTCUBottle' object has no attribute 'aDateTime'
+['./vendange.py', 'ptcu/20190307_Skibotn/mr_a164_e90', '-s', 'False']
+WARNING: No observation info in the input file.
+['mr', 'a164', 'e90']
+ptcu 20190307 Skibotn mr 164.0 90.0 
+2019-03-07 22:36:31
+2019-03-07 22:36:31 22:36:31
+0:00:00 0:34:13.105000 0:00:00 0:34:12.572000
+0 bad rotations in 3853
+0 bad rotations in 3853
+0 bad rotations in 3853
+DEBUG TIME LISTS:  1551994591.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:34:12.572000 2019-03-07 22:36:31 2019-03-07 23:10:43.572000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'mr_a164_e90']
+DoLP min: 0.4324657623192999
+DoLP max: 3.252913852165136
+DoLP stddev: 0.5452304966073132
+AoLP stddev: 6.015460075615214
+AoBlos: -11.886568766971822
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_a164_e90/20190307_skibotn_mr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 22:36:31 2019-03-07 23:10:43.572000
+8640
+205
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_a164_e90/20190307_skibotn_mr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_a164_e90/20190307_skibotn_mr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_a164_e90/20190307_skibotn_mr_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/mr_rot_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['mr', 'rot', 'e45']
+ptcu 20190307 Skibotn mr 0.0 45.0 _rot
+2019-03-08 00:28:18
+2019-03-08 00:28:18 00:28:18
+0:03:51.600000 0:11:12.568000 0:03:52.050000 0:11:12.034000
+41 bad rotations in 824
+41 bad rotations in 824
+41 bad rotations in 824
+DEBUG TIME LISTS:  1552001298.0 0:03:51.600000 0:00:00
+0:03:51.600000 0:00:00 0:07:19.984000 2019-03-08 00:32:09.600000 2019-03-08 00:39:29.584000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'mr_rot_e45']
+DoLP min: 0.8653126140083262
+DoLP max: 3.7995590519550806
+DoLP stddev: 0.7052300823084725
+AoLP stddev: 49.85421140062754
+AoBlos: -55.32420041724762
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_rot_e45/20190307_skibotn_mr_rot_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 00:32:09.600000 2019-03-08 00:39:29.584000
+8640
+0
+WARNING: GeoMag Data has no time list...
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_rot_e45/20190307_skibotn_mr_rot_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_rot_e45/20190307_skibotn_mr_rot_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/mr_rot_e45/20190307_skibotn_mr_rot_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/rr_a164_e90', '-s', 'False']
+WARNING: No observation info in the input file.
+['rr', 'a164', 'e90']
+ptcu 20190307 Skibotn rr 164.0 90.0 
+2019-03-07 18:16:56
+2019-03-07 18:16:56 18:16:56
+0:00:00 1:40:33.356000 0:00:00 1:40:32.820000
+252 bad rotations in 11275
+252 bad rotations in 11275
+503 bad rotations in 11024
+DEBUG TIME LISTS:  1551979016.0 0:00:00 0:00:00
+0:00:00 0:00:00 1:38:18.452000 2019-03-07 18:16:56 2019-03-07 19:55:14.452000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'rr_a164_e90']
+DoLP min: 0.19164975949340424
+DoLP max: 1.8102095474051418
+DoLP stddev: 0.30369539898083175
+AoLP stddev: 10.785490550915542
+AoBlos: -11.886568766971822
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/rr_a164_e90/20190307_skibotn_rr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 18:16:56 2019-03-07 19:55:14.452000
+8640
+590
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/rr_a164_e90/20190307_skibotn_rr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/rr_a164_e90/20190307_skibotn_rr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/rr_a164_e90/20190307_skibotn_rr_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/rr_rot_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['rr', 'rot', 'e45']
+ptcu 20190307 Skibotn rr 0.0 45.0 _rot
+2019-03-08 01:52:50
+2019-03-08 01:52:50 01:52:50
+0:00:00 0:04:59.965000 0:00:00 0:04:59.427000
+17 bad rotations in 573
+17 bad rotations in 573
+34 bad rotations in 556
+DEBUG TIME LISTS:  1552006370.0 0:00:00 0:00:00.289000
+0:00:00 0:00:00.289000 0:04:59.427000 2019-03-08 01:52:50.578000 2019-03-08 01:57:49.716000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'rr_rot_e45']
+DoLP min: 0.03951962474407869
+DoLP max: 1.5759912971690586
+DoLP stddev: 0.279604395613715
+AoLP stddev: 29.81511532907193
+AoBlos: -53.945760036390205
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/rr_rot_e45/20190307_skibotn_br_rot_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 01:52:50.289000 2019-03-08 01:57:49.427000
+8640
+0
+WARNING: GeoMag Data has no time list...
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/rr_rot_e45/20190307_skibotn_br_rot_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/rr_rot_e45/20190307_skibotn_br_rot_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/rr_rot_e45/20190307_skibotn_br_rot_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/vr_a164_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['vr', 'a164', 'e45']
+ptcu 20190307 Skibotn vr 164.0 45.0 
+2019-03-07 20:34:32
+2019-03-07 20:34:32 20:34:32
+0:00:00 0:30:06 0:00:00 0:30:05.786000
+8 bad rotations in 3380
+8 bad rotations in 3380
+8 bad rotations in 3380
+DEBUG TIME LISTS:  1551987272.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:30:05.786000 2019-03-07 20:34:32 2019-03-07 21:04:37.786000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'vr_a164_e45']
+DoLP min: 0.07480368113471428
+DoLP max: 3.4580430300281226
+DoLP stddev: 0.426473819377576
+AoLP stddev: 25.722592113157454
+AoBlos: -33.066208037136384
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_a164_e45/20190307_skibotn_vr_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 20:34:32 2019-03-07 21:04:37.786000
+8640
+180
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_a164_e45/20190307_skibotn_vr_a164_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_a164_e45/20190307_skibotn_vr_a164_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_a164_e45/20190307_skibotn_vr_a164_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/vr_rot_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['vr', 'rot', 'e45']
+ptcu 20190307 Skibotn vr 0.0 45.0 _rot
+2019-03-08 01:20:19
+2019-03-08 01:20:19 01:20:19
+0:00:00 0:07:19.816000 0:00:00 0:07:19.281000
+0 bad rotations in 820
+0 bad rotations in 820
+0 bad rotations in 820
+DEBUG TIME LISTS:  1552004419.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:19.281000 2019-03-08 01:20:19 2019-03-08 01:27:38.281000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'vr_rot_e45']
+DoLP min: 0.016518362801020314
+DoLP max: 1.5417471325563652
+DoLP stddev: 0.36253844994130013
+AoLP stddev: 43.379840553990604
+AoBlos: 124.67579958275239
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_rot_e45/20190307_skibotn_vr_rot_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 01:20:19 2019-03-08 01:27:38.281000
+8640
+0
+WARNING: GeoMag Data has no time list...
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_rot_e45/20190307_skibotn_vr_rot_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_rot_e45/20190307_skibotn_vr_rot_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_rot_e45/20190307_skibotn_vr_rot_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190307_Skibotn/vr_rot_e80', '-s', 'False']
+WARNING: No observation info in the input file.
+['vr', 'rot', 'e80']
+ptcu 20190307 Skibotn vr 0.0 80.0 _rot
+2019-03-08 01:32:45
+2019-03-08 01:32:45 01:32:45
+0:00:00 0:07:15.240000 0:00:00 0:07:14.705000
+0 bad rotations in 812
+0 bad rotations in 812
+0 bad rotations in 812
+DEBUG TIME LISTS:  1552005165.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:14.705000 2019-03-08 01:32:45 2019-03-08 01:39:59.705000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190307_Skibotn', 'vr_rot_e80']
+DoLP min: 0.0018609490573145732
+DoLP max: 0.8754398994641835
+DoLP stddev: 0.187316642137434
+AoLP stddev: 47.7302917966966
+AoBlos: -21.568148985487603
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_rot_e80/20190307_skibotn_vr_rot_e80_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 01:32:45 2019-03-08 01:39:59.705000
+8640
+0
+WARNING: GeoMag Data has no time list...
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_rot_e80/20190307_skibotn_vr_rot_e80_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_rot_e80/20190307_skibotn_vr_rot_e80_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190307_Skibotn/vr_rot_e80/20190307_skibotn_vr_rot_e80_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190308_Skibotn/br_a164_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['br', 'a164', 'e45']
+ptcu 20190308 Skibotn br 164.0 45.0 
+2019-03-08 21:11:35
+2019-03-08 21:11:35 21:11:35
+0:00:00 0:43:32.399000 0:00:00 0:43:31.873000
+12 bad rotations in 4953
+12 bad rotations in 4953
+23 bad rotations in 4942
+DEBUG TIME LISTS:  1552075895.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:43:26.084000 2019-03-08 21:11:35 2019-03-08 21:55:01.084000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190308_Skibotn', 'br_a164_e45']
+DoLP min: 0.07260693021375388
+DoLP max: 3.3822954638051184
+DoLP stddev: 0.47394007911312314
+AoLP stddev: 6.514528575407188
+AoBlos: -33.066208037136384
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/br_a164_e45/20190308_skibotn_br_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 21:11:35 2019-03-08 21:55:01.084000
+8640
+261
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/br_a164_e45/20190308_skibotn_br_a164_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/br_a164_e45/20190308_skibotn_br_a164_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/br_a164_e45/20190308_skibotn_br_a164_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190308_Skibotn/br_a164_e90', '-s', 'False']
+WARNING: No observation info in the input file.
+['br', 'a164', 'e90']
+ptcu 20190308 Skibotn br 164.0 90.0 
+2019-03-08 21:57:06
+2019-03-08 21:57:06 21:57:06
+0:00:00 0:29:48 0:00:00 0:29:47.506000
+4 bad rotations in 3391
+4 bad rotations in 3391
+4 bad rotations in 3391
+DEBUG TIME LISTS:  1552078626.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:29:47.506000 2019-03-08 21:57:06 2019-03-08 22:26:53.506000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190308_Skibotn', 'br_a164_e90']
+DoLP min: 0.03217215199854844
+DoLP max: 3.203851398276315
+DoLP stddev: 0.6602009626516904
+AoLP stddev: 13.71832379937522
+AoBlos: 168.11343123302817
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/br_a164_e90/20190308_skibotn_br_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 21:57:06 2019-03-08 22:26:53.506000
+8640
+179
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/br_a164_e90/20190308_skibotn_br_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/br_a164_e90/20190308_skibotn_br_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/br_a164_e90/20190308_skibotn_br_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190308_Skibotn/mr_a164_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['mr', 'a164', 'e45']
+ptcu 20190308 Skibotn mr 164.0 45.0 
+2019-03-08 22:36:49
+2019-03-08 22:36:49 22:36:49
+0:36:24 1:30:22.504000 0:36:24.169000 1:30:21.978000
+394 bad rotations in 6152
+394 bad rotations in 6152
+394 bad rotations in 6152
+DEBUG TIME LISTS:  1552081009.0 0:36:24 0:00:00
+0:36:24 0:00:00 0:53:57.809000 2019-03-08 23:13:13 2019-03-09 00:07:10.809000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190308_Skibotn', 'mr_a164_e45']
+DoLP min: 0.019283566780595764
+DoLP max: 1.3725539507233668
+DoLP stddev: 0.23102398867084692
+AoLP stddev: 16.60818525103144
+AoBlos: -33.066208037136384
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/mr_a164_e45/20190308_skibotn_mr_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+Traceback (most recent call last):
+  File "./vendange.py", line 50, in <module>
+    mag_data = MagData(bottle)
+  File "/home/bossel/These/Analysis/src/MagData.py", line 35, in __init__
+    end_date = bottle.aDateTime("end")
+AttributeError: 'PTCUBottle' object has no attribute 'aDateTime'
+['./vendange.py', 'ptcu/20190308_Skibotn/mr_a164_e90', '-s', 'False']
+WARNING: No observation info in the input file.
+['mr', 'a164', 'e90']
+ptcu 20190308 Skibotn mr 164.0 90.0 
+2019-03-08 22:36:49
+2019-03-08 22:36:49 22:36:49
+0:01:10.734000 0:32:54 0:01:10.809000 0:32:53.763000
+394 bad rotations in 3611
+394 bad rotations in 3611
+394 bad rotations in 3611
+DEBUG TIME LISTS:  1552081009.0 0:01:10.734000 0:00:00
+0:01:10.734000 0:00:00 0:31:42.954000 2019-03-08 22:37:59.734000 2019-03-08 23:09:42.688000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190308_Skibotn', 'mr_a164_e90']
+DoLP min: 0.0066138217579510316
+DoLP max: 0.990750778287363
+DoLP stddev: 0.16182856535050344
+AoLP stddev: 35.7453269253554
+AoBlos: -11.886568766971822
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/mr_a164_e90/20190308_skibotn_mr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 22:37:59.734000 2019-03-08 23:09:42.688000
+8640
+191
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/mr_a164_e90/20190308_skibotn_mr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/mr_a164_e90/20190308_skibotn_mr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/mr_a164_e90/20190308_skibotn_mr_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190308_Skibotn/vr_a164_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['vr', 'a164', 'e45']
+ptcu 20190308 Skibotn vr 164.0 45.0 
+2019-03-08 20:37:02
+2019-03-08 20:37:02 20:37:02
+0:00:00 0:29:47.843000 0:00:00 0:29:47.316000
+81 bad rotations in 3384
+81 bad rotations in 3384
+161 bad rotations in 3304
+DEBUG TIME LISTS:  1552073822.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:29:05.183000 2019-03-08 20:37:02 2019-03-08 21:06:07.183000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190308_Skibotn', 'vr_a164_e45']
+DoLP min: 0.37315008371362357
+DoLP max: 2.3470475079747777
+DoLP stddev: 0.4223582894070613
+AoLP stddev: 5.99150649794685
+AoBlos: -33.066208037136384
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/vr_a164_e45/20190308_skibotn_vr_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 20:37:02 2019-03-08 21:06:07.183000
+8640
+174
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/vr_a164_e45/20190308_skibotn_vr_a164_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/vr_a164_e45/20190308_skibotn_vr_a164_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/vr_a164_e45/20190308_skibotn_vr_a164_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190308_Skibotn/vr_a164_e90', '-s', 'False']
+WARNING: No observation info in the input file.
+['vr', 'a164', 'e90']
+ptcu 20190308 Skibotn vr 164.0 90.0 
+2019-03-08 20:58:42
+2019-03-08 20:58:42 20:58:42
+0:00:00 0:33:42 0:00:00 0:33:41.579000
+1053 bad rotations in 3812
+1053 bad rotations in 3812
+2096 bad rotations in 2769
+DEBUG TIME LISTS:  1552075122.0 0:00:00 0:05:15.798000
+0:00:00 0:05:15.798000 0:33:41.579000 2019-03-08 21:09:13.596000 2019-03-08 21:37:39.377000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190308_Skibotn', 'vr_a164_e90']
+DoLP min: 0.9227998933766943
+DoLP max: 31.96608072916097
+DoLP stddev: 0.6283013029641207
+AoLP stddev: 5.176450960396308
+AoBlos: 168.11343123302817
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/vr_a164_e90/20190308_skibotn_vr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-08 21:03:57.798000 2019-03-08 21:32:23.579000
+8640
+171
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/vr_a164_e90/20190308_skibotn_vr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/vr_a164_e90/20190308_skibotn_vr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190308_Skibotn/vr_a164_e90/20190308_skibotn_vr_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190309_Skibotn/br_rot_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['br', 'rot', 'e45']
+ptcu 20190309 Skibotn br 0.0 45.0 _rot
+2019-03-09 21:47:00
+2019-03-09 21:47:00 21:47:00
+0:00:00 0:07:16.108000 0:00:00 0:07:15.583000
+0 bad rotations in 828
+0 bad rotations in 828
+0 bad rotations in 828
+DEBUG TIME LISTS:  1552164420.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:15.583000 2019-03-09 21:47:00 2019-03-09 21:54:15.583000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190309_Skibotn', 'br_rot_e45']
+DoLP min: 0.5899888146026944
+DoLP max: 2.595439174688189
+DoLP stddev: 0.383522796588093
+AoLP stddev: 44.11068626117546
+AoBlos: -55.32420041724762
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/br_rot_e45/20190309_skibotn_br_rot_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-09 21:47:00 2019-03-09 21:54:15.583000
+8640
+44
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/br_rot_e45/20190309_skibotn_br_rot_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/br_rot_e45/20190309_skibotn_br_rot_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/br_rot_e45/20190309_skibotn_br_rot_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190309_Skibotn/br_rot_e80', '-s', 'False']
+WARNING: No observation info in the input file.
+['br', 'rot', 'e80']
+ptcu 20190309 Skibotn br 0.0 80.0 _rot
+2019-03-09 21:55:55
+2019-03-09 21:55:55 21:55:55
+0:00:00 0:07:16.800000 0:00:00 0:07:16.276000
+0 bad rotations in 832
+0 bad rotations in 832
+0 bad rotations in 832
+DEBUG TIME LISTS:  1552164955.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:16.276000 2019-03-09 21:55:55 2019-03-09 22:03:11.276000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190309_Skibotn', 'br_rot_e80']
+DoLP min: 0.4915494344722578
+DoLP max: 2.2239432444413914
+DoLP stddev: 0.39468653495973194
+AoLP stddev: 49.22267961554265
+AoBlos: -21.568148985487603
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/br_rot_e80/20190309_skibotn_br_rot_e80_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-09 21:55:55 2019-03-09 22:03:11.276000
+8640
+44
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/br_rot_e80/20190309_skibotn_br_rot_e80_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/br_rot_e80/20190309_skibotn_br_rot_e80_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/br_rot_e80/20190309_skibotn_br_rot_e80_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190309_Skibotn/mr_rot_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['mr', 'rot', 'e45']
+ptcu 20190309 Skibotn mr 0.0 45.0 _rot
+2019-03-09 19:48:12
+2019-03-09 19:48:12 19:48:12
+0:00:00 0:07:17.844000 0:00:00 0:07:17.321000
+0 bad rotations in 837
+0 bad rotations in 837
+0 bad rotations in 837
+DEBUG TIME LISTS:  1552157292.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:17.321000 2019-03-09 19:48:12 2019-03-09 19:55:29.321000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190309_Skibotn', 'mr_rot_e45']
+DoLP min: 0.024222319820395403
+DoLP max: 2.028684106863437
+DoLP stddev: 0.4770584843979207
+AoLP stddev: 35.69798768060898
+AoBlos: -55.32420041724762
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/mr_rot_e45/20190309_skibotn_mr_rot_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-09 19:48:12 2019-03-09 19:55:29.321000
+8640
+43
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/mr_rot_e45/20190309_skibotn_mr_rot_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/mr_rot_e45/20190309_skibotn_mr_rot_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/mr_rot_e45/20190309_skibotn_mr_rot_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190309_Skibotn/mr_rot_e80', '-s', 'False']
+WARNING: No observation info in the input file.
+['mr', 'rot', 'e80']
+ptcu 20190309 Skibotn mr 0.0 80.0 _rot
+2019-03-09 19:57:36
+2019-03-09 19:57:36 19:57:36
+0:00:00 0:07:24.645000 0:00:00 0:07:24.120000
+0 bad rotations in 848
+0 bad rotations in 848
+0 bad rotations in 848
+DEBUG TIME LISTS:  1552157856.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:24.120000 2019-03-09 19:57:36 2019-03-09 20:05:00.120000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190309_Skibotn', 'mr_rot_e80']
+DoLP min: 0.009376260833056106
+DoLP max: 1.136356870050031
+DoLP stddev: 0.2702109333860763
+AoLP stddev: 46.735717402634585
+AoBlos: -21.568148985487603
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/mr_rot_e80/20190309_skibotn_mr_rot_e80_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-09 19:57:36 2019-03-09 20:05:00.120000
+8640
+45
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/mr_rot_e80/20190309_skibotn_mr_rot_e80_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/mr_rot_e80/20190309_skibotn_mr_rot_e80_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/mr_rot_e80/20190309_skibotn_mr_rot_e80_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190309_Skibotn/rr_rot_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['rr', 'rot', 'e45']
+ptcu 20190309 Skibotn rr 0.0 45.0 _rot
+2019-03-09 22:14:06
+2019-03-09 22:14:06 22:14:06
+0:00:00 0:07:15.587000 0:00:00 0:07:15.060000
+0 bad rotations in 825
+0 bad rotations in 825
+0 bad rotations in 825
+DEBUG TIME LISTS:  1552166046.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:15.060000 2019-03-09 22:14:06 2019-03-09 22:21:21.060000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190309_Skibotn', 'rr_rot_e45']
+DoLP min: 0.01597579018535119
+DoLP max: 1.7038602464670654
+DoLP stddev: 0.34560815016079566
+AoLP stddev: 44.675148563321116
+AoBlos: -53.945760036390205
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/rr_rot_e45/20190309_skibotn_rr_rot_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-09 22:14:06 2019-03-09 22:21:21.060000
+8640
+44
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/rr_rot_e45/20190309_skibotn_rr_rot_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/rr_rot_e45/20190309_skibotn_rr_rot_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/rr_rot_e45/20190309_skibotn_rr_rot_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190309_Skibotn/rr_rot_e80', '-s', 'False']
+WARNING: No observation info in the input file.
+['rr', 'rot', 'e80']
+ptcu 20190309 Skibotn rr 0.0 80.0 _rot
+2019-03-09 22:23:17
+2019-03-09 22:23:17 22:23:17
+0:00:00 0:07:16.470000 0:00:00 0:07:15.943000
+0 bad rotations in 828
+0 bad rotations in 828
+0 bad rotations in 828
+DEBUG TIME LISTS:  1552166597.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:15.943000 2019-03-09 22:23:17 2019-03-09 22:30:32.943000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190309_Skibotn', 'rr_rot_e80']
+DoLP min: 0.04531889322359659
+DoLP max: 1.6745772982333471
+DoLP stddev: 0.3502330252482556
+AoLP stddev: 48.02360443780159
+AoBlos: -21.318783988203016
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/rr_rot_e80/20190309_skibotn_rr_rot_e80_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-09 22:23:17 2019-03-09 22:30:32.943000
+8640
+44
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/rr_rot_e80/20190309_skibotn_rr_rot_e80_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/rr_rot_e80/20190309_skibotn_rr_rot_e80_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/rr_rot_e80/20190309_skibotn_rr_rot_e80_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190309_Skibotn/vr_rot_e45', '-s', 'False']
+WARNING: No observation info in the input file.
+['vr', 'rot', 'e45']
+ptcu 20190309 Skibotn vr 0.0 45.0 _rot
+2019-03-09 21:20:43
+2019-03-09 21:20:43 21:20:43
+0:00:00 0:07:24.293000 0:00:00 0:07:23.771000
+38 bad rotations in 885
+38 bad rotations in 885
+76 bad rotations in 847
+DEBUG TIME LISTS:  1552162843.0 0:00:00 0:00:00.302000
+0:00:00 0:00:00.302000 0:07:23.771000 2019-03-09 21:20:43.604000 2019-03-09 21:28:07.073000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190309_Skibotn', 'vr_rot_e45']
+DoLP min: 0.43179737166141624
+DoLP max: 2.480108508979326
+DoLP stddev: 0.4761611508927153
+AoLP stddev: 43.907748847507456
+AoBlos: -55.32420041724762
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/vr_rot_e45/20190309_skibotn_vr_rot_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-09 21:20:43.302000 2019-03-09 21:28:06.771000
+8640
+44
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/vr_rot_e45/20190309_skibotn_vr_rot_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/vr_rot_e45/20190309_skibotn_vr_rot_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/vr_rot_e45/20190309_skibotn_vr_rot_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'ptcu/20190309_Skibotn/vr_rot_e80', '-s', 'False']
+WARNING: No observation info in the input file.
+['vr', 'rot', 'e80']
+ptcu 20190309 Skibotn vr 0.0 80.0 _rot
+2019-03-09 21:30:33
+2019-03-09 21:30:33 21:30:33
+0:00:00 0:07:19.218000 0:00:00 0:07:18.695000
+0 bad rotations in 838
+0 bad rotations in 838
+0 bad rotations in 838
+DEBUG TIME LISTS:  1552163433.0 0:00:00 0:00:00
+0:00:00 0:00:00 0:07:18.695000 2019-03-09 21:30:33 2019-03-09 21:37:51.695000
+0.0 0.0
+*********************************************
+INFO: ['ptcu', '20190309_Skibotn', 'vr_rot_e80']
+DoLP min: 0.8441697748877933
+DoLP max: 2.2135693035855537
+DoLP stddev: 0.2706416293048132
+AoLP stddev: 51.09827110002798
+AoBlos: -21.568148985487603
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/vr_rot_e80/20190309_skibotn_vr_rot_e80_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-09 21:30:33 2019-03-09 21:37:51.695000
+8640
+44
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/vr_rot_e80/20190309_skibotn_vr_rot_e80_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/vr_rot_e80/20190309_skibotn_vr_rot_e80_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20190309_Skibotn/vr_rot_e80/20190309_skibotn_vr_rot_e80_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'spp/20190301_NyAlesund/', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190301', 'tout']
+spp 20190301 NyAlesund  0.0 0.0 _20190301_tout
+nb_data_tot 1371854
+DEBUG SetTimes:  21:0:0 21:00:00 2019-03-01 21:00:00
+0:00:00 1 day, 2:59:59 21:00:00 1 day, 2:59:59
+10 bad rotations in 5401
+10 bad rotations in 5400
+0:00:00 1 day, 2:59:59 21:00:00 1 day, 2:59:55
+10 bad rotations in 5400
+20 bad rotations in 5390
+DEBUG TIME LISTS:  21:00:00 0:00:00 21:00:00
+0:00:00 21:00:00 1 day, 2:59:55 2019-03-02 18:00:00 2019-03-02 23:59:55
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190301_NyAlesund', '20190301_tout']
+DoLP min: 0.025741833179673726
+DoLP max: 85.80415735409068
+DoLP stddev: 4.764900110084583
+AoLP stddev: 42.86234360044698
+AoBlos: 98.65988702950318
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190302_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+Traceback (most recent call last):
+  File "./vendange.py", line 50, in <module>
+    mag_data = MagData(bottle)
+  File "/home/bossel/These/Analysis/src/MagData.py", line 35, in __init__
+    end_date = bottle.aDateTime("end")
+AttributeError: 'SPPBottle' object has no attribute 'aDateTime'
+['./vendange.py', 'spp/20190301_NyAlesund/a00_e38.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190301', 'tout']
+spp 20190301 NyAlesund  0.0 0.0 _20190301_tout
+nb_data_tot 1371854
+DEBUG SetTimes:  21:0:0 21:00:00 2019-03-01 21:00:00
+23:42:00 1 day, 0:32:38.400000 21:00:00 1 day, 2:59:59
+10 bad rotations in 5401
+10 bad rotations in 759
+23:42:00 1 day, 0:32:38.400000 23:42:03 1 day, 0:32:35
+10 bad rotations in 759
+10 bad rotations in 759
+DEBUG TIME LISTS:  21:00:00 23:42:00 23:42:03
+23:42:00 23:42:03 1 day, 0:32:35 2019-03-02 23:24:06 2019-03-03 00:14:38
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190301_NyAlesund', '20190301_tout']
+DoLP min: 1.1749128907061948
+DoLP max: 5.6673042061408685
+DoLP stddev: 0.7392368265636097
+AoLP stddev: 4.3833474526255864
+AoBlos: 98.65988702950318
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a00_e38_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+Traceback (most recent call last):
+  File "./vendange.py", line 50, in <module>
+    mag_data = MagData(bottle)
+  File "/home/bossel/These/Analysis/src/MagData.py", line 35, in __init__
+    end_date = bottle.aDateTime("end")
+AttributeError: 'SPPBottle' object has no attribute 'aDateTime'
+['./vendange.py', 'spp/20190301_NyAlesund/a180_e85.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190301', 'tout']
+spp 20190301 NyAlesund  0.0 0.0 _20190301_tout
+nb_data_tot 1371854
+DEBUG SetTimes:  21:0:0 21:00:00 2019-03-01 21:00:00
+22:22:26.400000 23:38:31.200000 21:00:00 1 day, 2:59:59
+10 bad rotations in 5401
+10 bad rotations in 1142
+22:22:26.400000 23:38:31.200000 22:22:28 23:38:31
+10 bad rotations in 1142
+10 bad rotations in 1142
+DEBUG TIME LISTS:  21:00:00 22:22:26.400000 22:22:28
+22:22:26.400000 22:22:28 23:38:31 2019-03-02 20:44:56 2019-03-02 22:00:59
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190301_NyAlesund', '20190301_tout']
+DoLP min: 0.049106213954719334
+DoLP max: 6.895511055035214
+DoLP stddev: 1.5540984135922167
+AoLP stddev: 17.947327380099573
+AoBlos: 98.65988702950318
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a180_e85_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-01 22:22:28 2019-03-01 23:38:31
+8640
+457
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a180_e85_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a180_e85_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a180_e85_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'spp/20190301_NyAlesund/rot_lente_e30.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190301', 'tout']
+spp 20190301 NyAlesund  0.0 0.0 _20190301_tout
+nb_data_tot 1371854
+DEBUG SetTimes:  21:0:0 21:00:00 2019-03-01 21:00:00
+21:28:26.400000 22:15:10.800000 21:00:00 1 day, 2:59:59
+10 bad rotations in 5401
+10 bad rotations in 701
+21:28:26.400000 22:15:10.800000 21:28:27 22:15:07
+10 bad rotations in 701
+116 bad rotations in 595
+DEBUG TIME LISTS:  21:00:00 21:28:26.400000 21:28:27
+21:28:26.400000 21:28:27 22:15:03 2019-03-02 18:56:54 2019-03-02 19:43:30
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190301_NyAlesund', '20190301_tout']
+DoLP min: 0.0387718575198332
+DoLP max: 10.638930831299422
+DoLP stddev: 2.391809161823903
+AoLP stddev: 47.09415186846088
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_rot_lente_e30_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-01 21:28:27 2019-03-01 22:15:03
+8640
+280
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_rot_lente_e30_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_rot_lente_e30_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_rot_lente_e30_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'spp/20190303_NyAlesund/', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190303', 'tout']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_tout
+nb_data_tot 5517642
+DEBUG SetTimes:  0:0:3 0:00:03 2019-03-03 00:00:03
+0:00:00 1 day, 0:12:40 0:00:03 1 day, 0:12:40
+10 bad rotations in 21723
+10 bad rotations in 21722
+0:00:00 1 day, 0:12:40 0:00:03 1 day, 0:12:38
+10 bad rotations in 21722
+20 bad rotations in 21712
+DEBUG TIME LISTS:  0:00:03 0:00:00 0:00:03
+0:00:00 0:00:03 1 day, 0:12:38 2019-03-03 00:00:06 2019-03-04 00:12:41
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_tout']
+DoLP min: 0.01482813127128643
+DoLP max: 98.99098630140057
+DoLP stddev: 28.622855557558314
+AoLP stddev: 46.29123784262469
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+Traceback (most recent call last):
+  File "./vendange.py", line 50, in <module>
+    mag_data = MagData(bottle)
+  File "/home/bossel/These/Analysis/src/MagData.py", line 35, in __init__
+    end_date = bottle.aDateTime("end")
+AttributeError: 'SPPBottle' object has no attribute 'aDateTime'
+['./vendange.py', 'spp/20190303_NyAlesund/a-90_e30.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190303', 'night']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_night
+nb_data_tot 913892
+DEBUG SetTimes:  20:0:2 20:00:02 2019-03-03 20:00:02
+22:48:59.760000 23:33:15.840000 20:00:02 23:59:58
+2 bad rotations in 3598
+2 bad rotations in 664
+22:48:59.760000 23:33:15.840000 22:49:02 23:33:14
+2 bad rotations in 664
+2 bad rotations in 664
+DEBUG TIME LISTS:  20:00:02 22:48:59.760000 22:49:02
+22:48:59.760000 22:49:02 23:33:14 2019-03-04 21:38:04 2019-03-04 22:22:16
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_night']
+DoLP min: 1.4020985572383804
+DoLP max: 9.800806726642127
+DoLP stddev: 1.5023191769812057
+AoLP stddev: 7.0574033304234485
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a-90_e30_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 22:49:02 2019-03-03 23:33:14
+8640
+265
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a-90_e30_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a-90_e30_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a-90_e30_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'spp/20190303_NyAlesund/a180_e38.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190303', 'night']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_night
+nb_data_tot 913892
+DEBUG SetTimes:  20:0:2 20:00:02 2019-03-03 20:00:02
+20:29:00.960000 22:00:51.480000 20:00:02 23:59:58
+2 bad rotations in 3598
+2 bad rotations in 1377
+20:29:00.960000 22:00:51.480000 20:29:02 22:00:50
+2 bad rotations in 1377
+33 bad rotations in 1346
+DEBUG TIME LISTS:  20:00:02 20:29:00.960000 20:29:02
+20:29:00.960000 20:29:02 22:00:50 2019-03-04 16:58:04 2019-03-04 18:29:52
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_night']
+DoLP min: 0.03536710292413233
+DoLP max: 4.395828651838875
+DoLP stddev: 0.7309337238368685
+AoLP stddev: 20.902365068776554
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e38_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 20:29:02 2019-03-03 22:00:50
+8640
+551
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e38_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e38_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e38_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'spp/20190303_NyAlesund/a180_e85.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190303', 'night']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_night
+nb_data_tot 913892
+DEBUG SetTimes:  20:0:2 20:00:02 2019-03-03 20:00:02
+23:34:48.360000 1 day, 0:11:07.080000 20:00:02 23:59:58
+2 bad rotations in 3598
+2 bad rotations in 378
+23:34:48.360000 1 day, 0:11:07.080000 23:34:50 23:59:58
+2 bad rotations in 378
+2 bad rotations in 378
+DEBUG TIME LISTS:  20:00:02 23:34:48.360000 23:34:50
+23:34:48.360000 23:34:50 23:59:58 2019-03-04 23:09:40 2019-03-04 23:34:48
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_night']
+DoLP min: 0.2764557857275533
+DoLP max: 6.001201749051944
+DoLP stddev: 1.162211955692026
+AoLP stddev: 23.811968178172204
+AoBlos: 98.65988702950318
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e85_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 23:34:50 2019-03-03 23:59:58
+8640
+151
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e85_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e85_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e85_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'spp/20190303_NyAlesund/calib_angle_0deg.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190303', 'tout']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_tout
+nb_data_tot 5517642
+DEBUG SetTimes:  0:0:3 0:00:03 2019-03-03 00:00:03
+17:38:24 20:28:37.200000 0:00:03 1 day, 0:12:40
+10 bad rotations in 21723
+10 bad rotations in 2552
+17:38:24 20:28:37.200000 17:38:26 20:28:34
+10 bad rotations in 2552
+15 bad rotations in 2547
+DEBUG TIME LISTS:  0:00:03 17:38:24 17:38:30
+17:38:24 17:38:30 20:28:34 2019-03-04 11:17:00 2019-03-04 14:07:04
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_tout']
+DoLP min: 82.5403126366143
+DoLP max: 98.95593302954592
+DoLP stddev: 4.177057310209635
+AoLP stddev: 1.6673196950157532
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_calib_angle_0deg_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 17:38:30 2019-03-03 20:28:34
+8640
+1021
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_calib_angle_0deg_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_calib_angle_0deg_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_calib_angle_0deg_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+['./vendange.py', 'spp/20190303_NyAlesund/rot_lente_e30.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190303', 'night']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_night
+nb_data_tot 913892
+DEBUG SetTimes:  20:0:2 20:00:02 2019-03-03 20:00:02
+22:03:13.320000 22:48:15.480000 20:00:02 23:59:58
+2 bad rotations in 3598
+2 bad rotations in 676
+22:03:13.320000 22:48:15.480000 22:03:14 22:48:14
+2 bad rotations in 676
+87 bad rotations in 591
+DEBUG TIME LISTS:  20:00:02 22:03:13.320000 22:03:14
+22:03:13.320000 22:03:14 22:48:14 2019-03-04 20:06:28 2019-03-04 20:51:28
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_night']
+DoLP min: 0.13051528403528642
+DoLP max: 4.938537111011398
+DoLP stddev: 0.987801027450318
+AoLP stddev: 34.976638357587255
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_rot_lente_e30_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 22:03:14 2019-03-03 22:48:14
+8640
+270
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_rot_lente_e30_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_rot_lente_e30_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_rot_lente_e30_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+['./vendange.py', 'spp/20190307_Skibotn/', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+0:00:00 1 day, 1:27:26 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 7095
+0:00:00 1 day, 1:27:26 8:07:53 1 day, 1:27:25
+1266 bad rotations in 7095
+2531 bad rotations in 5830
+DEBUG TIME LISTS:  8:07:53 0:00:00 8:14:33
+0:00:00 8:14:33 1 day, 1:00:05 2019-03-07 16:29:06 2019-03-08 09:14:38
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.004949621949380995
+DoLP max: 86.04447034151555
+DoLP stddev: 4.7696773211736385
+AoLP stddev: 44.772494753801716
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+Traceback (most recent call last):
+  File "./vendange.py", line 50, in <module>
+    mag_data = MagData(bottle)
+  File "/home/bossel/These/Analysis/src/MagData.py", line 35, in __init__
+    end_date = bottle.aDateTime("end")
+AttributeError: 'SPPBottle' object has no attribute 'aDateTime'
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+['./vendange.py', 'spp/20190307_Skibotn/br_a164_e45.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+21:09:14.400000 21:51:48.960000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 611
+21:09:14.400000 21:51:48.960000 21:09:16 21:51:48
+1266 bad rotations in 611
+1266 bad rotations in 611
+DEBUG TIME LISTS:  8:07:53 21:09:14.400000 21:09:16
+21:09:14.400000 21:09:16 21:51:48 2019-03-08 18:18:32 2019-03-08 19:01:04
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.027380218335910277
+DoLP max: 1.1375858997250803
+DoLP stddev: 0.1831635823161264
+AoLP stddev: 31.105136527767442
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 21:09:16 2019-03-07 21:51:48
+8640
+255
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+['./vendange.py', 'spp/20190307_Skibotn/br_a164_e90.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+21:54:03.600000 22:27:44.640000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 483
+21:54:03.600000 22:27:44.640000 21:54:04 22:27:44
+1266 bad rotations in 483
+1266 bad rotations in 483
+DEBUG TIME LISTS:  8:07:53 21:54:03.600000 21:54:04
+21:54:03.600000 21:54:04 22:27:44 2019-03-08 19:48:08 2019-03-08 20:21:48
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.023036318316621607
+DoLP max: 1.5668535260952146
+DoLP stddev: 0.3048969737924329
+AoLP stddev: 46.87110200796355
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 21:54:04 2019-03-07 22:27:44
+8640
+202
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+['./vendange.py', 'spp/20190307_Skibotn/mr_a164_e90.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+22:36:46.800000 23:11:12.840000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 489
+22:36:46.800000 23:11:12.840000 22:36:48 23:11:12
+1266 bad rotations in 489
+1266 bad rotations in 489
+DEBUG TIME LISTS:  8:07:53 22:36:46.800000 22:36:48
+22:36:46.800000 22:36:48 23:11:12 2019-03-08 21:13:36 2019-03-08 21:48:00
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.029169723905076
+DoLP max: 1.5712656895546482
+DoLP stddev: 0.2881030639749041
+AoLP stddev: 48.33827141515276
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 22:36:48 2019-03-07 23:11:12
+8640
+207
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+['./vendange.py', 'spp/20190307_Skibotn/mr_a164_e45.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+23:14:58.920000 1 day, 0:01:13.080000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 645
+23:14:58.920000 1 day, 0:01:13.080000 23:15:00 1 day, 0:01:12
+1266 bad rotations in 645
+1266 bad rotations in 645
+DEBUG TIME LISTS:  8:07:53 23:14:58.920000 23:15:00
+23:14:58.920000 23:15:00 1 day, 0:01:12 2019-03-08 22:30:00 2019-03-08 23:16:12
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.02591736155034253
+DoLP max: 1.7106809674020131
+DoLP stddev: 0.31937916696508983
+AoLP stddev: 28.626793350448462
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+Traceback (most recent call last):
+  File "./vendange.py", line 50, in <module>
+    mag_data = MagData(bottle)
+  File "/home/bossel/These/Analysis/src/MagData.py", line 35, in __init__
+    end_date = bottle.aDateTime("end")
+AttributeError: 'SPPBottle' object has no attribute 'aDateTime'
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+['./vendange.py', 'spp/20190307_Skibotn/vr_a164_e45.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+20:35:07.800000 21:05:13.200000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 423
+20:35:07.800000 21:05:13.200000 20:35:08 21:05:12
+1266 bad rotations in 423
+1266 bad rotations in 423
+DEBUG TIME LISTS:  8:07:53 20:35:07.800000 20:35:08
+20:35:07.800000 20:35:08 21:05:12 2019-03-08 17:10:16 2019-03-08 17:40:20
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.04369573768203854
+DoLP max: 1.7160484970084044
+DoLP stddev: 0.2840434572205664
+AoLP stddev: 37.28127463453318
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 20:35:08 2019-03-07 21:05:12
+8640
+181
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e45_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+['./vendange.py', 'spp/20190307_Skibotn/vr_a164_e90.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+20:05:47.400000 20:31:20.640000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 355
+20:05:47.400000 20:31:20.640000 20:05:48 20:31:19
+1266 bad rotations in 355
+1268 bad rotations in 353
+DEBUG TIME LISTS:  8:07:53 20:05:47.400000 20:05:48
+20:05:47.400000 20:05:48 20:31:12 2019-03-08 16:11:36 2019-03-08 16:37:00
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.025959032437461844
+DoLP max: 3.396350690508209
+DoLP stddev: 0.554262262598352
+AoLP stddev: 42.31328575007628
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 20:05:48 2019-03-07 20:31:12
+8640
+153
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+['./vendange.py', 'spp/20190307_Skibotn/rr_a164_e90.in', '-s', 'False']
+WARNING: No observation info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+18:17:13.920000 19:55:48.720000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 1427
+18:17:13.920000 19:55:48.720000 18:17:15 19:55:47
+1266 bad rotations in 1427
+1266 bad rotations in 1427
+DEBUG TIME LISTS:  8:07:53 18:17:13.920000 18:17:15
+18:17:13.920000 18:17:15 19:55:47 2019-03-08 12:34:30 2019-03-08 14:13:02
+0.8499753457212386 48.7
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.02936106875345316
+DoLP max: 2.476906405841439
+DoLP stddev: 0.5003711768754643
+AoLP stddev: 24.041025392579098
+AoBlos: 94.01504139624497
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_rr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 18:17:15 2019-03-07 19:55:47
+8640
+591
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_rr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_rr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_rr_a164_e90_correlations.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)

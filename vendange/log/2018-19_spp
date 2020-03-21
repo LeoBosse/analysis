@@ -1,0 +1,2023 @@
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181113_NyAlesund/', '-s', 'False']
+['20181113', 'NyAlesund', 'tout']
+spp 20181113 NyAlesund  -90.0 29.999999999999996 _20181113_NyAlesund_tout
+nb_data_tot 847598
+DEBUG SetTimes:  20:9:13 20:09:13 2018-11-13 20:09:13
+0:00:00 1 day, 0:00:10 20:09:13 1 day, 0:00:10
+87 bad rotations in 3337
+87 bad rotations in 3336
+0:00:00 1 day, 0:00:10 20:09:13 1 day, 0:00:09
+87 bad rotations in 3336
+230 bad rotations in 3193
+DEBUG TIME LISTS:  20:09:13 0:00:00 20:15:05
+0:00:00 20:15:05 23:58:21 2018-11-14 16:30:10 2018-11-14 20:13:26
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181113_NyAlesund', '20181113_NyAlesund_tout']
+DoLP min: 0.059424416782298504
+DoLP max: 12.92915858175563
+DoLP stddev: 1.2701469726590768
+AoLP stddev: 18.050134254946457
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181113_NyAlesund/20181113_NyAlesund_tout/20181113_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2018-11-13 20:15:05 2018-11-13 23:58:21
+8640
+1340
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181113_NyAlesund/20181113_NyAlesund_tout/20181113_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181113_NyAlesund/20181113_NyAlesund_tout/20181113_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181113_NyAlesund/20181113_NyAlesund_tout/20181113_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181113_NyAlesund/20181113_NyAlesund_tout/20181113_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+['./vendange.py', 'spp/20181114_NyAlesund/', '-s', 'False']
+['20181114', 'NyAlesund', 'tout']
+spp 20181114 NyAlesund  -90.0 29.999999999999996 _20181114_NyAlesund_tout
+nb_data_tot 753872
+DEBUG SetTimes:  14:35:53 14:35:53 2018-11-14 14:35:53
+0:00:00 21:21:04 14:35:53 21:21:04
+1633 bad rotations in 2968
+1633 bad rotations in 2967
+0:00:00 21:21:04 14:35:53 21:20:58
+1633 bad rotations in 2967
+3266 bad rotations in 1334
+DEBUG TIME LISTS:  14:35:53 0:00:00 14:36:25
+0:00:00 14:36:25 21:20:58 2018-11-15 05:12:50 2018-11-15 11:57:23
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181114_NyAlesund', '20181114_NyAlesund_tout']
+DoLP min: 0.00801130444178898
+DoLP max: 80.49867272492678
+DoLP stddev: 7.433550132184358
+AoLP stddev: 28.733056003638755
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181114_NyAlesund/20181114_NyAlesund_tout/20181114_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2018-11-14 14:36:25 2018-11-14 21:20:58
+8640
+2427
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181114_NyAlesund/20181114_NyAlesund_tout/20181114_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181114_NyAlesund/20181114_NyAlesund_tout/20181114_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181114_NyAlesund/20181114_NyAlesund_tout/20181114_NyAlesund_tout_correlations.png
+Traceback (most recent call last):
+  File "./vendange.py", line 60, in <module>
+    Cru = Mixer(bottle, mag_data=mag_data, comp_bottle=comp_bottle)
+  File "/home/bossel/These/Analysis/src/Mixer.py", line 43, in __init__
+    self.MakeCoherencePLots()
+  File "/home/bossel/These/Analysis/src/Mixer.py", line 271, in MakeCoherencePLots
+    f, C, A = self.GetCoherence(self.bottle.smooth_I0, self.bottle.smooth_DoLP, self.bottle.GetRotationFrequency())
+  File "/home/bossel/These/Analysis/src/bottle.py", line 306, in GetRotationFrequency
+    all_freq = [1. / (self.all_times[i].total_seconds() - self.all_times[i-1].total_seconds()) for i in range(1, self.nb_rot)]
+  File "/home/bossel/These/Analysis/src/bottle.py", line 306, in <listcomp>
+    all_freq = [1. / (self.all_times[i].total_seconds() - self.all_times[i-1].total_seconds()) for i in range(1, self.nb_rot)]
+ZeroDivisionError: float division by zero
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181115_NyAlesund/', '-s', 'False']
+['20181115', 'NyAlesund', 'tout']
+spp 20181115 NyAlesund  -90.0 29.999999999999996 _20181115_NyAlesund_tout
+nb_data_tot 6568948
+DEBUG SetTimes:  8:10:23 8:10:23 2018-11-15 08:10:23
+15:20:16.440000 1 day, 5:34:58.440000 8:10:23 1 day, 18:10:52
+1724 bad rotations in 25862
+1724 bad rotations in 12687
+15:20:16.440000 1 day, 5:34:58.440000 15:20:18 1 day, 5:34:55
+1724 bad rotations in 12687
+1749 bad rotations in 12662
+DEBUG TIME LISTS:  8:10:23 15:20:16.440000 15:20:18
+15:20:16.440000 15:20:18 1 day, 5:34:55 2018-11-16 06:40:36 2018-11-16 20:55:13
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181115_NyAlesund', '20181115_NyAlesund_tout']
+DoLP min: 0.003279574306086733
+DoLP max: 6.684320636843773
+DoLP stddev: 1.4697548683883426
+AoLP stddev: 15.96858118351676
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181115_NyAlesund/20181115_NyAlesund_tout/20181115_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181116 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181116 17280
+DEBUG MAGDATA TIME 2018-11-15 15:20:18 2018-11-16 05:34:55
+17280
+5128
+Creating AllSky Imager Data Object
+<a list of 8 Text yticklabel objects>
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181115_NyAlesund/20181115_NyAlesund_tout/20181115_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181115_NyAlesund/20181115_NyAlesund_tout/20181115_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181115_NyAlesund/20181115_NyAlesund_tout/20181115_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181115_NyAlesund/20181115_NyAlesund_tout/20181115_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181204_NyAlesund/', '-s', 'False']
+['20181204', 'NyAlesund', 'tout']
+spp 20181204 NyAlesund  -90.0 29.999999999999996 _20181204_NyAlesund_tout
+nb_data_tot 5715254
+DEBUG SetTimes:  14:0:0 14:00:00 2018-12-04 14:00:00
+14:57:25.200000 1 day, 14:26:24 14:00:00 1 day, 14:59:58
+3 bad rotations in 22501
+3 bad rotations in 21135
+14:57:25.200000 1 day, 14:26:24 14:57:28 1 day, 14:26:22
+3 bad rotations in 21135
+16 bad rotations in 21122
+DEBUG TIME LISTS:  14:00:00 14:57:25.200000 14:57:28
+14:57:25.200000 14:57:28 1 day, 14:26:22 2018-12-05 05:54:56 2018-12-06 05:23:50
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181204_NyAlesund', '20181204_NyAlesund_tout']
+DoLP min: 0.0045969928148179295
+DoLP max: 4.691471596392855
+DoLP stddev: 0.8176341619837716
+AoLP stddev: 16.258983292768022
+AoBlos: 122.34438386472539
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181204_NyAlesund/20181204_NyAlesund_tout/20181204_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181205 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181205 17280
+DEBUG MAGDATA TIME 2018-12-04 14:57:28 2018-12-05 14:26:22
+17280
+8454
+Creating AllSky Imager Data Object
+<a list of 8 Text yticklabel objects>
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181204_NyAlesund/20181204_NyAlesund_tout/20181204_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181204_NyAlesund/20181204_NyAlesund_tout/20181204_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181204_NyAlesund/20181204_NyAlesund_tout/20181204_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181204_NyAlesund/20181204_NyAlesund_tout/20181204_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181119_NyAlesund/', '-s', 'False']
+['20181119', 'NyAlesund', 'tout']
+spp 20181119 NyAlesund  -90.0 29.999999999999996 _20181119_NyAlesund_tout
+nb_data_tot 3283204
+DEBUG SetTimes:  7:47:18 7:47:18 2018-11-19 07:47:18
+1 day, 15:46:50.160000 1 day, 20:43:17.040000 7:47:18 1 day, 21:59:58
+0 bad rotations in 12926
+0 bad rotations in 4447
+1 day, 15:46:50.160000 1 day, 20:43:17.040000 1 day, 15:46:51 1 day, 20:43:14
+0 bad rotations in 4447
+0 bad rotations in 4447
+DEBUG TIME LISTS:  7:47:18 1 day, 15:46:50.160000 1 day, 15:46:51
+1 day, 15:46:50.160000 1 day, 15:46:51 1 day, 20:43:14 2018-11-21 07:33:42 2018-11-21 12:30:05
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181119_NyAlesund', '20181119_NyAlesund_tout']
+DoLP min: 2.714613128248696
+DoLP max: 27.156352673133803
+DoLP stddev: 7.627962905377825
+AoLP stddev: 10.708145807962183
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181119_NyAlesund/20181119_NyAlesund_tout/20181119_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2018-11-19 15:46:51 2018-11-19 20:43:14
+8640
+1778
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181119_NyAlesund/20181119_NyAlesund_tout/20181119_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181119_NyAlesund/20181119_NyAlesund_tout/20181119_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181119_NyAlesund/20181119_NyAlesund_tout/20181119_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181119_NyAlesund/20181119_NyAlesund_tout/20181119_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181206_NyAlesund/', '-s', 'False']
+['20181206', 'NyAlesund', 'tout']
+spp 20181206 NyAlesund  -90.0 29.999999999999996 _20181206_NyAlesund_tout
+nb_data_tot 5486400
+DEBUG SetTimes:  8:0:3 8:00:03 2018-12-06 08:00:03
+8:22:48 1 day, 7:59:57 8:00:03 1 day, 7:59:57
+0 bad rotations in 21600
+0 bad rotations in 21257
+8:22:48 1 day, 7:59:57 8:22:51 1 day, 7:59:53
+0 bad rotations in 21257
+2 bad rotations in 21255
+DEBUG TIME LISTS:  8:00:03 8:22:48 8:22:51
+8:22:48 8:22:51 1 day, 7:59:53 2018-12-06 16:45:42 2018-12-07 16:22:44
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181206_NyAlesund', '20181206_NyAlesund_tout']
+DoLP min: 0.007257295968655605
+DoLP max: 6.8403259347244285
+DoLP stddev: 1.2045198219393596
+AoLP stddev: 21.13391566636056
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181206_NyAlesund/20181206_NyAlesund_tout/20181206_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181207 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181207 17280
+DEBUG MAGDATA TIME 2018-12-06 08:22:51 2018-12-07 07:59:53
+17280
+8502
+Creating AllSky Imager Data Object
+<a list of 6 Text yticklabel objects>
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181206_NyAlesund/20181206_NyAlesund_tout/20181206_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181206_NyAlesund/20181206_NyAlesund_tout/20181206_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181206_NyAlesund/20181206_NyAlesund_tout/20181206_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181206_NyAlesund/20181206_NyAlesund_tout/20181206_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181208_NyAlesund/', '-s', 'False']
+['20181208', 'NyAlesund', 'tout']
+spp 20181208 NyAlesund  -90.0 29.999999999999996 _20181208_NyAlesund_tout
+nb_data_tot 5486146
+DEBUG SetTimes:  8:0:3 8:00:03 2018-12-08 08:00:03
+0:00:00 1 day, 7:59:57 8:00:03 1 day, 7:59:57
+0 bad rotations in 21599
+0 bad rotations in 21598
+0:00:00 1 day, 7:59:57 8:00:03 1 day, 7:59:53
+0 bad rotations in 21598
+1 bad rotations in 21597
+DEBUG TIME LISTS:  8:00:03 0:00:00 8:00:03
+0:00:00 8:00:03 1 day, 7:59:53 2018-12-08 16:00:06 2018-12-09 15:59:56
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181208_NyAlesund', '20181208_NyAlesund_tout']
+DoLP min: 0.007207136872723814
+DoLP max: 5.2741505574071725
+DoLP stddev: 1.017501066080187
+AoLP stddev: 37.48784442716591
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181208_NyAlesund/20181208_NyAlesund_tout/20181208_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181209 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181209 17280
+DEBUG MAGDATA TIME 2018-12-08 08:00:03 2018-12-09 07:59:53
+17280
+8639
+Creating AllSky Imager Data Object
+<a list of 6 Text yticklabel objects>
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181208_NyAlesund/20181208_NyAlesund_tout/20181208_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181208_NyAlesund/20181208_NyAlesund_tout/20181208_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181208_NyAlesund/20181208_NyAlesund_tout/20181208_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181208_NyAlesund/20181208_NyAlesund_tout/20181208_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181209_NyAlesund/', '-s', 'False']
+['20181209', 'NyAlesund', 'tout']
+spp 20181209 NyAlesund  -90.0 29.999999999999996 _20181209_NyAlesund_tout
+nb_data_tot 5943600
+DEBUG SetTimes:  8:0:1 8:00:01 2018-12-09 08:00:01
+0:00:00 1 day, 9:04:12 8:00:01 1 day, 9:59:58
+1 bad rotations in 23400
+1 bad rotations in 22563
+0:00:00 1 day, 9:04:12 8:00:01 1 day, 9:04:10
+1 bad rotations in 22563
+1 bad rotations in 22563
+DEBUG TIME LISTS:  8:00:01 0:00:00 8:00:01
+0:00:00 8:00:01 1 day, 9:04:10 2018-12-09 16:00:02 2018-12-10 17:04:11
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181209_NyAlesund', '20181209_NyAlesund_tout']
+DoLP min: 0.0018210581910803954
+DoLP max: 6.821160859452389
+DoLP stddev: 1.0127344337207151
+AoLP stddev: 34.17933825793471
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181209_NyAlesund/20181209_NyAlesund_tout/20181209_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181210 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181210 17280
+DEBUG MAGDATA TIME 2018-12-09 08:00:01 2018-12-10 09:04:10
+17280
+9025
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181209_NyAlesund/20181209_NyAlesund_tout/20181209_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181209_NyAlesund/20181209_NyAlesund_tout/20181209_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181209_NyAlesund/20181209_NyAlesund_tout/20181209_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181209_NyAlesund/20181209_NyAlesund_tout/20181209_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181207_NyAlesund/', '-s', 'False']
+['20181207', 'NyAlesund', 'tout']
+spp 20181207 NyAlesund  -90.0 29.999999999999996 _20181207_NyAlesund_tout
+nb_data_tot 5486400
+DEBUG SetTimes:  8:0:1 8:00:01 2018-12-07 08:00:01
+0:00:00 1 day, 7:59:59 8:00:01 1 day, 7:59:59
+1 bad rotations in 21600
+1 bad rotations in 21599
+0:00:00 1 day, 7:59:59 8:00:01 1 day, 7:59:55
+1 bad rotations in 21599
+8 bad rotations in 21592
+DEBUG TIME LISTS:  8:00:01 0:00:00 8:00:01
+0:00:00 8:00:01 1 day, 7:59:55 2018-12-07 16:00:02 2018-12-08 15:59:56
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181207_NyAlesund', '20181207_NyAlesund_tout']
+DoLP min: 0.016299551283519887
+DoLP max: 4.002777084227776
+DoLP stddev: 0.4732896989126351
+AoLP stddev: 14.769061345269824
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181207_NyAlesund/20181207_NyAlesund_tout/20181207_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181208 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20181208 17280
+DEBUG MAGDATA TIME 2018-12-07 08:00:01 2018-12-08 07:59:55
+17280
+8639
+Creating AllSky Imager Data Object
+<a list of 7 Text yticklabel objects>
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181207_NyAlesund/20181207_NyAlesund_tout/20181207_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181207_NyAlesund/20181207_NyAlesund_tout/20181207_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181207_NyAlesund/20181207_NyAlesund_tout/20181207_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181207_NyAlesund/20181207_NyAlesund_tout/20181207_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181212_NyAlesund/', '-s', 'False']
+['20181212', 'NyAlesund', 'tout']
+spp 20181212 NyAlesund  -90.0 29.999999999999996 _20181212_NyAlesund_tout
+nb_data_tot 1600200
+DEBUG SetTimes:  9:0:3 9:00:03 2018-12-12 09:00:03
+9:19:48 15:27:00 9:00:03 15:59:59
+3 bad rotations in 6300
+3 bad rotations in 5508
+9:19:48 15:27:00 9:19:51 15:26:59
+3 bad rotations in 5508
+6 bad rotations in 5505
+DEBUG TIME LISTS:  9:00:03 9:19:48 9:19:51
+9:19:48 9:19:51 15:26:59 2018-12-12 18:39:42 2018-12-13 00:46:50
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181212_NyAlesund', '20181212_NyAlesund_tout']
+DoLP min: 0.04493714694339771
+DoLP max: 3.9473881203091707
+DoLP stddev: 0.7929794453477202
+AoLP stddev: 12.526469695401133
+AoBlos: 122.34438386472539
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181212_NyAlesund/20181212_NyAlesund_tout/20181212_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2018-12-12 09:19:51 2018-12-12 15:26:59
+8640
+2202
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181212_NyAlesund/20181212_NyAlesund_tout/20181212_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181212_NyAlesund/20181212_NyAlesund_tout/20181212_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181212_NyAlesund/20181212_NyAlesund_tout/20181212_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181212_NyAlesund/20181212_NyAlesund_tout/20181212_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181214_NyAlesund/', '-s', 'False']
+['20181214', 'NyAlesund', 'tout']
+spp 20181214 NyAlesund  -90.0 29.999999999999996 _20181214_NyAlesund_tout
+nb_data_tot 2514346
+DEBUG SetTimes:  6:0:3 6:00:03 2018-12-14 06:00:03
+6:30:36 14:32:24 6:00:03 16:59:56
+3 bad rotations in 9899
+3 bad rotations in 7226
+6:30:36 14:32:24 6:30:39 14:32:20
+3 bad rotations in 7226
+7 bad rotations in 7222
+DEBUG TIME LISTS:  6:00:03 6:30:36 6:30:39
+6:30:36 6:30:39 14:32:20 2018-12-14 13:01:18 2018-12-14 21:02:59
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181214_NyAlesund', '20181214_NyAlesund_tout']
+DoLP min: 0.006658089104050645
+DoLP max: 2.12172502753704
+DoLP stddev: 0.3594946335042335
+AoLP stddev: 30.13302171550119
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181214_NyAlesund/20181214_NyAlesund_tout/20181214_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2018-12-14 06:30:39 2018-12-14 14:32:20
+8640
+2891
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181214_NyAlesund/20181214_NyAlesund_tout/20181214_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181214_NyAlesund/20181214_NyAlesund_tout/20181214_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181214_NyAlesund/20181214_NyAlesund_tout/20181214_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181214_NyAlesund/20181214_NyAlesund_tout/20181214_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20181217_NyAlesund/', '-s', 'False']
+['20181217', 'NyAlesund', 'tout']
+spp 20181217 NyAlesund  -90.0 29.999999999999996 _20181217_NyAlesund_tout
+nb_data_tot 1600200
+DEBUG SetTimes:  8:0:1 8:00:01 2018-12-17 08:00:01
+8:40:30 14:59:56 8:00:01 14:59:56
+1 bad rotations in 6300
+1 bad rotations in 5691
+8:40:30 14:59:56 8:40:33 14:59:52
+1 bad rotations in 5691
+7 bad rotations in 5685
+DEBUG TIME LISTS:  8:00:01 8:40:30 8:40:33
+8:40:30 8:40:33 14:59:52 2018-12-17 17:21:06 2018-12-17 23:40:25
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20181217_NyAlesund', '20181217_NyAlesund_tout']
+DoLP min: 0.008365865414898838
+DoLP max: 2.7244503361853303
+DoLP stddev: 0.48285336063454787
+AoLP stddev: 40.713450036801575
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20181217_NyAlesund/20181217_NyAlesund_tout/20181217_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2018-12-17 08:40:33 2018-12-17 14:59:52
+8640
+2276
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181217_NyAlesund/20181217_NyAlesund_tout/20181217_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20181217_NyAlesund/20181217_NyAlesund_tout/20181217_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20181217_NyAlesund/20181217_NyAlesund_tout/20181217_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20181217_NyAlesund/20181217_NyAlesund_tout/20181217_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190128_NyAlesund/', '-s', 'False']
+['20190128', 'NyAlesund', 'tout']
+spp 20190128 NyAlesund  -90.0 29.999999999999996 _20190128_NyAlesund_tout
+nb_data_tot 1416558
+DEBUG SetTimes:  17:48:8 17:48:08 2019-01-28 17:48:08
+18:32:53.160000 23:02:24 17:48:08 23:59:56
+9 bad rotations in 5577
+9 bad rotations in 4042
+18:32:53.160000 23:02:24 18:32:56 23:02:21
+9 bad rotations in 4042
+9 bad rotations in 4042
+DEBUG TIME LISTS:  17:48:08 18:32:53.160000 18:32:56
+18:32:53.160000 18:32:56 23:02:21 2019-01-29 13:05:52 2019-01-29 17:35:17
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20190128_NyAlesund', '20190128_NyAlesund_tout']
+DoLP min: 0.7960549270456153
+DoLP max: 4.0744868222908925
+DoLP stddev: 0.5147828550635897
+AoLP stddev: 6.082908688590236
+AoBlos: 122.34438386472539
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190128_NyAlesund/20190128_NyAlesund_tout/20190128_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-01-28 18:32:56 2019-01-28 23:02:21
+8640
+1617
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190128_NyAlesund/20190128_NyAlesund_tout/20190128_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190128_NyAlesund/20190128_NyAlesund_tout/20190128_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190128_NyAlesund/20190128_NyAlesund_tout/20190128_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190128_NyAlesund/20190128_NyAlesund_tout/20190128_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190129_NyAlesund/', '-s', 'False']
+['20190129', 'NyAlesund', 'tout']
+spp 20190129 NyAlesund  -90.0 29.999999999999996 _20190129_NyAlesund_tout
+nb_data_tot 2514600
+DEBUG SetTimes:  15:0:2 15:00:02 2019-01-29 15:00:02
+16:39:59.760000 1 day, 1:07:36.120000 15:00:02 1 day, 1:59:57
+1 bad rotations in 9900
+1 bad rotations in 7614
+16:39:59.760000 1 day, 1:07:36.120000 16:40:02 1 day, 1:07:33
+1 bad rotations in 7614
+1 bad rotations in 7614
+DEBUG TIME LISTS:  15:00:02 16:39:59.760000 16:40:02
+16:39:59.760000 16:40:02 1 day, 1:07:33 2019-01-30 09:20:04 2019-01-30 17:47:35
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20190129_NyAlesund', '20190129_NyAlesund_tout']
+DoLP min: 0.026667327839719104
+DoLP max: 6.290646639756227
+DoLP stddev: 1.5149764347969394
+AoLP stddev: 14.712415860960226
+AoBlos: 122.34438386472539
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190129_NyAlesund/20190129_NyAlesund_tout/20190129_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190130 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190130 17280
+DEBUG MAGDATA TIME 2019-01-29 16:40:02 2019-01-30 01:07:33
+17280
+3045
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190129_NyAlesund/20190129_NyAlesund_tout/20190129_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190129_NyAlesund/20190129_NyAlesund_tout/20190129_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190129_NyAlesund/20190129_NyAlesund_tout/20190129_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190129_NyAlesund/20190129_NyAlesund_tout/20190129_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190131_NyAlesund/', '-s', 'False']
+['20190131', 'NyAlesund', 'tout']
+spp 20190131 NyAlesund  -90.0 29.999999999999996 _20190131_NyAlesund_tout
+nb_data_tot 2286000
+DEBUG SetTimes:  16:0:1 16:00:01 2019-01-31 16:00:01
+17:05:15.720000 1 day, 1:08:13.560000 16:00:01 1 day, 1:59:59
+0 bad rotations in 9000
+0 bad rotations in 7244
+17:05:15.720000 1 day, 1:08:13.560000 17:05:17 1 day, 1:08:11
+0 bad rotations in 7244
+0 bad rotations in 7244
+DEBUG TIME LISTS:  16:00:01 17:05:15.720000 17:05:17
+17:05:15.720000 17:05:17 1 day, 1:08:11 2019-02-01 10:10:34 2019-02-01 18:13:28
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20190131_NyAlesund', '20190131_NyAlesund_tout']
+DoLP min: 0.019882564663153912
+DoLP max: 1.8109635917595563
+DoLP stddev: 0.24233555527408815
+AoLP stddev: 20.7704116483573
+AoBlos: 122.34438386472539
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190131_NyAlesund/20190131_NyAlesund_tout/20190131_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190201 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190201 17280
+DEBUG MAGDATA TIME 2019-01-31 17:05:17 2019-02-01 01:08:11
+17280
+2898
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190131_NyAlesund/20190131_NyAlesund_tout/20190131_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190131_NyAlesund/20190131_NyAlesund_tout/20190131_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190131_NyAlesund/20190131_NyAlesund_tout/20190131_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190131_NyAlesund/20190131_NyAlesund_tout/20190131_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190201_NyAlesund/', '-s', 'False']
+['20190201', 'NyAlesund', 'tout']
+spp 20190201 NyAlesund  -90.0 29.999999999999996 _20190201_NyAlesund_tout
+nb_data_tot 3429000
+DEBUG SetTimes:  15:0:1 15:00:01 2019-02-01 15:00:01
+15:08:58.200000 1 day, 2:45:07.560000 15:00:01 1 day, 5:59:58
+0 bad rotations in 13500
+0 bad rotations in 10442
+15:08:58.200000 1 day, 2:45:07.560000 15:09:01 1 day, 2:45:06
+0 bad rotations in 10442
+0 bad rotations in 10442
+DEBUG TIME LISTS:  15:00:01 15:08:58.200000 15:09:01
+15:08:58.200000 15:09:01 1 day, 2:45:06 2019-02-02 06:18:02 2019-02-02 17:54:07
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20190201_NyAlesund', '20190201_NyAlesund_tout']
+DoLP min: 0.029801134270955706
+DoLP max: 8.217578348739508
+DoLP stddev: 1.6118402971180663
+AoLP stddev: 19.788488129681145
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190201_NyAlesund/20190201_NyAlesund_tout/20190201_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190202 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190202 17280
+DEBUG MAGDATA TIME 2019-02-01 15:09:01 2019-02-02 02:45:06
+17280
+4176
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190201_NyAlesund/20190201_NyAlesund_tout/20190201_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190201_NyAlesund/20190201_NyAlesund_tout/20190201_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190201_NyAlesund/20190201_NyAlesund_tout/20190201_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190201_NyAlesund/20190201_NyAlesund_tout/20190201_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190202_NyAlesund/', '-s', 'False']
+['20190202', 'NyAlesund', 'tout']
+spp 20190202 NyAlesund  -90.0 29.999999999999996 _20190202_NyAlesund_tout
+nb_data_tot 2057400
+DEBUG SetTimes:  15:0:2 15:00:02 2019-02-02 15:00:02
+16:46:50.520000 21:08:05.280000 15:00:02 23:59:59
+0 bad rotations in 8100
+0 bad rotations in 3918
+16:46:50.520000 21:08:05.280000 16:46:54 21:08:03
+0 bad rotations in 3918
+0 bad rotations in 3918
+DEBUG TIME LISTS:  15:00:02 16:46:50.520000 16:46:54
+16:46:50.520000 16:46:54 21:08:03 2019-02-03 09:33:48 2019-02-03 13:54:57
+0.8499753457212386 48.7
+-1.5707963267948966 0.5235987755982988
+DEBUG B 8.691425924614274
+*********************************************
+INFO: ['spp', '20190202_NyAlesund', '20190202_NyAlesund_tout']
+DoLP min: 0.1373089588987144
+DoLP max: 2.203328213444381
+DoLP stddev: 0.35985117776930237
+AoLP stddev: 11.848397316099215
+AoBlos: -57.655616135274606
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190202_NyAlesund/20190202_NyAlesund_tout/20190202_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-02-02 16:46:54 2019-02-02 21:08:03
+8640
+1567
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190202_NyAlesund/20190202_NyAlesund_tout/20190202_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190202_NyAlesund/20190202_NyAlesund_tout/20190202_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190202_NyAlesund/20190202_NyAlesund_tout/20190202_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190202_NyAlesund/20190202_NyAlesund_tout/20190202_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190301_NyAlesund/', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190301', 'tout']
+spp 20190301 NyAlesund  0.0 0.0 _20190301_tout
+nb_data_tot 1371854
+DEBUG SetTimes:  21:0:0 21:00:00 2019-03-01 21:00:00
+0:00:00 1 day, 2:59:59 21:00:00 1 day, 2:59:59
+10 bad rotations in 5401
+10 bad rotations in 5400
+0:00:00 1 day, 2:59:59 21:00:00 1 day, 2:59:55
+10 bad rotations in 5400
+20 bad rotations in 5390
+DEBUG TIME LISTS:  21:00:00 0:00:00 21:00:00
+0:00:00 21:00:00 1 day, 2:59:55 2019-03-02 18:00:00 2019-03-02 23:59:55
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190301_NyAlesund', '20190301_tout']
+DoLP min: 0.025741833179673726
+DoLP max: 85.80415735409068
+DoLP stddev: 4.764900110084583
+AoLP stddev: 42.86234360044698
+AoBlos: 98.65988702950318
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190302_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190302 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190302 17280
+DEBUG MAGDATA TIME 2019-03-01 21:00:00 2019-03-02 02:59:55
+17280
+2160
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190302_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190302_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190302_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190302_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190301_NyAlesund/a00_e38.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190301', 'tout']
+spp 20190301 NyAlesund  0.0 0.0 _20190301_tout
+nb_data_tot 1371854
+DEBUG SetTimes:  21:0:0 21:00:00 2019-03-01 21:00:00
+23:42:00 1 day, 0:32:38.400000 21:00:00 1 day, 2:59:59
+10 bad rotations in 5401
+10 bad rotations in 759
+23:42:00 1 day, 0:32:38.400000 23:42:03 1 day, 0:32:35
+10 bad rotations in 759
+10 bad rotations in 759
+DEBUG TIME LISTS:  21:00:00 23:42:00 23:42:03
+23:42:00 23:42:03 1 day, 0:32:35 2019-03-02 23:24:06 2019-03-03 00:14:38
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190301_NyAlesund', '20190301_tout']
+DoLP min: 1.1749128907061948
+DoLP max: 5.6673042061408685
+DoLP stddev: 0.7392368265636097
+AoLP stddev: 4.3833474526255864
+AoBlos: 98.65988702950318
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a00_e38_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190302 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190302 17280
+DEBUG MAGDATA TIME 2019-03-01 23:42:03 2019-03-02 00:32:35
+17280
+303
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a00_e38_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a00_e38_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a00_e38_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a00_e38coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190301_NyAlesund/a180_e85.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190301', 'tout']
+spp 20190301 NyAlesund  0.0 0.0 _20190301_tout
+nb_data_tot 1371854
+DEBUG SetTimes:  21:0:0 21:00:00 2019-03-01 21:00:00
+22:22:26.400000 23:38:31.200000 21:00:00 1 day, 2:59:59
+10 bad rotations in 5401
+10 bad rotations in 1142
+22:22:26.400000 23:38:31.200000 22:22:28 23:38:31
+10 bad rotations in 1142
+10 bad rotations in 1142
+DEBUG TIME LISTS:  21:00:00 22:22:26.400000 22:22:28
+22:22:26.400000 22:22:28 23:38:31 2019-03-02 20:44:56 2019-03-02 22:00:59
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190301_NyAlesund', '20190301_tout']
+DoLP min: 0.049106213954719334
+DoLP max: 6.895511055035214
+DoLP stddev: 1.5540984135922167
+AoLP stddev: 17.947327380099573
+AoBlos: 98.65988702950318
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a180_e85_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-01 22:22:28 2019-03-01 23:38:31
+8640
+457
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a180_e85_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a180_e85_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a180_e85_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_a180_e85coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190301_NyAlesund/rot_lente_e30.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190301', 'tout']
+spp 20190301 NyAlesund  0.0 0.0 _20190301_tout
+nb_data_tot 1371854
+DEBUG SetTimes:  21:0:0 21:00:00 2019-03-01 21:00:00
+21:28:26.400000 22:15:10.800000 21:00:00 1 day, 2:59:59
+10 bad rotations in 5401
+10 bad rotations in 701
+21:28:26.400000 22:15:10.800000 21:28:27 22:15:07
+10 bad rotations in 701
+116 bad rotations in 595
+DEBUG TIME LISTS:  21:00:00 21:28:26.400000 21:28:27
+21:28:26.400000 21:28:27 22:15:03 2019-03-02 18:56:54 2019-03-02 19:43:30
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190301_NyAlesund', '20190301_tout']
+DoLP min: 0.0387718575198332
+DoLP max: 10.638930831299422
+DoLP stddev: 2.391809161823903
+AoLP stddev: 47.09415186846088
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_rot_lente_e30_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-01 21:28:27 2019-03-01 22:15:03
+8640
+280
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_rot_lente_e30_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_rot_lente_e30_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_rot_lente_e30_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190301_NyAlesund/20190301_tout/20190301_NyAlesund_rot_lente_e30coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190303_NyAlesund/', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190303', 'tout']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_tout
+nb_data_tot 5517642
+DEBUG SetTimes:  0:0:3 0:00:03 2019-03-03 00:00:03
+0:00:00 1 day, 0:12:40 0:00:03 1 day, 0:12:40
+10 bad rotations in 21723
+10 bad rotations in 21722
+0:00:00 1 day, 0:12:40 0:00:03 1 day, 0:12:38
+10 bad rotations in 21722
+20 bad rotations in 21712
+DEBUG TIME LISTS:  0:00:03 0:00:00 0:00:03
+0:00:00 0:00:03 1 day, 0:12:38 2019-03-03 00:00:06 2019-03-04 00:12:41
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_tout']
+DoLP min: 0.01482813127128643
+DoLP max: 98.99098630140057
+DoLP stddev: 28.622855557558314
+AoLP stddev: 46.29123784262469
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190304 8640
+/home/bossel/These/Analysis/data/magnetometer/Nyalesund/20190304 17280
+DEBUG MAGDATA TIME 2019-03-03 00:00:03 2019-03-04 00:12:38
+17280
+8715
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190303_NyAlesund/a-90_e30.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190303', 'night']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_night
+nb_data_tot 913892
+DEBUG SetTimes:  20:0:2 20:00:02 2019-03-03 20:00:02
+22:48:59.760000 23:33:15.840000 20:00:02 23:59:58
+2 bad rotations in 3598
+2 bad rotations in 664
+22:48:59.760000 23:33:15.840000 22:49:02 23:33:14
+2 bad rotations in 664
+2 bad rotations in 664
+DEBUG TIME LISTS:  20:00:02 22:48:59.760000 22:49:02
+22:48:59.760000 22:49:02 23:33:14 2019-03-04 21:38:04 2019-03-04 22:22:16
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_night']
+DoLP min: 1.4020985572383804
+DoLP max: 9.800806726642127
+DoLP stddev: 1.5023191769812057
+AoLP stddev: 7.0574033304234485
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a-90_e30_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 22:49:02 2019-03-03 23:33:14
+8640
+265
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a-90_e30_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a-90_e30_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a-90_e30_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a-90_e30coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190303_NyAlesund/a180_e38.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190303', 'night']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_night
+nb_data_tot 913892
+DEBUG SetTimes:  20:0:2 20:00:02 2019-03-03 20:00:02
+20:29:00.960000 22:00:51.480000 20:00:02 23:59:58
+2 bad rotations in 3598
+2 bad rotations in 1377
+20:29:00.960000 22:00:51.480000 20:29:02 22:00:50
+2 bad rotations in 1377
+33 bad rotations in 1346
+DEBUG TIME LISTS:  20:00:02 20:29:00.960000 20:29:02
+20:29:00.960000 20:29:02 22:00:50 2019-03-04 16:58:04 2019-03-04 18:29:52
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_night']
+DoLP min: 0.03536710292413233
+DoLP max: 4.395828651838875
+DoLP stddev: 0.7309337238368685
+AoLP stddev: 20.902365068776554
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e38_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 20:29:02 2019-03-03 22:00:50
+8640
+551
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e38_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e38_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e38_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e38coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/scipy/signal/spectral.py:1970: UserWarning: nperseg = 512 is greater than input length  = 378, using nperseg = 378
+  .format(nperseg, input_length))
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190303_NyAlesund/a180_e85.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190303', 'night']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_night
+nb_data_tot 913892
+DEBUG SetTimes:  20:0:2 20:00:02 2019-03-03 20:00:02
+23:34:48.360000 1 day, 0:11:07.080000 20:00:02 23:59:58
+2 bad rotations in 3598
+2 bad rotations in 378
+23:34:48.360000 1 day, 0:11:07.080000 23:34:50 23:59:58
+2 bad rotations in 378
+2 bad rotations in 378
+DEBUG TIME LISTS:  20:00:02 23:34:48.360000 23:34:50
+23:34:48.360000 23:34:50 23:59:58 2019-03-04 23:09:40 2019-03-04 23:34:48
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_night']
+DoLP min: 0.2764557857275533
+DoLP max: 6.001201749051944
+DoLP stddev: 1.162211955692026
+AoLP stddev: 23.811968178172204
+AoBlos: 98.65988702950318
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e85_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 23:34:50 2019-03-03 23:59:58
+8640
+151
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e85_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e85_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e85_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_a180_e85coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190303_NyAlesund/calib_angle_0deg.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190303', 'tout']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_tout
+nb_data_tot 5517642
+DEBUG SetTimes:  0:0:3 0:00:03 2019-03-03 00:00:03
+17:38:24 20:28:37.200000 0:00:03 1 day, 0:12:40
+10 bad rotations in 21723
+10 bad rotations in 2552
+17:38:24 20:28:37.200000 17:38:26 20:28:34
+10 bad rotations in 2552
+15 bad rotations in 2547
+DEBUG TIME LISTS:  0:00:03 17:38:24 17:38:30
+17:38:24 17:38:30 20:28:34 2019-03-04 11:17:00 2019-03-04 14:07:04
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_tout']
+DoLP min: 82.5403126366143
+DoLP max: 98.95593302954592
+DoLP stddev: 4.177057310209635
+AoLP stddev: 1.6673196950157532
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_calib_angle_0deg_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 17:38:30 2019-03-03 20:28:34
+8640
+1021
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_calib_angle_0deg_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_calib_angle_0deg_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_calib_angle_0deg_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_tout/20190303_NyAlesund_calib_angle_0degcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190303_NyAlesund/rot_lente_e30.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190303', 'night']
+spp 20190303 NyAlesund  0.0 0.0 _20190303_night
+nb_data_tot 913892
+DEBUG SetTimes:  20:0:2 20:00:02 2019-03-03 20:00:02
+22:03:13.320000 22:48:15.480000 20:00:02 23:59:58
+2 bad rotations in 3598
+2 bad rotations in 676
+22:03:13.320000 22:48:15.480000 22:03:14 22:48:14
+2 bad rotations in 676
+87 bad rotations in 591
+DEBUG TIME LISTS:  20:00:02 22:03:13.320000 22:03:14
+22:03:13.320000 22:03:14 22:48:14 2019-03-04 20:06:28 2019-03-04 20:51:28
+0.8499753457212386 48.7
+0 0
+DEBUG B 0.23725445180412033
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190303_NyAlesund', '20190303_night']
+DoLP min: 0.13051528403528642
+DoLP max: 4.938537111011398
+DoLP stddev: 0.987801027450318
+AoLP stddev: 34.976638357587255
+AoBlos: -81.3401129704968
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_rot_lente_e30_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-03 22:03:14 2019-03-03 22:48:14
+8640
+270
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_rot_lente_e30_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_rot_lente_e30_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_rot_lente_e30_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190303_NyAlesund/20190303_night/20190303_NyAlesund_rot_lente_e30coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190307_Skibotn/', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+0:00:00 1 day, 1:27:26 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 7095
+0:00:00 1 day, 1:27:26 8:07:53 1 day, 1:27:25
+1266 bad rotations in 7095
+2531 bad rotations in 5830
+DEBUG TIME LISTS:  8:07:53 0:00:00 8:14:33
+0:00:00 8:14:33 1 day, 1:00:05 2019-03-07 16:29:06 2019-03-08 09:14:38
+0.8499753457212386 48.7
+0 0
+DEBUG B 1.2987444282423664
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.004949621949380995
+DoLP max: 86.04447034151555
+DoLP stddev: 4.7696773211736385
+AoLP stddev: 44.772494753801716
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_tout_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Tromso/20190308 8640
+/home/bossel/These/Analysis/data/magnetometer/Tromso/20190308 17280
+DEBUG MAGDATA TIME 2019-03-07 08:14:33 2019-03-08 01:00:05
+17280
+6033
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_tout_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_tout_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_tout_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_toutcoherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190307_Skibotn/br_a164_e45.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+21:09:14.400000 21:51:48.960000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 611
+21:09:14.400000 21:51:48.960000 21:09:16 21:51:48
+1266 bad rotations in 611
+1266 bad rotations in 611
+DEBUG TIME LISTS:  8:07:53 21:09:14.400000 21:09:16
+21:09:14.400000 21:09:16 21:51:48 2019-03-08 18:18:32 2019-03-08 19:01:04
+0.8499753457212386 48.7
+0 0
+DEBUG B 1.2987444282423664
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.027380218335910277
+DoLP max: 1.1375858997250803
+DoLP stddev: 0.1831635823161264
+AoLP stddev: 31.105136527767442
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 21:09:16 2019-03-07 21:51:48
+8640
+255
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e45_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e45coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/.local/lib/python3.6/site-packages/scipy/signal/spectral.py:1970: UserWarning: nperseg = 512 is greater than input length  = 483, using nperseg = 483
+  .format(nperseg, input_length))
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190307_Skibotn/br_a164_e90.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+21:54:03.600000 22:27:44.640000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 483
+21:54:03.600000 22:27:44.640000 21:54:04 22:27:44
+1266 bad rotations in 483
+1266 bad rotations in 483
+DEBUG TIME LISTS:  8:07:53 21:54:03.600000 21:54:04
+21:54:03.600000 21:54:04 22:27:44 2019-03-08 19:48:08 2019-03-08 20:21:48
+0.8499753457212386 48.7
+0 0
+DEBUG B 1.2987444282423664
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.023036318316621607
+DoLP max: 1.5668535260952146
+DoLP stddev: 0.3048969737924329
+AoLP stddev: 46.87110200796355
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 21:54:04 2019-03-07 22:27:44
+8640
+202
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e90_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_br_a164_e90coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/.local/lib/python3.6/site-packages/scipy/signal/spectral.py:1970: UserWarning: nperseg = 512 is greater than input length  = 489, using nperseg = 489
+  .format(nperseg, input_length))
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190307_Skibotn/mr_a164_e90.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+22:36:46.800000 23:11:12.840000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 489
+22:36:46.800000 23:11:12.840000 22:36:48 23:11:12
+1266 bad rotations in 489
+1266 bad rotations in 489
+DEBUG TIME LISTS:  8:07:53 22:36:46.800000 22:36:48
+22:36:46.800000 22:36:48 23:11:12 2019-03-08 21:13:36 2019-03-08 21:48:00
+0.8499753457212386 48.7
+0 0
+DEBUG B 1.2987444282423664
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.029169723905076
+DoLP max: 1.5712656895546482
+DoLP stddev: 0.2881030639749041
+AoLP stddev: 48.33827141515276
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 22:36:48 2019-03-07 23:11:12
+8640
+207
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e90_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e90coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190307_Skibotn/mr_a164_e45.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+23:14:58.920000 1 day, 0:01:13.080000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 645
+23:14:58.920000 1 day, 0:01:13.080000 23:15:00 1 day, 0:01:12
+1266 bad rotations in 645
+1266 bad rotations in 645
+DEBUG TIME LISTS:  8:07:53 23:14:58.920000 23:15:00
+23:14:58.920000 23:15:00 1 day, 0:01:12 2019-03-08 22:30:00 2019-03-08 23:16:12
+0.8499753457212386 48.7
+0 0
+DEBUG B 1.2987444282423664
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.02591736155034253
+DoLP max: 1.7106809674020131
+DoLP stddev: 0.31937916696508983
+AoLP stddev: 28.626793350448462
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+/home/bossel/These/Analysis/data/magnetometer/Tromso/20190308 8640
+/home/bossel/These/Analysis/data/magnetometer/Tromso/20190308 17280
+DEBUG MAGDATA TIME 2019-03-07 23:15:00 2019-03-08 00:01:12
+17280
+278
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e45_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_mr_a164_e45coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/.local/lib/python3.6/site-packages/scipy/signal/spectral.py:1970: UserWarning: nperseg = 512 is greater than input length  = 423, using nperseg = 423
+  .format(nperseg, input_length))
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190307_Skibotn/vr_a164_e45.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+20:35:07.800000 21:05:13.200000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 423
+20:35:07.800000 21:05:13.200000 20:35:08 21:05:12
+1266 bad rotations in 423
+1266 bad rotations in 423
+DEBUG TIME LISTS:  8:07:53 20:35:07.800000 20:35:08
+20:35:07.800000 20:35:08 21:05:12 2019-03-08 17:10:16 2019-03-08 17:40:20
+0.8499753457212386 48.7
+0 0
+DEBUG B 1.2987444282423664
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.04369573768203854
+DoLP max: 1.7160484970084044
+DoLP stddev: 0.2840434572205664
+AoLP stddev: 37.28127463453318
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e45_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 20:35:08 2019-03-07 21:05:12
+8640
+181
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e45_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e45_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e45_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e45coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/.local/lib/python3.6/site-packages/scipy/signal/spectral.py:1970: UserWarning: nperseg = 512 is greater than input length  = 353, using nperseg = 353
+  .format(nperseg, input_length))
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190307_Skibotn/vr_a164_e90.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+20:05:47.400000 20:31:20.640000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 355
+20:05:47.400000 20:31:20.640000 20:05:48 20:31:19
+1266 bad rotations in 355
+1268 bad rotations in 353
+DEBUG TIME LISTS:  8:07:53 20:05:47.400000 20:05:48
+20:05:47.400000 20:05:48 20:31:12 2019-03-08 16:11:36 2019-03-08 16:37:00
+0.8499753457212386 48.7
+0 0
+DEBUG B 1.2987444282423664
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.025959032437461844
+DoLP max: 3.396350690508209
+DoLP stddev: 0.554262262598352
+AoLP stddev: 42.31328575007628
+AoBlos: -85.98495860375503
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 20:05:48 2019-03-07 20:31:12
+8640
+153
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e90_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_vr_a164_e90coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/These/Analysis/src/rotation.py:40: RuntimeWarning: invalid value encountered in double_scalars
+  DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+/home/bossel/These/Analysis/src/Mixer.py:272: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:273: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
+/home/bossel/These/Analysis/src/Mixer.py:276: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:277: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:280: RuntimeWarning: divide by zero encountered in true_divide
+  ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
+/home/bossel/These/Analysis/src/Mixer.py:281: RuntimeWarning: divide by zero encountered in true_divide
+  ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
+['./vendange.py', 'spp/20190307_Skibotn/rr_a164_e90.in', '-s', 'False']
+WARNING: No observation angles info in the input file.
+['20190307', 'tout']
+spp 20190307 Skibotn  0.0 0.0 _20190307_tout
+nb_data_tot 1802384
+DEBUG SetTimes:  8:7:53 8:07:53 2019-03-07 08:07:53
+18:17:13.920000 19:55:48.720000 8:07:53 1 day, 1:27:26
+1266 bad rotations in 7096
+1266 bad rotations in 1427
+18:17:13.920000 19:55:48.720000 18:17:15 19:55:47
+1266 bad rotations in 1427
+1266 bad rotations in 1427
+DEBUG TIME LISTS:  8:07:53 18:17:13.920000 18:17:15
+18:17:13.920000 18:17:15 19:55:47 2019-03-08 12:34:30 2019-03-08 14:13:02
+0.8499753457212386 48.7
+0 0
+DEBUG B 1.2987444282423664
+WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)
+*********************************************
+INFO: ['spp', '20190307_Skibotn', '20190307_tout']
+DoLP min: 0.02936106875345316
+DoLP max: 2.476906405841439
+DoLP stddev: 0.5003711768754643
+AoLP stddev: 24.041025392579098
+AoBlos: 94.01504139624497
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_rr_a164_e90_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+DEBUG MAGDATA TIME 2019-03-07 18:17:15 2019-03-07 19:55:47
+8640
+591
+Creating AllSky Imager Data Object
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_rr_a164_e90_graphs.png
+Saving graphs in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_rr_a164_e90_magneto.png
+Saving correlation in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_rr_a164_e90_correlations.png
+Saving coherence in /home/bossel/These/Analysis/data/spp/20190307_Skibotn/20190307_tout/20190307_Skibotn_rr_a164_e90coherence.png
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)

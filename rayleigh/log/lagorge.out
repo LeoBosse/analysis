@@ -1,0 +1,682 @@
+WARNING: Wrong or no input file specified, default in use.
+[  0.  10.  20.  30.  40.  50.  60.  70.  80.  90. 100. 110. 120. 130.
+ 140. 150. 160. 170. 180. 190. 200. 210. 220. 230. 240. 250. 260. 270.
+ 280. 290. 300. 310. 320. 330. 340. 350.] [45.]
+Initialization DONE
+Starting computing...
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a0.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 32.261138394209375
+Total scattered polarized intensity from all direction: 18.675223397843016
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5005460883804546 0.10049625652212038 -0.006328089450355491
+Azimut, Elevation: 0.0 45.0
+DoLP, AoLP: 40.23417488301722 -1.8015335313437557
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 10.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 80.02525520324707 seconds left...
+	 44.76324439048767 seconds left...
+Total scattered intensity from all direction: 31.681987320269304
+Total scattered polarized intensity from all direction: 17.07611790641025
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5004882867461072 0.09000525988806023 -0.018339257434450647
+Azimut, Elevation: 10.0 45.0
+DoLP, AoLP: 36.70601049549248 -5.758398592363409
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 20.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 207.65920329093933 seconds left...
+	 103.44904160499573 seconds left...
+Total scattered intensity from all direction: 31.173175720208732
+Total scattered polarized intensity from all direction: 15.595658168835511
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5004232794274727 0.07820643155588614 -0.025779388558273837
+Azimut, Elevation: 20.0 45.0
+DoLP, AoLP: 32.91044002668709 -9.12195206568982
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a30.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 30.719560393591347
+Total scattered polarized intensity from all direction: 14.27173353987317
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5003570969012934 0.06619430305436587 -0.02916436789637835
+Azimut, Elevation: 29.999999999999996 45.0
+DoLP, AoLP: 28.91305707812187 -11.888839633705487
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 40.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 137.4105978012085 seconds left...
+	 74.81734347343445 seconds left...
+Total scattered intensity from all direction: 30.319191667967456
+Total scattered polarized intensity from all direction: 13.1325902832702
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002923864352778 0.05444935347252368 -0.029014937871540268
+Azimut, Elevation: 40.0 45.0
+DoLP, AoLP: 24.664632570593813 -14.026116773471122
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 50.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 132.47090005874634 seconds left...
+	 66.54256415367126 seconds left...
+Total scattered intensity from all direction: 29.975317777909726
+Total scattered polarized intensity from all direction: 12.198211405244557
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002318482838348 0.04346167898562879 -0.025284238650926546
+Azimut, Elevation: 50.0 45.0
+DoLP, AoLP: 20.103202727370256 -15.094552546816809
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a60.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 29.690887984221884
+Total scattered polarized intensity from all direction: 11.483490717008097
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001798313312428 0.034020602090168314 -0.018086887204293436
+Azimut, Elevation: 59.99999999999999 45.0
+DoLP, AoLP: 15.406334106168655 -13.998563719502945
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 70.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 98.32503390312195 seconds left...
+	 56.868059396743774 seconds left...
+Total scattered intensity from all direction: 29.46664550016613
+Total scattered polarized intensity from all direction: 11.00040765895705
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001420235472778 0.027158489300511852 -0.007856013951137393
+Azimut, Elevation: 70.0 45.0
+DoLP, AoLP: 11.305549870503302 -8.066666128560268
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 80.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 106.03658652305603 seconds left...
+	 55.670116901397705 seconds left...
+Total scattered intensity from all direction: 29.300563137523525
+Total scattered polarized intensity from all direction: 10.757676249120346
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001234874098982 0.023794180366131044 0.0046207370717117014
+Azimut, Elevation: 80.0 45.0
+DoLP, AoLP: 9.693083186793901 5.494914802949092
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a90.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 29.187718556425203
+Total scattered polarized intensity from all direction: 10.758680701226927
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001277342789828 0.024564987104994315 0.01824033572066482
+Azimut, Elevation: 90.0 45.0
+DoLP, AoLP: 12.23549138476253 18.297569246552733
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 100.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 99.60315370559692 seconds left...
+	 55.35972261428833 seconds left...
+Total scattered intensity from all direction: 29.120185254023365
+Total scattered polarized intensity from all direction: 10.999498689377155
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001580487854478 0.030067070028380497 0.031732611081473905
+Azimut, Elevation: 100.0 45.0
+DoLP, AoLP: 17.480410804470445 23.271892159357467
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 110.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 99.3053297996521 seconds left...
+	 54.991697549819946 seconds left...
+Total scattered intensity from all direction: 29.087049473827552
+Total scattered polarized intensity from all direction: 11.468589330870062
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002150865794621/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 8 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 9 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 10 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 11 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 12 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 13 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 14 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 15 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 16 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 17 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 18 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 19 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 20 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 21 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 22 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 23 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 24 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 25 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 26 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 27 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 28 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 29 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 30 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 31 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 32 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 33 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 34 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 35 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 36 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 37 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 38 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 39 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 40 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 41 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 42 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 43 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 44 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 45 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 46 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 47 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 48 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 49 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 50 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+ 0.040419429641971316 0.0437911304086737
+Azimut, Elevation: 110.0 45.0
+DoLP, AoLP: 23.827177549128866 23.646418516524943
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a120.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 29.076816607709887
+Total scattered polarized intensity from all direction: 12.149020634549464
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5003002213276023 0.05587138642944142 0.052781680920468595
+Azimut, Elevation: 119.99999999999999 45.0
+DoLP, AoLP: 30.725702063468376 21.685575720279463
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 130.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 100.7251946926117 seconds left...
+	 58.501492738723755 seconds left...
+Total scattered intensity from all direction: 29.084713221521884
+Total scattered polarized intensity from all direction: 13.022589946872122
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5004113101914606 0.0760340152196846 0.05641156961690443
+Azimut, Elevation: 130.0 45.0
+DoLP, AoLP: 37.839044010185745 18.286329767562883
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 140.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 99.9213194847107 seconds left...
+	 54.68049383163452 seconds left...
+Total scattered intensity from all direction: 29.12340368178795
+Total scattered polarized intensity from all direction: 14.072958799648962
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5005386101070158 0.09913894989298426 0.05214565754725661
+Azimut, Elevation: 140.0 45.0
+DoLP, AoLP: 44.75839377129357 13.871861390078426
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a150.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 29.232019122264713
+Total scattered polarized intensity from all direction: 15.28504851355815
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5006628824710023 0.12169438395654296 0.03835186790644819
+Azimut, Elevation: 150.0 45.0
+DoLP, AoLP: 50.97027622480318 8.746097681552376
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 160.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 105.93299961090088 seconds left...
+	 57.648375034332275 seconds left...
+Total scattered intensity from all direction: 29.477837488836087
+Total scattered polarized intensity from all direction: 16.641596460987977
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5007614878394362 0.1395912583272913 0.015004090500200207
+Azimut, Elevation: 160.0 45.0
+DoLP, AoLP: 56.07272526856299 3.067467037829559
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 170.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 100.9673273563385 seconds left...
+	 59.22910165786743 seconds left...
+Total scattered intensity from all direction: 29.946766596480416
+Total scattered polarized intensity from all direction: 18.120203983520234
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5008131442805664 0.14896690239240526 -0.01571309619601697
+Azimut, Elevation: 170.0 45.0
+DoLP, AoLP: 59.820044259327666 -3.0106596373144563
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a180.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 30.725768982560442
+Total scattered polarized intensity from all direction: 19.692883352462477
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5008031328223082 0.147149822718552 -0.05044700144923152
+Azimut, Elevation: 180.0 45.0
+DoLP, AoLP: 62.123001142054235 -9.461561554229977
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 190.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 102.12564468383789 seconds left...
+	 60.67074918746948 seconds left...
+Total scattered intensity from all direction: 31.885155735801227
+Total scattered polarized intensity from all direction: 21.327492883519557
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5007256401562957 0.13308490383729066 -0.08507737493475077
+Azimut, Elevation: 190.0 45.0
+DoLP, AoLP: 63.09039931192212 -16.294809321606245
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 200.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 100.25943660736084 seconds left...
+	 55.25430393218994 seconds left...
+Total scattered intensity from all direction: 33.46328900460971
+Total scattered polarized intensity from all direction: 22.989036848430423
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.500578471422037 0.10637377856934899 -0.11583428421022243
+Azimut, Elevation: 200.0 45.0
+DoLP, AoLP: 62.83417169904107 -23.71894742265827
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a210.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 35.44795830122427
+Total scattered polarized intensity from all direction: 24.63877964681534
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5003658974902382 0.06779160994784951 -0.1381381985173733
+Azimut, Elevation: 210.00000000000003 45.0
+DoLP, AoLP: 61.50544377546957 -31.930203869196855
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 220.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 98.1515851020813 seconds left...
+	 58.85513496398926 seconds left...
+Total scattered intensity from all direction: 37.74790999346484
+Total scattered polarized intensity from all direction: 26.229531712637407
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001007476766299 0.019666918777934566 -0.14679723138634118
+Azimut, Elevation: 220.0 45.0
+DoLP, AoLP: 59.231582679966316 -41.18466459794756
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 230.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 98.21057438850403 seconds left...
+	 55.304293632507324 seconds left...
+Total scattered intensity from all direction: 40.15966094732537
+Total scattered polarized intensity from all direction: 27.69729019538126
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.4998107333697934 -0.03297067791288688 -0.13642366029898859
+Azimut, Elevation: 230.0 45.0
+DoLP, AoLP: 56.16176952135532 -51.79331834283478
+*******************************************************************************************************************************/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 51 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 52 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 53 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 54 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 55 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 56 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 57 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 58 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 59 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 60 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 61 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 62 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 63 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 64 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 65 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 66 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 67 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 68 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 69 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 70 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 71 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 72 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 73 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 74 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 75 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 76 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 77 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 78 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 79 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 80 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 81 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 82 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 83 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 84 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 85 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 86 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 87 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 88 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 89 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 90 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 91 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 92 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 93 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+
+Observation already done. Loading old results from file results/lagorge_a240.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 42.356306724687194
+Total scattered polarized intensity from all direction: 28.95426749696009
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.49954767225576235 -0.08071627010952373 -0.10401505205514293
+Azimut, Elevation: 239.99999999999997 45.0
+DoLP, AoLP: 52.71152127402715 -63.905832802731176
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 250.00000000000003, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 97.13606643676758 seconds left...
+	 55.38124322891235 seconds left...
+Total scattered intensity from all direction: 43.94285035031488
+Total scattered polarized intensity from all direction: 29.893922457256195
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.4993750195590434 -0.11205273456401281 -0.05235064988796023
+Azimut, Elevation: 250.00000000000003 45.0
+DoLP, AoLP: 49.53337057296837 -77.47909066636181
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 260.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 94.57040476799011 seconds left...
+	 53.4782817363739 seconds left...
+Total scattered intensity from all direction: 44.59875238335832
+Total scattered polarized intensity from all direction: 30.417253457767433
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.4993432805423477 -0.11781336609426166 0.00815699609910969
+Azimut, Elevation: 260.0 45.0
+DoLP, AoLP: 47.300289961526225 88.01967803691198
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a270.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 44.23456386165472
+Total scattered polarized intensity from all direction: 30.471064721212755
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.4994555406619741 -0.09743815438208211 0.06313204190381672
+Azimut, Elevation: 270.0 45.0
+DoLP, AoLP: 46.491725858038436 73.53001343375242
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 280.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 110.70648837089539 seconds left...
+	 57.99765229225159 seconds left...
+Total scattered intensity from all direction: 43.02911279379047
+Total scattered polarized intensity from all direction: 30.067787882245167
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.49966997731802465 -0.05851790130891142 0.10143001397251393
+Azimut, Elevation: 280.0 45.0
+DoLP, AoLP: 46.87090704968163 59.99094376821863
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 290.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 106.35807609558105 seconds left...
+	 55.72498631477356 seconds left...
+Total scattered intensity from all direction: 41.31719982473436
+Total scattered polarized intensity from all direction: 29.27062769573571
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.4999242662878324 -0.012364453288821688 0.11907927036681193
+Azimut, Elevation: 290.0 45.0
+DoLP, AoLP: 47.8950439407927 47.96399767152167
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a300.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 39.4392121512712
+Total scattered polarized intensity from all direction: 28.163046386240183
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.500165888330167 0.03148994739491202 0.1181003315609545
+Azimut, Elevation: 300.0 45.0
+DoLP, AoLP: 48.8743646627428 37.53507824712164
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 310.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 103.37182688713074 seconds left...
+	 57.966655015945435 seconds left...
+Total scattered intensity from all direction: 37.65024924425598
+Total scattered polarized intensity from all direction: 26.826050140941437
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5003619286309179 0.06707126198120826 0.10355361763571858
+Azimut, Elevation: 310.0 45.0
+DoLP, AoLP: 49.31513818583016 28.534515981336515
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 320.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 99.59740948677063 seconds left...
+	 54.78084754943848 seconds left...
+Total scattered intensity from all direction: 36.09257388866935
+Total scattered polarized intensity from all direction: 25.327128912066083
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5004978536951119 0.09174166113241859 0.08114212723418648
+Azimut, Elevation: 320.0 45.0
+DoLP, AoLP: 48.94200549274792 20.745788891662734
+*******************************************************************************************************************************
+Observation already done. Loading old results from file results/lagorge_a330.0_e45.0_h0.0_0.0-10.0_dlos0.0_D40.0
+Total scattered intensity from all direction: 34.80794671114217
+Total scattered polarized intensity from all direction: 23.718600099055376
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.500573914836524 0.10554675829871148 0.056138256110255226
+Azimut, Elevation: 330.0 45.0
+DoLP, AoLP: 47.764203655451794 14.003818965731524
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 340.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 132.98887753486633 seconds left...
+	 58.36772656440735 seconds left...
+Total scattered intensity from all direction: 33.77429925347988
+Total scattered polarized intensity from all direction: 22.04419728418341
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5005998536967643 0.11025466143231363 0.03186161345924675
+Azimut, Elevation: 340.0 45.0
+DoLP, AoLP: 45.8514231182875 8.059171237487595
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 350.0, elevation 45.0. Observed point at altitude 0.0, position (5.936935, 45.212343)
+828352 bins to compute
+	 127.11532473564148 seconds left...
+	 70.6475157737732 seconds left...
+Total scattered intensity from all direction: 32.94306295832591
+Total scattered polarized intensity from all direction: 20.347436385474847
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5005874144124254 0.10799693132482242 0.010644488322028122
+Azimut, Elevation: 350.0 45.0
+DoLP, AoLP: 43.35715842428475 2.8145278998440095
+Azimut, Elevtion, I, DoLP, AoLP
+0.0 45.0 32.26113839420936 40.23417488301722 -1.8015335313437557
+10.0 45.0 31.681987320269304 36.70601049549248 -5.758398592363409
+20.0 45.0 31.173175720208718 32.91044002668709 -9.12195206568982
+29.999999999999996 45.0 30.71956039359135 28.91305707812187 -11.888839633705487/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 94 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 95 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 96 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 97 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 98 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 99 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 100 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 101 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 102 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 103 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 104 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 105 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 106 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 107 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 108 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 109 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 110 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 111 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 112 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 113 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 114 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+/home/bossel/.local/lib/python3.6/site-packages/matplotlib/backends/backend_gtk3.py:181: Warning: Source ID 115 was not found when attempting to remove it
+  GLib.source_remove(self._idle_draw_id)
+
+40.0 45.0 30.31919166796746 24.664632570593813 -14.026116773471122
+50.0 45.0 29.975317777909712 20.103202727370256 -15.094552546816809
+59.99999999999999 45.0 29.69088798422186 15.406334106168655 -13.998563719502945
+70.0 45.0 29.466645500166127 11.305549870503302 -8.066666128560268
+80.0 45.0 29.300563137523536 9.693083186793901 5.494914802949092
+90.0 45.0 29.187718556425203 12.23549138476253 18.297569246552733
+100.0 45.0 29.12018525402335 17.480410804470445 23.271892159357467
+110.0 45.0 29.087049473827527 23.827177549128866 23.646418516524943
+119.99999999999999 45.0 29.076816607709883 30.725702063468376 21.685575720279463
+130.0 45.0 29.084713221521902 37.839044010185745 18.286329767562883
+140.0 45.0 29.12340368178795 44.75839377129357 13.871861390078426
+150.0 45.0 29.23201912226468 50.97027622480318 8.746097681552376
+160.0 45.0 29.477837488836087 56.07272526856299 3.067467037829559
+170.0 45.0 29.946766596480444 59.820044259327666 -3.0106596373144563
+180.0 45.0 30.725768982560457 62.123001142054235 -9.461561554229977
+190.0 45.0 31.885155735801245 63.09039931192212 -16.294809321606245
+200.0 45.0 33.46328900460969 62.83417169904107 -23.71894742265827
+210.00000000000003 45.0 35.44795830122427 61.50544377546957 -31.930203869196855
+220.0 45.0 37.74790999346479 59.231582679966316 -41.18466459794756
+230.0 45.0 40.15966094732536 56.16176952135532 -51.79331834283478
+239.99999999999997 45.0 42.35630672468717 52.71152127402715 -63.905832802731176
+250.00000000000003 45.0 43.94285035031487 49.53337057296837 -77.47909066636181
+260.0 45.0 44.59875238335832 47.300289961526225 88.01967803691198
+270.0 45.0 44.23456386165472 46.491725858038436 73.53001343375242
+280.0 45.0 43.029112793790475 46.87090704968163 59.99094376821863
+290.0 45.0 41.317199824734374 47.8950439407927 47.96399767152167
+300.0 45.0 39.43921215127119 48.8743646627428 37.53507824712164
+310.0 45.0 37.65024924425596 49.31513818583016 28.534515981336515
+320.0 45.0 36.09257388866933 48.94200549274792 20.745788891662734
+330.0 45.0 34.80794671114216 47.764203655451794 14.003818965731524
+340.0 45.0 33.77429925347987 45.8514231182875 8.059171237487595
+350.0 45.0 32.943062958325925 43.35715842428475 2.8145278998440095
+PLOT [  0.  10.  20.  30.  40.  50.  60.  70.  80.  90. 100. 110. 120. 130.
+ 140. 150. 160. 170. 180. 190. 200. 210. 220. 230. 240. 250. 260. 270.
+ 280. 290. 300. 310. 320. 330. 340. 350.] [32.26113839420936, 31.681987320269304, 31.173175720208718, 30.71956039359135, 30.31919166796746, 29.975317777909712, 29.69088798422186, 29.466645500166127, 29.300563137523536, 29.187718556425203, 29.12018525402335, 29.087049473827527, 29.076816607709883, 29.084713221521902, 29.12340368178795, 29.23201912226468, 29.477837488836087, 29.946766596480444, 30.725768982560457, 31.885155735801245, 33.46328900460969, 35.44795830122427, 37.74790999346479, 40.15966094732536, 42.35630672468717, 43.94285035031487, 44.59875238335832, 44.23456386165472, 43.029112793790475, 41.317199824734374, 39.43921215127119, 37.65024924425596, 36.09257388866933, 34.80794671114216, 33.77429925347987, 32.943062958325925] [40.23417488301722, 36.70601049549248, 32.91044002668709, 28.91305707812187, 24.664632570593813, 20.103202727370256, 15.406334106168655, 11.305549870503302, 9.693083186793901, 12.23549138476253, 17.480410804470445, 23.827177549128866, 30.725702063468376, 37.839044010185745, 44.75839377129357, 50.97027622480318, 56.07272526856299, 59.820044259327666, 62.123001142054235, 63.09039931192212, 62.83417169904107, 61.50544377546957, 59.231582679966316, 56.16176952135532, 52.71152127402715, 49.53337057296837, 47.300289961526225, 46.491725858038436, 46.87090704968163, 47.8950439407927, 48.8743646627428, 49.31513818583016, 48.94200549274792, 47.764203655451794, 45.8514231182875, 43.35715842428475] [-0.031442691707029, -0.10050301507894828, -0.1592080977553854, -0.20749939584975735, -0.2448019189662747, -0.26344964105724883, -0.24432102745555034, -0.14078988360248085, 0.09590435542803707, 0.3193528284640033, 0.4061711413498407, 0.4127078594179134, 0.37848469650941746, 0.31915666254942165, 0.24210965463714598, 0.15264820124413148, 0.05353739950652326, -0.05254592332803559, -0.1651354015014251, -0.28439807364669256, -0.4139737276328099, -0.5572871883505179, -0.7188079985637316, -0.9039639356160402, -1.115367193636655, -1.3522652335792211, 1.536233188289453, 1.283340833454641, 1.047039490134189, 0.8371296817869467, 0.6551107004059744, 0.498021254337263, 0.3620823220831799, 0.24441274880524205, 0.1406590730761844, 0.049122778741519164]
