@@ -2,18 +2,18 @@
 
 
 folder="ptcu/20190307_Skibotn/"
-./vendange.py $folder"br_a164_e45" -s False
-./vendange.py $folder"br_a164_e90"  -s False
-./vendange.py $folder"br_rot_e45"  -s False
-./vendange.py $folder"mr_a90_e45"  -s False
-./vendange.py $folder"mr_a164_e45"  -s False
-./vendange.py $folder"mr_a164_e90"  -s False
-./vendange.py $folder"mr_rot_e45"  -s False
-./vendange.py $folder"rr_a164_e90"  -s False
-./vendange.py $folder"rr_rot_e45"  -s False
-./vendange.py $folder"vr_a164_e45"  -s False
-./vendange.py $folder"vr_rot_e45"  -s False
-./vendange.py $folder"vr_rot_e80"  -s False
+../vendange/vendange.py $folder"br_a164_e45" -s False
+../vendange/vendange.py $folder"br_a164_e90"  -s False
+../vendange/vendange.py $folder"br_rot_e45"  -s False
+../vendange/vendange.py $folder"mr_a90_e45"  -s False
+../vendange/vendange.py $folder"mr_a164_e45"  -s False
+../vendange/vendange.py $folder"mr_a164_e90"  -s False
+../vendange/vendange.py $folder"mr_rot_e45"  -s False
+../vendange/vendange.py $folder"rr_a164_e90"  -s False
+../vendange/vendange.py $folder"rr_rot_e45"  -s False
+../vendange/vendange.py $folder"vr_a164_e45"  -s False
+../vendange/vendange.py $folder"vr_rot_e45"  -s False
+../vendange/vendange.py $folder"vr_rot_e80"  -s False
 
 #$folder"vr_a164_e90"  -s False
 #$folder"vr_a164_e90_densite"  -s False
@@ -22,45 +22,45 @@ folder="ptcu/20190307_Skibotn/"
 
 
 folder="ptcu/20190308_Skibotn/"
-./vendange.py $folder"br_a164_e45"  -s False
-./vendange.py $folder"br_a164_e90"  -s False
-./vendange.py $folder"mr_a164_e45"  -s False
-./vendange.py $folder"mr_a164_e90"  -s False
-./vendange.py $folder"vr_a164_e45"  -s False
-./vendange.py $folder"vr_a164_e90"  -s False
+../vendange/vendange.py $folder"br_a164_e45"  -s False
+../vendange/vendange.py $folder"br_a164_e90"  -s False
+../vendange/vendange.py $folder"mr_a164_e45"  -s False
+../vendange/vendange.py $folder"mr_a164_e90"  -s False
+../vendange/vendange.py $folder"vr_a164_e45"  -s False
+../vendange/vendange.py $folder"vr_a164_e90"  -s False
 
 
 folder="ptcu/20190309_Skibotn/"
-./vendange.py $folder"br_rot_e45"  -s False
-./vendange.py $folder"br_rot_e80"  -s False
-./vendange.py $folder"mr_rot_e45"  -s False
-./vendange.py $folder"mr_rot_e80"  -s False
-./vendange.py $folder"rr_rot_e45"  -s False
-./vendange.py $folder"rr_rot_e80"  -s False
-./vendange.py $folder"vr_rot_e45"  -s False
-./vendange.py $folder"vr_rot_e80"  -s False
+../vendange/vendange.py $folder"br_rot_e45"  -s False
+../vendange/vendange.py $folder"br_rot_e80"  -s False
+../vendange/vendange.py $folder"mr_rot_e45"  -s False
+../vendange/vendange.py $folder"mr_rot_e80"  -s False
+../vendange/vendange.py $folder"rr_rot_e45"  -s False
+../vendange/vendange.py $folder"rr_rot_e80"  -s False
+../vendange/vendange.py $folder"vr_rot_e45"  -s False
+../vendange/vendange.py $folder"vr_rot_e80"  -s False
 
 folder="spp/20190301_NyAlesund/"
-./vendange.py $folder -s False
-./vendange.py $folder"a00_e38.in"  -s False
-./vendange.py $folder"a180_e85.in"  -s False
-./vendange.py $folder"rot_lente_e30.in"  -s False
+../vendange/vendange.py $folder -s False
+../vendange/vendange.py $folder"a00_e38.in"  -s False
+../vendange/vendange.py $folder"a180_e85.in"  -s False
+../vendange/vendange.py $folder"rot_lente_e30.in"  -s False
 
 folder="spp/20190303_NyAlesund/"
-./vendange.py $folder -s False
-./vendange.py $folder"a-90_e30.in" -s False
-./vendange.py $folder"a180_e38.in" -s False
-./vendange.py $folder"a180_e85.in" -s False
-./vendange.py $folder"calib_angle_0deg.in" -s False
-./vendange.py $folder"rot_lente_e30.in" -s False
+../vendange/vendange.py $folder -s False
+../vendange/vendange.py $folder"a-90_e30.in" -s False
+../vendange/vendange.py $folder"a180_e38.in" -s False
+../vendange/vendange.py $folder"a180_e85.in" -s False
+../vendange/vendange.py $folder"calib_angle_0deg.in" -s False
+../vendange/vendange.py $folder"rot_lente_e30.in" -s False
 
 
 folder="spp/20190307_Skibotn/"
-./vendange.py $folder -s False
-./vendange.py $folder"br_a164_e45.in"  -s False
-./vendange.py $folder"br_a164_e90.in"  -s False
-./vendange.py $folder"mr_a164_e90.in"  -s False
-./vendange.py $folder"mr_a164_e45.in"  -s False
-./vendange.py $folder"vr_a164_e45.in"  -s False
-./vendange.py $folder"vr_a164_e90.in"  -s False
-./vendange.py $folder"rr_a164_e90.in"  -s False
+../vendange/vendange.py $folder -s False
+../vendange/vendange.py $folder"br_a164_e45.in"  -s False
+../vendange/vendange.py $folder"br_a164_e90.in"  -s False
+../vendange/vendange.py $folder"mr_a164_e90.in"  -s False
+../vendange/vendange.py $folder"mr_a164_e45.in"  -s False
+../vendange/vendange.py $folder"vr_a164_e45.in"  -s False
+../vendange/vendange.py $folder"vr_a164_e90.in"  -s False
+../vendange/vendange.py $folder"rr_a164_e90.in"  -s False

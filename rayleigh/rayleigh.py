@@ -48,15 +48,6 @@ class Rayleigh:
 	def ComputeAllMaps(self):
 		"""Will compute what the instrument sees for all the maps and all the observations directions"""
 
-		if self.world.has_ground_emission: ### Compute how the ground map looks through the instrument for every observations directions
-			self.is_ground_emission = True
-			for ia_pc in range(self.world.Nb_a_pc):
-				for ie_pc in range(self.world.Nb_e_pc):
-					self.ia_pc, self.ie_pc = ia_pc, ie_pc
-					self.a_pc, self.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
-					self.time = 0
-					self.SingleComputation()
-
 		if self.world.has_sky_emission: ### Compute how the sky maps looks through the instrument for every time and observations directions
 			self.is_ground_emission = False
 			for t in range(self.world.sky_map.Nt):
@@ -67,6 +58,16 @@ class Rayleigh:
 						self.a_pc, self.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
 						self.time = t
 						self.SingleComputation()
+
+		if self.world.has_ground_emission: ### Compute how the ground map looks through the instrument for every observations directions
+			self.is_ground_emission = True
+			for ia_pc in range(self.world.Nb_a_pc):
+				for ie_pc in range(self.world.Nb_e_pc):
+					self.ia_pc, self.ie_pc = ia_pc, ie_pc
+					self.a_pc, self.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
+					self.time = 0
+					self.SingleComputation()
+
 
 		self.GetLightParametersList()
 
@@ -132,14 +133,14 @@ class Rayleigh:
 
 		if sky and ground: #If sky and ground exist
 			self.I0 = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten()) + np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
-			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten()) - np.sum(self.world.sky_map.scattering_map[ie_pc, ia_pc].flatten())
+			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten()) - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
 			# self.I_direct_list[t, ie_pc, ia_pc] = self.world.GetDirectIntensity()
 		elif ground: #If sky doesn't exist
 			self.I0 = np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
 			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten())
 		elif sky:  #If ground doesn't exist
 			self.I0 = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
-			self.InonPola = self.I0 - np.sum(self.world.sky_map.scattering_map[ie_pc, ia_pc].flatten())
+			self.InonPola = self.I0 - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
 			# self.I_direct_list[t, ie_pc, ia_pc] = self.world.GetDirectIntensity()
 
 		###Compute the AoLP contribution histogram.
@@ -190,7 +191,7 @@ class Rayleigh:
 		################################################################################
 		###	Polar plots of intensity
 
-		self.save_individual_plots = False
+		self.save_individual_plots = bool(int(in_dict["saving_graphs"]))
 
 		if self.save_individual_plots:
 			print("Making and saving plots...")

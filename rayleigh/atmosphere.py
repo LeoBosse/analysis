@@ -46,25 +46,6 @@ class Atmosphere:
 		# plt.show()
 
 
-	def GetEffCrossSection(self, alt, wl = 557.7):
-		"""Give the effective cross section of the atmosphere at a given altitude. From Born&Wolf (edition 7), formula 103 (p785) and 85 (p778). In the case a<<wl, only l=1 is necessary."""
-		a = 0.1 #Sphere radius
-		n = 1.00027716 #Complex refractive index
-
-		eB_1 = 1j * (2 * np.pi * a / wl) ** 3 * (n**2 - 1) / (n**2 + 2)
-		mB_1 = 1j * (2 * np.pi * a / wl) ** 5 * (n**2 - 1) / 30
-		eB_2 = - (2 * np.pi * a / wl) ** 5 / 36 * (n**2 - 1) / (n**2 + 3/2)
-
-		sum = - 2 * (eB_1 + mB_1) + 1j * 6 * eB_2
-		# print(sum, sum.real)
-
-		Q = wl ** 2 / (2 * np.pi) * sum.real
-
-		return Q
-
-	def GetCExt(self, alt):
-		# print(self.GetEffCrossSection(alt),  self.GetParticuleDensity(alt), self.GetEffCrossSection(alt) * self.GetParticuleDensity(alt))
-		return self.GetEffCrossSection(alt) * self.GetParticuleDensity(alt)
 
 	def LoadAllProfiles(self, filename):
 		"Load all atmospheric profiles from a file into a dictionnary. Download the file from: http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure)"
@@ -120,56 +101,28 @@ class Atmosphere:
 		return V * (10 ** 9) # in m3. (multiply by e9 because every distances is in km)
 
 
-	def GetRSCrossSection(self, alt, theta, wl = 557.7):
-		k = 2 * np.pi / (wl * 10 ** (-9))
-		alpha = self.GetPolarizability(alt)
-		A_ptcu = 5 * 10 ** (-4)
-
-		cs = (1 + np.cos(theta) ** 2) * k ** 4 * alpha ** 2 / 2 / A_ptcu
-
-		return cs
-
-
-	def GetPolarizability(self, alt):
-
-		fraction 	= np.array([self.GetProfileValue(alt, n) for n in self.names])
-
-		polarizability =  np.sum(self.polarizability * fraction) / np.sum(fraction)
-
-		return polarizability
-
-
 	def GetRSVolumeCS(self, wl, alt):
+		"""Return the RAyleigh scattering volume cross section as calculated in Bucholtz 95.
+		"""
+
 		beta_s = self.GetSquareLawFit(wl, "Volume CS")
 		P = self.GetProfileValue(alt, "PRE")
 		T = self.GetProfileValue(alt, "TEM")
+
 		return beta_s * (P / 101325) * (288.15 / T)
 
 	def GetRSOpticalDepth(self, wl, E_alt, R_alt):
-		"""Return VERTICAL optical depth between two altitudes."""
+		"""Return VERTICAL optical depth between two altitudes aas calculated in Bucholtz 95."""
 		tau_E = self.GetSquareLawFit(wl, "Optical Depth")
-		# print("tau_E", tau_E)
 		P_E = self.GetProfileValue(E_alt, "PRE")
-		# print("P_E", P_E)
 		tau_E *= (P_E / 101300)
-		# print("tau_E", tau_E)
 
 		tau_R = self.GetSquareLawFit(wl, "Optical Depth")
-		# print("tau_R", tau_R)
 		P_R = self.GetProfileValue(R_alt, "PRE")
-		# print("P_R", P_R)
 		tau_R *= (P_R / 101300)
-		# print("tau_R", tau_R)
 
 		tau_ER = abs(tau_E - tau_R)
-		# print("tau_ER",tau_ER)
 		return tau_ER
-
-
-	# def GetRSOpticalDepth(self, wl, alt):
-	# 	tau_s = self.GetSquareLawFit(wl, "Optical Depth")
-	# 	P = self.GetProfileValue(alt, "PRE")
-	# 	return tau_s * (P / 101300)
 
 	def GetSquareLawFit(self, wl, purpose):
 		"""Return the result of the square law fit function presented in Bucholtz 1995. Purpose can be:
@@ -177,6 +130,7 @@ class Atmosphere:
 		"Volume CS" = For volume cross rayleigh sectioself.
 		"Optical Depth" = For the rayleigh optical depth.
 		Value of parameter A for optical depth is given for a Sub arctic winter atmosphere model."""
+
 		A, B, C, D = self.GetSquareLawParam(wl, purpose)
 		wl /= 1000  #wavelength given in nanometers, converted to micrometer
 		E = - (B + C * wl + D / wl)
@@ -193,14 +147,15 @@ class Atmosphere:
 		elif wl == 630:
 			gamma = 1.413 * 0.01
 
+		### Simple approx
+		# A = 3. / 4
+		# B = 1 + np.cos(theta) ** 2
+
+		### Chandrasekhar formula
 		A = 3 / (4 + 8 * gamma)
 		B = (1 + 3 * gamma) + (1 - gamma) * np.cos(theta) ** 2
 
 		return A * B
-
-
-	def GetScattered(self, wl, alt, theta):
-		return self.GetRSVolumeCS(wl, alt) * self.GetRSPhaseFunction(wl, theta) / 4 / np.pi
 
 	def GetSquareLawParam(self, wl, purpose):
 		"""Return the necessary parameters for calculatingthe result of the square law fit function presented in Bucholtz 1995. Purpose can be:
@@ -231,6 +186,75 @@ class Atmosphere:
 		return A, B, C, D
 
 
+	def MakePlots(self):
+		f1, (ax1, ax2, ax3) = plt.subplots(3, sharey = True, figsize=(16, 8))
+		ax1 = plt.subplot(131)
+		ax2 = plt.subplot(132)
+		ax3 = plt.subplot(133)
+
+		ax1.plot(self.profiles["TEM"], self.profiles["HGT"])
+		ax2.plot(self.profiles["PRE"], self.profiles["HGT"])
+		ax3.plot(self.profiles["N2"], self.profiles["HGT"], label="N2")
+		ax3.plot(self.profiles["O2"], self.profiles["HGT"], label="O2")
+		ax3.plot(self.profiles["H2O"], self.profiles["HGT"], label="H2O")
+		ax3.plot(self.profiles["CO2"], self.profiles["HGT"], label="CO2")
+		ax3.plot(self.profiles["O3"], self.profiles["HGT"], label="O3")
+
+		ax3.legend()
+		ax3.set_xscale('log')
+
+		ax1.set_title("Temperature")
+		ax2.set_title("Pressure")
+		ax3.set_title("Species")
+
+	#
+	# def GetRSCrossSection(self, alt, theta, wl = 557.7):
+	# 	k = 2 * np.pi / (wl * 10 ** (-9))
+	# 	alpha = self.GetPolarizability(alt)
+	# 	A_ptcu = 5 * 10 ** (-4)
+	#
+	# 	cs = (1 + np.cos(theta) ** 2) * k ** 4 * alpha ** 2 / 2 / A_ptcu
+	#
+	# 	return cs
+
+
+	# def GetPolarizability(self, alt):
+	#
+	# 	fraction 	= np.array([self.GetProfileValue(alt, n) for n in self.names])
+	#
+	# 	polarizability =  np.sum(self.polarizability * fraction) / np.sum(fraction)
+	#
+	# 	return polarizability
+	# def GetEffCrossSection(self, alt, wl = 557.7):
+	# 	"""Give the effective cross section of the atmosphere at a given altitude. From Born&Wolf (edition 7), formula 103 (p785) and 85 (p778). In the case a<<wl, only l=1 is necessary."""
+	# 	a = 0.1 #Sphere radius
+	# 	n = 1.00027716 #Complex refractive index
+	#
+	# 	eB_1 = 1j * (2 * np.pi * a / wl) ** 3 * (n**2 - 1) / (n**2 + 2)
+	# 	mB_1 = 1j * (2 * np.pi * a / wl) ** 5 * (n**2 - 1) / 30
+	# 	eB_2 = - (2 * np.pi * a / wl) ** 5 / 36 * (n**2 - 1) / (n**2 + 3/2)
+	#
+	# 	sum = - 2 * (eB_1 + mB_1) + 1j * 6 * eB_2
+	# 	# print(sum, sum.real)
+	#
+	# 	Q = wl ** 2 / (2 * np.pi) * sum.real
+	#
+	# 	return Q
+	#
+	# def GetCExt(self, alt):
+	# 	# print(self.GetEffCrossSection(alt),  self.GetParticuleDensity(alt), self.GetEffCrossSection(alt) * self.GetParticuleDensity(alt))
+	# 	return self.GetEffCrossSection(alt) * self.GetParticuleDensity(alt)
+
+	# def GetRSOpticalDepth(self, wl, alt):
+	# 	tau_s = self.GetSquareLawFit(wl, "Optical Depth")
+	# 	P = self.GetProfileValue(alt, "PRE")
+	# 	return tau_s * (P / 101300)
+
+
+
+	# def GetScattered(self, wl, alt, theta):
+	# 	return self.GetRSVolumeCS(wl, alt) * self.GetRSPhaseFunction(wl, theta) / 4 / np.pi
+
 
 	# def GetRSCrossSectionParticle(self, theta, wl = 557.7, Dp = 0.315, n = 1.000271375):
 	# 	"""Get Rayleigh scattering cross section for 1 angle. (See wikipedia or Seinfeld, John H. and Pandis, Spyros N. (2006) Atmospheric Chemistry and Physics, 2nd Edition, John Wiley and Sons, New Jersey, Chapter 15.1.1, ISBN 0471720186).
@@ -260,34 +284,13 @@ class Atmosphere:
 	#
 	# 	return cs
 
-	def GetParticuleDensity(self, h):
-		"""Should give the particle density at altitude h in particules/m3."""
-
-		T = self.GetProfileValue(h, "TEM")
-		P = self.GetProfileValue(h, "PRE")
-		k_B = 1.380649 * 10**(-23)
-
-		d = P / (k_B * T) #in particles / m3
-
-		return d
-
-	def MakePlots(self):
-		f1, (ax1, ax2, ax3) = plt.subplots(3, sharey = True, figsize=(16, 8))
-		ax1 = plt.subplot(131)
-		ax2 = plt.subplot(132)
-		ax3 = plt.subplot(133)
-
-		ax1.plot(self.profiles["TEM"], self.profiles["HGT"])
-		ax2.plot(self.profiles["PRE"], self.profiles["HGT"])
-		ax3.plot(self.profiles["N2"], self.profiles["HGT"], label="N2")
-		ax3.plot(self.profiles["O2"], self.profiles["HGT"], label="O2")
-		ax3.plot(self.profiles["H2O"], self.profiles["HGT"], label="H2O")
-		ax3.plot(self.profiles["CO2"], self.profiles["HGT"], label="CO2")
-		ax3.plot(self.profiles["O3"], self.profiles["HGT"], label="O3")
-
-		ax3.legend()
-		ax3.set_xscale('log')
-
-		ax1.set_title("Temperature")
-		ax2.set_title("Pressure")
-		ax3.set_title("Species")
+	# def GetParticuleDensity(self, h):
+	# 	"""Should give the particle density at altitude h in particules/m3."""
+	#
+	# 	T = self.GetProfileValue(h, "TEM")
+	# 	P = self.GetProfileValue(h, "PRE")
+	# 	k_B = 1.380649 * 10**(-23)
+	#
+	# 	d = P / (k_B * T) #in particles / m3
+	#
+	# 	return d

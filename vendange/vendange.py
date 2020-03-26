@@ -40,7 +40,10 @@ bottles = []
 
 # ls = subp.check_output("ls /home/bossel/These/Analysis/data/" + arguments[1] + "/data*.csv")
 if instrument_name != "spp":
-	ls = [f for f in os.listdir("/home/bossel/These/Analysis/data/" + arguments[1]) if "data" in f]
+	try:
+		ls = [f for f in os.listdir("/home/bossel/These/Analysis/data/" + arguments[1]) if "data" in f]
+	except:
+		ls = [f for f in os.listdir("/home/bossel/These/Analysis/data/" + "/".join(arguments[1].split("/")[:-1])) if "data" in f]
 	print("ls", ls)
 	nb_lines = len(ls)
 else:

@@ -48,7 +48,7 @@ class SkyMap:
 
 		### Initialize some parameters for the case h!=0
 		self.N = float(in_dict["Nb_emission_points"]) # Number of bins to compute (if h!=0)
-		self.Na, self.Ne = 2*np.sqrt(self.N), np.sqrt(self.N) / 2 # Numbers of bins in azimut/elevation. Na = 4*Ne and Na*Ne = N
+		self.Na, self.Ne = int(2 * np.sqrt(self.N)), int(np.sqrt(self.N) / 2) # Numbers of bins in azimut/elevation. Na = 4*Ne and Na*Ne = N
 		self.da = (self.I_zone_a_max - self.I_zone_a_min) / self.Na # Length of an azimut bin
 		self.de = (self.I_zone_e_max - self.I_zone_e_min) / self.Ne # Length of an elevation bin
 

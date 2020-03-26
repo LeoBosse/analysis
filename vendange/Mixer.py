@@ -297,16 +297,16 @@ class Mixer:
 			# print(self.mag_data.times[0], self.mag_data.times[-1])
 			# print(self.mag_data.GetNormTimes(self.divisor)[0], self.mag_data.GetNormTimes(self.divisor)[-1])
 			component = "Horiz"
-			# t, d = self.mag_data.GetComponent(component, self.divisor)
-			t, d = self.mag_data.GetDerivative(component, self.divisor)
-			# l_mag_data, = self.ax21.plot(t, d, "orange", label="B (nT)")
-			l_mag_data, = self.ax21.plot(t, d, self.mag_color, label="dB/dt (nT/s)", zorder=2, linewidth=2)
+			t, d = self.mag_data.GetComponent(component, self.divisor)
+			# t, d = self.mag_data.GetDerivative(component, self.divisor)
+			l_mag_data, = self.ax21.plot(t, d, "orange", label="B (nT)")
+			# l_mag_data, = self.ax21.plot(t, d, self.mag_color, label="dB/dt (nT/s)", zorder=2, linewidth=2)
 			# print(t, d)
 			# Md, md = max(d), min(d)
 			# self.ax21.set_ylim(min(-20, md, -abs(Md)), max(20, Md, abs(md)))
 			self.ax2_lines.append([l_mag_data, l_mag_data.get_label()])
-			# self.ax21.set_ylabel("B (nT)")
-			self.ax21.set_ylabel("dB/dt (nT/s)")
+			self.ax21.set_ylabel("B (nT)")
+			# self.ax21.set_ylabel("dB/dt (nT/s)")
 
 
 		if self.eiscat_data.valid:
@@ -403,21 +403,26 @@ class Mixer:
 
 		elif self.xaxis_azimut and bottle.observation_type == "fixed_elevation_discrete_rotation":
 			print("DEBUG plot discrete")
-			l_AoRD, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "k*", markersize=self.marker_size*(5+2), label="AoRD", zorder=2)
-			l_AoRD, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.marker_size*(5-2), label="AoRD", zorder=3)
-			self.ax3_lines.append([l_AoRD, l_AoRD.get_label()])
+			# l_AoRD, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "k*", markersize=self.marker_size*(5+2), label="AoRD", zorder=2)
+			# l_AoRD, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.marker_size*(5-2), label="AoRD", zorder=3)
+			# self.ax3_lines.append([l_AoRD, l_AoRD.get_label()])
+			#
+			# l_AoBapp, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "k*", markersize=self.marker_size*(5+2), label="AoBapp", zorder=2)
+			# l_AoBapp, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "*", color = self.AoBapp_color, markersize=self.marker_size*(5-2), label="AoBapp", zorder=3)
+			# self.ax3_lines.append([l_AoBapp, l_AoBapp.get_label()])
 
-			l_AoBapp, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "k*", markersize=self.marker_size*(5+2), label="AoBapp", zorder=2)
-			l_AoBapp, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "*", color = self.AoBapp_color, markersize=self.marker_size*(5-2), label="AoBapp", zorder=3)
-			self.ax3_lines.append([l_AoBapp, l_AoBapp.get_label()])
+			rot = 0
+			if len(self.x_axis_ticks_pos) > 15:
+				rot = 60
 
 			self.ax3.set_xticks(self.x_axis_ticks_pos)
-			self.ax3.set_xticklabels(self.x_axis_ticks_label)
+			self.ax3.set_xticklabels(self.x_axis_ticks_label, rotation = rot)
+			# self.ax3.xticks(rotation = 30)
 
 		elif self.xaxis_azimut and bottle.observation_type == "fixed_azimut_discrete_rotation":
 			print("DEBUG plot discrete")
-			l_AoRD, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.marker_size*4, label="AoRD")
-			self.ax3_lines.append([l_AoRD, l_AoRD.get_label()], zorder=2)
+			l_AoRD, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.marker_size*4, label="AoRD", zorder=2)
+			self.ax3_lines.append([l_AoRD, l_AoRD.get_label()])
 			l_AoBapp, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "*", color = self.AoBapp_color, markersize=self.marker_size*4, label="AoBapp", zorder=2)
 			self.ax3_lines.append([l_AoBapp, l_AoBapp.get_label()])
 

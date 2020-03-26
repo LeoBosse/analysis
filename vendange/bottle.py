@@ -177,7 +177,10 @@ class Bottle:
 		# 		self.all_times[i] += 24 * 3600
 
 		# self.AoLP_correction = float(self.input_parameters["AoLP_correction"])*DtoR
-		self.AoLP_correction = self.config['IS_PolarizerOffset' + str(self.line)] * DtoR
+		if self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
+			self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 90) * DtoR
+		else:
+			self.AoLP_correction = 0
 		print("AoLP correction:", self.AoLP_correction*RtoD)
 
 

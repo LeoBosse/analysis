@@ -87,6 +87,30 @@ class World:
 
 		self.v_pc_u = Getuen(a_pc, e_pc) # Vector of observation (line of sight) in UEN system
 
+		# Print iterations progress
+	def Progress(self, iteration, total, prefix = '', suffix = '', decimals = 1, length = 50, fill = '█', printEnd = "\r"):
+		"""
+		Call in a loop to create terminal progress bar
+		@params:
+		    iteration   - Required  : current iteration (Int)
+		    total       - Required  : total iterations (Int)
+		    prefix      - Optional  : prefix string (Str)
+		    suffix      - Optional  : suffix string (Str)
+		    decimals    - Optional  : positive number of decimals in percent complete (Int)
+		    length      - Optional  : character length of bar (Int)
+		    fill        - Optional  : bar fill character (Str)
+		    printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+		"""
+		percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+		filledLength = int(length * iteration // total)
+		bar = fill * filledLength + '-' * (length - filledLength)
+
+		sys.stdout.write('\r%s |%s| %s%% %s %s' % (prefix, bar, percent, suffix, printEnd))
+		sys.stdout.flush()
+		# Print New Line on Complete
+		if iteration == total:
+			print("\n")
+
 	def ComputeSkyMaps(self, time, ia_pc, ie_pc):
 		"""Compute the contribution of the sky map at the time set"""
 		# try:
@@ -119,10 +143,11 @@ class World:
 						self.sky_map.scattering_map[time, ie_pc, ia_pc, ie, ia] += w_DoLP * I0 # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
 
 						count += 1
-						if count == N // 10:
-							print("\t", 9 * (tm.time() - start_time), "seconds left...")
-						elif count == N // 2:
-							print("\t", (tm.time() - start_time), "seconds left...")
+						self.Progress(count, N, suffix="of sky point sources done")
+						# if count == N // 10:
+						# 	print("\t", 9 * (tm.time() - start_time), "seconds left...")
+						# elif count == N // 2:
+						# 	print("\t", (tm.time() - start_time), "seconds left...")
 
 					self.sky_map.DoLP_map = self.sky_map.scattering_map / self.sky_map.total_scattering_map # DoLP of a given (e, a)
 
@@ -161,10 +186,11 @@ class World:
 						self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
 
 						count += 1
-						if count == self.N // 10:
-							print("\t", 9 * (tm.time() - start_time), "seconds left...")
-						elif count == self.N // 2:
-							print("\t", (tm.time() - start_time), "seconds left...")
+						self.Progress(count, self.N, suffix="of ground point sources done")
+						# if count == self.N // 10:
+						# 	print("\t", 9 * (tm.time() - start_time), "seconds left...")
+						# elif count == self.N // 2:
+						# 	print("\t", (tm.time() - start_time), "seconds left...")
 
 
 					self.ground_map.DoLP_map = self.ground_map.scattering_map / self.ground_map.total_scattering_map # DoLP of a given (e, a)
@@ -174,47 +200,28 @@ class World:
 
 
 	def ComputeSingleRSGroundPointSource(self, ilon, ilat, a_rd, e_rd, alt):
-		I0 = self.ground_map.I_map[ilat, ilon]
 
-		# print("E I0", I0)
+		I0 = self.ground_map.I_map[ilat, ilon]
 
 		AR, RE, RD_angle = self.GetGeometryFromAzDist(a_rd, e_rd, alt)
 
 		I0 *= self.ground_map.GetArea(ilat) / RE ** 2
-		# print("E I0", I0)
 
-		# ER_Nalt = RE / self.atmosphere.d_los # Number of bins along the line of sight between atmosphere.h_r_min and atmosphere.h_r_max of length atmosphere.d_los
-		# ER_altitudes = np.linspace(0, alt, ER_Nalt) #List of all altitudes on the segment ER
-		# opt_depths = [self.atmosphere.GetRSOpticalDepth(self.wavelength, alt) for alt in ER_altitudes]
-		# opt_depth = sum(opt_depths)
 		if alt != 0:
 			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * RE / alt
 		else:
 			opt_depth = 0
-		# print("opt_depth, p.exp(-opt_depth)", opt_depth, np.exp(-opt_depth))
 		I0 *= np.exp(-opt_depth)
-
-		# print("R I in", I0)
 
 		I0, w_DoLP = self.GetScattered(I0, AR, RE, RD_angle, alt)
 
-		# print("R I sca", I0)
-
-		# RA_Nalt = AR / self.atmosphere.d_los # Number of bins along the line of sight between R and A of length atmosphere.d_los
-		# RA_altitudes = np.linspace(alt, 0, RA_Nalt) #List of all altitudes on the segment RA
-		# opt_depths = [self.atmosphere.GetRSOpticalDepth(self.wavelength, alt) for alt in RA_altitudes]
-		# opt_depth = sum(opt_depths)
 		if alt != 0:
 			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * AR / alt
 		else:
 			opt_depth = 0
-		# print("opt_depth, p.exp(-opt_depth)", opt_depth, np.exp(-opt_depth))
+
 		I0 *= np.exp(-opt_depth)
 
-		# for RA_alt in RA_altitudes:
-		# 	I0 -= I0 * self.atmosphere.GetCExt(RA_alt) * self.atmosphere.d_los
-
-		# print("A I in", I0)
 		return I0, w_DoLP
 
 
@@ -224,24 +231,16 @@ class World:
 
 		AR, RE, RD_angle = self.GetGeometryFromAzEl(a, e, alt)
 
-		# ER_Nalt = RE / self.atmosphere.d_los # Number of bins along the line of sight between atmosphere.h_r_min and atmosphere.h_r_max of length atmosphere.d_los
-		# ER_altitudes = np.linspace(self.sky_map.h, alt, ER_Nalt) #List of all altitudes on the segment ER
-		# for ER_alt in ER_altitudes:
-		# 	I0 -= I0 * self.atmosphere.GetCExt(ER_alt) * self.atmosphere.d_los
 		if alt != 0:
 			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, self.sky_map.h, alt) * RE / alt
 		else:
 			opt_depth = 0
-		# print("opt_depth, p.exp(-opt_depth)", opt_depth, np.exp(-opt_depth))
+
 		I0 *= np.exp(-opt_depth)
 
 
 		I0, w_DoLP = self.GetScattered(I0, AR, RE, RD_angle, alt, elevation = e)
 
-		# RA_Nalt = AR / self.atmosphere.d_los # Number of bins along the line of sight between R and A of length atmosphere.d_los
-		# RA_altitudes = np.linspace(alt, 0, RA_Nalt) #List of all altitudes on the segment RA
-		# for RA_alt in RA_altitudes:
-		# 	I0 -= I0 * self.atmosphere.GetCExt(RA_alt) * self.atmosphere.d_los
 		if alt != 0:
 			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * AR / alt
 		else:
@@ -310,6 +309,7 @@ class World:
 		V = self.atmosphere.GetVolume(AR, self.ouv_pc)
 		Crs = self.atmosphere.GetRSVolumeCS(self.wavelength, alt)
 		P = self.atmosphere.GetRSPhaseFunction(self.wavelength, RD_angle)
+
 		if AR != 0:
 			I0 *= Crs * P * V * self.PTCU_area / (AR * 1000) ** 2 / 4 / np.pi
 			# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)

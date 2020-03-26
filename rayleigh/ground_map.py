@@ -3,6 +3,7 @@
 
 import sys as sys
 import numpy as np
+import cv2
 import time as tm
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -29,6 +30,7 @@ class GroundMap:
 		self.A_lon, self.A_lat 	= GetLonLatFromName(self.location)
 
 		self.radius = float(in_dict["ground_emission_radius"]) / RT
+		self.N_bins_max = int(in_dict["ground_N_bins_max"])
 
 		self.exist = ((self.radius > 0 and self.file) or float(in_dict["point_src_I0"]) > 0)
 		self.is_point_source = float(in_dict["point_src_I0"]) > 0
@@ -40,6 +42,7 @@ class GroundMap:
 		map = gdal.Open(self.path + self.file, gdal.GA_ReadOnly)
 		nb_lon = map.RasterXSize
 		nb_lat = map.RasterYSize
+
 		nb_bands = map.RasterCount
 
 		map_info = map.GetGeoTransform()
@@ -60,11 +63,24 @@ class GroundMap:
 		nb_lon  = int( 2 * self.radius / pixel_width)
 		nb_lat  = int(-2 * self.radius / pixel_height)
 
+		print("GROUND MAP", nb_lon, nb_lat)
+
 		self.longitudes, self.dlon = np.linspace(lon_min, lon_max, nb_lon, retstep=True) # list of pixel longitudes
 		self.latitudes, self.dlat = np.linspace(lat_max, lat_min, nb_lat, retstep=True) # list of pixel latitudes
 
 		map_band = map.GetRasterBand(1)
 		self.I_map = map_band.ReadAsArray(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat) # Emission map we will use
+
+		if nb_lon * nb_lat > self.N_bins_max and self.N_bins_max > 0:
+			print("GROUND MAP TOO BIG", nb_lon * nb_lat, self.N_bins_max)
+			new_nb_lon, new_nb_lat = int(np.sqrt(self.N_bins_max)), int(np.sqrt(self.N_bins_max))
+			print("GROUND MAP", new_nb_lon, new_nb_lat)
+
+			self.longitudes, self.dlon = np.linspace(lon_min, lon_max, new_nb_lon, retstep=True) # list of pixel longitudes
+			self.latitudes, self.dlat = np.linspace(lat_max, lat_min, new_nb_lat, retstep=True) # list of pixel latitudes
+
+			self.I_map = cv2.resize(self.I_map, dsize=(new_nb_lon, new_nb_lat), interpolation = cv2.INTER_CUBIC)
+
 
 		self.maps_shape = (Nb_e_pc, Nb_a_pc, len(self.latitudes), len(self.longitudes))
 
