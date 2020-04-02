@@ -1,0 +1,5 @@
+setup.py
+rayleigh.egg-info/PKG-INFO
+rayleigh.egg-info/SOURCES.txt
+rayleigh.egg-info/dependency_links.txt
+rayleigh.egg-info/top_level.txt

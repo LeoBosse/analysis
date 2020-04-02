@@ -8,13 +8,61 @@ import os.path
 import numpy as np
 
 class Input:
-	def __init__(self, input_file = ""):
-		self.template = "/home/bossel/These/Analysis/src/input_files/template.in"
+	def __init__(self, template, input_file="", path = "./"):
+		self.template = template
+		self.path = path
 
 		if not input_file:
 			input_file = self.template
 
-		self.dictionnary, self.comments = self.ReadInputFile(input_file)
+		self.file_name = input_file
+
+		# print(self.path, self.file_name)
+
+		self.dictionnary, self.comments = self.ReadInputFile(self.path + input_file)
+
+	def Update(self, dict):
+		for key, value in dict.items():
+			self.dictionnary[key] = value
+
+	def ReadInputFile(self, file_name):
+		"""Read a given input file and return a dictionnary. First word = key, second = value. Remove empty lines, as many arguments as you want, in any order that you want."""
+		with open(file_name, "r") as f: #open the file
+			input = f.readlines() #store all lines in input
+
+		input = [l.split()[:] for l in input if l != "\n"] #get first two words (separated by a space) for all non empty line
+
+		dict = {i[0]: i[1] for i in input} #Create dictionnary
+		comments = {i[0]: " ".join(i[2:]) for i in input if len(i) > 2}
+
+		return dict, comments
+
+	def WriteInputFile(self, folder="", file_name = "input", **kwargs):
+		if folder == "":
+			folder = self.path
+
+		if kwargs:
+			file_name = file_name.split(".")[0]
+			for k, v in kwargs.items():
+				file_name += "_" + k + str(v)
+			# file_name += ".in"
+
+		with open(folder + file_name + ".in", "w") as f_in:
+			for key, value in self.dictionnary.items():
+				f_in.write(" ".join((key, str(value))))
+				if self.comments.__contains__(key):
+					f_in.write("\t" + self.comments[key])
+				f_in.write("\n")
+
+		return file_name
+
+
+class VendangeInput(Input):
+	def __init__(self, input_file = ""):
+		template = "template.in"
+		path = "/home/bossel/These/Analysis/src/vendange/input_files/"
+		Input.__init__(self, template, input_file, path = path)
+
 
 	def Update(self, dict):
 		for key, value in dict.items():
@@ -22,7 +70,6 @@ class Input:
 				self.SetObservationType(value)
 			else:
 				self.dictionnary[key] = value
-
 
 	def SetPollutionSource(self, lieu = "", az = 0, el = 0):
 		if lieu.lower() == "skibotn":
@@ -70,25 +117,3 @@ class Input:
 				self.dictionnary["#discrete_rotation_azimut"] = self.dictionnary.pop("discrete_rotation_azimut")
 				self.dictionnary["#discrete_rotation_times"] = self.dictionnary.pop("discrete_rotation_times")
 				self.dictionnary["#discrete_rotation_elevations"] = self.dictionnary.pop("discrete_rotation_elevations")
-
-
-
-	def ReadInputFile(self, file_name):
-		"""Read a given input file and return a dictionnary. First word = key, second = value. Remove empty lines, as many arguments as you want, in any order that you want."""
-		with open(file_name, "r") as f: #open the file
-			input = f.readlines() #store all lines in input
-
-		input = [l.split()[:] for l in input if l != "\n"] #get first two words (separated by a space) for all non empty line
-
-		dict = {i[0]: i[1] for i in input} #Create dictionnary
-		comments = {i[0]: " ".join(i[2:]) for i in input if len(i) > 2}
-
-		return dict, comments
-
-	def WriteInputFile(self, folder, file_name = "/input.in"):
-		with open(folder + file_name, "w") as f_in:
-			for key, value in self.dictionnary.items():
-				f_in.write(" ".join((key, str(value))))
-				if self.comments.__contains__(key):
-					f_in.write(comments[key])
-				f_in.write("\n")

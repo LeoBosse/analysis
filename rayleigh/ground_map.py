@@ -36,6 +36,7 @@ class GroundMap:
 		self.is_point_source = float(in_dict["point_src_I0"]) > 0
 
 
+		self.src_I0, self.src_az, self.src_dist = None, None, None
 
 	def LoadGroundEmmisionsMap(self, Nb_a_pc, Nb_e_pc):
 		"""In the case where h==0, load the emission map from the geotiff files"""
@@ -99,6 +100,8 @@ class GroundMap:
 
 	def LoadPointSourceMap(self, src_I0, src_az, src_dist, Nb_a_pc, Nb_e_pc):
 
+		self.src_I0, self.src_az, self.src_dist = src_I0, src_az, src_dist
+		
 		src_lon, src_lat = AzDistToLonLat(src_az, src_dist, self.A_lon, self.A_lat)
 
 		self.longitudes = np.linspace(src_lon, src_lon, 1) # list of pixel longitudes

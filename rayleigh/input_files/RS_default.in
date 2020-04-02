@@ -33,7 +33,7 @@ Atmospheric_profile win.atm   #name of the atmospheric profile file to use http:
 # "[1, 2, 3...]_moving_EW_band",    east-west auroral band passing from north to south in the sky. (can be doubled or tripled)
 # "[1, 2, 3...]_band_eEE",          east-west auroral band at elevation EE. (can be doubled or tripled)
 # "spot_aAA_eEE" 										bright source at elevation EE and azimut AA
-sky_mode uniform_1
+sky_mode None
 
 emission_altitude	110			# Altitude of the emission in km. Put 0 if emission on ground
 
@@ -54,13 +54,13 @@ sky_file None
 # ###############################################################################
 ### Ground map parameters
 
-ground_emission_radius 50  # in km. Put 0 if you don't want the ground emission
+ground_emission_radius 0  # in km. Put 0 if you don't want the ground emission
 ground_N_bins_max 100
 
 ### Use a point source on ground instead of the satellite emission map
 
-point_src_I0 0 		#Point source intensity. If 0, do not use point source and use the satellite map instead
-point_src_az 0 			#Azimut of the point source
+point_src_I0 100 		#Point source intensity. If 0, do not use point source and use the satellite map instead
+point_src_az 180 			#Azimut of the point source
 point_src_dist 5	 	#distance of the point source in km
 
 

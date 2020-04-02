@@ -29,12 +29,19 @@ class World:
 
 		### Get all the azimuts and elevations of the instruments.
 		self.a_pc_list		= np.array(in_dict["azimuts"].split(";"))  # List of azimuts for the observations
-		if self.a_pc_list[0] == "all": 	self.a_pc_list = np.arange(0, 360, 10) * DtoR
-		else: 						self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
+		if self.a_pc_list[0] == "all":
+			self.a_pc_list = np.arange(0, 360, 10) * DtoR
+		else:
+			self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
+
 		self.e_pc_list		= np.array(in_dict["elevations"].split(";"))  # List of elevation for the observations
-		if self.e_pc_list[0] == "all": 	self.e_pc_list = np.arange(10, 90, 10) * DtoR
-		else: 						self.e_pc_list = np.array([float(e) for e in self.e_pc_list]) * DtoR
+		if self.e_pc_list[0] == "all":
+			self.e_pc_list = np.arange(10, 90, 10) * DtoR
+		else:
+			self.e_pc_list = np.array([float(e) for e in self.e_pc_list]) * DtoR
+
 		self.a_pc, self.e_pc = self.a_pc_list[0], self.e_pc_list[0]
+
 		self.Nb_a_pc, self.Nb_e_pc = len(self.a_pc_list), len(self.e_pc_list)
 
 
@@ -80,6 +87,9 @@ class World:
 	def SetObservation(self, a_pc, e_pc):
 
 		self.Nalt = int((self.atmosphere.h_r_max - self.atmosphere.h_r_min) / (self.atmosphere.d_los * np.sin(e_pc)))		# Number of bins along the line of sight between atmosphere.h_r_min and atmosphere.h_r_max of length atmosphere.d_los
+		if self.Nalt == 0:
+			sys.exit("ERROR: Nalt == 0")
+			
 		self.dh = int((self.atmosphere.h_r_max - self.atmosphere.h_r_min) / self.Nalt) #Height of each bin
 		self.altitudes = np.linspace(self.atmosphere.h_r_min, self.atmosphere.h_r_max, self.Nalt) #List of all altitudes
 
