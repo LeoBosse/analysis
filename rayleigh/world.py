@@ -36,7 +36,7 @@ class World:
 
 		self.e_pc_list		= np.array(in_dict["elevations"].split(";"))  # List of elevation for the observations
 		if self.e_pc_list[0] == "all":
-			self.e_pc_list = np.arange(10, 90, 10) * DtoR
+			self.e_pc_list = np.linspace(10, 90, 9, endpoint=True) * DtoR
 		else:
 			self.e_pc_list = np.array([float(e) for e in self.e_pc_list]) * DtoR
 
@@ -84,12 +84,23 @@ class World:
 		self.has_ground_emission = self.ground_map.exist
 		print("Has_ground_emission:", self.has_ground_emission)
 
+
+		### Initialize the atlitude maps
+		self.alt_map = ElevationMap(in_dict)
+		self.alt_map.PlotMap()
+
+
+
+	# def GetAltitude(self, min, max, step):
+	# 	N = max / min
+	# 	return np.linspace(min, max, N)
+
 	def SetObservation(self, a_pc, e_pc):
 
 		self.Nalt = int((self.atmosphere.h_r_max - self.atmosphere.h_r_min) / (self.atmosphere.d_los * np.sin(e_pc)))		# Number of bins along the line of sight between atmosphere.h_r_min and atmosphere.h_r_max of length atmosphere.d_los
 		if self.Nalt == 0:
 			sys.exit("ERROR: Nalt == 0")
-			
+
 		self.dh = int((self.atmosphere.h_r_max - self.atmosphere.h_r_min) / self.Nalt) #Height of each bin
 		self.altitudes = np.linspace(self.atmosphere.h_r_min, self.atmosphere.h_r_max, self.Nalt) #List of all altitudes
 
@@ -97,7 +108,8 @@ class World:
 
 		self.v_pc_u = Getuen(a_pc, e_pc) # Vector of observation (line of sight) in UEN system
 
-		# Print iterations progress
+
+	# Print iterations progress
 	def Progress(self, iteration, total, prefix = '', suffix = '', decimals = 1, length = 50, fill = '█', printEnd = "\r"):
 		"""
 		Call in a loop to create terminal progress bar

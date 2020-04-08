@@ -6,10 +6,10 @@ saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for in
 
 # ###############################################################################
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
-azimuts 									 	all 								# In degrees, 0 is north, east is 90
+azimuts 									 	0 								# In degrees, 0 is north, east is 90
 elevations 									45 								#90 may have some bugs...
 
-location 										lagorge   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens
+location 										skibotn   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens
 
 instrument_opening_angle 		1	  		# Angle de demi-ouverture de l'instrument en degré
 instrument_area 5 #Area of Petit Cru in cm^2
@@ -19,8 +19,8 @@ wavelength 557.7
 # ###############################################################################
 ### Atmosphere parameters
 RS_min_altitude	 						0	  		# Minimum altitude of the scatering layer
-RS_max_altitude	 						50 			# Maximum altitude of the scatering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
-resolution_along_los				0.5			# Distance between every RS points along the line of sight (in km)
+RS_max_altitude	 						10 			# Maximum altitude of the scatering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
+resolution_along_los				0.1			# Distance between every RS points along the line of sight (in km)
 # Nb_points_along_los 			0			  # WARNING: Should not use! Use the resolution parameter instead! Number of bins along the line of sight between H_r_min and h_r_max
 
 Atmospheric_profile win.atm   #name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure)
@@ -52,14 +52,20 @@ sky_file None
 
 
 # ###############################################################################
+### Altitude map parameters
+
+alt_map_path /home/bossel/These/Analysis/data/elevation/
+alt_map_radius 40
+
+# ###############################################################################
 ### Ground map parameters
 
-ground_emission_radius 0  # in km. Put 0 if you don't want the ground emission
-ground_N_bins_max 100
+ground_emission_radius 10  # in km. Put 0 if you don't want the ground emission
+ground_N_bins_max 100000
 
 ### Use a point source on ground instead of the satellite emission map
 
-point_src_I0 100 		#Point source intensity. If 0, do not use point source and use the satellite map instead
+point_src_I0 0 		#Point source intensity. If 0, do not use point source and use the satellite map instead
 point_src_az 180 			#Azimut of the point source
 point_src_dist 5	 	#distance of the point source in km
 

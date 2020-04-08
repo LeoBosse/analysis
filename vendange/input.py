@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
-
 import mysql.connector as mysql
 import sys
 import os.path

@@ -28,8 +28,14 @@ class Eiscat:
 		self.end_datetime = bottle.DateTime("end")
 
 		self.folder = self.path
+		if self.start_datetime.year == 2020:
+			self.folder += "SP_FR_anadata/"
 		self.folder += bottle.DateTime().strftime("%Y-%m-%d")
-		self.folder += "_beata_10@uhfa/"
+
+		if self.start_datetime.year == 2019:
+			self.folder += "_beata_10@uhfa/"
+		elif self.start_datetime.year == 2020:
+			self.folder += "_beata_60@vhf/"
 
 		self.folders = [self.folder]
 		if self.start_datetime.day != self.end_datetime.day:

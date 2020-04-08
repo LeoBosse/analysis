@@ -61,4 +61,8 @@ if __name__ == "__main__":
 	arguments = sys.argv
 	nb_args = len(arguments)
 
-	RunSimulation(file_name = arguments[1])
+	if nb_args == 2:
+		file_name = arguments[1]
+	else:
+		file_name = "./input_files/RS_default.in"
+	RunSimulation(file_name)
