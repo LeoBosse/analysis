@@ -55,7 +55,9 @@ sky_file None
 ### Altitude map parameters
 
 alt_map_path /home/bossel/These/Analysis/data/elevation/
-alt_map_radius 40
+alt_map_radius 100 #in km
+alt_map_N_bins_max 10000000
+alt_map_resolution 0.1 # en km. Minimum 1arcsec (31m)
 
 # ###############################################################################
 ### Ground map parameters
