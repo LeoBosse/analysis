@@ -36,6 +36,22 @@ class ObservationPoint:
 		self.B_igrf=[0,0,0,0,0]
 		self.B_chaos=[0,0,0,0,0]
 
+	def InitFrom2Points(self, A_lon, A_lat, B_lon, B_lat, B_alt, RD_src_azimut=None, RD_src_elevation=None, init_full = True, A_alt=0):
+
+		OA = self.GetOA() #Earth center O to observer A
+		OB = self.GetOA(lon=B_lon, lat=B_lat, alt=B_alt) #Earth center O to observed point B
+
+		AB = OB - OA #in XYZ earth center
+		AB = np.dot(self.GetRotMatrixAO(A_lon, A_lat).transpose(), AB) #UEN
+		AB_norm = np.sqrt(AB[0]**2 + AB[1]**2 + AB[2]**2) * RT
+
+		elevation 	= np.arcsin(AB[0] / AB_norm)
+		azimuth		= np.arctan2(AB[1], AB[2])
+
+		return self.__init__(A_lon, A_lat, B_alt, azimuth, elevation, RD_src_azimut, RD_src_elevation, init_full, A_alt)
+
+
+
 	def SinglePointGeometry(self, GetBatP=True): #, A_lon, A_lat, h, a, e):
 		if GetBatP:
 			self.GetBatP()
@@ -97,11 +113,16 @@ class ObservationPoint:
 
 		return self.AoRD
 
-	def GetOA(self):
+	def GetOA(self, **kwargs):
 		"""Return the vector OA in the reference frame of O. O:Centre of the Earth to A:observer"""
-		OA = (RT + self.A_alt) * np.array([[	 m.cos(self.lat) * m.cos(self.lon)],
-											[	 m.cos(self.lat) * m.sin(self.lon)],
-											[	 m.sin(self.lat)]])
+		if not kwargs:
+			lon = self.lon
+			lat = self.lat
+			alt = self.A_alt
+
+		OA = (RT + alt) * np.array([[	 m.cos(lat) * m.cos(lon)],
+									[	 m.cos(lat) * m.sin(lon)],
+									[	 m.sin(lat)]])
 		return OA
 
 	def GetAH(self, **kwargs):

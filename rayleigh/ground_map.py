@@ -142,11 +142,10 @@ class ElevationMap():
 		if not alt1:
 			alt1 = self.GetAltitudeFromLonLat(lon1, lat1)
 
+
+		obs = ObservationPoint.InitFrom2Points(lon2, lat2, lon1, lat1, alt1, A_alt = alt2)
+
 		
-
-
-
-
 
 
 
