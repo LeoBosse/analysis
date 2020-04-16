@@ -2,6 +2,7 @@
 # -*-coding:utf-8 -*
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from utils import *
 from scipy import signal
@@ -16,7 +17,7 @@ import datetime as dt
 ### Bottle classes.
 
 class Bottle:
-	def __init__(self, folder_name, auto=True, line=1):
+	def __init__(self, folder_name, auto=True, line=1, from_txt = False):
 		self.folder = folder_name
 		self.rotations = []
 
@@ -24,6 +25,8 @@ class Bottle:
 		self.AoBlos = False
 		self.AoRD = False
 		self.time_stamp = ""
+
+		self.from_txt = from_txt
 
 		self.line = line
 
@@ -84,14 +87,18 @@ class Bottle:
 	def MiseEnBouteille(self):
 		### Loading the data from the files, then creating a list of Rotation objects depending on the instrument name specified. Can be 'spp', 'spp2014', 'fake_spp', 'ptcu', 'fake_ptcu'
 		self.SetJumps()
-		self.LoadData()
+		if not self.from_txt:
+			self.LoadData()
+			if self.valid:
+				self.CleanRotations()
+
+			### Now that we have all our rotations, creating lists of usefull data for easier smoothing
+				self.CreateLists()
+				self.GetSmoothLists()
+		else:
+			self.LoadFromTxt()
+
 		if self.valid:
-			self.CleanRotations()
-
-		### Now that we have all our rotations, creating lists of usefull data for easier smoothing
-			self.CreateLists()
-			self.GetSmoothLists()
-
 			self.Geometry()
 
 	def ReadInputFile(self, filename):
@@ -162,15 +169,15 @@ class Bottle:
 		# self.all_times = np.array([r.time - self.head_jump for r in self.rotations])
 		self.all_times = np.array([r.time for r in self.rotations])
 		# self.all_times_since_start = np.array([r.time  for r in self.rotations])
-		self.all_times_since_start = np.array([r.time - self.rotations[0].time for r in self.rotations])
+		# self.all_times_since_start = np.array([r.time - self.rotations[0].time for r in self.rotations])
 
 		# self.all_datetimes = [time.gmtime(r.time + self.time + self.head_jump) for r in self.rotations]
 		# self.all_datetimes = [time.gmtime(time.mktime(self.DateTime()) + r.time + self.time + self.head_jump) for r in self.rotations]
 
-		self.all_datetimes = [self.DateTime() + t for t in self.all_times]
+		# self.all_datetimes = [self.DateTime() + self.head_jump + t for t in self.all_times]
 		# self.all_datetimes = [self.DateTime() + t for t in self.all_times_since_start]
 
-		print(self.head_jump, self.all_times[0], self.all_times[-1], self.all_datetimes[0], self.all_datetimes[-1])
+		# print(self.head_jump, self.all_times[0], self.all_times[-1], self.all_datetimes[0], self.all_datetimes[-1])
 
 		# for i in range(1, self.nb_rot):
 		# 	if self.all_times[i] < self.all_times[i-1]:
@@ -248,7 +255,7 @@ class Bottle:
 	# 	self.all_AoLP = np.array([r.AoLP for r in self.rotations]) + self.AoLP_correction
 	# 	self.all_AoLP = SetAngleBounds(self.all_AoLP, -np.pi/2, np.pi/2)
 
-	def GetSmoothLists(self):
+	def SetSmoothLists(self):
 		print("Get Smooth Lists")
 		### Smoothing procedure. Can smooth for a given number of rotations (smoothing_unit==rotations) or a  given time period (smoothing_unit==seconds).
 		self.smoothing_factor = int(self.input_parameters["smoothing_factor"]) #Average the data over smoothing_factor rotations
@@ -260,6 +267,10 @@ class Bottle:
 		self.avg_dt = 1000 * np.average([self.all_times[i].total_seconds() - self.all_times[i-1].total_seconds() for i in range(1, len(self.all_times))]) #in millisec
 
 		print("AVG DT (millisec)", self.avg_dt)
+
+	def GetSmoothLists(self):
+
+		self.SetSmoothLists()
 
 		print("Smooting data over {} {}".format(self.smoothing_factor, self.smoothing_unit))
 		self.smooth_V    = GetSliddingAverage(self.all_V,    self.all_times, self.smoothing_factor, self.smoothing_unit)
@@ -278,6 +289,7 @@ class Bottle:
 			self.smooth_I0[i], self.smooth_DoLP[i], self.smooth_AoLP[i] = Rotation.GetLightParameters(self.smooth_V[i], self.smooth_Vcos[i], self.smooth_Vsin[i])
 
 		self.smooth_AoLP = self.smooth_AoLP + self.AoLP_correction
+
 		self.smooth_AoLP = SetAngleBounds(self.smooth_AoLP, -np.pi/2, np.pi/2)
 
 		self.V_average = np.average(self.all_V)
@@ -288,6 +300,8 @@ class Bottle:
 		self.AoLP_average += self.AoLP_correction
 		self.AoLP_average = SetAngleBounds(self.AoLP_average, -np.pi/2, np.pi/2)
 
+
+		print("Computing Error bars...")
 		#Get Variance
 		if self.smoothing_unit == "seconds": smoothing_factor = self.smoothing_factor*1000
 		elif self.smoothing_unit == "minutes": smoothing_factor = self.smoothing_factor * 60*1000
@@ -317,6 +331,7 @@ class Bottle:
 		self.smooth_AoLP_lower = self.smooth_AoLP - self.std_smooth_AoLP
 		# print(self.smooth_DoLP.shape, self.sm ooth_AoLP.shape, self.var_DoLP.shape, self.var_AoLP.shape)
 
+		print("Unifying AoLPs for least deviation")
 		self.smooth_AoLP, smooth_graph_angle_shift = UnifyAngles(self.smooth_AoLP)
 		self.all_AoLP, all_graph_angle_shift = UnifyAngles(self.all_AoLP)
 		self.smooth_AoLP_upper, tmp = UnifyAngles(self.smooth_AoLP_upper)
@@ -347,13 +362,11 @@ class Bottle:
 		# for i, up in enumerate(self.smooth_AoLP_upper):
 		# 	if up < self.smooth_AoLP[i]:
 
-
-
-
 		print("Get Smooth Lists: DONE")
 
-
 	def GetGeometryAngles(self, obs):
+		# print("DEBUG obs", obs)
+
 		obs.SinglePointGeometry()
 		AoBapp = obs.eta_chaos
 		AoBapp_ortho = AoBapp + np.pi / 2
@@ -385,33 +398,7 @@ class Bottle:
 		# os.chdir(pwd_src + "Geometry/Leo/src/")
 
 		A_lon, A_lat = False, False
-		if self.location.lower() == "skibotn":
-			A_lon = 20.24 * DtoR
-			A_lat = 69.34 * DtoR
-		elif self.location.lower() == "mens":
-			A_lon = 5.76 * DtoR
-			A_lat = 44.83 * DtoR
-		elif self.location.lower() == "nyalesund":
-			A_lon = 11.92288 * DtoR
-			A_lat = 78.92320 * DtoR
-		elif self.location.lower() == "vigan":
-			A_lon = 3.504259 * DtoR
-			A_lat = 44.039661 * DtoR
-		elif self.location.lower() == "lagorge":
-			A_lon = 5.936935 * DtoR
-			A_lat = 45.212343 * DtoR
-		elif self.location.lower() == "stveran":
-			A_lon = 6.5430 * DtoR
-			A_lat = 44.4156 * DtoR
-		elif self.location.lower() == "sob":
-			A_lon = -16.452403 * DtoR
-			A_lat = 14.49496 * DtoR
-		elif self.location.lower() == "skibotnsud":
-			A_lon = 19.981116 * DtoR
-			A_lat = 69.234956 * DtoR
-		elif self.location.lower() == "kilpisjarvi":
-			A_lon = 20.7846926 * DtoR
-			A_lat = 69.0526675 * DtoR
+		A_lon, A_lat = geometry.GetLonLatFromName(self.location.lower())
 
 		if self.filters[0] == "r":
 			h = 220
@@ -429,8 +416,8 @@ class Bottle:
 		except:
 			self.source_azimut = self.source_elevation = 0
 
-		if self.observation_type == "fixed" and self.azimut and self.elevation:
-			print("DEBUG SOURCE:", self.source_azimut*RtoD, self.source_elevation*RtoD)
+		if self.observation_type == "fixed" and self.azimut is not None and self.elevation is not None:
+			# print("DEBUG SOURCE:", self.source_azimut*RtoD, self.source_elevation*RtoD)
 			try:
 				print("DEBUG: AZ/EL", self.azimut*RtoD, self.elevation*RtoD)
 				self.observation, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = self.GetGeometryAngles(observation.ObservationPoint(A_lon, A_lat, h, self.azimut, self.elevation, self.source_azimut, self.source_elevation))
@@ -486,46 +473,8 @@ class Bottle:
 			self.obs, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = zip(*ang_list)
 			self.obs, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = np.array(self.obs), np.array(self.AoBapp), np.array(self.AoBlos), np.array(self.AoRD), np.array(self.AoBapp_ortho), np.array(self.AoRD_ortho)
 
-
-
-		# try:
-		# 	print(self.azimut, self.elevation)
-		# 	self.observation = observation.ObservationPoint(A_lon, A_lat, h, self.azimut, self.elevation)
-		# 	self.observation.SinglePointGeometry()
-		# 	self.AoBapp = self.observation.eta_chaos
-		# 	self.AoBapp_ortho = self.AoBapp + np.pi / 2
-		# 	self.AoBlos = self.observation.Blos
-		#
-		# 	if self.graph_angle_shift == 1 and self.AoBapp < 0:
-		# 		self.AoBapp += np.pi
-		# 	if self.graph_angle_shift == 0 and self.AoBlos > np.pi/2:
-		# 		self.AoBlos -= np.pi
-		# 	if self.graph_angle_shift == 0 and self.AoBapp_ortho > np.pi/2:
-		# 		self.AoBapp_ortho -= np.pi
-		#
-		# 	print("DEBUG B", self.AoBapp*RtoD)
-		# except:
-		# 	print("WARNING: Could not get the apparent angle of the magnetic field.")
-		#
-		# try:
-		# 	self.source_azimut = float(self.input_parameters["pollution_source_azimut"]) * DtoR
-		# 	try:
-		# 		self.source_elevation = float(self.input_parameters["pollution_source_elevation"]) * DtoR
-		# 	except:
-		# 		self.source_elevation = 0
-		# 	self.AoRD = self.observation.GetRayleighAngle(self.source_azimut, self.source_elevation)
-		# 	self.AoRD_ortho = self.AoRD + np.pi/2
-		#
-		# 	if self.graph_angle_shift == 1:
-		# 		if self.AoRD < 0:
-		# 			self.AoRD += np.pi
-		# 	elif self.graph_angle_shift == 0:
-		# 		if self.AoRD_ortho > np.pi/2:
-		# 			self.AoRD_ortho -= np.pi
-		# except:
-		# 	print("WARNING: No source pollution azimut to get the Angle of Rayleigh Diffusion (AoRD)")
-
 		os.chdir(wd)
+		# print("Geometry:", self.AoBapp, self.AoBlos, self.AoRD)
 		print("Geometry: DONE")
 
 
@@ -630,6 +579,50 @@ class Bottle:
 		all_freq = [1. / (self.all_times[i].total_seconds() - self.all_times[i-1].total_seconds()) for i in range(1, self.nb_rot)]
 		return np.average(all_freq)
 
+	def RenormTimes(self, shift):
+		self.all_times = np.array([t + shift for t in self.all_times])
+
+
+	def __add__(self, bottle_to_add):
+
+		print("Adding ")
+
+		for ir, r in enumerate(bottle_to_add.rotations):
+			bottle_to_add.rotations[ir].time += self.rotations[-1].time
+
+		print(len(self.rotations), len(bottle_to_add.rotations))
+		self.rotations = np.append(self.rotations, bottle_to_add.rotations)
+
+		print(len(self.rotations), len(bottle_to_add.rotations))
+
+		if not self.from_txt:
+			self.CleanRotations()
+
+		### Now that we have all our rotations, creating lists of usefull data for easier smoothing
+			self.CreateLists()
+			self.GetSmoothLists()
+
+		self.Geometry()
+
+		# np.append(self.all_V, bottle_to_add.all_V)
+		# np.append(self.all_Vcos, bottle_to_add.all_Vcos)
+		# np.append(self.all_Vsin, bottle_to_add.all_Vsin)
+		# np.append(self.all_I0, bottle_to_add.all_I0)
+		# np.append(self.all_DoLP, bottle_to_add.all_DoLP)
+		# np.append(self.all_AoLP, bottle_to_add.all_AoLP)
+		#
+		# np.append(self.all_times, bottle_to_add.all_times)
+		#
+		# self.saving_name += bottle_to_add.saving_name
+		#
+		# if self.NoVref or bottle_to_add.NoVref:
+		# 	self.NoVref = True
+		#
+		# self.GetSmoothLists()
+		# self.Geometry(to_initiate=False)
+
+		return self
+
 
 
 #####################################################################################
@@ -638,8 +631,8 @@ class Bottle:
 
 
 class PTCUBottle(Bottle):
-	def __init__(self, folder_name, auto=True, line = 1):
-		Bottle.__init__(self, folder_name, auto, line = line)
+	def __init__(self, folder_name, auto=True, line = 1, from_txt = False):
+		Bottle.__init__(self, folder_name, auto, line = line, from_txt = from_txt)
 
 		self.SetInfoFromDataFileName(self.data_file_name, pwd_data)
 
@@ -685,13 +678,14 @@ class PTCUBottle(Bottle):
 
 	def LoadData(self):
 		if self.instrument_name == "carmen" or self.instrument_name == "corbel" or self.instrument_name == "gdcu":
-			self.raw_data, self.config = LoadPTCUData(self.data_file_name, line = self.line)
+			self.raw_data, self.config = self.LoadPTCUData()
 			self.nb_rot = len(self.raw_data)
 			if self.nb_rot == 0:
 				self.valid = False
 			# self.nb_data_per_rot = len(self.raw_data[0])
 			# if self.jump_mode == "length" or self.tail_jump == 0:
 			# 	self.tail_jump = len(self.raw_data) - self.tail_jump
+
 			for r in self.raw_data[:]:
 				self.rotations.append(PTCURotation(r))
 
@@ -705,6 +699,14 @@ class PTCUBottle(Bottle):
 		if self.valid:
 			Bottle.LoadData(self)
 
+	def GetTimeFromDateTime(self, date):
+		shift = self.DateTime(moment="start") - date
+		return self.all_times + shift
+
+	def SetTimeFromDateTime(self, date):
+		self.date_time = date
+		self.all_times = self.GetTimeFromDateTime(date)
+
 	def SetTimes(self):
 		try:
 			self.time_stamp = str(self.config["Timestamp"]).split("\"")[1] #When importing config file from mysql workbench, timestamp is between "", but when using python script, there is no more ""
@@ -713,17 +715,25 @@ class PTCUBottle(Bottle):
 
 		print(self.time_stamp)
 		#Date and time of first rotation (before deleting head_jump)
+
 		self.datetime = time.datetime.strptime(self.time_stamp, "%Y-%m-%d %H:%M:%S")
 		print(self.datetime, self.datetime.strftime("%H:%M:%S"))
 		#Time in sec since EPOCH
-		self.time = self.datetime.timestamp()
+		# self.time = self.datetime.timestamp()
 
-	def DateTime(self, moment="start"):
-		if moment == "start":
-			return self.rotations[0].time + self.datetime + self.head_jump
-		if moment == "end":
-			return self.rotations[-1].time + self.datetime + self.head_jump
 
+	def DateTime(self, moment="start", delta=None):
+		if not delta:
+			delta = dt.timedelta(seconds=0)
+
+		if moment == "start": #Datetime of first good rotation
+			return self.all_times[0] + self.datetime + self.head_jump + delta
+			# return self.rotations[0].time + self.datetime + self.head_jump + delta
+		elif moment == "end": #Datetime of last good rotation
+			return self.all_times[-1] + self.datetime + self.head_jump + delta
+			# return self.rotations[-1].time + self.datetime + self.head_jump + delta
+		elif moment == "config": #Datetime written in the config file (== first bad rotation, before head_jump)
+			return self.datetime + delta
 
 	def CleanRotations(self):
 		self.nb_rot = len(self.rotations)
@@ -736,7 +746,7 @@ class PTCUBottle(Bottle):
 		### Add 24h when next rotation is earlier than the previous one. Happens sometimes when we change the date
 		for i in range(1, len(self.rotations)):
 			while self.rotations[i].time < self.rotations[i-1].time:
-				self.rotations[i].time += 24 * 3600
+				self.rotations[i].time += dt.timedelta(day=1)
 
 		### Get and set the head and tail jumps
 		if self.jump_mode == "time": # and self.jump_unit in ["seconds", "minutes", "hours"]:
@@ -773,10 +783,137 @@ class PTCUBottle(Bottle):
 		self.nb_rot = len(self.rotations)
 
 	def SaveTXT(self):
-		times = [t.total_seconds() for t in self.all_times]
+		times = [t.total_seconds() * 1000 for t in self.GetTimeFromDateTime(self.DateTime(moment="config"))]
 		print("Saving as .txt in", self.data_file_name + "/" + self.saving_name + '_results.txt')
 
-		np.savetxt(self.data_file_name + "/" + self.saving_name + '_results.txt', np.array([times, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP]).transpose(), delimiter = "\t", header = "time(s)\tSV\tSVcos\tSVsin\tSI0(mV)\tSDoLP(percent)\tSAoLP(deg)")
+		np.savetxt(self.data_file_name + "/" + self.saving_name + '_results.txt', np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP]).transpose(), delimiter = "\t", header = "time(ms)\tV\tVcos\tVsin\tI0(mV)\tDoLP(percent)\tAoLP(deg)\tSV\tSVcos\tSVsin\tSI0(mV)\tSDoLP(percent)\tSAoLP(deg)")
+
+
+	def LoadPTCUData(self):
+		"""Return an array of data and a dictionnary of config from a list of data files. The first is the data, the second is the config. Each line of the data is a rotation with 6 entries, the config dict is all the parameters of the observation, common to all rotations."""
+		###DATA FILE
+		# 0: 	IDProcessedData,
+		# 1: 	IDConfiguration,
+		# 2: 	Time since begining of obseravtion (timestamp) in milliseconds,
+		# 3:	PMAvg,
+		# 4:	PMCosAvg,
+		# 5:	PMSinAvg
+		# 6:	IDTemperatures
+		# 7:	TempPM
+		# 8:	TempOptical
+		# 9:	TempAmbiant
+		# 10:	IDLiveComment
+		# 11:	Comment
+		# 12:	live_commentscol
+		###CONFIG FILE
+		# 0:		IDConfiguration,
+		# 1:		Timestamp,
+		# 2-3:		CM_Latitude, CM_Longitude,
+		# 4-5:		CM_Elevation, CM_Azimuth,
+		# 6:		CM_PolarizerSpeed,
+		# 7:		CM_Tilt,
+		# 8:		CM_Usage,
+		# 9:		CM_Comments,
+		# 10:		IS_PolarizerOffset1,
+		# 11:		IS_PolarizerOffset2,
+		# 12:		IS_PolarizerOffset3,
+		# 13:		IS_PolarizerOffset4,
+		# 14:		IS_ConverterOffset4,
+		# 15:		IS_ConverterOffset3,
+		# 16:		IS_ConverterOffset2,
+		# 17:		IS_ConverterOffset1,
+		# 18:		IS_EngineTicksPerTour,
+		# 19:		IS_MotorGearedRatio,
+		# 20:		IS_QuantumEfficiency,
+		# 21:		IS_IpAddress
+
+		file_names = self.data_file_name
+		line = self.line
+
+		print("LOADING PTCU data: line", line)
+		data_path = file_names
+		#Loading the data from a binary file.
+		#Output is one big 1-D array of length nb_data_tot = nb_toy * nb_data_per_rot
+		data_file = data_path + "/data" + str(line) + ".csv"
+		config_file = data_path + "/config.csv"
+
+
+		print(data_file, config_file)
+
+		try:
+			with open(data_file, "r") as f:
+				first_line = f.readlines()[1]
+			d = GetDelimiter(first_line)
+		except:
+			d = ""
+
+		raw_data = np.genfromtxt(data_file, delimiter = d, skip_header=1)
+
+
+		array_type = [('IDConfiguration',float),('Timestamp','S100'),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),('IS_ConverterOffset4',float),('IS_ConverterOffset3',float),('IS_ConverterOffset2',float),('IS_ConverterOffset1',float),('IS_EngineTicksPerTour',float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float),('IS_IpAddress',float)]
+		configuration = np.genfromtxt(config_file, dtype=array_type, delimiter=",", skip_header=1)
+
+		print("PTCU DATA loaded")
+		return raw_data, configuration
+
+
+	def LoadFromTxt(self):
+		file_name = self.data_file_name + "/" + self.saving_name + '_results.txt'
+
+		data = pd.read_csv(file_name, delimiter="\t")
+		data.columns = [c.replace("#", "").replace("(", "").replace(")", "").strip() for c in data.columns]
+		time_name = data.columns[0]
+
+		self.all_times = np.array([dt.timedelta(milliseconds=t) for t in data[time_name]])
+		self.nb_rot = len(self.all_times)
+
+		self.smooth_V    = np.array(data["SV"])
+		self.smooth_Vcos = np.array(data["SVcos"])
+		self.smooth_Vsin = np.array(data["SVsin"])
+
+		self.nb_smooth_rot = len(self.smooth_V)
+
+		### Calculate the smooth I0, DoLP and AoLP
+		self.smooth_I0 = np.array(data["SI0mV"])
+		self.smooth_DoLP = np.array(data["SDoLPpercent"])
+		self.smooth_AoLP = np.array(data["SAoLPdeg"])
+
+		if len(data.columns) > 7:
+			self.all_V =  np.array(data["V"])
+			self.all_Vcos =  np.array(data["Vcos"])
+			self.all_Vsin =  np.array(data["Vsin"])
+			self.all_I0 =  np.array(data["I0mV"])
+			self.all_DoLP =  np.array(data["DoLPpercent"])
+			self.all_AoLP =  np.array(data["AoLPdeg"])
+		else:
+			self.all_V = np.empty(self.nb_rot)
+			self.all_Vcos = np.empty(self.nb_rot)
+			self.all_Vsin = np.empty(self.nb_rot)
+			self.all_I0 = np.empty(self.nb_rot)
+			self.all_DoLP = np.empty(self.nb_rot)
+			self.all_AoLP = np.empty(self.nb_rot)
+
+		self.valid = True
+		_, self.config = self.LoadPTCUData()
+		self.SetTimes()
+		self.SetSmoothLists()
+
+		self.SetTimeFromDateTime(self.DateTime(moment="start"))
+
+		self.graph_angle_shift = 0
+		for a in  self.smooth_AoLP:
+			if a > np.pi/2.:
+				self.graph_angle_shift = 1
+				break
+			if a < 0:
+				break
+
+		if self.instrument_name in ["corbel", "gdcu"]:
+			self.all_AoLP 		-= 90 * DtoR
+			self.smooth_AoLP 	-= 90 * DtoR
+
+
+
 
 
 
@@ -786,8 +923,8 @@ class PTCUBottle(Bottle):
 
 
 class SPPBottle(Bottle):
-	def __init__(self, folder_name, auto=True):
-		Bottle.__init__(self, folder_name, auto)
+	def __init__(self, folder_name, auto=True, from_txt = False):
+		Bottle.__init__(self, folder_name, auto, from_txt=from_txt)
 		try:
 			self.SetInfoFromDataFileName(self.data_file_name, pwd_data)
 		except:

@@ -216,8 +216,8 @@ class Simulation:
 
 		self.MakeAoLPMap()
 
-		# if self.world.is_single_observation and not self.world.is_time_dependant:
-		# 	plt.show()
+		if self.world.is_single_observation and not self.world.is_time_dependant:
+			plt.show()
 
 		plt.close("all")
 

@@ -28,7 +28,7 @@ class ElevationMap():
 
 		self.location = in_dict["location"]
 		self.A_lon, self.A_lat = GetLonLatFromName(self.location)
-		self.A_lon, self.A_lat = self.A_lon, self.A_lat
+		# self.A_lon, self.A_lat = self.A_lon, self.A_lat
 		print(self.location, self.A_lon, self.A_lat)
 
 		self.nb_pix_max = int(in_dict["alt_map_N_bins_max"])
@@ -47,6 +47,8 @@ class ElevationMap():
 		self.SetMapProperties()
 
 		self.LoadMultipleTiles()
+
+		self.A_alt = self.GetAltitudeFromLonLat(self.A_lon, self.A_lat)
 
 		self.exist = (self.radius > 0)
 
@@ -88,11 +90,71 @@ class ElevationMap():
 			for n_lat in self.lat_name_list:
 				self.tiles_coord.append((n_lon, n_lat))
 
+	def IsInMap(self, lon, lat):
+		print(self.lon_min ,lon ,self.lon_max ,self.lat_min ,lat ,self.lat_max)
+
+		if self.lon_min < lon < self.lon_max and self.lat_min < lat < self.lat_max:
+			return True
+		else:
+			return False
+
+
+	def GetRelativeAltitude(self, lon, lat, unit=1000): #Elevation map is in meters
+	"""Altitude of given coord above the instrument in A (center of the map).
+	return result(in meter)/unit. (unit=1000:result in km)"""
+		if self.IsInMap(lon, lat):
+			l, c = self.GetIndexFromLonLat(lon, lat)
+			return (self.map[l, c] - self.A_alt) / unit
+		else:
+			return - self.A_alt / unit
+
+	def GetAltitudeFromLonLat(self, lon, lat, unit=1000):
+		"""Altitude of given coord above sea level.
+		return result(in meter)/unit. (unit=1000:result in km)"""
+		if self.IsInMap(lon, lat):
+			l, c = self.GetIndexFromLonLat(lon, lat)
+			return self.map[l, c] / unit
+		else:
+			return 0
+
+	def GetAltitudeAboveGround(self, lon, lat, alt, unit=1000):
+		"""For a given altitude, returns the relative altitude to the given coord altitude.
+		return result(in meter)/unit. (unit=1000:result in km)"""
+		if self.IsInMap(lon, lat):
+			l, c = self.GetIndexFromLonLat(lon, lat)
+			return alt - self.map[l, c] / unit
+		else:
+			return alt
+
+
+	def IsVisible(self, lon1, lat1, alt1=None, lon2=None, lat2=None, alt2=None, dlos=0.05):
+		"""Return True if two points are visible. (if a straight line between them is always above ground.).Else returns False.
+		dlos is the distance between each points along the line. (too big and it is long, too low and you will miss collisions.)
+		If alt1==None, point 1 on ground.
+		If point 2 not given, use instrument coord and alt.
+		If point 2 coord are given but alt2==None, use point 2 on ground."""
+		if not lon2:
+			lon2 = self.A_lon
+			lat2 = self.A_lat
+			alt2 = self.A_alt
+		if not alt2:
+			alt2 = self.GetAltitudeFromLonLat(lon2, lat2)
+		if not alt1:
+			alt1 = self.GetAltitudeFromLonLat(lon1, lat1)
+
+		
+
+
+
+
+
+
+
 	def GetIndexFromLonLat(self, lon, lat):
 		line = int((self.lat_max - lat) / self.resolution)
 		col  = int((lon - self.lon_min) / self.resolution)
-
 		return line, col
+
 
 	def GetLonLatFromindex(self, l, c):
 		lon = self.longitudes[c]
@@ -157,12 +219,13 @@ class ElevationMap():
 
 			print(self.map.shape, tile_line, tile_line + nb_lat, tile_col, tile_col + nb_lon)
 
-			self.map[tile_line : tile_line + nb_lat, tile_col : tile_col + nb_lon] += tile
+			self.map[tile_line : tile_line + nb_lat, tile_col : tile_col + nb_lon] = tile
 
 
 	def PlotMap(self):
 		f = plt.figure()
 		plt.pcolormesh((self.longitudes - self.A_lon) * RT, (self.latitudes - self.A_lat) * RT, self.map)
+		plt.colorbar()
 		# plt.pcolormesh(np.flip(self.map, axis=0))
 		# plt.pcolormesh(np.flip(np.rot90(self.map, k=-1)))
 		plt.show()

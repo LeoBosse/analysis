@@ -17,11 +17,12 @@ RT = 6371 # #km
 class ObservationPoint:
 	"""This is the class of ONE observation point, about which we know the position of the observer (A_lon, A_lat), the direction of observation (elevation, azimuth), and the height of the observed point. It can then give us the position of the observed point H, the magnetic field at this position (from CHAOS-6) and the apparent angle of this magnetic field on our captor. """
 
-	def __init__(self, A_lon, A_lat, observed_altitude, azimuth, elevation, RD_src_azimut=None, RD_src_elevation=None, init_full = True):
+	def __init__(self, A_lon, A_lat, observed_altitude, azimuth, elevation, RD_src_azimut=None, RD_src_elevation=None, init_full = True, A_alt=0):
 		"""Initiating the class. The position of the observed point H is calculated automatically. Give everything in radians !"""
 		self.lon, self.lat = A_lon, A_lat
 		self.e, self.a = elevation, azimuth
 		self.h = observed_altitude
+		self.A_alt = A_alt
 
 		#Calculating the observed point position
 		self.OA = self.GetOA() #Earth center O to observer A
@@ -41,6 +42,21 @@ class ObservationPoint:
 		self.GetEta()
 		if self.RD_src_azimut is not None and self.RD_src_elevation is not None:
 			self.GetRayleighAngle(self.RD_src_azimut, self.RD_src_elevation)
+
+
+	def GetPCoordinatesFromRange(self, range):
+		"""Get lon, lat, alt from range. Range is the distance to the instrument along the line of sight in km.
+		alt is the absolute altitude (above see level)"""
+
+		AH_vect = (self.AH / self.AH_norm) * range
+		print(AH_vect)
+		lon, lat = self.GetPCoordinates(AH=AH_vect)
+
+		alt = self.A_alt + np.sin(self.e) * range
+
+		return lon, lat, alt
+
+
 
 	def GetRayleighAngle(self, source_azimut, source_elevation, unit="radians"): #obs_azimut, source_azimut, elevation, unit="radians"):
 		if unit == "radians":
@@ -83,9 +99,9 @@ class ObservationPoint:
 
 	def GetOA(self):
 		"""Return the vector OA in the reference frame of O. O:Centre of the Earth to A:observer"""
-		OA = RT * np.array([[	 m.cos(self.lat) * m.cos(self.lon)],
-							[	 m.cos(self.lat) * m.sin(self.lon)],
-							[	 m.sin(self.lat)]])
+		OA = (RT + self.A_alt) * np.array([[	 m.cos(self.lat) * m.cos(self.lon)],
+											[	 m.cos(self.lat) * m.sin(self.lon)],
+											[	 m.sin(self.lat)]])
 		return OA
 
 	def GetAH(self, **kwargs):
@@ -111,7 +127,7 @@ class ObservationPoint:
 		losO = np.dot(Rotation, los)
 
 		#Norm of AH. Distance between observer and observed aurora
-		AH_norm =  -RT * m.sin(e) + m.sqrt(RT**2 * m.sin(e)**2 + altitude**2 + 2 * altitude * RT)
+		AH_norm =  - (RT + self.A_alt) * m.sin(e) + m.sqrt(- m.cos(e)**2 * (RT + self.A_alt) ** 2 + (RT + altitude) ** 2)
 		AH = losO * AH_norm
 
 		return AH, AH_norm
@@ -130,11 +146,14 @@ class ObservationPoint:
 
 		return R_ao
 
-	def GetPCoordinates(self):
+	def GetPCoordinates(self, AH=None):
 		"""Return the coordinates of the observed point H (or P). The position of the observer and the vector OA and AH should be calculated before."""
 
+		if AH is None:
+			AH = self.AH
+
 		###OH: Vector from Earth's center to observed point in reference frame of Earth's center O
-		OH = self.OA + self.AH
+		OH = self.OA + AH
 		# OH_norm = np.sqrt(sum([x**2 for x in OH.flat]))
 
 		###Calculating longitude and latitude of P

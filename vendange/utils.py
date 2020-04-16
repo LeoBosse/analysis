@@ -371,20 +371,21 @@ def GetInstrumentName(file):
 
 
 
-
 def FindArgument(arg_string, arguments, default_value = "", getindex = 0):
 	try:
 		index = arguments.index(arg_string) + getindex
 		result = arguments[index]
-		del arguments[index]
-		if getindex == 1:
-			del arguments[index - getindex]
+		# print(arg_string, index, result)
+		# del arguments[index]
+		# if getindex == 1:
+		# 	del arguments[index - getindex]
 	except:
 		result = default_value
 
 	if   result == ("False" or "f"): result = False
-	elif result == ("True" or "t" or arg_string): result = True
+	elif result in ["True", "t", arg_string]: result = True
 
+	print(arg_string, result)
 	return result, arguments
 
 

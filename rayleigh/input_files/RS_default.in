@@ -6,10 +6,10 @@ saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for in
 
 # ###############################################################################
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
-azimuts 									 	0 								# In degrees, 0 is north, east is 90
+azimuts 									 	all 								# In degrees, 0 is north, east is 90
 elevations 									45 								#90 may have some bugs...
 
-location 										skibotn   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens
+location 										nyalesund   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens
 
 instrument_opening_angle 		1	  		# Angle de demi-ouverture de l'instrument en degré
 instrument_area 5 #Area of Petit Cru in cm^2
@@ -56,18 +56,18 @@ sky_file None
 
 alt_map_path /home/bossel/These/Analysis/data/elevation/
 alt_map_radius 100 #in km
-alt_map_N_bins_max 10000000
+alt_map_N_bins_max 1000000
 alt_map_resolution 0.1 # en km. Minimum 1arcsec (31m)
 
 # ###############################################################################
 ### Ground map parameters
 
-ground_emission_radius 10  # in km. Put 0 if you don't want the ground emission
-ground_N_bins_max 100000
+ground_emission_radius 0  # in km. Put 0 if you don't want the ground emission
+ground_N_bins_max 100
 
 ### Use a point source on ground instead of the satellite emission map
 
-point_src_I0 0 		#Point source intensity. If 0, do not use point source and use the satellite map instead
+point_src_I0 100 		#Point source intensity. If 0, do not use point source and use the satellite map instead
 point_src_az 180 			#Azimut of the point source
 point_src_dist 5	 	#distance of the point source in km
 

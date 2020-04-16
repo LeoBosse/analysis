@@ -44,7 +44,6 @@ class World:
 
 		self.Nb_a_pc, self.Nb_e_pc = len(self.a_pc_list), len(self.e_pc_list)
 
-
 		### Init the atmosphere object
 		self.atmosphere = Atmosphere(in_dict)
 
@@ -89,22 +88,36 @@ class World:
 		self.alt_map = ElevationMap(in_dict)
 		self.alt_map.PlotMap()
 
+		self.instrument_altitude = self.alt_map.GetAltitudeFromLonLat(self.ground_map.A_lon, self.ground_map.A_lat) / 1000.#In km
 
 
-	# def GetAltitude(self, min, max, step):
-	# 	N = max / min
-	# 	return np.linspace(min, max, N)
 
 	def SetObservation(self, a_pc, e_pc):
 
-		self.Nalt = int((self.atmosphere.h_r_max - self.atmosphere.h_r_min) / (self.atmosphere.d_los * np.sin(e_pc)))		# Number of bins along the line of sight between atmosphere.h_r_min and atmosphere.h_r_max of length atmosphere.d_los
-		if self.Nalt == 0:
-			sys.exit("ERROR: Nalt == 0")
+		#Create an observation object
+		self.obs = ObservationPoint(self.ground_map.A_lon, self.ground_map.A_lat, self.sky_map.h, a_pc, e_pc, A_alt = self.instrument_altitude) # Usefull observation object
 
-		self.dh = int((self.atmosphere.h_r_max - self.atmosphere.h_r_min) / self.Nalt) #Height of each bin
-		self.altitudes = np.linspace(self.atmosphere.h_r_min, self.atmosphere.h_r_max, self.Nalt) #List of all altitudes
+		#numbers of scattering point along the line of sight
+		los_length = self.atmosphere.h_r_max / np.sin(e_pc)
+		#array of range for each scattering points (distance along los from the instrument)
+		dlos_list = np.arange(self.atmosphere.d_los / 2,  los_length - self.atmosphere.d_los / 2, self.atmosphere.d_los)
 
-		self.obs = ObservationPoint(self.ground_map.A_lon, self.ground_map.A_lat, self.sky_map.h, a_pc, e_pc) # Usefull observation object
+		#array of lon, lat, alt (above sea level) for each scattering point
+		self.dlos_list = [self.obs.GetPCoordinatesFromRange(d) for d in dlos_list]
+
+		#list of absolute altitudes (above sea level) for each scattering point
+		self.altitudes = [d[2] for d in self.dlos_list]
+		# self.altitudes = [self.alt_map.GetAltitudeAboveGround(lon, lat, a) for lon, lat, a in dlos_list]
+		self.Nalt = len(self.altitudes)
+
+
+		# self.Nalt = int((self.atmosphere.h_r_max - self.atmosphere.h_r_min) / (self.atmosphere.d_los * np.sin(e_pc)))		# Number of bins along the line of sight between atmosphere.h_r_min and atmosphere.h_r_max of length atmosphere.d_los
+		# if self.Nalt == 0:
+		# 	sys.exit("ERROR: Nalt == 0")
+		#
+		# self.dh = int((self.atmosphere.h_r_max - self.atmosphere.h_r_min) / self.Nalt) #Height of each bin
+		# self.altitudes = np.linspace(self.atmosphere.h_r_min, self.atmosphere.h_r_max, self.Nalt) #List of all altitudes
+
 
 		self.v_pc_u = Getuen(a_pc, e_pc) # Vector of observation (line of sight) in UEN system
 
