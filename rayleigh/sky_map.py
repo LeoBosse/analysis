@@ -66,8 +66,8 @@ class SkyMap:
 		self.mid_azimuts = self.azimuts + self.da/2.
 		self.mid_elevations = self.elevations + self.de/2.
 
-		print("DEBUG SKYMAP: elevations", self.elevations*RtoD)
-		print("DEBUG SKYMAP: azimuts", self.azimuts*RtoD)
+		# print("DEBUG SKYMAP: elevations", self.elevations*RtoD)
+		# print("DEBUG SKYMAP: azimuts", self.azimuts*RtoD)
 
 		self.maps_shape = (len(self.elevations), len(self.azimuts))
 		# self.sky_I_map = np.zeros(self.maps_shape) # Intensity of the emission at point (e,a)
@@ -203,14 +203,14 @@ class SkyMap:
 	def GetPixFromAzEl(self, a, e):
 		return self.GetPixFromAz(a), self.GetPixFromEl(e)
 
-	def _GetPixelSolidAngleFromiEl(self, pix_ie):
+	def GetPixelSolidAngleFromiEl(self, pix_ie):
 		"""Returns the solid angle from an elevation index"""
 		return self.da * self.de * np.cos(self.mid_elevations[pix_ie])
 
 	def GetPixelSolidAngle(self, pix_e):
 		"""Returns the solid angle from a elevation in radian"""
 		ie = self.GetPixFromEl(pix_e)
-		return _GetPixelSolidAngleFromiEl(ie)
+		return GetPixelSolidAngleFromiEl(ie)
 
 
 	def GetFlux(self, az, el, r, t=0, area=1):
@@ -225,21 +225,23 @@ class SkyMap:
 		# ia_min, ia_max = min(ia_min, ia_max), max(ia_min, ia_max)
 		# ie_min, ie_max = min(ie_min, ie_max), max(ie_min, ie_max)
 
-		print(ia_min, ie_min, ia_max, ie_max)
+		# print(ia_min, ie_min, ia_max, ie_max)
 		if ia_max >= ia_min:
 			ia_list = np.arange(ia_min, ia_max + 1)
 		else:
 			ia_list = np.arange(ia_min, ia_max + self.Na + 1) % self.Na
 
 		ie_list = np.arange(ie_min, ie_max + 1)
-		print(ia_list, ie_list)
+		# print(ia_list, ie_list)
 
 		for ia in ia_list:
+			pix_da = min(self.azimuts[(ia + 1)%self.Na], az + r) - max(self.azimuts[ia], az - r)
 			for ie in ie_list:
-				print(self.cube[t, ie, ia], self._GetPixelSolidAngleFromiEl(ie), self.cube[t, ie, ia] * self._GetPixelSolidAngleFromiEl(ie))
-				b += self.cube[t, ie, ia] * self._GetPixelSolidAngleFromiEl(ie)
+				pix_de = min(self.elevations[(ie + 1)%self.Ne], el + r) - max(self.elevations[ie], el - r)
+				# print(self.cube[t, ie, ia], self._GetPixelSolidAngleFromiEl(ie), self.cube[t, ie, ia] * self._GetPixelSolidAngleFromiEl(ie))
+				b += self.cube[t, ie, ia] * pix_da * pix_de * np.cos(self.mid_elevations[ie])
 
 
-		print("DEBUG DIRECT:", b, area, b * area)
+		# print("DEBUG DIRECT:", b, area, b * area)
 
 		return b * area

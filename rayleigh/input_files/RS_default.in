@@ -6,7 +6,7 @@ saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for in
 
 # ###############################################################################
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
-azimuts 									 	0 								# In degrees, 0 is north, east is 90
+azimuts 									 	all 								# In degrees, 0 is north, east is 90
 elevations 									45 								#90 may have some bugs...
 
 location 										lagorge   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens
@@ -33,7 +33,7 @@ Atmospheric_profile atm_profiles/ngt.atm   #name of the atmospheric profile file
 # "[1, 2, 3...]_moving_EW_band",    east-west auroral band passing from north to south in the sky. (can be doubled or tripled)
 # "[1, 2, 3...]_band_eEE",          east-west auroral band at elevation EE. (can be doubled or tripled)
 # "spot_aAA_eEE" 										bright source at elevation EE and azimut AA
-sky_mode uniform_100
+sky_mode uniform_1
 
 emission_altitude	110			# Altitude of the emission in km. Put 0 if emission on ground
 
@@ -69,7 +69,7 @@ ground_N_bins_max 1000
 
 ### Use a point source on ground instead of the satellite emission map
 
-point_src_I0 00 		#Point source intensity. If 0, do not use point source and use the satellite map instead
+point_src_I0 100 		#Point source intensity. If 0, do not use point source and use the satellite map instead
 point_src_az 180 			#Azimut of the point source
 point_src_dist 5	 	#distance of the point source in km
 

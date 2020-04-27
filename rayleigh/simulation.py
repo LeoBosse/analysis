@@ -171,15 +171,15 @@ class Simulation:
 			ground_hst, b = np.histogram(self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :], density = False)
 			self.hst += ground_hst
 
-		print("DEBUG HST:", self.hst[0], self.hst[-1])
-		self.hst[-1] /= 2
-		self.hst[0] += self.hst[-1]
-		print("DEBUG HST:", self.hst[0], self.hst[-1])
+		# print("DEBUG HST:", self.hst[0], self.hst[-1])
+		# self.hst[-1] /= 2
+		# self.hst[0] += self.hst[-1]
+		# print("DEBUG HST:", self.hst[0], self.hst[-1])
 
 		# self.hst /= sum(self.hst)
 
 		###Simulate the instrument with a rotating polarizing filter to get V, Vcos, Vsin and then I, DoLP, AoLP
-		Ns = 100 * len(self.bins)
+		Ns = 1000 #5 * len(self.bins)
 		rs_signal = np.zeros(Ns) + 0.5 * self.InonPola
 		filter_orientation = np.linspace(0, 2 * np.pi, Ns, endpoint=False)
 		for i_f, f in enumerate(filter_orientation):
