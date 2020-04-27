@@ -58,8 +58,16 @@ class SkyMap:
 			self.Nt = 1
 		self.is_time_dependant = self.Nt > 1
 
-		self.azimuts = np.linspace(self.I_zone_a_min, self.I_zone_a_max, self.Na) # array of all azimuts
-		self.elevations = np.linspace(self.I_zone_e_min + self.de/2., self.I_zone_e_max - self.de/2., self.Ne-1) # array of all elevations
+		# self.azimuts = np.linspace(self.I_zone_a_min + self.da/2., self.I_zone_a_max + self.da/2, self.Na) # array of all azimuts
+		# self.elevations = np.linspace(self.I_zone_e_min + self.de/2., self.I_zone_e_max - self.de/2., self.Ne-1) # array of all elevations
+		self.azimuts = np.linspace(self.I_zone_a_min + self.da/2, self.I_zone_a_max + self.da/2, self.Na, endpoint=True) # array of all azimuts
+		self.elevations = np.linspace(self.I_zone_e_min, self.I_zone_e_max, self.Ne, endpoint=True) # array of all elevations
+
+		self.mid_azimuts = self.azimuts + self.da/2.
+		self.mid_elevations = self.elevations + self.de/2.
+
+		print("DEBUG SKYMAP: elevations", self.elevations*RtoD)
+		print("DEBUG SKYMAP: azimuts", self.azimuts*RtoD)
 
 		self.maps_shape = (len(self.elevations), len(self.azimuts))
 		# self.sky_I_map = np.zeros(self.maps_shape) # Intensity of the emission at point (e,a)
@@ -108,8 +116,6 @@ class SkyMap:
 		nb_rows, nb_cols = int(np.ceil(np.sqrt(self.Nt))), int(np.sqrt(self.Nt))
 		f, axs = plt.subplots(nb_rows, nb_cols)
 		c = 0
-
-
 
 		def MakeSubplot(ax, pos, nb_rows, nb_cols, ouv_pc):
 			ax = plt.subplot(nb_rows, nb_cols, pos+1, projection='polar')
@@ -173,7 +179,67 @@ class SkyMap:
 
 			for iel, el in enumerate(map):
 				for iaz, az in enumerate(el):
-					AH = InBand(self.azimuts[iaz], self.elevations[iel])
+					AH = InBand(self.mid_azimuts[iaz], self.mid_elevations[iel])
 					if AH:
 						map[iel][iaz] += band_I / AH ** 2
 		return map
+
+	def GetPixFromEl(self, pix_e):
+		"""Return the index of pixels containing a given elevation in radians."""
+		for ie, e in enumerate(self.elevations):
+			if pix_e < e:
+				pix_ie = (ie - 1)%self.Ne
+				return pix_ie
+
+	def GetPixFromAz(self, pix_a):
+		"""Return the index of pixels containing a given elevation in radians."""
+		if pix_a < 0:
+			pix_a += 360*DtoR
+		for ia, a in enumerate(self.azimuts):
+			if pix_a < a:
+				pix_ia = (ia - 1)%self.Na
+				return pix_ia
+
+	def GetPixFromAzEl(self, a, e):
+		return self.GetPixFromAz(a), self.GetPixFromEl(e)
+
+	def _GetPixelSolidAngleFromiEl(self, pix_ie):
+		"""Returns the solid angle from an elevation index"""
+		return self.da * self.de * np.cos(self.mid_elevations[pix_ie])
+
+	def GetPixelSolidAngle(self, pix_e):
+		"""Returns the solid angle from a elevation in radian"""
+		ie = self.GetPixFromEl(pix_e)
+		return _GetPixelSolidAngleFromiEl(ie)
+
+
+	def GetFlux(self, az, el, r, t=0, area=1):
+		"""Return the flux in nW for a given az, el and opening angle (all in radians).
+		The pixel units are in nW/sr/m2.
+		t is the time of the map
+		area is the area of the detector. Set to 1 by default."""
+		b = 0
+
+		ia_min, ie_min = self.GetPixFromAzEl(az - r, el - r)
+		ia_max, ie_max = self.GetPixFromAzEl(az + r, el + r)
+		# ia_min, ia_max = min(ia_min, ia_max), max(ia_min, ia_max)
+		# ie_min, ie_max = min(ie_min, ie_max), max(ie_min, ie_max)
+
+		print(ia_min, ie_min, ia_max, ie_max)
+		if ia_max >= ia_min:
+			ia_list = np.arange(ia_min, ia_max + 1)
+		else:
+			ia_list = np.arange(ia_min, ia_max + self.Na + 1) % self.Na
+
+		ie_list = np.arange(ie_min, ie_max + 1)
+		print(ia_list, ie_list)
+
+		for ia in ia_list:
+			for ie in ie_list:
+				print(self.cube[t, ie, ia], self._GetPixelSolidAngleFromiEl(ie), self.cube[t, ie, ia] * self._GetPixelSolidAngleFromiEl(ie))
+				b += self.cube[t, ie, ia] * self._GetPixelSolidAngleFromiEl(ie)
+
+
+		print("DEBUG DIRECT:", b, area, b * area)
+
+		return b * area

@@ -6,7 +6,7 @@ saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for in
 
 # ###############################################################################
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
-azimuts 									 	all 								# In degrees, 0 is north, east is 90
+azimuts 									 	0 								# In degrees, 0 is north, east is 90
 elevations 									45 								#90 may have some bugs...
 
 location 										lagorge   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens
@@ -33,7 +33,7 @@ Atmospheric_profile atm_profiles/ngt.atm   #name of the atmospheric profile file
 # "[1, 2, 3...]_moving_EW_band",    east-west auroral band passing from north to south in the sky. (can be doubled or tripled)
 # "[1, 2, 3...]_band_eEE",          east-west auroral band at elevation EE. (can be doubled or tripled)
 # "spot_aAA_eEE" 										bright source at elevation EE and azimut AA
-sky_mode None
+sky_mode uniform_100
 
 emission_altitude	110			# Altitude of the emission in km. Put 0 if emission on ground
 
@@ -54,6 +54,8 @@ sky_file None
 # ###############################################################################
 ### Altitude map parameters
 
+use_alt_map True
+
 alt_map_path /home/bossel/These/Analysis/data/elevation/
 alt_map_radius 100 #in km
 alt_map_N_bins_max 1000000
@@ -62,7 +64,7 @@ alt_map_resolution 0.1 # en km. Minimum 1arcsec (31m)
 # ###############################################################################
 ### Ground map parameters
 
-ground_emission_radius 40  # in km. Put 0 if you don't want the ground emission
+ground_emission_radius 0  # in km. Put 0 if you don't want the ground emission
 ground_N_bins_max 1000
 
 ### Use a point source on ground instead of the satellite emission map

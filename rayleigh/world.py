@@ -86,7 +86,7 @@ class World:
 
 		### Initialize the atlitude maps
 		self.alt_map = ElevationMap(in_dict)
-		self.alt_map.PlotMap()
+		# self.alt_map.PlotMap()
 
 		self.instrument_altitude = self.alt_map.GetAltitudeFromLonLat(self.ground_map.A_lon, self.ground_map.A_lat) / 1000.#In km
 
@@ -169,13 +169,16 @@ class World:
 		print(N, "bins to compute")
 		for ie, e in enumerate(self.sky_map.elevations):
 			for ia, a in enumerate(self.sky_map.azimuts):
-				if self.sky_map.cube[time, ie, ia] > 0:
+				if self.sky_map.cube[time, ie, ia] >= 0:
 					for ialt, alt in enumerate(self.altitudes): #for every altitude between minimum and maximum scattering altitude
 
-						I0, w_DoLP = self.ComputeSingleRSSkyPointSource(time, ia, a, ie, e, alt)
+						# sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
+						sca_from_E_is_visible = True
 
-						self.sky_map.total_scattering_map[time, ie_pc, ia_pc, ie, ia] += I0 # Intensity of light scattered from a given (e, a)
-						self.sky_map.scattering_map[time, ie_pc, ia_pc, ie, ia] += w_DoLP * I0 # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
+						if sca_from_E_is_visible:
+							I0, w_DoLP = self.ComputeSingleRSSkyPointSource(time, ia, a, ie, e, alt)
+							self.sky_map.total_scattering_map[time, ie_pc, ia_pc, ie, ia] += I0 # Intensity of light scattered from a given (e, a)
+							self.sky_map.scattering_map[time, ie_pc, ia_pc, ie, ia] += w_DoLP * I0 # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
 
 						count += 1
 						self.Progress(count, N, suffix="of sky point sources done")
@@ -183,6 +186,7 @@ class World:
 						# 	print("\t", 9 * (tm.time() - start_time), "seconds left...")
 						# elif count == N // 2:
 						# 	print("\t", (tm.time() - start_time), "seconds left...")
+
 
 					self.sky_map.DoLP_map = self.sky_map.scattering_map / self.sky_map.total_scattering_map # DoLP of a given (e, a)
 
@@ -215,7 +219,7 @@ class World:
 					a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
 					for sca_lon, sca_lat, sca_alt in self.dlos_list: #for every altitude between minimum and maximum scattering altitude
 
-						# sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
+						sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
 						sca_from_E_is_visible = True
 
 						if sca_from_E_is_visible:
@@ -225,11 +229,9 @@ class World:
 							self.ground_map.total_scattering_map[ie_pc, ia_pc, ilat, ilon] += I0 # Intensity of light scattered from a given (e, a)
 							self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
 
-						else:
-							I0, w_DoLP = 0, 0
-
 						count += 1
 						self.Progress(count, self.N, suffix="of ground point sources done")
+
 
 					self.ground_map.DoLP_map = self.ground_map.scattering_map / self.ground_map.total_scattering_map # DoLP of a given (e, a)
 
@@ -332,7 +334,6 @@ class World:
 
 		return AR, RE, ARE#, AER
 
-
 	def GetScattered(self, I0, AR, ER, RD_angle, alt, elevation = 0):
 		"""Given an initial intensity of a source and some geometrical parameter, returns the intensity mesured at the instrument and its DoLP.
 		Input parameters: elevation, altitude of scattering, scattering angle, distance between emission and scattering."""
@@ -367,16 +368,10 @@ class World:
 		# print("DEBUG DOLP:", w_DoLP * 100)
 		return I0, DoLP
 
-	def GetDirectIntensity(self):
-		"""BUGGED !!! Get the direct intensity going in the instrument whithout scattering. BUGGED"""
-		direct_intensity = 0
 
-		for ie, e in enumerate(self.sky_map.cube[time]):
-			# print("DIRECT LIGHT EL", self.sky_map.elevations[ie], self.ouv_pc,  self.e_pc)
-			if self.sky_map.elevations[ie] - self.ouv_pc < self.e_pc < self.sky_map.elevations[ie] + self.sky_map.de + self.ouv_pc:
-				for ia, I in enumerate(e):
-					# print("DIRECT LIGHT AZ", self.sky_map.azimuts[ia], self.a_pc)
-					if self.sky_map.azimuts[ia] - self.ouv_pc < self.a_pc < self.sky_map.azimuts[ia] + self.sky_map.da + self.ouv_pc:
-						# print("DIRECT LIGHT")
-						direct_intensity += I / self.obs.GetAH(azimut=self.a_pc, elevation=self.e_pc, altitude=self.sky_map.h)[1] ** 2
-		return direct_intensity
+	def GetDirect(self, t, ia, ie):
+		"""Returns direct intensity (flux in nW) coming in the instrument"""
+		a = self.a_pc_list[ia]
+		e = self.e_pc_list[ie]
+
+		return self.sky_map.GetFlux(a, e, self.ouv_pc, t = t, area = self.PTCU_area)

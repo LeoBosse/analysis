@@ -42,7 +42,7 @@ class Atmosphere:
 		self.profile_name = in_dict["Atmospheric_profile"] #name of the atmospheric profile file to use
 		self.LoadAllProfiles(self.profile_name)
 
-		self.MakePlots()
+		# self.MakePlots()
 		# plt.show()
 
 

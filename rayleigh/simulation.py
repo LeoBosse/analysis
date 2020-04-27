@@ -59,7 +59,8 @@ class Simulation:
 				for ia_pc in range(self.world.Nb_a_pc):
 					for ie_pc in range(self.world.Nb_e_pc):
 						self.ia_pc, self.ie_pc = ia_pc, ie_pc
-						self.a_pc, self.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
+						self.world.a_pc, self.world.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
+						self.a_pc, self.e_pc = self.world.a_pc, self.world.e_pc
 						self.time = t
 						self.SingleComputation()
 
@@ -68,7 +69,8 @@ class Simulation:
 			for ia_pc in range(self.world.Nb_a_pc):
 				for ie_pc in range(self.world.Nb_e_pc):
 					self.ia_pc, self.ie_pc = ia_pc, ie_pc
-					self.a_pc, self.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
+					self.world.a_pc, self.world.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
+					self.a_pc, self.e_pc = self.world.a_pc, self.world.e_pc
 					self.time = 0
 					self.SingleComputation()
 
@@ -78,7 +80,7 @@ class Simulation:
 	def SingleComputation(self):
 		"""Will compute and show what the instrument sees for one given I_map and one observation"""
 		self.ComputeMaps()
-		self.MakePlots()
+		# self.MakePlots()
 
 	def PrintSystematicResults(self):
 		print("t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), I0, DoLP (%), AoRD (°):")
@@ -94,8 +96,6 @@ class Simulation:
 		for t in range(self.world.sky_map.Nt):
 			for ie_pc in range(self.world.Nb_e_pc):
 				for ia_pc in range(self.world.Nb_a_pc):
-
-
 					self.GetLightParameters(ground = self.world.has_ground_emission, sky = self.world.has_sky_emission, time = t, ie_pc = ie_pc, ia_pc = ia_pc)
 					self.I_list[t, ie_pc, ia_pc] = self.I0
 					self.InonPola_list[t, ie_pc, ia_pc] = self.InonPola
@@ -142,16 +142,19 @@ class Simulation:
 		if ia_pc == None: ia_pc = self.ia_pc
 
 		if sky and ground: #If sky and ground exist
-			self.I0 = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten()) + np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
+			self.I_direct_list[time, ie_pc, ia_pc] = self.world.GetDirect(time, ia_pc, ie_pc)
+			self.I0  = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
+			self.I0 += np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
+			self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
 			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten()) - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
-			# self.I_direct_list[t, ie_pc, ia_pc] = self.world.GetDirectIntensity()
 		elif ground: #If sky doesn't exist
 			self.I0 = np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
 			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten())
 		elif sky:  #If ground doesn't exist
-			self.I0 = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
+			self.I_direct_list[time, ie_pc, ia_pc] = self.world.GetDirect(time, ia_pc, ie_pc)
+			self.I0  = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
+			self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
 			self.InonPola = self.I0 - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
-			# self.I_direct_list[t, ie_pc, ia_pc] = self.world.GetDirectIntensity()
 
 		###Compute the AoLP contribution histogram.
 		self.N_bins = 180
@@ -162,21 +165,30 @@ class Simulation:
 		self.hst = np.zeros(self.N_bins)
 
 		if sky:
-			sky_hst, b = np.histogram(self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :], density = True)
+			sky_hst, b = np.histogram(self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :], density = False)
 			self.hst += sky_hst
 		if ground:
 			ground_hst, b = np.histogram(self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :], density = False)
 			self.hst += ground_hst
 
+		print("DEBUG HST:", self.hst[0], self.hst[-1])
+		self.hst[-1] /= 2
+		self.hst[0] += self.hst[-1]
+		print("DEBUG HST:", self.hst[0], self.hst[-1])
+
 		# self.hst /= sum(self.hst)
 
 		###Simulate the instrument with a rotating polarizing filter to get V, Vcos, Vsin and then I, DoLP, AoLP
-		Ns = 2 * len(self.bins)
+		Ns = 100 * len(self.bins)
 		rs_signal = np.zeros(Ns) + 0.5 * self.InonPola
 		filter_orientation = np.linspace(0, 2 * np.pi, Ns, endpoint=False)
 		for i_f, f in enumerate(filter_orientation):
 			for ihist, hist in enumerate(self.hst):
 				rs_signal[i_f] += hist * np.cos(b[ihist] - f) ** 2
+
+		# plt.plot(filter_orientation, rs_signal)
+		# plt.plot(filter_orientation, [0.5 * self.InonPola]*Ns)
+		# plt.show()
 
 		self.V = np.average(rs_signal)
 		self.Vcos = np.average(rs_signal * np.cos(2 * filter_orientation))
@@ -201,8 +213,6 @@ class Simulation:
 		################################################################################
 		###	Polar plots of intensity
 
-
-
 		if self.save_individual_plots:
 			print("Making and saving plots...")
 		else:
@@ -213,7 +223,7 @@ class Simulation:
 		else:
 			self.MakeSkyMapPlots()
 
-		self.MakeAoLPHist(ground = self.is_ground_emission, sky = not self.is_ground_emission)
+		self.MakeAoLPHist(ground = self.is_ground_emission, sky = not self.is_ground_emission, double=True)
 
 		self.MakeAoLPMap()
 
@@ -302,7 +312,7 @@ class Simulation:
 			plt.savefig(self.path + self.save_name + '_groundmaps.png', bbox_inches='tight')
 
 
-	def MakeAoLPHist(self, ground = False, sky = False):
+	def MakeAoLPHist(self, ground = False, sky = False, double=True):
 		"""Make an pyplot histogram of all AoLP contributionsThe histogram is calculated in GetLightParameters()
 		Need a call to plt.show() after calling this function."""
 		f3, ax = plt.subplots(1, figsize=(16, 8))
@@ -310,16 +320,30 @@ class Simulation:
 		ax = plt.subplot(111, projection='polar')
 		ax.set_theta_zero_location("N")
 		ax.set_theta_direction(-1)
-		ax.set_thetamin(-90)
-		ax.set_thetamax(90)
+		if double:
+			ax.set_thetamin(-180)
+			ax.set_thetamax(180)
+		else:
+			ax.set_thetamin(-90)
+			ax.set_thetamax(90)
 
-		I0, DoLP, AoRD = self.GetLightParameters(ground=ground, sky=sky)
+		I0, DoLP, AoRD = self.I_list[0,0,0], self.DoLP_list[0,0,0], self.AoRD_list[0,0,0]
+		# I0, DoLP, AoRD = self.GetLightParameters(ground=ground, sky=sky)
 
-		bars = ax.bar(self.bins[:self.N_bins], self.hst, width=self.width)
+		if not double:
+			bins = self.bins[:self.N_bins]
+			h = self.hst
+		else:
+			bins = np.append(self.bins[:self.N_bins], 180*DtoR + self.bins[:self.N_bins])
+			h = np.append(self.hst, self.hst)
+		bars = ax.bar(bins, h, width=self.width)
 
 		ax.set_title("Weighted AoRD: I0 = " + str(np.format_float_scientific(I0, precision=3)) + " DoLP = " + str(np.round(DoLP, 1)) + " AoRD = " + str(np.round(AoRD*RtoD, 1)))
 
-		ax.plot([AoRD, AoRD], [0, max(self.hst)], "r")
+		if not double:
+			ax.plot([AoRD, AoRD], [0, max(self.hst)], "r")
+		else:
+			ax.plot([-AoRD, AoRD], [max(self.hst), max(self.hst)], "r")
 
 		if self.save_individual_plots:
 			plt.savefig(self.path + self.save_name + '_AoRD_hist.png', bbox_inches='tight')
@@ -383,8 +407,9 @@ class Simulation:
 
 		if not self.world.is_time_dependant:
 			if self.world.is_single_observation:
-				self.MakeAoLPHist(ground = self.world.has_ground_emission, sky = self.world.has_sky_emission)
-
+				# self.MakeAoLPHist(ground = self.world.has_ground_emission, sky = self.world.has_sky_emission)
+				self.MakePlots()
+				# pass
 			else:
 				f, axs = plt.subplots(3, sharex = True)
 				axs[0] = plt.subplot(311)
