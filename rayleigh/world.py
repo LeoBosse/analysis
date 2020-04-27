@@ -213,20 +213,23 @@ class World:
 			for ilon, lon in enumerate(self.ground_map.longitudes):
 				if self.ground_map.I_map[ilat, ilon] > 0:
 					a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
-					for ialt, alt in enumerate(self.altitudes): #for every altitude between minimum and maximum scattering altitude
+					for sca_lon, sca_lat, sca_alt in self.dlos_list: #for every altitude between minimum and maximum scattering altitude
 
-						I0, w_DoLP = self.ComputeSingleRSGroundPointSource(ilon, ilat, a_rd, e_rd, alt)
+						# sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
+						sca_from_E_is_visible = True
 
-						self.ground_map.total_scattering_map[ie_pc, ia_pc, ilat, ilon] += I0 # Intensity of light scattered from a given (e, a)
-						self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
+						if sca_from_E_is_visible:
+
+							I0, w_DoLP = self.ComputeSingleRSGroundPointSource(ilon, ilat, a_rd, e_rd, sca_alt)
+
+							self.ground_map.total_scattering_map[ie_pc, ia_pc, ilat, ilon] += I0 # Intensity of light scattered from a given (e, a)
+							self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
+
+						else:
+							I0, w_DoLP = 0, 0
 
 						count += 1
 						self.Progress(count, self.N, suffix="of ground point sources done")
-						# if count == self.N // 10:
-						# 	print("\t", 9 * (tm.time() - start_time), "seconds left...")
-						# elif count == self.N // 2:
-						# 	print("\t", (tm.time() - start_time), "seconds left...")
-
 
 					self.ground_map.DoLP_map = self.ground_map.scattering_map / self.ground_map.total_scattering_map # DoLP of a given (e, a)
 

@@ -106,10 +106,11 @@ class Mixer:
 				self.x_axis_ticks_label = ["N", "E", "S", "W"] *  bottle.nb_continue_rotation
 
 		else:
-			if bottle.all_times[-1] > time.timedelta(hours=2):
+			delta = bottle.all_times[-1] - bottle.all_times[0]
+			if delta > time.timedelta(hours=2):
 				self.divisor = 3600.
 				self.xlabel = "Time (hours)"
-			elif bottle.all_times[-1] > time.timedelta(minutes=2):
+			elif delta > time.timedelta(minutes=2):
 				self.divisor = 60.
 				self.xlabel = "Time (minutes)"
 			else:
@@ -118,7 +119,7 @@ class Mixer:
 			# self.x_axis_list 	   = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
 			norm =  bottle.all_times[0].total_seconds()
 			# self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
-			self.x_axis_list = np.array([t.total_seconds() for t in bottle.all_times]) / self.divisor
+			self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
 
 			if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_discrete_rotation":
 				self.xlabel = "Azimut (degrees)"
@@ -153,24 +154,39 @@ class Mixer:
 
 	def SetGraphParameter(self, bottle, comp = False):
 		self.marker_size = 3
-		self.single_star_size = self.marker_size*3
+		self.single_star_size = self.marker_size*5
+
+		self.show_allsky = True
+		self.show_eiscat = False
 
 		self.show_mag_data 	= False
 		self.show_AoBapp 	= True
 		self.show_AoRD	 	= True
 
-		self.show_LT = not comp
+		self.show_Ipola = False
+		self.show_Iref = False
+
+		self.show_time = not comp
+		self.time_format = "LT" #LT or UT
+
 
 		self.show_raw_data = False
 
 		self.show_error_bars 		= False
-		self.show_smooth_error_bars = False
+		self.show_smooth_error_bars = True
 		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
 
 		#If True Will show the azimut on the xaxis instead of time for rotations
-		self.xaxis_azimut = 1
+		self.xaxis_azimut = True
 
 		self.SetColors(bottle, comp=comp)
+
+		font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 24}
+		matplotlib.rc('font', **font)
+
+		# plt.tight_layout(pad=0, h_pad=None, w_pad=None, rect=None)
 
 
 	def SetColors(self, bottle, comp = False):
@@ -189,6 +205,8 @@ class Mixer:
 
 		self.EISCAT_color = "xkcd:mustard"
 		self.mag_color = "xkcd:mustard"
+
+		self.all_sky_color = "xkcd:orange"
 
 		### xkcd color guide: https://xkcd.com/color/rgb/
 		print("MIXER FILTER:", bottle.filters)
@@ -243,9 +261,17 @@ class Mixer:
 				l_all_I0 = self.ax1.errorbar(self.x_axis_list, bottle.all_I0, yerr = bottle.std_I0, fmt=".", ecolor=self.raw_error_bars_color, color = self.all_I0_color , linestyle = 'none', markersize=self.marker_size, label="Intensity", zorder=0, errorevery=self.error_step)
 
 		if not self.show_smooth_error_bars:
-			l_smooth_I0, = self.ax1.plot(self.x_axis_list, bottle.smooth_I0, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			# l_smooth_I0, = self.ax1.plot(self.x_axis_list, bottle.smooth_I0, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			y = bottle.smooth_I0
+			if self.show_Ipola:
+				y *= bottle.smooth_DoLP / 100.
+			l_smooth_I0, = self.ax1.plot(self.x_axis_list, y, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 		else:
-			l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, bottle.smooth_I0, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+			# l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, bottle.smooth_I0, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+			y = bottle.smooth_I0
+			if self.show_Ipola:
+				y *= bottle.smooth_DoLP / 100.
+			l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, y, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
 
 		if self.show_raw_data:
@@ -266,7 +292,7 @@ class Mixer:
 
 
 
-		if not bottle.NoVref and bottle.instrument_name == "carmen":
+		if not bottle.NoVref and bottle.instrument_name == "carmen" and self.show_Iref:
 			self.ax13 = self.ax1.twinx()
 			# ax13.set_xlim(ax1.get_xlim())
 			# xticks = plt.xticks()[0] * self.divisor
@@ -285,20 +311,20 @@ class Mixer:
 
 
 
-		# if self.allsky_data_available:
-		# 	self.ax14 = self.ax1.twinx()
-		# 	offset = 10
-		# 	# new_fixed_axis = self.ax14.get_grid_helper().new_fixed_axis
-		# 	# self.ax14.axis["right"] = new_fixed_axis(loc="right", axes=par2, offset=(offset, 0))
-		# 	#
-		# 	# self.ax14.axis["right"].toggle(all=True)
-		#
-		# 	l_ASI, = self.ax14.plot(self.allsky_data.GetNormTimes(bottle.DateTime(), self.divisor), self.allsky_data.brightness, "*", color = "orange", linestyle = 'none', markersize=self.marker_size, label="AllSKy Imager", zorder=2)
-		# 	self.ax1_lines.append([l_ASI, l_ASI.get_label()])
-		# 	print(self.ax14.get_yticklabels())
-		# 	# self.ax14.set_yticklabels([l.get_text() for l in self.ax14.get_yticklabels()], horizontalalignment = "left")
-		# 	# self.ax14.tick_params(direction='in', labelright=True, pad=-5)
-		# 	self.ax14.set_ylabel("ASI Brightness")
+		if self.allsky_data_available and self.show_allsky:
+			self.ax14 = self.ax1.twinx()
+			offset = 10
+			# new_fixed_axis = self.ax14.get_grid_helper().new_fixed_axis
+			# self.ax14.axis["right"] = new_fixed_axis(loc="right", axes=par2, offset=(offset, 0))
+			#
+			# self.ax14.axis["right"].toggle(all=True)
+
+			l_ASI, = self.ax14.plot(self.allsky_data.GetNormTimes(bottle.DateTime("start", format=self.time_format), self.divisor), self.allsky_data.brightness, "*", color = "orange", linestyle = 'none', markersize=self.marker_size, label="AllSKy Imager", zorder=2)
+			self.ax1_lines.append([l_ASI, l_ASI.get_label()])
+			print(self.ax14.get_yticklabels())
+			# self.ax14.set_yticklabels([l.get_text() for l in self.ax14.get_yticklabels()], horizontalalignment = "left")
+			# self.ax14.tick_params(direction='in', labelright=True, pad=-5)
+			self.ax14.set_ylabel("ASI Brightness")
 
 
 
@@ -321,13 +347,11 @@ class Mixer:
 		else:
 			(l_smooth_DoLP, _, _) = self.ax2.errorbar(self.x_axis_list, bottle.smooth_DoLP, yerr = bottle.std_smooth_DoLP, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
-		# self.ax2.set_ylim(bottom = 0)
+		self.ax2.set_ylim(bottom = 0)
 
 		if self.show_raw_data:
 			self.ax2_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
 		self.ax2_lines.append([l_smooth_DoLP, l_smooth_DoLP.get_label()])
-
-
 
 		if bottle.location.lower() == "skibotn" and bottle.filters == "br" and bottle.DateTime().date() == dt.date(2019, 3, 7):
 			self.ax2.set_ylim((0, 5))
@@ -352,7 +376,7 @@ class Mixer:
 			# self.ax21.set_ylabel("dB/dt (nT/s)")
 
 
-		if self.eiscat_data.valid:
+		if self.eiscat_data.valid and self.show_eiscat:
 			self.ax22 = self.ax1.twinx()
 
 			parameter = "N_e"
@@ -527,18 +551,19 @@ class Mixer:
 		if bottle.observation_type == "fixed":
 			plt.minorticks_on()
 
-		if self.show_LT:
+		if self.show_time:
 			self.ax12 = self.ax1.twiny()
 			self.ax12.set_xlim(self.ax1.get_xlim())
 			xticks = plt.xticks()[0] * self.divisor
-			xticks = [bottle.DateTime() + time.timedelta(seconds = t) for t in xticks]
+			xticks = [bottle.DateTime(format=self.time_format) + time.timedelta(seconds = t) for t in xticks]
 			# xticks = [bottle.DateTime() + time.timedelta(seconds = t) + bottle.head_jump for t in xticks]
 			self.ax12.set_xticklabels([st.strftime("%H:%M") for st in xticks])
-			self.ax12.set_xlabel("LT")
+			self.ax12.set_xlabel(self.time_format)
 
 		# self.ax1.legend(list(zip(*self.ax1_lines))[0], list(zip(*self.ax1_lines))[1])
 		# self.ax2.legend(list(zip(*self.ax2_lines))[0], list(zip(*self.ax2_lines))[1])
 		# self.ax3.legend(list(zip(*self.ax3_lines))[0], list(zip(*self.ax3_lines))[1], loc = "lower center")
+
 
 		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_graphs.png')
 		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:

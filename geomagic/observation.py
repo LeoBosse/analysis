@@ -14,6 +14,7 @@ DtoR = np.pi/ 180.
 RtoD = 180. / np.pi
 RT = 6371 # #km
 
+
 class ObservationPoint:
 	"""This is the class of ONE observation point, about which we know the position of the observer (A_lon, A_lat), the direction of observation (elevation, azimuth), and the height of the observed point. It can then give us the position of the observed point H, the magnetic field at this position (from CHAOS-6) and the apparent angle of this magnetic field on our captor. """
 
@@ -36,22 +37,6 @@ class ObservationPoint:
 		self.B_igrf=[0,0,0,0,0]
 		self.B_chaos=[0,0,0,0,0]
 
-	def InitFrom2Points(self, A_lon, A_lat, B_lon, B_lat, B_alt, RD_src_azimut=None, RD_src_elevation=None, init_full = True, A_alt=0):
-
-		OA = self.GetOA() #Earth center O to observer A
-		OB = self.GetOA(lon=B_lon, lat=B_lat, alt=B_alt) #Earth center O to observed point B
-
-		AB = OB - OA #in XYZ earth center
-		AB = np.dot(self.GetRotMatrixAO(A_lon, A_lat).transpose(), AB) #UEN
-		AB_norm = np.sqrt(AB[0]**2 + AB[1]**2 + AB[2]**2) * RT
-
-		elevation 	= np.arcsin(AB[0] / AB_norm)
-		azimuth		= np.arctan2(AB[1], AB[2])
-
-		return self.__init__(A_lon, A_lat, B_alt, azimuth, elevation, RD_src_azimut, RD_src_elevation, init_full, A_alt)
-
-
-
 	def SinglePointGeometry(self, GetBatP=True): #, A_lon, A_lat, h, a, e):
 		if GetBatP:
 			self.GetBatP()
@@ -65,7 +50,7 @@ class ObservationPoint:
 		alt is the absolute altitude (above see level)"""
 
 		AH_vect = (self.AH / self.AH_norm) * range
-		print(AH_vect)
+		# print(AH_vect)
 		lon, lat = self.GetPCoordinates(AH=AH_vect)
 
 		alt = self.A_alt + np.sin(self.e) * range
@@ -116,9 +101,9 @@ class ObservationPoint:
 	def GetOA(self, **kwargs):
 		"""Return the vector OA in the reference frame of O. O:Centre of the Earth to A:observer"""
 		if not kwargs:
-			lon = self.lon
-			lat = self.lat
-			alt = self.A_alt
+			lon, lat, alt = self.lon, self.lat, self.A_alt
+		else:
+			lon, lat, alt = kwargs["lon"], kwargs["lat"], kwargs["alt"]
 
 		OA = (RT + alt) * np.array([[	 m.cos(lat) * m.cos(lon)],
 									[	 m.cos(lat) * m.sin(lon)],
@@ -148,7 +133,9 @@ class ObservationPoint:
 		losO = np.dot(Rotation, los)
 
 		#Norm of AH. Distance between observer and observed aurora
-		AH_norm =  - (RT + self.A_alt) * m.sin(e) + m.sqrt(- m.cos(e)**2 * (RT + self.A_alt) ** 2 + (RT + altitude) ** 2)
+		# print(np.cos(e), RT + self.A_alt, - m.cos(e)**2 * (RT + self.A_alt)**2 + (RT + altitude) ** 2)
+
+		AH_norm =  - (RT + self.A_alt) * m.sin(e) + m.sqrt(abs(- m.cos(e)**2 * (RT + self.A_alt)**2 + (RT + altitude) ** 2))
 		AH = losO * AH_norm
 
 		return AH, AH_norm
@@ -332,3 +319,24 @@ class ObservationPoint:
 	def __repr__(self):
 		s = "Observation at point ({0}, {1}), azimuth {2}, elevation {3}. Observed point at altitude {4}, position ({5}, {6})".format(self.lon*RtoD, self.lat*RtoD, self.a*RtoD, self.e*RtoD, self.h, self.P_lon*RtoD, self.P_lat*RtoD)
 		return s
+
+class ObservationToPoint(ObservationPoint):
+	def __init__(self, A_lon, A_lat, B_lon, B_lat, B_alt, RD_src_azimut=None, RD_src_elevation=None, init_full = True, A_alt=0):
+
+		self.lon, self.lat = A_lon, A_lat
+		self.h = B_alt
+		self.A_alt = A_alt
+
+		OA = self.GetOA() #Earth center O to observer A
+		OB = self.GetOA(lon=B_lon, lat=B_lat, alt=B_alt) #Earth center O to observed point B
+
+		AB = OB - OA #in XYZ earth center
+		AB = np.dot(self.GetRotMatrixAO(A_lon, A_lat).transpose(), AB) #UEN
+		AB_norm = np.sqrt(AB[0]**2 + AB[1]**2 + AB[2]**2)
+
+		elevation 	= np.arcsin(AB[0] / AB_norm)
+		azimuth		= np.arctan2(AB[1], AB[2])
+
+		# print("ObservationToPoint: az, el:", azimuth*RtoD, elevation*RtoD)
+
+		ObservationPoint.__init__(self, A_lon, A_lat, B_alt, azimuth, elevation, RD_src_azimut, RD_src_elevation, init_full, A_alt)

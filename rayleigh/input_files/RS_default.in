@@ -9,7 +9,7 @@ saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for in
 azimuts 									 	all 								# In degrees, 0 is north, east is 90
 elevations 									45 								#90 may have some bugs...
 
-location 										nyalesund   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens
+location 										lagorge   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens
 
 instrument_opening_angle 		1	  		# Angle de demi-ouverture de l'instrument en degré
 instrument_area 5 #Area of Petit Cru in cm^2
@@ -23,7 +23,7 @@ RS_max_altitude	 						10 			# Maximum altitude of the scatering layer (maximum 
 resolution_along_los				0.1			# Distance between every RS points along the line of sight (in km)
 # Nb_points_along_los 			0			  # WARNING: Should not use! Use the resolution parameter instead! Number of bins along the line of sight between H_r_min and h_r_max
 
-Atmospheric_profile win.atm   #name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure)
+Atmospheric_profile atm_profiles/ngt.atm   #name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure).
 
 # ###############################################################################
 ### Sky map parameters
@@ -62,12 +62,12 @@ alt_map_resolution 0.1 # en km. Minimum 1arcsec (31m)
 # ###############################################################################
 ### Ground map parameters
 
-ground_emission_radius 0  # in km. Put 0 if you don't want the ground emission
-ground_N_bins_max 100
+ground_emission_radius 40  # in km. Put 0 if you don't want the ground emission
+ground_N_bins_max 1000
 
 ### Use a point source on ground instead of the satellite emission map
 
-point_src_I0 100 		#Point source intensity. If 0, do not use point source and use the satellite map instead
+point_src_I0 00 		#Point source intensity. If 0, do not use point source and use the satellite map instead
 point_src_az 180 			#Azimut of the point source
 point_src_dist 5	 	#distance of the point source in km
 

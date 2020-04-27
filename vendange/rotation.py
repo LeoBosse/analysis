@@ -297,10 +297,10 @@ class SPPRotation(Rotation):
 					self.I_total[i] = self.I_total[i-1]
 
 
-	def IsGood(self, Imin=1, Imax=10000, DoLPmin=0, DoLPmax=100):
+	def IsGood(self, Imin=0.1, Imax=10000, DoLPmin=0, DoLPmax=100):
 		"""Check if the rotat
 		ion is "good" like the Rotation class, but also check if the pola intensity is not 0 everywhere."""
-		good = Rotation.IsGood(self, Imin, DoLPmin, DoLPmax)
+		good = Rotation.IsGood(self, Imin, Imax, DoLPmin, DoLPmax)
 		if good:
 			if self.V == 0.:
 				good = False

@@ -30,7 +30,7 @@ print(arguments)
 
 show_plots, arguments 		= FindArgument("-s", arguments, default_value = True, getindex = 1)
 show_plots = bool(show_plots)
-mag_data_file, arguments 	= FindArgument("-m", arguments, default_value = True, getindex = 1)
+mag_data_file, arguments 	= FindArgument("-m", arguments, default_value = False, getindex = 1)
 mag_data_file = bool(mag_data_file)
 comp_bottle, arguments 	= FindArgument("-b", arguments, default_value = False, getindex = 1)
 
@@ -46,7 +46,7 @@ comp_bottles = []
 def GetNbLines(bottle_name):
 	"""Find the number of chanels of the instrument (the number of dataX.csv in the folder)"""
 	instrument_name = GetInstrumentName(bottle_name)
-	if instrument_name != "spp":
+	if instrument_name not in ["spp", "carmen", "ptcu"]:
 		try:
 			ls = [f for f in os.listdir("/home/bossel/These/Analysis/data/" + bottle_name) if "data" in f]
 		except:

@@ -87,6 +87,7 @@ class Simulation:
 				for ia_pc in range(self.world.Nb_a_pc):
 					print(t, self.world.a_pc_list[ia_pc]*RtoD, self.world.e_pc_list[ie_pc]*RtoD, self.world.ground_map.src_dist, self.world.atmosphere.d_los, self.world.atmosphere.h_r_min, self.world.atmosphere.h_r_max, self.world.wavelength, self.I_list[t, ie_pc, ia_pc], self.DoLP_list[t, ie_pc, ia_pc], self.AoRD_list[t, ie_pc, ia_pc] * RtoD, sep = "," )
 
+
 	def GetLightParametersList(self):
 		"""When the contributions of all maps for all times and all observations are done, compute the intensity, DoLP, AoLP lists.
 		the lists have the shape: (time, e_pc, a_pc)"""

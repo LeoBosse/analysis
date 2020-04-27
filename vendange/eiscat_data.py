@@ -24,13 +24,13 @@ class Eiscat:
 
 		self.data = []
 
-		self.start_datetime = bottle.DateTime()
-		self.end_datetime = bottle.DateTime("end")
+		self.start_datetime = bottle.DateTime(format="UT")
+		self.end_datetime = bottle.DateTime("end", format="UT")
 
 		self.folder = self.path
 		if self.start_datetime.year == 2020:
 			self.folder += "SP_FR_anadata/"
-		self.folder += bottle.DateTime().strftime("%Y-%m-%d")
+		self.folder += bottle.DateTime(format="UT").strftime("%Y-%m-%d")
 
 		if self.start_datetime.year == 2019:
 			self.folder += "_beata_10@uhfa/"
@@ -40,8 +40,8 @@ class Eiscat:
 		self.folders = [self.folder]
 		if self.start_datetime.day != self.end_datetime.day:
 			one_day = time.timedelta(days=1)
-			start_date = bottle.DateTime("start")
-			end_date = bottle.DateTime("end")
+			start_date = bottle.DateTime("start", format="UT")
+			end_date = bottle.DateTime("end", format="UT")
 			while start_date.day != end_date.day:
 				start_date += one_day
 				folder = self.path
@@ -68,7 +68,7 @@ class Eiscat:
 				print("No EISCAT data available.")
 			else:
 				print("EISCAT data exist! Number of points:", len(self.data))
-				print(bottle.DateTime().strftime("%Y-%m-%d"))
+				print(bottle.DateTime(format="UT").strftime("%Y-%m-%d"))
 
 
 	def GetDataFromFile(self, file_name):

@@ -35,3 +35,6 @@ DoLPmin 0 #All measurments with DoLP (%) below will be filtered out
 DoLPmax 100 ##All measurments with DoLP (%) above will be filtered out
 
 I_ref on #on or off. if off, the reference canal of carmen will not be displayed
+
+time_zone 1  #UT+X what is the time zone of the observation (UT+1 for France/Norway)?
+config_time_format UT  #UT or LT. What did you use for the instrument clock? LT is the Local Time of the clock

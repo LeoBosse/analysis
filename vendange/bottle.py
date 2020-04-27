@@ -73,6 +73,16 @@ class Bottle:
 		except:
 			print("WARNING: No observation angles info in the input file.")
 
+
+		try:
+			self.time_zone = int(self.input_parameters["time_zone"])
+			self.config_time_format = self.input_parameters["config_time_format"]
+		except:
+			self.time_zone = 0
+			self.config_time_format = "UT"
+		self.time_zone = dt.timedelta(hours = self.time_zone)
+
+
 		### See PTCUBottle or SPPBottle for specific instructions
 
 	def SetInfoFromDataFileName(self, f, data_f):
@@ -86,9 +96,9 @@ class Bottle:
 
 	def MiseEnBouteille(self):
 		### Loading the data from the files, then creating a list of Rotation objects depending on the instrument name specified. Can be 'spp', 'spp2014', 'fake_spp', 'ptcu', 'fake_ptcu'
-		self.SetJumps()
 		if not self.from_txt:
 			self.LoadData()
+			self.SetJumps()
 			if self.valid:
 				self.CleanRotations()
 
@@ -123,14 +133,28 @@ class Bottle:
 			self.jump_mode = "lenght"
 		#Until the bug at the begining of the observation is not fixed, delete head and tail after treatment. When fixed, we'll be able to do it before
 		if self.jump_unit in ("seconds", "minutes", "hours"):
-			self.head_jump = time.timedelta(0)
-			self.tail_jump = time.timedelta(0)
-		# elif self.jump_unit == "minutes":
-		# 	self.head_jump = 0
-		# 	self.tail_jump = 0
-		# elif self.jump_unit == "hours":
-		# 	self.head_jump = 0
-		# 	self.tail_jump = 0
+			self.head_jump = dt.timedelta(0)
+			self.tail_jump = dt.timedelta(0)
+
+
+		if self.jump_mode == "time": # and self.jump_unit in ["seconds", "minutes", "hours"]:
+			self.head_jump = dt.timedelta(seconds=float(self.input_parameters["head_jump"]))
+			self.tail_jump = dt.timedelta(seconds=float(self.input_parameters["tail_jump"]))
+			if self.jump_unit == "minutes":
+				self.head_jump = dt.timedelta(minutes=float(self.input_parameters["head_jump"]))
+				self.tail_jump = dt.timedelta(minutes=float(self.input_parameters["tail_jump"]))
+			elif self.jump_unit == "hours":
+				# print("DEBUG jumps", [r.time.total_seconds() for r in self.rotations[:10]])
+				# print(time.timedelta(hours=float(self.input_parameters["head_jump"])), time.timedelta(hours=float(self.input_parameters["tail_jump"])))
+				self.head_jump = dt.timedelta(hours=float(self.input_parameters["head_jump"]))
+				self.tail_jump = dt.timedelta(hours=float(self.input_parameters["tail_jump"]))
+
+			if self.jump_mode == "length" or self.tail_jump.seconds == 0.:
+				try:
+					self.tail_jump = self.all_times[-1] - self.tail_jump
+				except:
+					self.tail_jump = self.rotations[-1].time - self.tail_jump
+
 
 	def LoadData(self):
 		# Loading the data files
@@ -167,7 +191,8 @@ class Bottle:
 
 		# print("DEBUG TIME LISTS: ", self.time, self.head_jump, self.rotations[0].time)
 		# self.all_times = np.array([r.time - self.head_jump for r in self.rotations])
-		self.all_times = np.array([r.time for r in self.rotations])
+		norm = self.rotations[0].time
+		self.all_times = np.array([r.time - norm for r in self.rotations])
 		# self.all_times_since_start = np.array([r.time  for r in self.rotations])
 		# self.all_times_since_start = np.array([r.time - self.rotations[0].time for r in self.rotations])
 
@@ -186,6 +211,8 @@ class Bottle:
 		# self.AoLP_correction = float(self.input_parameters["AoLP_correction"])*DtoR
 		if self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
 			self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 90) * DtoR
+		elif self.instrument_name == "spp":
+			self.AoLP_correction = float(self.input_parameters["AoLP_correction"])*DtoR
 		else:
 			self.AoLP_correction = 0
 		print("AoLP correction:", self.AoLP_correction*RtoD)
@@ -256,7 +283,7 @@ class Bottle:
 	# 	self.all_AoLP = SetAngleBounds(self.all_AoLP, -np.pi/2, np.pi/2)
 
 	def SetSmoothLists(self):
-		print("Get Smooth Lists")
+		print("Set Smooth Lists")
 		### Smoothing procedure. Can smooth for a given number of rotations (smoothing_unit==rotations) or a  given time period (smoothing_unit==seconds).
 		self.smoothing_factor = int(self.input_parameters["smoothing_factor"]) #Average the data over smoothing_factor rotations
 		self.smoothing_unit = self.input_parameters["smoothing_unit"].lower()
@@ -583,46 +610,88 @@ class Bottle:
 		self.all_times = np.array([t + shift for t in self.all_times])
 
 
+	def DateTime(self, moment="start", delta=dt.timedelta(seconds=0), format="LT"):
+		norm = dt.timedelta(seconds=0)
+		if format == "LT" and self.config_time_format == "UT":
+			norm = self.time_zone
+		elif format == "UT" and self.config_time_format == "LT":
+			norm = - self.time_zone
+
+		if moment == "start": #Datetime of first good rotation
+			return self.all_times[0] + self.datetime + self.head_jump + delta + norm
+			# return self.rotations[0].time + self.datetime + self.head_jump + delta
+		elif moment == "end": #Datetime of last good rotation
+			return self.all_times[-1] + self.datetime + self.head_jump + delta + norm
+			# return self.rotations[-1].time + self.datetime + self.head_jump + delta
+		elif moment == "config": #Datetime written in the config file (== first bad rotation, before head_jump)
+			return self.datetime + delta + norm
+
+
 	def __add__(self, bottle_to_add):
 
-		print("Adding ")
+		print("Adding:")
 
+
+		norm = bottle_to_add.DateTime("config") - self.DateTime("config")
 		for ir, r in enumerate(bottle_to_add.rotations):
-			bottle_to_add.rotations[ir].time += self.rotations[-1].time
+			bottle_to_add.rotations[ir].time += norm
+			# bottle_to_add.rotations[ir].time += self.rotations[-1].time
 
-		print(len(self.rotations), len(bottle_to_add.rotations))
-		self.rotations = np.append(self.rotations, bottle_to_add.rotations)
+		if len(bottle_to_add.rotations) > 0:
 
-		print(len(self.rotations), len(bottle_to_add.rotations))
+			print(len(self.rotations), len(bottle_to_add.rotations))
+			self.rotations = np.append(self.rotations, bottle_to_add.rotations)
 
-		if not self.from_txt:
-			self.CleanRotations()
+			print(len(self.rotations), len(bottle_to_add.rotations))
 
-		### Now that we have all our rotations, creating lists of usefull data for easier smoothing
-			self.CreateLists()
-			self.GetSmoothLists()
+			self.tail_jump = self.rotations[-1].time
+			if not self.from_txt:
+				self.CleanRotations()
 
+			### Now that we have all our rotations, creating lists of usefull data for easier smoothing
+				self.CreateLists()
+				self.GetSmoothLists()
+
+		else:
+			bottle_to_add.all_times += bottle_to_add.DateTime("start") - self.DateTime("start")
+			# bottle_to_add.all_times += self.all_times[-1]
+
+			self.all_times = np.append(self.all_times, bottle_to_add.all_times)
+			self.nb_rot = len(self.all_times)
+
+			self.smooth_V    = np.append(self.smooth_V, bottle_to_add.smooth_V)
+			self.smooth_Vcos = np.append(self.smooth_Vcos, bottle_to_add.smooth_Vcos)
+			self.smooth_Vsin = np.append(self.smooth_Vsin, bottle_to_add.smooth_Vsin)
+
+			self.nb_smooth_rot = len(self.smooth_V)
+
+			### Calculate the smooth I0, DoLP and AoLP
+			self.smooth_I0 = np.append(self.smooth_I0, bottle_to_add.smooth_I0)
+			self.smooth_DoLP = np.append(self.smooth_DoLP, bottle_to_add.smooth_DoLP)
+			self.smooth_AoLP = np.append(self.smooth_AoLP, bottle_to_add.smooth_AoLP)
+
+			self.all_V =  np.append(self.all_V, bottle_to_add.all_V)
+			self.all_Vcos =  np.append(self.all_Vcos, bottle_to_add.all_Vcos)
+			self.all_Vsin =  np.append(self.all_Vsin, bottle_to_add.all_Vsin)
+			self.all_I0 =  np.append(self.all_I0, bottle_to_add.all_I0)
+			self.all_DoLP =  np.append(self.all_DoLP, bottle_to_add.all_DoLP)
+			self.all_AoLP =  np.append(self.all_AoLP, bottle_to_add.all_AoLP)
+
+			self.std_I0 			= np.append(self.std_I0, bottle_to_add.std_I0)
+			self.std_smooth_I0 		= np.append(self.std_smooth_I0, bottle_to_add.std_smooth_I0)
+
+			self.std_DoLP 			= np.append(self.std_DoLP, bottle_to_add.std_DoLP)
+			self.std_smooth_DoLP 	= np.append(self.std_smooth_DoLP, bottle_to_add.std_smooth_DoLP)
+
+			self.std_AoLP 			= np.append(self.std_AoLP, bottle_to_add.std_AoLP)
+			self.std_smooth_AoLP 	= np.append(self.std_smooth_AoLP, bottle_to_add.std_smooth_AoLP)
+
+			self.tail_jump = self.all_times[-1]
+
+		self.graph_angle_shift = max(self.graph_angle_shift, bottle_to_add.graph_angle_shift)
 		self.Geometry()
 
-		# np.append(self.all_V, bottle_to_add.all_V)
-		# np.append(self.all_Vcos, bottle_to_add.all_Vcos)
-		# np.append(self.all_Vsin, bottle_to_add.all_Vsin)
-		# np.append(self.all_I0, bottle_to_add.all_I0)
-		# np.append(self.all_DoLP, bottle_to_add.all_DoLP)
-		# np.append(self.all_AoLP, bottle_to_add.all_AoLP)
-		#
-		# np.append(self.all_times, bottle_to_add.all_times)
-		#
-		# self.saving_name += bottle_to_add.saving_name
-		#
-		# if self.NoVref or bottle_to_add.NoVref:
-		# 	self.NoVref = True
-		#
-		# self.GetSmoothLists()
-		# self.Geometry(to_initiate=False)
-
 		return self
-
 
 
 #####################################################################################
@@ -722,18 +791,24 @@ class PTCUBottle(Bottle):
 		# self.time = self.datetime.timestamp()
 
 
-	def DateTime(self, moment="start", delta=None):
-		if not delta:
-			delta = dt.timedelta(seconds=0)
-
-		if moment == "start": #Datetime of first good rotation
-			return self.all_times[0] + self.datetime + self.head_jump + delta
-			# return self.rotations[0].time + self.datetime + self.head_jump + delta
-		elif moment == "end": #Datetime of last good rotation
-			return self.all_times[-1] + self.datetime + self.head_jump + delta
-			# return self.rotations[-1].time + self.datetime + self.head_jump + delta
-		elif moment == "config": #Datetime written in the config file (== first bad rotation, before head_jump)
-			return self.datetime + delta
+	# def DateTime(self, moment="start", delta=None, format="LT"):
+	# 	if not delta:
+	# 		delta = dt.timedelta(seconds=0)
+	#
+	# 	norm = dt.timedelta(seconds=0)
+	# 	if format == "LT" and self.config_time_format == "UT":
+	# 		norm = self.time_zone
+	# 	elif format == "UT" and self.config_time_format == "LT":
+	# 		norm = - self.time_zone
+	#
+	# 	if moment == "start": #Datetime of first good rotation
+	# 		return self.all_times[0] + self.datetime + self.head_jump + delta + norm
+	# 		# return self.rotations[0].time + self.datetime + self.head_jump + delta
+	# 	elif moment == "end": #Datetime of last good rotation
+	# 		return self.all_times[-1] + self.datetime + self.head_jump + delta + norm
+	# 		# return self.rotations[-1].time + self.datetime + self.head_jump + delta
+	# 	elif moment == "config": #Datetime written in the config file (== first bad rotation, before head_jump)
+	# 		return self.datetime + delta + norm
 
 	def CleanRotations(self):
 		self.nb_rot = len(self.rotations)
@@ -749,34 +824,34 @@ class PTCUBottle(Bottle):
 				self.rotations[i].time += dt.timedelta(day=1)
 
 		### Get and set the head and tail jumps
-		if self.jump_mode == "time": # and self.jump_unit in ["seconds", "minutes", "hours"]:
-			self.head_jump = time.timedelta(seconds=float(self.input_parameters["head_jump"]))
-			self.tail_jump = time.timedelta(seconds=float(self.input_parameters["tail_jump"]))
-
-			if self.jump_unit == "minutes":
-				self.head_jump = time.timedelta(minutes=float(self.input_parameters["head_jump"]))
-				self.tail_jump = time.timedelta(minutes=float(self.input_parameters["tail_jump"]))
-			elif self.jump_unit == "hours":
-				print("DEBUG jumps", [r.time.total_seconds() for r in self.rotations[:10]])
-				print(time.timedelta(hours=float(self.input_parameters["head_jump"])), time.timedelta(hours=float(self.input_parameters["tail_jump"])))
-				self.head_jump = time.timedelta(hours=float(self.input_parameters["head_jump"]))
-				self.tail_jump = time.timedelta(hours=float(self.input_parameters["tail_jump"]))
-
-			if self.jump_mode == "length" or self.tail_jump.seconds == 0.:
-				self.tail_jump = self.rotations[-1].time - self.tail_jump
+		# if self.jump_mode == "time": # and self.jump_unit in ["seconds", "minutes", "hours"]:
+		# 	self.head_jump = time.timedelta(seconds=float(self.input_parameters["head_jump"]))
+		# 	self.tail_jump = time.timedelta(seconds=float(self.input_parameters["tail_jump"]))
+		#
+		# 	if self.jump_unit == "minutes":
+		# 		self.head_jump = time.timedelta(minutes=float(self.input_parameters["head_jump"]))
+		# 		self.tail_jump = time.timedelta(minutes=float(self.input_parameters["tail_jump"]))
+		# 	elif self.jump_unit == "hours":
+		# 		print("DEBUG jumps", [r.time.total_seconds() for r in self.rotations[:10]])
+		# 		print(time.timedelta(hours=float(self.input_parameters["head_jump"])), time.timedelta(hours=float(self.input_parameters["tail_jump"])))
+		# 		self.head_jump = time.timedelta(hours=float(self.input_parameters["head_jump"]))
+		# 		self.tail_jump = time.timedelta(hours=float(self.input_parameters["tail_jump"]))
+		#
+		# 	if self.jump_mode == "length" or self.tail_jump.seconds == 0.:
+		# 		self.tail_jump = self.rotations[-1].time - self.tail_jump
 
 			### Delete all rotations before the head and after the tail jump
-			self.rotations = [r for r in self.rotations if self.head_jump <= r.time < self.tail_jump]
-			print(len(self.rotations), "good rotations in", self.nb_rot, ";", self.nb_rot - len(self.rotations), "deleted because of time jumps.")
-			self.nb_rot = len(self.rotations)
+		self.rotations = [r for r in self.rotations if self.head_jump <= r.time < self.tail_jump]
+		print(len(self.rotations), "good rotations in", self.nb_rot, ";", self.nb_rot - len(self.rotations), "deleted because of time jumps.")
+		self.nb_rot = len(self.rotations)
 
-			print(self.head_jump, self.tail_jump, self.rotations[0].time, self.rotations[-1].time)
+		print(self.head_jump, self.tail_jump, self.rotations[0].time, self.rotations[-1].time)
 
 
-			### Put every rotation time in sec since first rotation (after deleting head_jump)
-			norm = self.rotations[0].time
-			for i in range(len(self.rotations)):
-				self.rotations[i].time -= norm
+		### Put every rotation time in sec since first rotation (after deleting head_jump)
+		norm = self.rotations[0].time
+		for i in range(len(self.rotations)):
+			self.rotations[i].time -= norm
 
 		self.rotations = [r for r in self.rotations if r.IsGood(Imin=self.Imin, Imax=self.Imax, DoLPmin=self.DoLPmin, DoLPmax=self.DoLPmax)]
 		print(len(self.rotations), "good rotations in", self.nb_rot, ";", self.nb_rot - len(self.rotations), "deleted because of invalid data.")
@@ -786,7 +861,7 @@ class PTCUBottle(Bottle):
 		times = [t.total_seconds() * 1000 for t in self.GetTimeFromDateTime(self.DateTime(moment="config"))]
 		print("Saving as .txt in", self.data_file_name + "/" + self.saving_name + '_results.txt')
 
-		np.savetxt(self.data_file_name + "/" + self.saving_name + '_results.txt', np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP]).transpose(), delimiter = "\t", header = "time(ms)\tV\tVcos\tVsin\tI0(mV)\tDoLP(percent)\tAoLP(deg)\tSV\tSVcos\tSVsin\tSI0(mV)\tSDoLP(percent)\tSAoLP(deg)")
+		np.savetxt(self.data_file_name + "/" + self.saving_name + '_results.txt', np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_I0, self.std_DoLP, self.std_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose(), delimiter = "\t", header = "time\tV\tVcos\tVsin\tI0\tDoLP\tAoLP\tSV\tSVcos\tSVsin\tSI0\tSDoLP\tSAoLP\terrI0\terrDoLP\terrAoLP\terrSI0\terrSDoLP\terrSAoLP")
 
 
 	def LoadPTCUData(self):
@@ -862,46 +937,57 @@ class PTCUBottle(Bottle):
 
 		data = pd.read_csv(file_name, delimiter="\t")
 		data.columns = [c.replace("#", "").replace("(", "").replace(")", "").strip() for c in data.columns]
+		print(data.columns)
 		time_name = data.columns[0]
+
 
 		self.all_times = np.array([dt.timedelta(milliseconds=t) for t in data[time_name]])
 		self.nb_rot = len(self.all_times)
 
-		self.smooth_V    = np.array(data["SV"])
-		self.smooth_Vcos = np.array(data["SVcos"])
-		self.smooth_Vsin = np.array(data["SVsin"])
+		self.SetJumps()
+
+		self.smooth_V    = np.array([d for d, t in zip(data["SV"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.smooth_Vcos = np.array([d for d, t in zip(data["SVcos"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.smooth_Vsin = np.array([d for d, t in zip(data["SVsin"], self.all_times) if self.head_jump <= t < self.tail_jump])
 
 		self.nb_smooth_rot = len(self.smooth_V)
 
 		### Calculate the smooth I0, DoLP and AoLP
-		self.smooth_I0 = np.array(data["SI0mV"])
-		self.smooth_DoLP = np.array(data["SDoLPpercent"])
-		self.smooth_AoLP = np.array(data["SAoLPdeg"])
+		self.smooth_I0 = np.array([d for d, t in zip(data["SI0"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.smooth_DoLP = np.array([d for d, t in zip(data["SDoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.smooth_AoLP = np.array([d for d, t in zip(data["SAoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
 
-		if len(data.columns) > 7:
-			self.all_V =  np.array(data["V"])
-			self.all_Vcos =  np.array(data["Vcos"])
-			self.all_Vsin =  np.array(data["Vsin"])
-			self.all_I0 =  np.array(data["I0mV"])
-			self.all_DoLP =  np.array(data["DoLPpercent"])
-			self.all_AoLP =  np.array(data["AoLPdeg"])
-		else:
-			self.all_V = np.empty(self.nb_rot)
-			self.all_Vcos = np.empty(self.nb_rot)
-			self.all_Vsin = np.empty(self.nb_rot)
-			self.all_I0 = np.empty(self.nb_rot)
-			self.all_DoLP = np.empty(self.nb_rot)
-			self.all_AoLP = np.empty(self.nb_rot)
+		self.all_V =  np.array([d for d, t in zip(data["V"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_Vcos =  np.array([d for d, t in zip(data["Vcos"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_Vsin =  np.array([d for d, t in zip(data["Vsin"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_I0 =  np.array([d for d, t in zip(data["I0"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_DoLP =  np.array([d for d, t in zip(data["DoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_AoLP =  np.array([d for d, t in zip(data["AoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		self.std_I0 			= np.array([d for d, t in zip(data["errI0"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.std_smooth_I0 		= np.array([d for d, t in zip(data["errSI0"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		self.std_DoLP 			= np.array([d for d, t in zip(data["errDoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.std_smooth_DoLP 	= np.array([d for d, t in zip(data["errSDoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		self.std_AoLP 			= np.array([d for d, t in zip(data["errAoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.std_smooth_AoLP 	= np.array([d for d, t in zip(data["errSAoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		norm = self.head_jump
+		self.all_times = np.array([t - norm for t in self.all_times if self.head_jump <= t < self.tail_jump])
+
 
 		self.valid = True
 		_, self.config = self.LoadPTCUData()
+
+
 		self.SetTimes()
 		self.SetSmoothLists()
 
 		self.SetTimeFromDateTime(self.DateTime(moment="start"))
 
 		self.graph_angle_shift = 0
-		for a in  self.smooth_AoLP:
+		for a in self.smooth_AoLP:
 			if a > np.pi/2.:
 				self.graph_angle_shift = 1
 				break
@@ -909,8 +995,8 @@ class PTCUBottle(Bottle):
 				break
 
 		if self.instrument_name in ["corbel", "gdcu"]:
-			self.all_AoLP 		-= 90 * DtoR
-			self.smooth_AoLP 	-= 90 * DtoR
+			self.all_AoLP 		-= 40 * DtoR
+			self.smooth_AoLP 	-= 40 * DtoR
 
 
 
@@ -973,14 +1059,14 @@ class SPPBottle(Bottle):
 	def LoadData(self):
 		# Loading the data files
 		if self.instrument_name[:3] == "spp":
-			self.raw_data = LoadSPPData(self.data_file_name)
+			self.raw_data = self.LoadSPPData(self.data_file_name)
 			# if self.jump_mode == "length" or self.tail_jump.seconds == 0:
 			# 	self.tail_jump = len(self.raw_data) - self.tail_jump.seconds
 			for r in self.raw_data[:]:
 				self.rotations.append(SPPRotation(r, instrument = self.instrument_name))
 
 		elif self.instrument_name == "fake_spp":
-			self.raw_data = LoadSPPTestData(1000, 100, 0.01, 45*RtoD)
+			self.raw_data = self.LoadSPPTestData(1000, 100, 0.01, 45*RtoD)
 			# if self.jump_mode == "length" or self.tail_jump.seconds == 0:
 			# 	self.tail_jump = len(self.raw_data) - self.tail_jump.seconds
 			for r in self.raw_data[:]:
@@ -988,11 +1074,11 @@ class SPPBottle(Bottle):
 
 		Bottle.LoadData(self)
 
-	def DateTime(self, moment="start"):
-		if moment == "start":
-			return self.rotations[0].datetime
-		if moment == "end":
-			return self.rotations[-1].datetime
+	# def DateTime(self, moment="start"):
+	# 	if moment == "start":
+	# 		return self.rotations[0].datetime
+	# 	if moment == "end":
+	# 		return self.rotations[-1].datetime
 
 
 	def SetTimes(self):
@@ -1027,24 +1113,88 @@ class SPPBottle(Bottle):
 				self.tail_jump = self.rotations[-1].time - self.tail_jump
 
 			print(self.head_jump, self.tail_jump, self.rotations[0].time, self.rotations[-1].time)
-			print(Rotation.nb_bad_rot, "bad rotations in", self.nb_rot)
+			print("Nb rotations before cleaning:", self.nb_rot)
 
 			self.rotations = [r for r in self.rotations if self.head_jump <= r.time < self.tail_jump]
-			self.nb_rot = len(self.rotations)
 
-			print(Rotation.nb_bad_rot, "bad rotations in", self.nb_rot)
+			print(self.nb_rot - len(self.rotations), "bad rotations in", self.nb_rot)
+			self.nb_rot = len(self.rotations)
+			print(self.nb_rot, "good rotations left after jump cuts.")
+
 			print(self.head_jump, self.tail_jump, self.rotations[0].time, self.rotations[-1].time)
 
 
-		print(Rotation.nb_bad_rot, "bad rotations in", self.nb_rot)
-
 		self.rotations = [r for r in self.rotations if r.IsGood(Imin=self.Imin, Imax=self.Imax, DoLPmin=self.DoLPmin, DoLPmax=self.DoLPmax)]
-		self.nb_rot = len(self.rotations)
+		print(self.Imin, self.Imax, self.DoLPmin, self.DoLPmax)
 
-		print(Rotation.nb_bad_rot, "bad rotations in", self.nb_rot)
+
+		print(self.nb_rot - len(self.rotations), "bad rotations in", self.nb_rot)
+		self.nb_rot = len(self.rotations)
+		print(self.nb_rot, "good rotations left after good rot cuts.")
 
 
 	def SaveTXT(self):
 		print("Saving as .txt in", self.data_file_name + "/" + self.saving_name + '_results.txt')
 		times = [t.total_seconds() for t in self.all_times]
 		np.savetxt("/".join(self.data_file_name.split("/")[:-1]) + "/" + self.saving_name + '_results.txt', 				   np.array([times, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP]).transpose(), delimiter = "\t", header = "time (ms)\tV\tVcos\tVsin\tI0 (mV)\tDoLP (percent)\tAoLP (deg)")
+
+
+	def LoadSPPData(self, file_names):
+		"""Return a data array from a given data file (1 or more). Each line is a rotation, each being a list of data as written below."""
+		# 0-5: 		year, month, day, hour, min, sec
+		# 6-9: 		voltage, positive voltage, negative voltage, motor voltage
+		# 10-11: 	Temperature of base, of filter
+		# 12-13:	elevation, azimuth (geog coord)
+		# 14-93:	angle of polariser (degrees)
+		# 94-173:	canal pola
+		# 174-253:	canal total
+		# 254-259:	V, Vcos, Vsin, I0, DoLP, AoLP
+		nb_data_per_rot  = 254
+		# raw_data = np.array([])
+		# data_path = "/home/bossel/These/Analysis/data/spp/"
+		#Loading the data from a binary file.
+		#Output is one big 1-D array of length nb_data_tot = nb_rot * nb_data_per_rot
+		# for f in file_names:
+		# 	f = data_path + f + ".spp"
+		# 	raw_data = np.fromfile(f, dtype = np.int16)
+		# 	# raw_data = np.concatenate((raw_data, np.fromfile(f, dtype=np.int16)), axis=0)
+		f = file_names + ".spp"
+		raw_data = np.fromfile(f, dtype = np.int16)
+		# raw_data = np.concatenate((raw_data, np.fromfile(f, dtype=np.int16)), axis=0)
+		nb_data_tot = len(raw_data)
+		print("nb_data_tot", nb_data_tot)
+
+		# print(raw_data[1001 * 254 : 1002 * 254])
+		#reshape the array to be (nb_pts, nb_data per pts)
+		return raw_data.reshape(int(nb_data_tot / nb_data_per_rot), nb_data_per_rot)
+
+
+	def LoadSPPTestData(self, nb_rot = 100, I0=100, D=0.1, phi=0, file_name = ''):
+		"""Return a test data array with the time, angle and fake voltage mesured every point as SPP would. The fake signal is a function of the form A*cos(theta-phi)+B where theta is the angle of the polariser and phi the angle of the polarisation"""
+
+		#I0:  Intensity of the incoming light of the aurora (constant through time) arbitrary units
+		#D:  Degree of polarized light (%)
+		#phi:  Angle of the polarisation with respect to SPP (degrees)
+
+		### Do not take into account the fact taht theta-phi cannot be > 90, because it would only change a sign, but it is squared in the end. So no difference. But I keep the ITheo function in case.
+		# I = lambda theta, I0, D, phi: D * I0 * np.cos((theta - phi)*DtoR)**2 + (1-D) * I0 / 2 + D/5*np.random.normal(0, 1, theta.shape)
+		I = lambda theta, I0, D, phi: I0 + np.random.normal(0, I0 * D, theta.shape)
+
+		data = np.zeros((nb_rot, 254))
+		da = 360./80
+		angles = np.linspace(da, 360., 80) * DtoR
+		dolps = np.linspace(0, 1., nb_rot)
+		phis = np.linspace(-90, 90, nb_rot)
+		for i in range(nb_rot):
+			data[i][5] = i
+			data[i][14:94] = angles
+			data[i][94:174] = I(angles, I0, D, phi)
+	#		data[i][94:174] = I(angles, I0, D, phis[i])
+			#data[i][94:174] = I(angles, I0, D, i*360/nb_rot)
+			#data[i][94:174] = I(angles, I0, dolps[i], phi)
+			data[i][174:254] = [I0]*80
+
+			data[i][92:94] = [0,0]
+			data[i][172:174] = [0,0]
+			data[i][252:254] = [0,0]
+		return data

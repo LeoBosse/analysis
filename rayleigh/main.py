@@ -42,13 +42,13 @@ def RunSimulation(file_name = "", show = True):
 	simu.MakeSummaryPlot()
 
 
-	old = sys.stdout
-	f = open("log/systematic_results.csv", "a")
-	sys.stdout = f
+	# old = sys.stdout
+	# f = open("log/systematic_results.csv", "a")
+	# sys.stdout = f
 
 	simu.PrintSystematicResults()
 
-	sys.stdout = old
+	# sys.stdout = old
 
 	print("ALL TIME SINCE START:", tm.time() - all_time_start)
 

@@ -45,8 +45,9 @@ class AllSkyData:
 		self.elevation = bottle.elevation * RtoD
 		self.deg_delta = 1
 
-		self.start = bottle.DateTime("start") + dtm.timedelta(hours=0)
-		self.end   = bottle.DateTime("end") + dtm.timedelta(hours=0)
+		self.start = bottle.DateTime("start", format="UT")
+		self.end   = bottle.DateTime("end", format="UT")
+		print("DEBUG ALL SKY:", self.start, self.end)
 		self.main_datetimes = []
 		self.all_datetimes = []
 
@@ -82,7 +83,10 @@ class AllSkyData:
 		file += str(datetime.year) + "/"
 		file += datetime.strftime("%Y%m%d") + "/"
 		file += "ut"
-		file += str(datetime.hour) + "/"
+		h = str(datetime.hour)
+		if len(h) == 1:
+			h = "0" + h
+		file += h + "/"
 
 		return file
 
@@ -128,7 +132,7 @@ class AllSkyData:
 			for j, col in enumerate(lign):
 				pix_azimut    = calibration["gazms"][i][j]
 				pix_elevation = calibration["elevs"][i][j]
-				if pix_azimut - self.deg_delta <= self.azimut < pix_azimut + self.deg_delta and pix_elevation - self.deg_delta <= self.elevation < pix_elevation + self.deg_delta:
+				if pix_azimut - self.deg_delta < self.azimut < pix_azimut + self.deg_delta and pix_elevation - self.deg_delta < self.elevation < pix_elevation + self.deg_delta:
 					self.pixel_area.append((i, j))
 
 		self.nb_pixels = len(self.pixel_area)
@@ -141,7 +145,7 @@ class AllSkyData:
 
 		for pix in self.pixel_area:
 			i, j = pix
-			brightness += self.image[i][j]  / self.nb_pixels
+			brightness += self.image[i][j]  #/ self.nb_pixels
 
 		return brightness
 
@@ -152,6 +156,7 @@ class AllSkyData:
 		image_name = self.GetFileName(datetime)
 		image = imageio.imread(image_name)
 		calibration = self.GetCalibrationFile(datetime)
+		# print("calibration", calibration)
 		self.SetPixelArea(image, calibration)
 
 		for dt in self.all_datetimes:
