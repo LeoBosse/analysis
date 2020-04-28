@@ -625,6 +625,8 @@ class Bottle:
 			# return self.rotations[-1].time + self.datetime + self.head_jump + delta
 		elif moment == "config": #Datetime written in the config file (== first bad rotation, before head_jump)
 			return self.datetime + delta + norm
+		elif moment == "midnight": #Datetime written in the config file (== first bad rotation, before head_jump)
+			return dt.datetime(year=self.datetime.year, month=self.datetime.month, day=self.datetime.day) + delta + norm
 
 
 	def __add__(self, bottle_to_add):
@@ -769,6 +771,7 @@ class PTCUBottle(Bottle):
 			Bottle.LoadData(self)
 
 	def GetTimeFromDateTime(self, date):
+		"""Return list self.all_times shifted so that 0 is date."""
 		shift = self.DateTime(moment="start") - date
 		return self.all_times + shift
 
@@ -858,10 +861,18 @@ class PTCUBottle(Bottle):
 		self.nb_rot = len(self.rotations)
 
 	def SaveTXT(self):
+		# times = [t.total_seconds() / 3600. for t in self.GetTimeFromDateTime(self.DateTime(moment="midnight", format="LT"))]
 		times = [t.total_seconds() * 1000 for t in self.GetTimeFromDateTime(self.DateTime(moment="config"))]
 		print("Saving as .txt in", self.data_file_name + "/" + self.saving_name + '_results.txt')
 
-		np.savetxt(self.data_file_name + "/" + self.saving_name + '_results.txt', np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_I0, self.std_DoLP, self.std_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose(), delimiter = "\t", header = "time\tV\tVcos\tVsin\tI0\tDoLP\tAoLP\tSV\tSVcos\tSVsin\tSI0\tSDoLP\tSAoLP\terrI0\terrDoLP\terrAoLP\terrSI0\terrSDoLP\terrSAoLP")
+
+		data = pd.DataFrame(np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_I0, self.std_DoLP, self.std_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose())
+		data.columns = ["time","V","Vcos","Vsin","I0","DoLP","AoLP","SV","SVcos","SVsin","SI0","SDoLP","SAoLP","errI0","errDoLP","errAoLP","errSI0","errSDoLP","errSAoLP"]
+
+		data.to_csv(elf.data_file_name + "/" + self.saving_name + '_results.txt', sep="\t", index=False)
+
+		# np.savetxt(self.data_file_name + "/" + self.saving_name + '_results.txt', np.array([times, self.smooth_DoLP, self.smooth_AoLP, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose(), delimiter = "\t", header = "time\tSDoLP\tSAoLP\terrSDoLP\terrSAoLP")
+		# np.savetxt(self.data_file_name + "/" + self.saving_name + '_results.txt', np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_I0, self.std_DoLP, self.std_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose(), delimiter = "\t", header = "time\tV\tVcos\tVsin\tI0\tDoLP\tAoLP\tSV\tSVcos\tSVsin\tSI0\tSDoLP\tSAoLP\terrI0\terrDoLP\terrAoLP\terrSI0\terrSDoLP\terrSAoLP")
 
 
 	def LoadPTCUData(self):
