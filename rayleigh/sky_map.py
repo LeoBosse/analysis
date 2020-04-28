@@ -236,10 +236,14 @@ class SkyMap:
 
 		mod = 360*DtoR
 		for ia in ia_list:
-			pix_da = min(self.azimuts[(ia + 1)%self.Na]%mod , (az + r)%mod) - max(self.azimuts[ia]%mod , (az - r)%mod )
+			shift = 0
+			if self.azimuts[(ia + 1)%self.Na]%mod < self.azimuts[ia]%mod:
+				shift = mod / 2.
+			pix_da = min((self.azimuts[(ia + 1)%self.Na] + shift) % mod, (az + r + shift) % mod) - max((self.azimuts[ia] + shift) % mod, (az - r + shift) % mod)
 			pix_da %= mod
-			# print("DEBUG DIRECT:", pix_da%mod*RtoD)
-			# print(self.azimuts[(ia + 1)%self.Na]%mod*RtoD, (az + r)%mod*RtoD, self.azimuts[ia]%mod*RtoD, (az - r)%mod*RtoD)
+			print("DEBUG DIRECT:", pix_da%mod*RtoD)
+			print(self.azimuts[(ia)%self.Na]%mod*RtoD, (self.azimuts[(ia + 1)%self.Na]%mod*RtoD))
+			print(self.azimuts[(ia + 1)%self.Na]%mod*RtoD, (az + r)%mod*RtoD, self.azimuts[ia]%mod*RtoD, (az - r)%mod*RtoD)
 			for ie in ie_list:
 				pix_de = min(self.elevations[ie + 1], el + r) - max(self.elevations[ie], el - r)
 				# print(self.cube[t, ie, ia], self._GetPixelSolidAngleFromiEl(ie), self.cube[t, ie, ia] * self._GetPixelSolidAngleFromiEl(ie))

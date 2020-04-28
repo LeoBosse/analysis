@@ -343,7 +343,7 @@ class Simulation:
 		if not double:
 			ax.plot([AoRD, AoRD], [0, max(self.hst)], "r")
 		else:
-			ax.plot([-AoRD, AoRD], [max(self.hst), max(self.hst)], "r")
+			ax.plot([AoRD, AoRD+np.pi], [max(self.hst), max(self.hst)], "r")
 
 		if self.save_individual_plots:
 			plt.savefig(self.path + self.save_name + '_AoRD_hist.png', bbox_inches='tight')
