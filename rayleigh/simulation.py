@@ -166,7 +166,7 @@ class Simulation:
 
 		#One value for each bin=180 values
 		self.hst = np.zeros(self.N_bins)
-		print("DEBUG ROT", self.N_bins, len(self.bins), len(self.mid_bins), len(self.hst))
+		# print("DEBUG ROT", self.N_bins, len(self.bins), len(self.mid_bins), len(self.hst))
 
 		if sky:
 			sky_hst, b = np.histogram(self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :], density = False)

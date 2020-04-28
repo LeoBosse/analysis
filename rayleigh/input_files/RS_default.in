@@ -33,7 +33,7 @@ Atmospheric_profile atm_profiles/ngt.atm   #name of the atmospheric profile file
 # "[1, 2, 3...]_moving_EW_band",    east-west auroral band passing from north to south in the sky. (can be doubled or tripled)
 # "[1, 2, 3...]_band_eEE",          east-west auroral band at elevation EE. (can be doubled or tripled)
 # "spot_aAA_eEE" 										bright source at elevation EE and azimut AA
-sky_mode uniform_1
+sky_mode uniform_10
 
 emission_altitude	110			# Altitude of the emission in km. Put 0 if emission on ground
 

@@ -193,11 +193,13 @@ class SkyMap:
 
 	def GetPixFromAz(self, pix_a):
 		"""Return the index of pixels containing a given elevation in radians."""
+		# print("GetPixFromAz", pix_a)
 		if pix_a < 0:
 			pix_a += 360*DtoR
+		# print(pix_a)
 		for ia, a in enumerate(self.azimuts):
 			if pix_a < a:
-				pix_ia = (ia - 1)%self.Na
+				pix_ia = (ia - 1)%(self.Na-1)
 				return pix_ia
 
 	def GetPixFromAzEl(self, a, e):
@@ -225,11 +227,13 @@ class SkyMap:
 		# ia_min, ia_max = min(ia_min, ia_max), max(ia_min, ia_max)
 		# ie_min, ie_max = min(ie_min, ie_max), max(ie_min, ie_max)
 
-		# print(ia_min, ie_min, ia_max, ie_max)
+		print(ia_min, ie_min, ia_max, ie_max)
 		if ia_max >= ia_min:
 			ia_list = np.arange(ia_min, ia_max + 1)
+			# print("COOL")
 		else:
-			ia_list = np.arange(ia_min, ia_max + self.Na + 1) % self.Na
+			ia_list = np.arange(ia_min, ia_max + (self.Na) + 1) % (self.Na)
+			# print("NOT COOL")
 
 		ie_list = np.arange(ie_min, ie_max + 1)
 		print(ia_list, ie_list)
@@ -237,14 +241,16 @@ class SkyMap:
 		mod = 360*DtoR
 		for ia in ia_list:
 			shift = 0
-			if self.azimuts[(ia + 1)%(self.Na-1)]%mod < self.azimuts[ia]%mod:
+			if self.azimuts[(ia + 1)%(self.Na-1)]%mod <= self.azimuts[ia]%mod:
 				shift = mod / 2.
 			pix_da = min((self.azimuts[(ia + 1)%(self.Na-1)] + shift) % mod, (az + r + shift) % mod) - max((self.azimuts[ia] + shift) % mod, (az - r + shift) % mod)
 			pix_da %= mod
+
 			print("DEBUG DIRECT:", pix_da%mod*RtoD)
 			print((ia)%(self.Na-1), (ia + 1)%(self.Na-1))
-			print("AZ", self.azimuts[(ia)%(self.Na-1)]%mod*RtoD, (self.azimuts[(ia + 1)%(self.Na-1)]%mod*RtoD))
-			print("AZ", self.azimuts[(ia + 1)%(self.Na-1)]%mod*RtoD, (az + r)%mod*RtoD, self.azimuts[ia]%mod*RtoD, (az - r)%mod*RtoD)
+			print("AZ", (self.azimuts[(ia + 1)%(self.Na-1)] + shift) % mod*RtoD, (self.azimuts[ia] + shift) % mod*RtoD)
+			print("AZ", (az + r + shift) % mod*RtoD, (az - r + shift) % mod*RtoD)
+
 			for ie in ie_list:
 				print("EL", self.elevations[ie + 1]*RtoD, (el + r)*RtoD, self.elevations[ie]*RtoD, (el - r)*RtoD)
 				pix_de = min(self.elevations[ie + 1], el + r) - max(self.elevations[ie], el - r)
