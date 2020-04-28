@@ -37,7 +37,7 @@ sky_mode uniform_10
 
 emission_altitude	110			# Altitude of the emission in km. Put 0 if emission on ground
 
-Nb_emission_points 100				 # Number of bins to compute
+Nb_emission_points 1000				 # Number of bins to compute
 Nb_emission_maps 1						 # Number of emission maps to compute. Use it for time changing emissions (auroras). Should be put to 1 when not varying !
 
 #Zone of emission (constant for the moment (all sky))
