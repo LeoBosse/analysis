@@ -158,13 +158,15 @@ class Simulation:
 
 		###Compute the AoLP contribution histogram.
 		self.N_bins = 180
+		#bins is the bins limits, so 181 values
 		self.bins, self.width = np.linspace(-np.pi/2, np.pi/2, self.N_bins + 1, endpoint=True, retstep=True)
 		self.bins, self.width = np.linspace(-np.pi/2 - self.width/2, np.pi/2 + self.width/2, self.N_bins + 1, endpoint=True, retstep=True)
-		print("DEBUG ROT")
-		self.mid_bins = [self.bins[i+1] - self.bins[i] for i in range(len(self.bins)-1)]
+		self.mid_bins = [(self.bins[i+1] + self.bins[i])/2. for i in range(len(self.bins)-1)]
 		 #self.width = np.pi / self.N_bins
 
+		#One value for each bin=180 values
 		self.hst = np.zeros(self.N_bins)
+		print("DEBUG ROT", self.N_bins, len(self.bins), len(self.mid_bins), len(self.hst))
 
 		if sky:
 			sky_hst, b = np.histogram(self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :], density = False)
@@ -186,13 +188,14 @@ class Simulation:
 		filter_orientation = np.linspace(0, 2 * np.pi, Ns, endpoint=False)
 		for i_f, f in enumerate(filter_orientation):
 			for ihist, hist in enumerate(self.hst):
-				theta = b[(ihist+1)%len(self.hst)] - b[ihist]
+				theta = self.mid_bins[ihist]
+				# theta = b[(ihist+1)%len(self.hst)] - b[ihist]
 				rs_signal[i_f] += hist * np.cos(theta - f) ** 2
 				# rs_signal[i_f] += hist * np.cos(b[ihist] - f) ** 2 # + 0.5 * self.InonPola
 
-		plt.plot(filter_orientation, rs_signal)
-		plt.plot(filter_orientation, [0.5 * self.InonPola * (len(self.hst))]*Ns)
-		plt.show()
+		# plt.plot(filter_orientation, rs_signal)
+		# plt.plot(filter_orientation, [0.5 * self.InonPola * len(self.hst)]*Ns)
+		# plt.show()
 
 		self.V = np.average(rs_signal)
 		self.Vcos = np.average(rs_signal * np.cos(2 * filter_orientation))
