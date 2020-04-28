@@ -232,19 +232,21 @@ class SkyMap:
 			ia_list = np.arange(ia_min, ia_max + self.Na + 1) % self.Na
 
 		ie_list = np.arange(ie_min, ie_max + 1)
-		# print(ia_list, ie_list)
+		print(ia_list, ie_list)
 
 		mod = 360*DtoR
 		for ia in ia_list:
 			shift = 0
-			if self.azimuts[(ia + 1)%self.Na]%mod < self.azimuts[ia]%mod:
+			if self.azimuts[(ia + 1)%(self.Na-1)]%mod < self.azimuts[ia]%mod:
 				shift = mod / 2.
-			pix_da = min((self.azimuts[(ia + 1)%self.Na] + shift) % mod, (az + r + shift) % mod) - max((self.azimuts[ia] + shift) % mod, (az - r + shift) % mod)
+			pix_da = min((self.azimuts[(ia + 1)%(self.Na-1)] + shift) % mod, (az + r + shift) % mod) - max((self.azimuts[ia] + shift) % mod, (az - r + shift) % mod)
 			pix_da %= mod
 			print("DEBUG DIRECT:", pix_da%mod*RtoD)
-			print(self.azimuts[(ia)%self.Na]%mod*RtoD, (self.azimuts[(ia + 1)%self.Na]%mod*RtoD))
-			print(self.azimuts[(ia + 1)%self.Na]%mod*RtoD, (az + r)%mod*RtoD, self.azimuts[ia]%mod*RtoD, (az - r)%mod*RtoD)
+			print((ia)%(self.Na-1), (ia + 1)%(self.Na-1))
+			print("AZ", self.azimuts[(ia)%(self.Na-1)]%mod*RtoD, (self.azimuts[(ia + 1)%(self.Na-1)]%mod*RtoD))
+			print("AZ", self.azimuts[(ia + 1)%(self.Na-1)]%mod*RtoD, (az + r)%mod*RtoD, self.azimuts[ia]%mod*RtoD, (az - r)%mod*RtoD)
 			for ie in ie_list:
+				print("EL", self.elevations[ie + 1]*RtoD, (el + r)*RtoD, self.elevations[ie]*RtoD, (el - r)*RtoD)
 				pix_de = min(self.elevations[ie + 1], el + r) - max(self.elevations[ie], el - r)
 				# print(self.cube[t, ie, ia], self._GetPixelSolidAngleFromiEl(ie), self.cube[t, ie, ia] * self._GetPixelSolidAngleFromiEl(ie))
 				b += self.cube[t, ie, ia] * pix_da * pix_de * np.cos(self.mid_elevations[ie])

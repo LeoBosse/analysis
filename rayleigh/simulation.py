@@ -160,6 +160,8 @@ class Simulation:
 		self.N_bins = 180
 		self.bins, self.width = np.linspace(-np.pi/2, np.pi/2, self.N_bins + 1, endpoint=True, retstep=True)
 		self.bins, self.width = np.linspace(-np.pi/2 - self.width/2, np.pi/2 + self.width/2, self.N_bins + 1, endpoint=True, retstep=True)
+		print("DEBUG ROT")
+		self.mid_bins = [self.bins[i+1] - self.bins[i] for i in range(len(self.bins)-1)]
 		 #self.width = np.pi / self.N_bins
 
 		self.hst = np.zeros(self.N_bins)
@@ -180,15 +182,17 @@ class Simulation:
 
 		###Simulate the instrument with a rotating polarizing filter to get V, Vcos, Vsin and then I, DoLP, AoLP
 		Ns = 1000 #5 * len(self.bins)
-		rs_signal = np.zeros(Ns) + 0.5 * self.InonPola
+		rs_signal = np.zeros(Ns) + 0.5 * self.InonPola * len(self.hst)
 		filter_orientation = np.linspace(0, 2 * np.pi, Ns, endpoint=False)
 		for i_f, f in enumerate(filter_orientation):
 			for ihist, hist in enumerate(self.hst):
-				rs_signal[i_f] += hist * np.cos(b[ihist] - f) ** 2
+				theta = b[(ihist+1)%len(self.hst)] - b[ihist]
+				rs_signal[i_f] += hist * np.cos(theta - f) ** 2
+				# rs_signal[i_f] += hist * np.cos(b[ihist] - f) ** 2 # + 0.5 * self.InonPola
 
-		# plt.plot(filter_orientation, rs_signal)
-		# plt.plot(filter_orientation, [0.5 * self.InonPola]*Ns)
-		# plt.show()
+		plt.plot(filter_orientation, rs_signal)
+		plt.plot(filter_orientation, [0.5 * self.InonPola * (len(self.hst))]*Ns)
+		plt.show()
 
 		self.V = np.average(rs_signal)
 		self.Vcos = np.average(rs_signal * np.cos(2 * filter_orientation))

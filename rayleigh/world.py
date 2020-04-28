@@ -16,6 +16,8 @@ gdal.UseExceptions()  # not required, but a good idea
 
 import imageio
 
+from tqdm import tqdm
+
 from observation import *
 from rayleigh_utils import *
 from sky_map import *
@@ -167,30 +169,32 @@ class World:
 		start_time = tm.time()
 		N = self.sky_map.N * self.Nalt
 		print(N, "bins to compute")
-		for ie, e in enumerate(self.sky_map.elevations):
-			for ia, a in enumerate(self.sky_map.azimuts):
-				if self.sky_map.cube[time, ie, ia] >= 0:
-					for ialt, alt in enumerate(self.altitudes): #for every altitude between minimum and maximum scattering altitude
+		with tqdm(total=N, file=sys.stdout) as pbar:
+			for ie, e in enumerate(self.sky_map.elevations):
+				for ia, a in enumerate(self.sky_map.azimuts):
+					if self.sky_map.cube[time, ie, ia] >= 0:
+						for ialt, alt in enumerate(self.altitudes): #for every altitude between minimum and maximum scattering altitude
 
-						# sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
-						sca_from_E_is_visible = True
+							# sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
+							sca_from_E_is_visible = True
 
-						if sca_from_E_is_visible:
-							I0, w_DoLP = self.ComputeSingleRSSkyPointSource(time, ia, a, ie, e, alt)
-							self.sky_map.total_scattering_map[time, ie_pc, ia_pc, ie, ia] += I0 # Intensity of light scattered from a given (e, a)
-							self.sky_map.scattering_map[time, ie_pc, ia_pc, ie, ia] += w_DoLP * I0 # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
+							if sca_from_E_is_visible:
+								I0, w_DoLP = self.ComputeSingleRSSkyPointSource(time, ia, a, ie, e, alt)
+								self.sky_map.total_scattering_map[time, ie_pc, ia_pc, ie, ia] += I0 # Intensity of light scattered from a given (e, a)
+								self.sky_map.scattering_map[time, ie_pc, ia_pc, ie, ia] += w_DoLP * I0 # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
 
-						count += 1
-						self.Progress(count, N, suffix="of sky point sources done")
-						# if count == N // 10:
-						# 	print("\t", 9 * (tm.time() - start_time), "seconds left...")
-						# elif count == N // 2:
-						# 	print("\t", (tm.time() - start_time), "seconds left...")
+							# count += 1
+							# self.Progress(count, N, suffix="of sky point sources done")
+							pbar.update(1)
+							# if count == N // 10:
+							# 	print("\t", 9 * (tm.time() - start_time), "seconds left...")
+							# elif count == N // 2:
+							# 	print("\t", (tm.time() - start_time), "seconds left...")
 
 
-					self.sky_map.DoLP_map = self.sky_map.scattering_map / self.sky_map.total_scattering_map # DoLP of a given (e, a)
+						self.sky_map.DoLP_map = self.sky_map.scattering_map / self.sky_map.total_scattering_map # DoLP of a given (e, a)
 
-				self.sky_map.AoRD_map[time, ie_pc, ia_pc, ie, ia] = self.obs.GetRayleighAngle(a, e)
+					self.sky_map.AoRD_map[time, ie_pc, ia_pc, ie, ia] = self.obs.GetRayleighAngle(a, e)
 
 	def ComputeGroundMaps(self, time, ia_pc, ie_pc):
 		"""Compute the contribution of the ground map at the time set"""
@@ -211,31 +215,33 @@ class World:
 		count = 0
 		start_time = tm.time()
 
-		self.N = len(self.ground_map.longitudes) * len(self.ground_map.latitudes) * self.Nalt
-		print(self.N, "bins to compute")
-		for ilat, lat in enumerate(self.ground_map.latitudes):
-			for ilon, lon in enumerate(self.ground_map.longitudes):
-				if self.ground_map.I_map[ilat, ilon] > 0:
-					a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
-					for sca_lon, sca_lat, sca_alt in self.dlos_list: #for every altitude between minimum and maximum scattering altitude
+		N = len(self.ground_map.longitudes) * len(self.ground_map.latitudes) * self.Nalt
+		print(N, "bins to compute")
+		with tqdm(total=N, file=sys.stdout) as pbar:
+			for ilat, lat in enumerate(self.ground_map.latitudes):
+				for ilon, lon in enumerate(self.ground_map.longitudes):
+					if self.ground_map.I_map[ilat, ilon] > 0:
+						a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
+						for sca_lon, sca_lat, sca_alt in self.dlos_list: #for every altitude between minimum and maximum scattering altitude
 
-						sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
-						sca_from_E_is_visible = True
+							sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
+							sca_from_E_is_visible = True
 
-						if sca_from_E_is_visible:
+							if sca_from_E_is_visible:
 
-							I0, w_DoLP = self.ComputeSingleRSGroundPointSource(ilon, ilat, a_rd, e_rd, sca_alt)
+								I0, w_DoLP = self.ComputeSingleRSGroundPointSource(ilon, ilat, a_rd, e_rd, sca_alt)
 
-							self.ground_map.total_scattering_map[ie_pc, ia_pc, ilat, ilon] += I0 # Intensity of light scattered from a given (e, a)
-							self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
+								self.ground_map.total_scattering_map[ie_pc, ia_pc, ilat, ilon] += I0 # Intensity of light scattered from a given (e, a)
+								self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
 
-						count += 1
-						self.Progress(count, self.N, suffix="of ground point sources done")
+							# count += 1
+							# self.Progress(count, N, suffix="of ground point sources done")
+							pbar.update(1)
 
 
-					self.ground_map.DoLP_map = self.ground_map.scattering_map / self.ground_map.total_scattering_map # DoLP of a given (e, a)
+						self.ground_map.DoLP_map = self.ground_map.scattering_map / self.ground_map.total_scattering_map # DoLP of a given (e, a)
 
-					self.ground_map.AoRD_map[ie_pc, ia_pc, ilat, ilon] = self.obs.GetRayleighAngle(a_rd, 0) # e_rd is NOT the elevation if ground emission
+						self.ground_map.AoRD_map[ie_pc, ia_pc, ilat, ilon] = self.obs.GetRayleighAngle(a_rd, 0) # e_rd is NOT the elevation if ground emission
 
 
 
