@@ -234,10 +234,14 @@ class SkyMap:
 		ie_list = np.arange(ie_min, ie_max + 1)
 		# print(ia_list, ie_list)
 
+		mod = 360*DtoR
 		for ia in ia_list:
-			pix_da = min(self.azimuts[(ia + 1)%self.Na], az + r) - max(self.azimuts[ia], az - r)
+			pix_da = min(self.azimuts[(ia + 1)%self.Na]%mod , (az + r)%mod) - max(self.azimuts[ia]%mod , (az - r)%mod )
+			pix_da %= mod
+			# print("DEBUG DIRECT:", pix_da%mod*RtoD)
+			# print(self.azimuts[(ia + 1)%self.Na]%mod*RtoD, (az + r)%mod*RtoD, self.azimuts[ia]%mod*RtoD, (az - r)%mod*RtoD)
 			for ie in ie_list:
-				pix_de = min(self.elevations[(ie + 1)%self.Ne], el + r) - max(self.elevations[ie], el - r)
+				pix_de = min(self.elevations[ie + 1], el + r) - max(self.elevations[ie], el - r)
 				# print(self.cube[t, ie, ia], self._GetPixelSolidAngleFromiEl(ie), self.cube[t, ie, ia] * self._GetPixelSolidAngleFromiEl(ie))
 				b += self.cube[t, ie, ia] * pix_da * pix_de * np.cos(self.mid_elevations[ie])
 
