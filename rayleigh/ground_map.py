@@ -352,6 +352,7 @@ class GroundMap:
 
 
 		self.maps_shape = (Nb_e_pc, Nb_a_pc, len(self.latitudes), len(self.longitudes))
+		print("GROUND MAP SHAPE",self.maps_shape )
 
 		self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
 		self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us

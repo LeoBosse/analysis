@@ -18,6 +18,7 @@ import imageio
 
 from observation import *
 from rayleigh_utils import *
+from AllSkyData import *
 
 class SkyMap:
 	def __init__(self, in_dict):
@@ -37,6 +38,11 @@ class SkyMap:
 		elif self.mode == "uniform_0" or self.mode == "none":
 			self.mode = "none"
 			self.exist = False
+
+		# Used if mode == image
+		self.image_file = in_dict["sky_path"] + in_dict["sky_file"]
+		self.image_wavelength = float(in_dict["sky_wavelength"]) * 10**-9
+		self.RtonW = 6.62607015*10**(-34) * 299792458 / self.image_wavelength * 10**9
 
 
 		#Zone of emission
@@ -60,20 +66,49 @@ class SkyMap:
 
 		# self.azimuts = np.linspace(self.I_zone_a_min + self.da/2., self.I_zone_a_max + self.da/2, self.Na) # array of all azimuts
 		# self.elevations = np.linspace(self.I_zone_e_min + self.de/2., self.I_zone_e_max - self.de/2., self.Ne-1) # array of all elevations
-		self.azimuts = np.linspace(self.I_zone_a_min + self.da/2, self.I_zone_a_max + self.da/2, self.Na, endpoint=True) # array of all azimuts
-		self.elevations = np.linspace(self.I_zone_e_min, self.I_zone_e_max, self.Ne, endpoint=True) # array of all elevations
+		self.azimuts = np.linspace(self.I_zone_a_min + self.da/2, self.I_zone_a_max + self.da/2, self.Na+1, endpoint=True) # array of all azimuts
+		self.elevations = np.linspace(self.I_zone_e_min, self.I_zone_e_max, self.Ne+1, endpoint=True) # array of all elevations
 
-		self.mid_azimuts = self.azimuts + self.da/2.
-		self.mid_elevations = self.elevations + self.de/2.
+		self.mid_azimuts = self.azimuts[:-1] + self.da/2.
+		self.mid_elevations = self.elevations[:-1] + self.de/2.
 
 		# print("DEBUG SKYMAP: elevations", self.elevations*RtoD)
 		# print("DEBUG SKYMAP: azimuts", self.azimuts*RtoD)
 
-		self.maps_shape = (len(self.elevations), len(self.azimuts))
+		self.maps_shape = (self.Ne, self.Na)
 		# self.sky_I_map = np.zeros(self.maps_shape) # Intensity of the emission at point (e,a)
 
 		self.cube_is_done = False
 
+	def LoadAllSkyImage(self):
+
+		print("Importing all sky image data...")
+		image = imageio.imread(self.image_file)
+		file = self.image_file.split("/")[-1]
+		calib_file = "/".join(self.image_file.split("/")[:-2]) + "/" + file[:14] + file[21:-3] + "dat"
+		calib = io.readsav(calib_file)
+
+		# print("self.maps_shape", self.maps_shape)
+		# print(self.azimuts * RtoD)
+		# print(self.elevations * RtoD)
+		map = np.zeros(self.maps_shape)
+
+		for i, line in enumerate(image):
+			for j, pix in enumerate(line):
+				if pix > 0:
+					# print("PIX", pix)
+					pix_azimut    = (calib["gazms"][i][j] * DtoR + np.pi) % (2*np.pi) # GIVEN IN DEGREES
+					pix_elevation = calib["elevs"][i][j] * DtoR # GIVEN IN DEGREES
+
+					if pix_azimut and pix_elevation:
+						ia, ie = self.GetPixFromAzEl(pix_azimut, pix_elevation)
+						# print("AA", pix_azimut, ia)
+						# print("EE", pix_elevation, ie)
+
+						if ia and ie:
+							map[ie, ia] += pix * self.RtonW
+
+		return map
 
 
 	def LoadSkyEmmisionsCube(self, Nb_a_pc, Nb_e_pc):
@@ -100,6 +135,8 @@ class SkyMap:
 			a = int(self.mode[6:8]) * DtoR
 			e = int(self.mode[-2:]) * DtoR
 			self.cube[0, :, :] = self.GetBandSkyMap(a_band = a, e_band = e, length = 50, thickness = 50, height = 50, band_I = 100, nb_sub_bands = 1)
+		elif self.mode == "image":
+			self.cube[0, :, :] = self.LoadAllSkyImage()
 
 		self.data_shape = (self.Nt, Nb_e_pc, Nb_a_pc, len(self.elevations), len(self.azimuts))
 
@@ -185,21 +222,18 @@ class SkyMap:
 		return map
 
 	def GetPixFromEl(self, pix_e):
-		"""Return the index of pixels containing a given elevation in radians."""
+		"""Return the elevation index of the pixel containing a given elevation in radians."""
 		for ie, e in enumerate(self.elevations):
 			if pix_e < e:
 				pix_ie = (ie - 1)%self.Ne
 				return pix_ie
 
 	def GetPixFromAz(self, pix_a):
-		"""Return the index of pixels containing a given elevation in radians."""
-		# print("GetPixFromAz", pix_a)
-		if pix_a < 0:
-			pix_a += 360*DtoR
-		# print(pix_a)
+		"""Return the azimut index of the pixel containing a given azimut in radians."""
+		pix_a %= (2*np.pi)
 		for ia, a in enumerate(self.azimuts):
 			if pix_a < a:
-				pix_ia = (ia - 1)%(self.Na-1)
+				pix_ia = (ia - 1)%(self.Na)
 				return pix_ia
 
 	def GetPixFromAzEl(self, a, e):
@@ -227,7 +261,7 @@ class SkyMap:
 		# ia_min, ia_max = min(ia_min, ia_max), max(ia_min, ia_max)
 		# ie_min, ie_max = min(ie_min, ie_max), max(ie_min, ie_max)
 
-		print(ia_min, ie_min, ia_max, ie_max)
+		# print(ia_min, ie_min, ia_max, ie_max)
 		if ia_max >= ia_min:
 			ia_list = np.arange(ia_min, ia_max + 1)
 			# print("COOL")
@@ -236,23 +270,23 @@ class SkyMap:
 			# print("NOT COOL")
 
 		ie_list = np.arange(ie_min, ie_max + 1)
-		print(ia_list, ie_list)
+		# print(ia_list, ie_list)
 
 		mod = 360*DtoR
 		for ia in ia_list:
 			shift = 0
-			if self.azimuts[(ia + 1)%(self.Na-1)]%mod <= self.azimuts[ia]%mod:
+			if self.azimuts[(ia + 1)%(self.Na)]%mod <= self.azimuts[ia]%mod:
 				shift = mod / 2.
-			pix_da = min((self.azimuts[(ia + 1)%(self.Na-1)] + shift) % mod, (az + r + shift) % mod) - max((self.azimuts[ia] + shift) % mod, (az - r + shift) % mod)
+			pix_da = min((self.azimuts[(ia + 1)%(self.Na)] + shift) % mod, (az + r + shift) % mod) - max((self.azimuts[ia] + shift) % mod, (az - r + shift) % mod)
 			pix_da %= mod
 
-			print("DEBUG DIRECT:", pix_da%mod*RtoD)
-			print((ia)%(self.Na-1), (ia + 1)%(self.Na-1))
-			print("AZ", (self.azimuts[(ia + 1)%(self.Na-1)] + shift) % mod*RtoD, (self.azimuts[ia] + shift) % mod*RtoD)
-			print("AZ", (az + r + shift) % mod*RtoD, (az - r + shift) % mod*RtoD)
+			# print("DEBUG DIRECT:", pix_da%mod*RtoD)
+			# print((ia)%(self.Na-1), (ia + 1)%(self.Na-1))
+			# print("AZ", (self.azimuts[(ia + 1)%(self.Na-1)] + shift) % mod*RtoD, (self.azimuts[ia] + shift) % mod*RtoD)
+			# print("AZ", (az + r + shift) % mod*RtoD, (az - r + shift) % mod*RtoD)
 
 			for ie in ie_list:
-				print("EL", self.elevations[ie + 1]*RtoD, (el + r)*RtoD, self.elevations[ie]*RtoD, (el - r)*RtoD)
+				# print("EL", self.elevations[ie + 1]*RtoD, (el + r)*RtoD, self.elevations[ie]*RtoD, (el - r)*RtoD)
 				pix_de = min(self.elevations[ie + 1], el + r) - max(self.elevations[ie], el - r)
 				# print(self.cube[t, ie, ia], self._GetPixelSolidAngleFromiEl(ie), self.cube[t, ie, ia] * self._GetPixelSolidAngleFromiEl(ie))
 				b += self.cube[t, ie, ia] * pix_da * pix_de * np.cos(self.mid_elevations[ie])

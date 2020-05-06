@@ -102,6 +102,9 @@ class Simulation:
 					self.DoLP_list[t, ie_pc, ia_pc] = self.DoLP
 					self.AoRD_list[t, ie_pc, ia_pc] = self.AoRD
 
+		plt.plot(range(self.world.Nb_a_pc), self.InonPola_list[t, ie_pc, :])
+		plt.show()
+
 
 	def SetSaveName(self):
 		### Get the base name for the saving file -> unique for each parameter set
@@ -156,58 +159,69 @@ class Simulation:
 			self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
 			self.InonPola = self.I0 - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
 
-		###Compute the AoLP contribution histogram.
-		self.N_bins = 180
-		#bins is the bins limits, so 181 values
-		self.bins, self.width = np.linspace(-np.pi/2, np.pi/2, self.N_bins + 1, endpoint=True, retstep=True)
-		self.bins, self.width = np.linspace(-np.pi/2 - self.width/2, np.pi/2 + self.width/2, self.N_bins + 1, endpoint=True, retstep=True)
-		self.mid_bins = [(self.bins[i+1] + self.bins[i])/2. for i in range(len(self.bins)-1)]
-		 #self.width = np.pi / self.N_bins
 
-		#One value for each bin=180 values
-		self.hst = np.zeros(self.N_bins)
-		# print("DEBUG ROT", self.N_bins, len(self.bins), len(self.mid_bins), len(self.hst))
+		if False:
+			self.DoLP = self.world.ground_map.DoLP_map[ie_pc, ia_pc, 0, 0] *100 # / self.I0 * 100
+			# self.DoLP = np.sum(self.world.ground_map.scattering_map[time, ie_pc, ia_pc].flatten()) / self.I0 * 100
+			self.AoRD = self.world.ground_map.AoRD_map[ie_pc, ia_pc, 0, 0] * RtoD
+		else:
+			###Compute the AoLP contribution histogram.
+			self.N_bins = 180
+			#bins is the bins limits, so 181 values
+			self.bins, self.width = np.linspace(-np.pi/2, np.pi/2, self.N_bins + 1, endpoint=True, retstep=True)
+			self.bins, self.width = np.linspace(-np.pi/2 - self.width/2, np.pi/2 + self.width/2, self.N_bins + 1, endpoint=True, retstep=True)
+			self.mid_bins = [(self.bins[i+1] + self.bins[i])/2. for i in range(len(self.bins)-1)]
+			 #self.width = np.pi / self.N_bins
 
-		if sky:
-			sky_hst, b = np.histogram(self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :], density = False)
-			self.hst += sky_hst
-		if ground:
-			ground_hst, b = np.histogram(self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :], density = False)
-			self.hst += ground_hst
+			#One value for each bin=180 values
+			self.hst = np.zeros(self.N_bins)
+			# print("DEBUG ROT", self.N_bins, len(self.bins), len(self.mid_bins), len(self.hst))
 
-		# print("DEBUG HST:", self.hst[0], self.hst[-1])
-		# self.hst[-1] /= 2
-		# self.hst[0] += self.hst[-1]
-		# print("DEBUG HST:", self.hst[0], self.hst[-1])
+			###Density=False: hst bins units are similar to intensities. Sum of hst does not depends on self.N_bins
+			if sky:
+				sky_hst, b = np.histogram(self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :], density = False)
+				self.hst += sky_hst
+			if ground:
+				ground_hst, b = np.histogram(self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :], density = False)
+				self.hst += ground_hst
 
-		# self.hst /= sum(self.hst)
+			print("DEBUG HST:", self.hst[0], self.hst[-1], sum(self.hst))
+			# self.hst[-1] /= 2
+			# self.hst[0] += self.hst[-1]
+			# print("DEBUG HST:", self.hst[0], self.hst[-1])
 
-		###Simulate the instrument with a rotating polarizing filter to get V, Vcos, Vsin and then I, DoLP, AoLP
-		Ns = 1000 #5 * len(self.bins)
-		rs_signal = np.zeros(Ns) + 0.5 * self.InonPola * len(self.hst)
-		filter_orientation = np.linspace(0, 2 * np.pi, Ns, endpoint=False)
-		for i_f, f in enumerate(filter_orientation):
-			for ihist, hist in enumerate(self.hst):
-				theta = self.mid_bins[ihist]
-				# theta = b[(ihist+1)%len(self.hst)] - b[ihist]
-				rs_signal[i_f] += hist * np.cos(theta - f) ** 2
-				# rs_signal[i_f] += hist * np.cos(b[ihist] - f) ** 2 # + 0.5 * self.InonPola
+			# self.hst /= sum(self.hst)
 
-		# plt.plot(filter_orientation, rs_signal)
-		# plt.plot(filter_orientation, [0.5 * self.InonPola * len(self.hst)]*Ns)
-		# plt.show()
 
-		self.V = np.average(rs_signal)
-		self.Vcos = np.average(rs_signal * np.cos(2 * filter_orientation))
-		self.Vsin = np.average(rs_signal * np.sin(2 * filter_orientation))
 
-		# print("V, Vcos, Vsin", self.V, self.Vcos, self.Vsin)
+			###Simulate the instrument with a rotating polarizing filter to get V, Vcos, Vsin and then I, DoLP, AoLP
+			Ns = 100 #5 * len(self.bins)
+			filter_orientation, df = np.linspace(0, 2 * np.pi, Ns, endpoint=False, retstep=True)
 
-		# self.I0 = 2 * self.V
-		self.DoLP = 100 * 2 * np.sqrt(self.Vcos ** 2 + self.Vsin ** 2) / self.V
-		self.AoRD = np.arctan2(self.Vsin, self.Vcos) / 2
+			rs_signal = np.zeros(Ns) #+ 0.5 * self.InonPola * len(self.hst) * self.width * df
 
-		# print("DEBUG LIGHT PARAM:", 2 * self.V, self.I0, self.DoLP, self.AoRD)
+			for i_f, f in enumerate(filter_orientation):
+				for ihist, hist in enumerate(self.hst):
+					theta = self.mid_bins[ihist]
+					# theta = b[(ihist+1)%len(self.hst)] - b[ihist]
+					rs_signal[i_f] += (hist * np.cos(theta - f) ** 2 + 0.5 * self.InonPola / self.N_bins)
+					# rs_signal[i_f] += hist * np.cos(b[ihist] - f) ** 2 # + 0.5 * self.InonPola
+
+			# plt.plot(filter_orientation, rs_signal)
+			# plt.plot(filter_orientation, [0.5 * self.InonPola * len(self.hst)]*Ns)
+			# plt.show()
+
+			self.V = np.average(rs_signal)
+			self.Vcos = np.average(rs_signal * np.cos(2 * filter_orientation))
+			self.Vsin = np.average(rs_signal * np.sin(2 * filter_orientation))
+
+			# print("V, Vcos, Vsin", self.V, self.Vcos, self.Vsin)
+
+			# self.I0 = 2 * self.V
+			self.DoLP = 100 * 2 * np.sqrt(self.Vcos ** 2 + self.Vsin ** 2) / self.V
+			self.AoRD = np.arctan2(self.Vsin, self.Vcos) / 2
+
+			# print("DEBUG LIGHT PARAM:", 2 * self.V, self.I0, self.DoLP, self.AoRD)
 
 		return self.I0, self.DoLP, self.AoRD
 

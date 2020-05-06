@@ -48,7 +48,9 @@ class Atmosphere:
 
 
 	def LoadAllProfiles(self, filename):
-		"Load all atmospheric profiles from a file into a dictionnary. Download the file from: http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure)"
+		"""Load all atmospheric profiles from a file into a dictionnary. Download the file from: http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure)
+		The pressure is converted in Pascals (1 mb = 100 Pa)
+		Unit of density is part per million per volume, convert to fraction per volume"""
 		self.profiles = dict()
 		unit_factor = 1
 		with open(filename, 'r') as f:
@@ -88,8 +90,9 @@ class Atmosphere:
 			return self.profiles[name][im] + d * (alt - self.profiles["HGT"][im])
 
 
-	def GetVolume(self, AR, ouv_pc):
-		"""Get the volume of a truncated cone of length d_los, and opening angle ouv_pc."""
+	def GetVolume(self, AR, ouv_pc, unit="m"):
+		"""Get the volume of a truncated cone of length d_los, and opening angle ouv_pc.
+		Unit defines the unit you want it in. can be "cm", "m" or "km". (the cube is implicit)"""
 		V = (np.pi * np.tan(ouv_pc) ** 2) / 3
 
 		h1, h2 = AR - self.d_los/2, AR + self.d_los/2
@@ -97,17 +100,29 @@ class Atmosphere:
 		V *= self.d_los
 		V *= (h1 ** 2 + h2 ** 2 + h1 * h2)
 
+		# Every length is given in km
+		if unit == "m":
+			V *= 10 ** 9
+		elif unit == "cm":
+			V *= 10 ** 15
+		elif unit == "km":
+			V *= 1
+		else:
+			V *= 1
+			print("WARNING: Unit for diffusion volume is not correct. Set to km by default.")
+
 		# print("V", V * (10 ** 9))
-		return V * (10 ** 9) # in m3. (multiply by e9 because every distances is in km)
+
+		return V
 
 
 	def GetRSVolumeCS(self, wl, alt):
-		"""Return the RAyleigh scattering volume cross section as calculated in Bucholtz 95.
+		"""Return the Rayleigh scattering volume cross section as calculated in Bucholtz 95 in km-1.
 		"""
 
-		beta_s = self.GetSquareLawFit(wl, "Volume CS")
-		P = self.GetProfileValue(alt, "PRE")
-		T = self.GetProfileValue(alt, "TEM")
+		beta_s = self.GetSquareLawFit(wl, "Volume CS") #in cm-1
+		P = self.GetProfileValue(alt, "PRE") #in Pa
+		T = self.GetProfileValue(alt, "TEM") #in K
 
 		return beta_s * (P / 101325) * (288.15 / T)
 
@@ -115,19 +130,19 @@ class Atmosphere:
 		"""Return VERTICAL optical depth between two altitudes aas calculated in Bucholtz 95."""
 		tau_E = self.GetSquareLawFit(wl, "Optical Depth")
 		P_E = self.GetProfileValue(E_alt, "PRE")
-		tau_E *= (P_E / 101300)
+		tau_E *= (P_E / 101325)
 
 		tau_R = self.GetSquareLawFit(wl, "Optical Depth")
 		P_R = self.GetProfileValue(R_alt, "PRE")
-		tau_R *= (P_R / 101300)
+		tau_R *= (P_R / 101325)
 
 		tau_ER = abs(tau_E - tau_R)
 		return tau_ER
 
 	def GetSquareLawFit(self, wl, purpose):
 		"""Return the result of the square law fit function presented in Bucholtz 1995. Purpose can be:
-		"Single CS" = For single air particule rayleigh cross sectionself.
-		"Volume CS" = For volume cross rayleigh sectioself.
+		"Single CS" = For single air particule rayleigh cross section in cm2.
+		"Volume CS" = For volume cross rayleigh section in km-1.
 		"Optical Depth" = For the rayleigh optical depth.
 		Value of parameter A for optical depth is given for a Sub arctic winter atmosphere model."""
 
@@ -158,16 +173,16 @@ class Atmosphere:
 		return A * B
 
 	def GetSquareLawParam(self, wl, purpose):
-		"""Return the necessary parameters for calculatingthe result of the square law fit function presented in Bucholtz 1995. Purpose can be:
-		"Single CS" = For single air particule rayleigh cross sectionself.
-		"Volume CS" = For volume cross rayleigh sectioself.
+		"""Return the necessary parameters for calculating the result of the square law fit function presented in Bucholtz 1995. Purpose can be:
+		"Single CS" = For single air particule rayleigh cross section.
+		"Volume CS" = For volume rayleigh cross section.
 		"Optical Depth" = For the rayleigh optical depth.
 		Value of parameter A for optical depth is given for a Sub arctic winter atmosphere model."""
 		if wl < 500:
 			if purpose == "Single CS":
-				A = 3.01577 * 10 ** (-28)
+				A = 3.01577 * 10 ** (-28) #for cm2
 			elif purpose == "Volume CS":
-				A = 7.68246 * 10 ** (-4)
+				A = 7.68246 * 10 ** (-4) #for km-1
 			elif purpose == "Optical Depth":
 				A = 6.49997 * 10 ** (-3)
 			B = 3.55212
@@ -175,14 +190,15 @@ class Atmosphere:
 			D = 0.11563
 		else:
 			if purpose == "Single CS":
-				A = 4.01061 * 10 ** (-28)
+				A = 4.01061 * 10 ** (-28) #for cm2
 			elif purpose == "Volume CS":
-				A = 10.21675 * 10 ** (-4)
+				A = 10.21675 * 10 ** (-4) #for km-1
 			elif purpose == "Optical Depth":
 				A = 8.64145 * 10 ** (-3)
 			B = 3.99668
 			C = 0.00110298
 			D = 0.0271393
+
 		return A, B, C, D
 
 
