@@ -102,8 +102,8 @@ class Simulation:
 					self.DoLP_list[t, ie_pc, ia_pc] = self.DoLP
 					self.AoRD_list[t, ie_pc, ia_pc] = self.AoRD
 
-		plt.plot(range(self.world.Nb_a_pc), self.InonPola_list[t, ie_pc, :])
-		plt.show()
+		# plt.plot(range(self.world.Nb_a_pc), self.InonPola_list[t, ie_pc, :])
+		# plt.show()
 
 
 	def SetSaveName(self):
@@ -148,18 +148,19 @@ class Simulation:
 			self.I_direct_list[time, ie_pc, ia_pc] = self.world.GetDirect(time, ia_pc, ie_pc)
 			self.I0  = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
 			self.I0 += np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
-			self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
+			# self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
 			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten()) - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
 		elif ground: #If sky doesn't exist
 			self.I0 = np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
 			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten())
+			print(self.I0, self.InonPola)
 		elif sky:  #If ground doesn't exist
 			self.I_direct_list[time, ie_pc, ia_pc] = self.world.GetDirect(time, ia_pc, ie_pc)
 			self.I0  = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
-			self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
+			# self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
 			self.InonPola = self.I0 - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
 
-
+		tmp_start = tm.time()
 		if False:
 			self.DoLP = self.world.ground_map.DoLP_map[ie_pc, ia_pc, 0, 0] *100 # / self.I0 * 100
 			# self.DoLP = np.sum(self.world.ground_map.scattering_map[time, ie_pc, ia_pc].flatten()) / self.I0 * 100
@@ -185,7 +186,7 @@ class Simulation:
 				ground_hst, b = np.histogram(self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :], density = False)
 				self.hst += ground_hst
 
-			print("DEBUG HST:", self.hst[0], self.hst[-1], sum(self.hst))
+			# print("DEBUG HST:", self.hst[0], self.hst[-1], sum(self.hst))
 			# self.hst[-1] /= 2
 			# self.hst[0] += self.hst[-1]
 			# print("DEBUG HST:", self.hst[0], self.hst[-1])
@@ -195,7 +196,7 @@ class Simulation:
 
 
 			###Simulate the instrument with a rotating polarizing filter to get V, Vcos, Vsin and then I, DoLP, AoLP
-			Ns = 100 #5 * len(self.bins)
+			Ns = 10 #5 * len(self.bins)
 			filter_orientation, df = np.linspace(0, 2 * np.pi, Ns, endpoint=False, retstep=True)
 
 			rs_signal = np.zeros(Ns) #+ 0.5 * self.InonPola * len(self.hst) * self.width * df
@@ -215,13 +216,16 @@ class Simulation:
 			self.Vcos = np.average(rs_signal * np.cos(2 * filter_orientation))
 			self.Vsin = np.average(rs_signal * np.sin(2 * filter_orientation))
 
+			# print("DEBUG I0:", 2*self.V, self.I0, abs(2*self.V-self.I0)<10**-15)
+
 			# print("V, Vcos, Vsin", self.V, self.Vcos, self.Vsin)
 
 			# self.I0 = 2 * self.V
-			self.DoLP = 100 * 2 * np.sqrt(self.Vcos ** 2 + self.Vsin ** 2) / self.V
+			self.DoLP = 100 * 2 * np.sqrt(self.Vcos ** 2 + self.Vsin ** 2) / self.V #in %
 			self.AoRD = np.arctan2(self.Vsin, self.Vcos) / 2
 
 			# print("DEBUG LIGHT PARAM:", 2 * self.V, self.I0, self.DoLP, self.AoRD)
+		# print("TIME:", tm.time() - tmp_start)
 
 		return self.I0, self.DoLP, self.AoRD
 
@@ -233,6 +237,11 @@ class Simulation:
 
 		################################################################################
 		###	Polar plots of intensity
+
+		font = {'family' : 'normal',
+		'weight' : 'bold',
+		'size'   : 24}
+		matplotlib.rc('font', **font)
 
 		if self.save_individual_plots:
 			print("Making and saving plots...")
@@ -248,10 +257,10 @@ class Simulation:
 
 		self.MakeAoLPMap()
 
-		if self.world.is_single_observation and not self.world.is_time_dependant:
-			plt.show()
+		# if self.world.is_single_observation and not self.world.is_time_dependant:
+		# 	plt.show()
 
-		plt.close("all")
+		# plt.close("all")
 
 
 	def MakeSkyMapPlots(self):
@@ -263,13 +272,13 @@ class Simulation:
 		ax4 = plt.subplot(224, projection='polar')
 
 		# So that e = 90 is in the center of the plot if the emission layer is NOT the ground
-		el = 90 - (self.world.sky_map.elevations) * RtoD
+		el = 90 - (self.world.sky_map.elevations[:]) * RtoD
 		# i1 = ax1.pcolormesh(azimuts, el, scattering_map)
-		i1 = ax1.pcolormesh(self.world.sky_map.azimuts, el, self.world.sky_map.cube[self.time, :, :])
-		i2 = ax2.pcolormesh(self.world.sky_map.azimuts, el, self.world.sky_map.total_scattering_map[self.time, self.ie_pc, self.ia_pc, :, :])
-		i3 = ax3.pcolormesh(self.world.sky_map.azimuts, el, self.world.sky_map.DoLP_map[self.time, self.ie_pc, self.ia_pc, :, :])
+		i1 = ax1.pcolormesh(self.world.sky_map.azimuts[:], el, self.world.sky_map.cube[self.time, :, :])
+		i2 = ax2.pcolormesh(self.world.sky_map.azimuts[:], el, self.world.sky_map.total_scattering_map[self.time, self.ie_pc, self.ia_pc, :, :])
+		i3 = ax3.pcolormesh(self.world.sky_map.azimuts[:], el, self.world.sky_map.DoLP_map[self.time, self.ie_pc, self.ia_pc, :, :])
 		# i4 = ax4.pcolormesh(azimuts, el, total_scattering_map)
-		i4 = ax4.pcolormesh(self.world.sky_map.azimuts, el, self.world.sky_map.AoRD_map[self.time, self.ie_pc, self.ia_pc, :, :]*RtoD, cmap=cm.twilight)
+		i4 = ax4.pcolormesh(self.world.sky_map.azimuts[:], el, self.world.sky_map.AoRD_map[self.time, self.ie_pc, self.ia_pc, :, :]*RtoD, cmap=cm.twilight)
 
 		cbar1 = f1.colorbar(i1, extend='both', spacing='proportional', shrink=0.9, ax=ax1)
 		cbar1.set_label('Initial emission map')
@@ -426,21 +435,25 @@ class Simulation:
 		# 		for ie, e in enumerate(self.e_pc_list):
 		# 			print(a*RtoD, e*RtoD, self.I_list[t][ie][ia], self.DoLP_list[t][ie][ia], self.AoRD_list[t][ie][ia]*RtoD)
 
+		font = {'family' : 'normal',
+		'weight' : 'bold',
+		'size'   : 24}
+		matplotlib.rc('font', **font)
+
 		if not self.world.is_time_dependant:
 			if self.world.is_single_observation:
 				# self.MakeAoLPHist(ground = self.world.has_ground_emission, sky = self.world.has_sky_emission)
 				self.MakePlots()
 				# pass
 			else:
-				f, axs = plt.subplots(3, sharex = True)
+				f, axs = plt.subplots(3, sharex = True, figsize=(16, 8))
 				axs[0] = plt.subplot(311)
 				axs[1] = plt.subplot(312)
 				axs[2] = plt.subplot(313)
 
 				if self.world.Nb_e_pc == 1:
-					# print("PLOT", self.a_pc_list*RtoD, self.I_list[0, 0, :].tolist(), self.DoLP_list[0, 0, :].tolist(), self.AoRD_list[0, 0, :].tolist())
 					axs[0].plot(self.world.a_pc_list*RtoD, self.I_list[0, 0, :].tolist(), label = "All")
-					# axs[0].plot(self.world.a_pc_list*RtoD, self.InonPola_list[0, 0, :].tolist(), "r", label = "Non polarized")
+					axs[0].plot(self.world.a_pc_list*RtoD, self.InonPola_list[0, 0, :].tolist(), "r", label = "Non polarized")
 					# axs[0].plot(self.world.a_pc_list*RtoD, (self.I_list[0, 0, :] - self.InonPola_list[0, 0, :]).tolist(), "g", label = "polarized")
 					axs[1].plot(self.world.a_pc_list*RtoD, self.DoLP_list[0, 0, :].tolist())
 					axs[2].plot(self.world.a_pc_list*RtoD, (self.AoRD_list[0, 0, :]*RtoD).tolist())
@@ -456,17 +469,17 @@ class Simulation:
 					axs[2].imshow(self.AoRD_list[0,:,:]*RtoD)
 					self.save_name = 'results/' + self.world.ground_map.location + "_skymap" + ".png"
 
-				axs[0].set_ylabel("Intensity")
-				axs[1].set_ylabel("DoLP")
-				axs[2].set_ylabel("AoLP")
+				axs[0].set_ylabel("Intensity (nW)")
+				axs[1].set_ylabel("DoLP (\%)")
+				axs[2].set_ylabel("AoLP (°)")
 		else:
-			f, axs = plt.subplots(3, sharex = True)
+			f, axs = plt.subplots(3, sharex = True, figsize=(16, 8))
 			axs[0] = plt.subplot(311)
 			axs[1] = plt.subplot(312)
 			axs[2] = plt.subplot(313)
-			axs[0].set_ylabel("Intensity")
-			axs[1].set_ylabel("DoLP")
-			axs[2].set_ylabel("AoLP")
+			axs[0].set_ylabel("Intensity (nW)")
+			axs[1].set_ylabel("DoLP, (\%)")
+			axs[2].set_ylabel("AoLP (°)")
 
 			self.world.sky_map.MakeSkyCubePlot(self.world.a_pc_list, self.world.e_pc_list, self.world.ouv_pc)
 			axs[0].set_yscale('log')

@@ -25,7 +25,7 @@ from atmosphere import *
 from world import *
 from input import *
 
-def RunSimulation(file_name = "", show = True):
+def RunSimulation(file_name = "", show = True, output_result_file=None):
 
 	all_time_start = tm.time()
 
@@ -42,13 +42,13 @@ def RunSimulation(file_name = "", show = True):
 	simu.MakeSummaryPlot()
 
 
-	# old = sys.stdout
-	# f = open("log/systematic_results.csv", "a")
-	# sys.stdout = f
+	old = sys.stdout
+	if output_result_file:
+		f = open(output_result_file, "a")
+		sys.stdout = f
 
 	simu.PrintSystematicResults()
-
-	# sys.stdout = old
+	sys.stdout = old
 
 	print("ALL TIME SINCE START:", tm.time() - all_time_start)
 

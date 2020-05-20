@@ -82,12 +82,18 @@ class Atmosphere:
 			while i < self.nb_profile_alt and alt > self.profiles["HGT"][i]:
 				i += 1
 
+			dalt = 0
+			dprof = 0
+			d = 0
+			value = 0
 			ip, im = i, i - 1
-			dalt = self.profiles["HGT"][ip] - self.profiles["HGT"][im]
-			dprof = self.profiles[name][ip] - self.profiles[name][im]
-			d = dprof / dalt
+			if ip < self.nb_profile_alt:
+				dalt = self.profiles["HGT"][ip] - self.profiles["HGT"][im]
+				dprof = self.profiles[name][ip] - self.profiles[name][im]
+				d = dprof / dalt
+				value = self.profiles[name][im]
 
-			return self.profiles[name][im] + d * (alt - self.profiles["HGT"][im])
+			return value + d * (alt - self.profiles["HGT"][im])
 
 
 	def GetVolume(self, AR, ouv_pc, unit="m"):

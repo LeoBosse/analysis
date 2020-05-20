@@ -96,8 +96,11 @@ def GetLonLatFromName(name, unit="radians"):
 	# 	A_lat = 69.541251
 
 	else:
-		A_lon = float(name.split(";")[0])
-		A_lat = float(name.split(";")[1])
+		try:
+			A_lon = float(name.split(";")[0])
+			A_lat = float(name.split(";")[1])
+		except:
+			A_lon, A_lat = 0, 0
 
 	if unit == "radians":
 		A_lon *= DtoR

@@ -358,6 +358,11 @@ class Bottle:
 		self.smooth_AoLP_lower = self.smooth_AoLP - self.std_smooth_AoLP
 		# print(self.smooth_DoLP.shape, self.sm ooth_AoLP.shape, self.var_DoLP.shape, self.var_AoLP.shape)
 
+		SN = lambda I, D, T: D * np.sqrt(I * T) / 2
+
+		self.all_SN = SN(self.all_I0, self.all_DoLP/100, self.avg_dt)
+		self.smooth_SN = SN(self.smooth_I0, self.smooth_DoLP/100, smoothing_factor)
+
 		print("Unifying AoLPs for least deviation")
 		self.smooth_AoLP, smooth_graph_angle_shift = UnifyAngles(self.smooth_AoLP)
 		self.all_AoLP, all_graph_angle_shift = UnifyAngles(self.all_AoLP)
@@ -641,10 +646,10 @@ class Bottle:
 
 		if len(bottle_to_add.rotations) > 0:
 
-			print(len(self.rotations), len(bottle_to_add.rotations))
+			# print(len(self.rotations), len(bottle_to_add.rotations))
 			self.rotations = np.append(self.rotations, bottle_to_add.rotations)
 
-			print(len(self.rotations), len(bottle_to_add.rotations))
+			# print(len(self.rotations), len(bottle_to_add.rotations))
 
 			self.tail_jump = self.rotations[-1].time
 			if not self.from_txt:
@@ -718,7 +723,7 @@ class PTCUBottle(Bottle):
 		date_location = self.folders[i+1].split("_")
 		self.date, self.location = date_location[0], date_location[1]
 		rest = self.folders[i+2].split("_")
-		print(rest)
+		# print(rest)
 		#Filters: r,v,b,m pour rouge, vert, bleu, mauve
 		#0: no filters_list
 		#o: orange 620
@@ -848,7 +853,7 @@ class PTCUBottle(Bottle):
 		print(len(self.rotations), "good rotations in", self.nb_rot, ";", self.nb_rot - len(self.rotations), "deleted because of time jumps.")
 		self.nb_rot = len(self.rotations)
 
-		print(self.head_jump, self.tail_jump, self.rotations[0].time, self.rotations[-1].time)
+		# print(self.head_jump, self.tail_jump, self.rotations[0].time, self.rotations[-1].time)
 
 
 		### Put every rotation time in sec since first rotation (after deleting head_jump)
@@ -861,19 +866,19 @@ class PTCUBottle(Bottle):
 		self.nb_rot = len(self.rotations)
 
 	def SaveTXT(self):
-		# times = [t.total_seconds() / 3600. for t in self.GetTimeFromDateTime(self.DateTime(moment="midnight", format="LT"))]
-		times = [t.total_seconds() * 1000 for t in self.GetTimeFromDateTime(self.DateTime(moment="config"))]
 		print("Saving as .txt in", self.data_file_name + "/" + self.saving_name + '_results.txt')
 
-
+		### Default Format
+		times = [t.total_seconds() * 1000 for t in self.GetTimeFromDateTime(self.DateTime(moment="config"))]
 		data = pd.DataFrame(np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_I0, self.std_DoLP, self.std_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose())
 		data.columns = ["time","V","Vcos","Vsin","I0","DoLP","AoLP","SV","SVcos","SVsin","SI0","SDoLP","SAoLP","errI0","errDoLP","errAoLP","errSI0","errSDoLP","errSAoLP"]
 
-		data.to_csv(elf.data_file_name + "/" + self.saving_name + '_results.txt', sep="\t", index=False)
+		### Simple format for Jean
+		# times = [t.total_seconds() / 3600. for t in self.GetTimeFromDateTime(self.DateTime(moment="midnight", format="LT"))]
+		# data = pd.DataFrame(np.array([times, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose())
+		# data.columns = ["time","SI0","SDoLP","SAoLP","errSI0","errSDoLP","errSAoLP"]
 
-		# np.savetxt(self.data_file_name + "/" + self.saving_name + '_results.txt', np.array([times, self.smooth_DoLP, self.smooth_AoLP, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose(), delimiter = "\t", header = "time\tSDoLP\tSAoLP\terrSDoLP\terrSAoLP")
-		# np.savetxt(self.data_file_name + "/" + self.saving_name + '_results.txt', np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_I0, self.std_DoLP, self.std_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose(), delimiter = "\t", header = "time\tV\tVcos\tVsin\tI0\tDoLP\tAoLP\tSV\tSVcos\tSVsin\tSI0\tSDoLP\tSAoLP\terrI0\terrDoLP\terrAoLP\terrSI0\terrSDoLP\terrSAoLP")
-
+		data.to_csv(self.data_file_name + "/" + self.saving_name + '_results.txt', sep="\t", index=False)
 
 	def LoadPTCUData(self):
 		"""Return an array of data and a dictionnary of config from a list of data files. The first is the data, the second is the config. Each line of the data is a rotation with 6 entries, the config dict is all the parameters of the observation, common to all rotations."""
@@ -1123,7 +1128,7 @@ class SPPBottle(Bottle):
 			if self.jump_mode == "length" or self.tail_jump.seconds == 0.:
 				self.tail_jump = self.rotations[-1].time - self.tail_jump
 
-			print(self.head_jump, self.tail_jump, self.rotations[0].time, self.rotations[-1].time)
+			# print(self.head_jump, self.tail_jump, self.rotations[0].time, self.rotations[-1].time)
 			print("Nb rotations before cleaning:", self.nb_rot)
 
 			self.rotations = [r for r in self.rotations if self.head_jump <= r.time < self.tail_jump]
@@ -1136,7 +1141,7 @@ class SPPBottle(Bottle):
 
 
 		self.rotations = [r for r in self.rotations if r.IsGood(Imin=self.Imin, Imax=self.Imax, DoLPmin=self.DoLPmin, DoLPmax=self.DoLPmax)]
-		print(self.Imin, self.Imax, self.DoLPmin, self.DoLPmax)
+		# print(self.Imin, self.Imax, self.DoLPmin, self.DoLPmax)
 
 
 		print(self.nb_rot - len(self.rotations), "bad rotations in", self.nb_rot)

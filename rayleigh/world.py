@@ -32,7 +32,8 @@ class World:
 		### Get all the azimuts and elevations of the instruments.
 		self.a_pc_list		= np.array(in_dict["azimuts"].split(";"))  # List of azimuts for the observations
 		if self.a_pc_list[0] == "all":
-			self.a_pc_list = np.arange(0, 360, 10) * DtoR
+			self.a_pc_list = np.arange(179.5, 180.5, 0.005) * DtoR
+			# self.a_pc_list = np.arange(0, 360, 10) * DtoR
 		else:
 			self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
 
@@ -65,10 +66,10 @@ class World:
 		if self.Nb_a_pc == self.Nb_e_pc == 1:
 			self.is_single_observation = True
 
-		###Show the skymaps if they change in time or we move the instrument
-		if self.has_sky_emission and (self.is_time_dependant or not self.is_single_observation):
-			self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
-			plt.show()
+		##Show the skymaps if they change in time or we move the instrument
+		# if self.has_sky_emission and (self.is_time_dependant or not self.is_single_observation):
+		self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
+		plt.show()
 			# plt.close("all")
 		print("Has_sky_emission:", self.has_sky_emission)
 
@@ -112,7 +113,7 @@ class World:
 			dlos_list = [2.]
 			# dlos_list = [(range_min + range_max) / 2.]
 
-		print("DEBUG dlos list:", dlos_list)
+		# print("DEBUG dlos list:", dlos_list)
 
 		#array of lon, lat, alt (above sea level) for each scattering point
 		self.dlos_list = [self.obs.GetPCoordinatesFromRange(d) for d in dlos_list]
@@ -194,13 +195,7 @@ class World:
 								self.sky_map.total_scattering_map[time, ie_pc, ia_pc, ie, ia] += I0 # Intensity of light scattered from a given (e, a)
 								self.sky_map.scattering_map[time, ie_pc, ia_pc, ie, ia] += w_DoLP * I0 # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
 
-							# count += 1
-							# self.Progress(count, N, suffix="of sky point sources done")
 							pbar.update(1)
-							# if count == N // 10:
-							# 	print("\t", 9 * (tm.time() - start_time), "seconds left...")
-							# elif count == N // 2:
-							# 	print("\t", (tm.time() - start_time), "seconds left...")
 
 						self.sky_map.DoLP_map = self.sky_map.scattering_map / self.sky_map.total_scattering_map # DoLP of a given (e, a)
 
@@ -234,7 +229,6 @@ class World:
 						a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
 						for sca_lon, sca_lat, sca_alt in self.dlos_list: #for every altitude between minimum and maximum scattering altitude
 
-							print("############### DEBUG dlos:", )
 							sca_from_E_is_visible = True
 							if self.use_elevation_map:
 								sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
@@ -263,61 +257,88 @@ class World:
 		I0 = self.ground_map.I_map[ilat, ilon]
 
 		AR, RE, RD_angle = self.GetGeometryFromAzDist(a_rd, e_rd, alt)
-		print("DEBUG: AR, RE, RD_angle, alt", AR, RE, RD_angle*RtoD, alt)
+		# print("DEBUG: AR, RE, RD_angle, alt", AR, RE, RD_angle*RtoD, alt)
 
-		print("DEBUG I0 1:", I0, I0*self.ground_map.GetArea(ilat) / RE ** 2)
+		# print("DEBUG I0 1:", I0, I0*self.ground_map.GetArea(ilat) / RE ** 2)
 		I0 *= self.ground_map.GetArea(ilat) / RE ** 2
 
 		if alt != 0:
 			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * RE / alt
-			print("DEBUG opt_depth: ER", opt_depth, 1-opt_depth, np.exp(-opt_depth))
+			# print("DEBUG opt_depth: ER", opt_depth, 1-opt_depth, np.exp(-opt_depth))
 		else:
 			opt_depth = 0
 		I0 *= np.exp(-opt_depth)
 
-		print("DEBUG I0 2:", I0)
-		print("DEBUG scattered:", self.GetScattered(I0, AR, RE, RD_angle, alt)[0]/I0)
+		# print("DEBUG I0 2:", I0)
+		# print("DEBUG scattered:", self.GetScattered(I0, AR, RE, RD_angle, alt)[0]/I0)
 
 		I0, w_DoLP = self.GetScattered(I0, AR, RE, RD_angle, alt)
 
-		print("DEBUG I0 3:", I0)
+		# print("DEBUG I0 3:", I0)
 
 		if alt != 0:
 			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * AR / alt
-			print("DEBUG opt_depth: RA", opt_depth, 1-opt_depth, np.exp(-opt_depth))
+			# print("DEBUG opt_depth: RA", opt_depth, 1-opt_depth, np.exp(-opt_depth))
 		else:
 			opt_depth = 0
 
 		I0 *= np.exp(-opt_depth)
-		print("DEBUG I0 4:", I0)
+		# print("DEBUG I0 4:", I0)
 
 		return I0, w_DoLP
 
 
 	def ComputeSingleRSSkyPointSource(self, time, ia, a, ie, e, alt):
-		I0 = self.sky_map.cube[time, ie, ia]
-		I0 *= np.cos(e) # Bining effect, bin around e=90 are "smaller" if sky emission
 
 		AR, RE, RD_angle = self.GetGeometryFromAzEl(a, e, alt)
 
-		if alt != 0:
-			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, self.sky_map.h, alt) * RE / alt
+		if RE > 10:
+			geo_list = [a, e, AR, AR, RE, RD_angle, alt]
 		else:
-			opt_depth = 0
+			geo_list = self.GetDiscreteRSPoint(a, e, alt, AR, RE)
 
-		I0 *= np.exp(-opt_depth)
+		for a, e, r, AR, RE, RD_angle, alt in geo_list:
+			I0 = self.sky_map.cube[time, ie, ia]
+			I0 *= self.sky_map.GetPixelArea(ie) / RE ** 2
+
+			if alt != 0:
+				opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, self.sky_map.h, alt) * RE / alt
+			else:
+				opt_depth = 0
+
+			I0 *= np.exp(-opt_depth)
 
 
-		I0, w_DoLP = self.GetScattered(I0, AR, RE, RD_angle, alt, elevation = e)
+			I0, w_DoLP = self.GetScattered(I0, AR, RE, RD_angle, alt, elevation = e)
 
-		if alt != 0:
-			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * AR / alt
-		else:
-			opt_depth = 0
-		# print("opt_depth, p.exp(-opt_depth)", opt_depth, np.exp(-opt_depth))
-		I0 *= np.exp(-opt_depth)
+			if alt != 0:
+				opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * AR / alt
+			else:
+				opt_depth = 0
+			# print("opt_depth, p.exp(-opt_depth)", opt_depth, np.exp(-opt_depth))
+			I0 *= np.exp(-opt_depth)
 
 		return I0, w_DoLP
+
+	def GetDiscreteRSPoint(self, a, e, alt, AR, RE, N = 100):
+		n = np.cbrt(N)
+		a_list = np.linspace(a - self.ouv_pc, a + self.ouv_pc, n)
+		e_list = np.linspace(e - self.ouv_pc, e + self.ouv_pc, n)
+		r_list = np.linspace(AR - self.atmosphere.d_los, AR + self.atmosphere.d_los, n)
+
+		geo_list = np.zeros((n, 7))
+
+		for i in range(n):
+			a, e, r = a_list[i], e_list[i], r_list[i]
+			alt = ObservationPoint(self.ground_map.A_lon, self.ground_map.A_lat, self.sky_map.h, a, e, A_alt = self.instrument_altitude).GetPCoordinatesFromRange(r)[2]
+
+			AR, RE, RD_angle = self.GetGeometryFromAzEl(a, e, alt)
+
+			geo_list[i] = a, e, r, AR, RE, RD_angle, alt
+
+		return geo_list
+
+
 
 	def GetGeometryFromAzEl(self, a_rd, e_rd, alt):
 		"""From known geometry parameters : a, e of emission and alt of scatering, return missing parameters: Distance between emission and scattering and angle of scattering.
@@ -367,14 +388,14 @@ class World:
 		"""Given an initial intensity of a source and some geometrical parameter, returns the intensity mesured at the instrument and its DoLP.
 		Input parameters: elevation, altitude of scattering, scattering angle, distance between emission and scattering."""
 
-		V = self.atmosphere.GetVolume(AR, self.ouv_pc, unit="km") #in m3
-		Crs = self.atmosphere.GetRSVolumeCS(self.wavelength, alt) #in cm-1 * 100 = m-1
+		V = self.atmosphere.GetVolume(AR, self.ouv_pc, unit="km") #in km3
+		Crs = self.atmosphere.GetRSVolumeCS(self.wavelength, alt) #in km-1
 		P = self.atmosphere.GetRSPhaseFunction(self.wavelength, RD_angle)
 
 		# print("DEBUG V, Crs, P", V, Crs, P)
 
 		if AR != 0:
-			I0 *= Crs * P * V * self.PTCU_area / (AR * 1) ** 2 / 4 / np.pi
+			I0 *= Crs * P * V * self.PTCU_area / AR ** 2 / 4 / np.pi
 			# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)
 		else:
 			I0 = 0

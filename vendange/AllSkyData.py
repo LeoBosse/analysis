@@ -20,7 +20,7 @@ import imageio
 
 
 class AllSkyData:
-	def __init__(self, bottle):
+	def __init__(self, bottle, filename=None):
 
 		print("Creating AllSky Imager Data Object")
 
@@ -29,20 +29,23 @@ class AllSkyData:
 		no_data = False
 
 		self.file = self.data_path
-		if   bottle.location.lower() == "nyalesund": self.location = "nya6"
-		elif bottle.location.lower() == "skibotn": self.location = "skn4"
-		else: self.location = "nan"
+		if filename:
+			self.file += filename
+		else:
+			if   bottle.location.lower() == "nyalesund": self.location = "nya6"
+			elif bottle.location.lower() == "skibotn": self.location = "skn4"
+			else: self.location = "nan"
 
-		if   bottle.filters and bottle.filters[0] in ["v", "m", "b"]: self.color = "5577"
-		elif bottle.filters and bottle.filters[0] == "r": self.color = "6300"
-		elif bottle.instrument_name == "spp": self.color = "6300"
-		else: self.color = "nan"
+			if   bottle.filters and bottle.filters[0] in ["v", "m", "b"]: self.color = "5577"
+			elif bottle.filters and bottle.filters[0] == "r": self.color = "6300"
+			elif bottle.instrument_name == "spp": self.color = "6300"
+			else: self.color = "nan"
 
-		self.file += self.location + "/"
-		self.file += self.color + "/"
+			self.file += self.location + "/"
+			self.file += self.color + "/"
 
-		self.azimut = bottle.azimut * RtoD
-		self.elevation = bottle.elevation * RtoD
+		self.azimut = bottle.azimut * RtoD #Calib file coord are given in degrees!
+		self.elevation = bottle.elevation * RtoD #Calib file coord are given in degrees!
 		self.deg_delta = 1
 
 		self.start = bottle.DateTime("start", format="UT")
@@ -130,10 +133,14 @@ class AllSkyData:
 
 		for i, lign in enumerate(image):
 			for j, col in enumerate(lign):
-				pix_azimut    = calibration["gazms"][i][j]
-				pix_elevation = calibration["elevs"][i][j]
-				if pix_azimut - self.deg_delta < self.azimut < pix_azimut + self.deg_delta and pix_elevation - self.deg_delta < self.elevation < pix_elevation + self.deg_delta:
-					self.pixel_area.append((i, j))
+				pix_azimut    = calibration["gazms"][i][j] #IN DEGREES
+				pix_elevation = calibration["elevs"][i][j] #IN DEGREES
+				if not np.isnan(pix_azimut) and not np.isnan(pix_elevation):
+					# print(pix_azimut, pix_elevation)
+					# print(self.deg_delta, self.azimut, self.elevation)
+
+					if pix_azimut - self.deg_delta < self.azimut and self.azimut < pix_azimut + self.deg_delta and pix_elevation - self.deg_delta < self.elevation and self.elevation < pix_elevation + self.deg_delta:
+						self.pixel_area.append((i, j))
 
 		self.nb_pixels = len(self.pixel_area)
 

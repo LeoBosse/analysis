@@ -54,9 +54,14 @@ class SkyMap:
 
 		### Initialize some parameters for the case h!=0
 		self.N = float(in_dict["Nb_emission_points"]) # Number of bins to compute (if h!=0)
-		self.Na, self.Ne = int(2 * np.sqrt(self.N)), int(np.sqrt(self.N) / 2) # Numbers of bins in azimut/elevation. Na = 4*Ne and Na*Ne = N
+		if self.N > 1:
+			self.Na, self.Ne = int(2 * np.sqrt(self.N)), int(np.sqrt(self.N) / 2) # Numbers of bins in azimut/elevation. Na = 4*Ne and Na*Ne = N
+		else:
+			self.Na, self.Ne = 1, 1
 		self.da = (self.I_zone_a_max - self.I_zone_a_min) / self.Na # Length of an azimut bin
 		self.de = (self.I_zone_e_max - self.I_zone_e_min) / self.Ne # Length of an elevation bin
+
+
 
 		if self.exist and "moving" in self.mode:
 			self.Nt = int(in_dict["Nb_emission_maps"])
@@ -67,13 +72,19 @@ class SkyMap:
 		# self.azimuts = np.linspace(self.I_zone_a_min + self.da/2., self.I_zone_a_max + self.da/2, self.Na) # array of all azimuts
 		# self.elevations = np.linspace(self.I_zone_e_min + self.de/2., self.I_zone_e_max - self.de/2., self.Ne-1) # array of all elevations
 		self.azimuts = np.linspace(self.I_zone_a_min + self.da/2, self.I_zone_a_max + self.da/2, self.Na+1, endpoint=True) # array of all azimuts
+		# self.azimuts.sort()
+		# self.azimuts %= (2*np.pi)
 		self.elevations = np.linspace(self.I_zone_e_min, self.I_zone_e_max, self.Ne+1, endpoint=True) # array of all elevations
 
-		self.mid_azimuts = self.azimuts[:-1] + self.da/2.
+		self.mid_azimuts = (self.azimuts[:-1] + self.da/2.) % (2*np.pi)
 		self.mid_elevations = self.elevations[:-1] + self.de/2.
 
+		# print("DEBUG SKYMAP", self.Na, self.Ne, len(self.azimuts), len(self.elevations), len(self.mid_azimuts), len(self.mid_elevations))
+		# print("DEBUG SKYMAP", self.azimuts*RtoD, self.elevations*RtoD)
 		# print("DEBUG SKYMAP: elevations", self.elevations*RtoD)
 		# print("DEBUG SKYMAP: azimuts", self.azimuts*RtoD)
+		# print("DEBUG SKYMAP: mid_elevations", self.mid_elevations*RtoD)
+		# print("DEBUG SKYMAP: mid_azimuts", self.mid_azimuts*RtoD)
 
 		self.maps_shape = (self.Ne, self.Na)
 		# self.sky_I_map = np.zeros(self.maps_shape) # Intensity of the emission at point (e,a)
@@ -92,23 +103,26 @@ class SkyMap:
 		# print(self.azimuts * RtoD)
 		# print(self.elevations * RtoD)
 		map = np.zeros(self.maps_shape)
+		div = np.zeros(self.maps_shape)
 
 		for i, line in enumerate(image):
 			for j, pix in enumerate(line):
 				if pix > 0:
 					# print("PIX", pix)
-					pix_azimut    = (calib["gazms"][i][j] * DtoR + np.pi) % (2*np.pi) # GIVEN IN DEGREES
+					pix_azimut    = -(calib["gazms"][i][j] * DtoR + np.pi) % (2*np.pi) # GIVEN IN DEGREES
 					pix_elevation = calib["elevs"][i][j] * DtoR # GIVEN IN DEGREES
 
 					if pix_azimut and pix_elevation:
 						ia, ie = self.GetPixFromAzEl(pix_azimut, pix_elevation)
-						# print("AA", pix_azimut, ia)
-						# print("EE", pix_elevation, ie)
 
-						if ia and ie:
+						# print("AA", pix_azimut*RtoD, ia)
+						# print("EE", pix_elevation*RtoD, ie)
+
+						if ia is not None and ie is not None:
 							map[ie, ia] += pix * self.RtonW
+							div[ie, ia] += 1
 
-		return map
+		return map / div
 
 
 	def LoadSkyEmmisionsCube(self, Nb_a_pc, Nb_e_pc):
@@ -132,9 +146,10 @@ class SkyMap:
 			self.cube[:, :, :] += float(self.mode[8:])
 
 		elif self.mode[:4] == "spot":
-			a = int(self.mode[6:8]) * DtoR
+			a = int(self.mode[6:9]) * DtoR
 			e = int(self.mode[-2:]) * DtoR
 			self.cube[0, :, :] = self.GetBandSkyMap(a_band = a, e_band = e, length = 50, thickness = 50, height = 50, band_I = 100, nb_sub_bands = 1)
+
 		elif self.mode == "image":
 			self.cube[0, :, :] = self.LoadAllSkyImage()
 
@@ -171,7 +186,7 @@ class SkyMap:
 			elif Nb_a_pc > 1:
 				ax.plot(a_pc_list, [90 - e_pc_list[0] * RtoD] * Nb_a_pc, "r")
 			elif Nb_e_pc > 1:
-				ax.plot([a_pc_list] * Nb_e_pc, 90 - e_pc_list[0] * RtoD, "r")
+				ax.plot([a_pc_list] * Nb_e_pc, 90 - e_pc_list * RtoD, "r")
 			# col.set_rlim(0,90, 1)
 			# col.set_yticks(np.arange(0, 90, 20))
 			# col.set_yticklabels(a.get_yticks()[::-1])   # Change the labels
@@ -218,23 +233,33 @@ class SkyMap:
 				for iaz, az in enumerate(el):
 					AH = InBand(self.mid_azimuts[iaz], self.mid_elevations[iel])
 					if AH:
-						map[iel][iaz] += band_I / AH ** 2
+						map[iel][iaz] += band_I # / AH ** 2
 		return map
 
 	def GetPixFromEl(self, pix_e):
 		"""Return the elevation index of the pixel containing a given elevation in radians."""
 		for ie, e in enumerate(self.elevations):
 			if pix_e < e:
-				pix_ie = (ie - 1)%self.Ne
+				pix_ie = (ie - 1) #% self.Ne
 				return pix_ie
+		# if not np.isnan(pix_e):
+		# 	return int(((pix_e - self.elevations[0]) / self.de) % self.Ne)
+		# else:
+		return None
 
 	def GetPixFromAz(self, pix_a):
 		"""Return the azimut index of the pixel containing a given azimut in radians."""
-		pix_a %= (2*np.pi)
-		for ia, a in enumerate(self.azimuts):
-			if pix_a < a:
-				pix_ia = (ia - 1)%(self.Na)
-				return pix_ia
+		mod = (2 * np.pi)
+		pix_a %= mod
+		for ia in range(self.Na):
+			if self.azimuts[ia] % mod <= pix_a < self.azimuts[ia + 1] % mod:
+				return ia #% (self.Na)
+			elif self.azimuts[ia + 1] > 2*np.pi and self.azimuts[ia] <= pix_a:
+				return ia
+		# if not np.isnan(pix_a):
+		# 	return int(((pix_a - self.azimuts[0]) / self.da) % self.Na)
+		# else:
+		return None
 
 	def GetPixFromAzEl(self, a, e):
 		return self.GetPixFromAz(a), self.GetPixFromEl(e)
@@ -248,12 +273,29 @@ class SkyMap:
 		ie = self.GetPixFromEl(pix_e)
 		return GetPixelSolidAngleFromiEl(ie)
 
+	def GetPixelArea(self, ie):
+		"""Return the flattened area in km2 of a sky pixel from its elevation index."""
+		e = self.mid_elevations[ie] #Get pixel mid elevation
+		em, eM = self.elevations[ie], self.elevations[ie + 1] #Get pixel min em and Max eM elevations
+
+		area = 2 * np.pi * RT**2 * (np.sin(eM) - np.sin(em)) / self.Na
+
+		### Deprecated version with square areas
+		# de = self.de / 2. # Get pixel half elevation difference
+		# AEm, AE = self.h / np.sin(em), self.h / np.sin(e) #Get lenght of segment AE and AEm for an given emission altitude
+		# Hm, HM = AEm * np.sin(de) / np.sin(e), AE * np.tan(de) / np.sin(e) #Get length of segment H
+		#
+		# area = (Hm + HM) * self.da * AE * np.cos(e) #km2
+
+		return area # in km2
+
 
 	def GetFlux(self, az, el, r, t=0, area=1):
 		"""Return the flux in nW for a given az, el and opening angle (all in radians).
 		The pixel units are in nW/sr/m2.
 		t is the time of the map
 		area is the area of the detector. Set to 1 by default."""
+
 		b = 0
 
 		ia_min, ie_min = self.GetPixFromAzEl(az - r, el - r)
@@ -262,6 +304,18 @@ class SkyMap:
 		# ie_min, ie_max = min(ie_min, ie_max), max(ie_min, ie_max)
 
 		# print(ia_min, ie_min, ia_max, ie_max)
+		# print(az*RtoD, el*RtoD)
+		# print(ia_min, ie_min)
+		# print(ia_max, ie_max)
+		if (ia_max is None or ie_max is None) and (ia_min is None or ie_min is None): # If the min and max pixel do not contain the instrument
+			# print("No direct flux")
+			return 0
+
+		if ia_max is None or ie_max is None:
+			ia_max, ie_max = ia_min, ie_min
+		if ia_min is None or ie_min is None:
+			ia_min, ie_min = ia_max, ie_max
+
 		if ia_max >= ia_min:
 			ia_list = np.arange(ia_min, ia_max + 1)
 			# print("COOL")
@@ -275,9 +329,9 @@ class SkyMap:
 		mod = 360*DtoR
 		for ia in ia_list:
 			shift = 0
-			if self.azimuts[(ia + 1)%(self.Na)]%mod <= self.azimuts[ia]%mod:
+			if self.azimuts[(ia + 1)]%mod <= self.azimuts[ia]%mod:
 				shift = mod / 2.
-			pix_da = min((self.azimuts[(ia + 1)%(self.Na)] + shift) % mod, (az + r + shift) % mod) - max((self.azimuts[ia] + shift) % mod, (az - r + shift) % mod)
+			pix_da = min((self.azimuts[(ia + 1)] + shift) % mod, (az + r + shift) % mod) - max((self.azimuts[ia] + shift) % mod, (az - r + shift) % mod)
 			pix_da %= mod
 
 			# print("DEBUG DIRECT:", pix_da%mod*RtoD)
@@ -292,6 +346,6 @@ class SkyMap:
 				b += self.cube[t, ie, ia] * pix_da * pix_de * np.cos(self.mid_elevations[ie])
 
 
-		# print("DEBUG DIRECT:", b, area, b * area)
+		# print("DEBUG DIRECT:", b, area, b * area, pix_da, pix_de)
 
 		return b * area

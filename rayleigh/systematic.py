@@ -5,6 +5,7 @@
 from main import *
 from rayleigh_input import *
 import pandas as pd
+import matplotlib as mpl
 
 import sys
 
@@ -32,28 +33,86 @@ def GetData():
 # def PlotData(data, x_axis, y_axis, t=None, a_pc=None, e_pc=None, src_dist=None, dlos=None, min_alt=None, max_alt=None, wl=None):
 
 
-def PlotData(data, x_axis_name, y_axis_name, **kwargs):
+def PlotData(data, x_axis_name, y_axis_name, zaxis=None, **kwargs):
+	font = {'size'   : 24}
+	matplotlib.rc('font', **font)
+
 	missing = []
 	for c in data.columns:
-		if c not in kwargs.keys() and c not in [x_axis_name, y_axis_name, "I0", "DoLP", "AoRD", "Ipola", "Inonpola"]:
+		if ((c not in kwargs.keys() or (c in kwargs.keys() and kwargs[c] == "*")) and c not in [x_axis_name, y_axis_name, zaxis, "I0", "DoLP", "AoRD", "Ipola", "Inonpola"]) :
 			missing.append(c)
+			# print(missing)
 
 	if kwargs:
 		for k, v in kwargs.items():
-			data = data[abs(data[k] - v) < 0.000001]
-			data = data[data["I0"] < 100]
+			if v == "*":
+				continue
+			try:
+				data = data[abs(data[k] - v) < 0.000001]
+			except:
+				pass
+				# print(data[k], v)
+			# data = data[data["I0"] < 100]
 		data = data.reset_index()
+		if data.empty:
+			raise ValueError('No simulation correspond to the following given parameters: {}'.format(kwargs))
+		# print(data)
 
 	if missing:
 		axs = PlotMissingData(data, missing, x_axis_name, y_axis_name, **kwargs)
-	else:
+	elif not zaxis:
 		axs = SimplePlot(data, x_axis_name, y_axis_name, **kwargs)
+	else:
+		axs = ParameterMap(data, x_axis_name, y_axis_name, zaxis, **kwargs)
 
 
 	axs[-1].set_xlabel(x_axis_name.replace("_", "-"))
-	axs[0].set_title(" ".join([k + "=" + str(v) for k, v in kwargs.items()]).replace("_", "-"))
+	# axs[0].set_title(" ".join([k + "=" + str(v) for k, v in kwargs.items()]).replace("_", "-"))
 
 
+def ParameterMap(data, x_axis_name, y_axis_name, z_axis_name, **kwargs):
+	fig, axs = plt.subplots(1, sharex=True, figsize=(16, 8))
+	axs = [axs]
+	axs_names = [y_axis_name]
+
+	x_axis = list(set(data[x_axis_name]))
+	y_axis = list(set(data[y_axis_name]))
+	z_axis = data[z_axis_name]
+
+	x_axis = sorted(x_axis)
+	y_axis = sorted(y_axis)
+
+	nb_x = len(x_axis)
+	nb_y = len(y_axis)
+
+	x_axis_bins = x_axis
+	x_axis_bins.append(2 * x_axis[-1] - x_axis[-2])
+	y_axis_bins = y_axis
+	y_axis_bins.append(2 * y_axis[-1] - y_axis[-2])
+
+	z_map = np.zeros((nb_y, nb_x))
+
+	for i in data.index:
+		x = data[x_axis_name][i]
+		y = data[y_axis_name][i]
+
+		x_index = x_axis.index(x)
+		y_index = y_axis.index(y)
+
+		z_map[y_index][x_index] = data[z_axis_name][i]
+
+	print(z_map.shape[-1])
+
+
+	m = axs[0].pcolormesh(x_axis_bins, y_axis_bins, z_map)
+
+	axs[0].set_xlabel(x_axis_name.replace("_", "-"))
+	axs[0].set_ylabel(y_axis_name.replace("_", "-"))
+
+	cbar1 = fig.colorbar(m, extend='both', spacing='proportional', shrink=0.9, ax=axs[0])
+	cbar1.set_label(z_axis_name)
+
+	return axs
 
 
 def SimplePlot(data, x_axis_name, y_axis_name, **kwargs):
@@ -84,22 +143,19 @@ def SimplePlot(data, x_axis_name, y_axis_name, **kwargs):
 	return axs
 
 def PlotMissingData(data, missing, x_axis_name, y_axis_name, **kwargs):
-	# missing = []
-	# for c in data.columns:
-	# 	if c not in kwargs.keys() and c not in [x_axis_name, y_axis_name, "I0", "DoLP", "AoRD", "Ipola", "Inonpola"]:
-	# 		missing.append(c)
 
-	# if kwargs:
-	# 	for k, v in kwargs.items():
-	# 		data = data[abs(data[k] - v) < 0.000001]
-	# 		data = data[data["I0"] < 100]
-	# 	data = data.reset_index()
+	x_axis_shift = 0
+	x_axis_mod = 0
 
-	def GetMissingValues(i):
-		missing_values = []
-		for m in missing:
-			missing_values.append(data[m][i])
-		return missing_values
+	def GetXAxis(x, x_axis_shift=None, x_axis_mod=None):
+		if x_axis_shift:
+			x += x_axis_shift
+		if x_axis_mod:
+			x %= x_axis_mod
+		return x
+
+	GetMissingValues = lambda i, missing: [data[m][i] for m in missing]
+
 
 	if y_axis_name == "all":
 		fig, axs = plt.subplots(3, sharex=True, figsize=(16, 8))
@@ -111,82 +167,133 @@ def PlotMissingData(data, missing, x_axis_name, y_axis_name, **kwargs):
 		axs_names = [y_axis_name]
 
 	legend_title = "; ".join(missing).replace("_", "-")
+	nb_plots = len(set(data[missing[0]]))
+
+	missing_value_list = sorted(list(set(data[missing[0]])))
+
 	for iax, ax in enumerate(axs):
-		old_missing_values = GetMissingValues(0)
+
+
+		#### Code from here to next "####" comment works best for only 1 missing argument
+		# Set the default color cycle
+		colors = [(i, 0, 1-i) for i in np.linspace(0, 1, nb_plots)]
+		ax.set_prop_cycle("c", colors)
+
 		x_axis, y_axis = [], []
 		y_axis_name = axs_names[iax]
-		for i in data.index:
-			missing_values = GetMissingValues(i)
-			if old_missing_values == missing_values:
-				x_axis.append(data[x_axis_name][i])
-				y_axis.append(data[y_axis_name][i])
-			else:
-				ax.plot(x_axis, y_axis, "-*", label = "; ".join(str(v) for v in old_missing_values))
-				x_axis, y_axis = [], []
 
-			if i == data.index.stop - 1:
-				ax.plot(x_axis, y_axis, "-*", label = "; ".join(str(v) for v in old_missing_values))
 
-			old_missing_values = missing_values
+		for m in missing_value_list:
+			tmp = data[data[missing[0]] == m]
+			x_axis = GetXAxis(tmp[x_axis_name], x_axis_shift, x_axis_mod)
+			y_axis = tmp[y_axis_name]
+
+			x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
+
+			ax.plot(x_axis, y_axis, "-*", label = str(m))
+
+		#### Following code should work if several arguments are missing
+		# old_missing_values = GetMissingValues(0, missing)
+		# x_axis, y_axis = [], []
+		# y_axis_name = axs_names[iax]
+		# for i in data.index: #Every line of the table once
+		# 	missing_values = GetMissingValues(i, missing) #Get value for changing paramter. missing should be of length 1
+		# 	if old_missing_values == missing_values: #If value for changing parameter do not change, append the plot
+		# 		x_axis.append(GetXAxis(data[x_axis_name][i], x_axis_shift, x_axis_mod))
+		# 		y_axis.append(data[y_axis_name][i])
+		# 	else:
+		#
+		# 		x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
+		# 		ax.plot(x_axis, y_axis, "-*", label = "; ".join(str(v) for v in old_missing_values))
+		# 		x_axis, y_axis = [GetXAxis(data[x_axis_name][i], x_axis_shift, x_axis_mod)], [data[y_axis_name][i]]
+		#
+		# 	if i == data.index.stop - 1:
+		# 		x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
+		# 		ax.plot(x_axis, y_axis, "-*", label = "; ".join(str(v) for v in old_missing_values))
+		#
+		# 	old_missing_values = missing_values
 
 		ax.set_ylabel(y_axis_name.replace("_", "-"))
 		handles, labels = ax.get_legend_handles_labels()
 		# sort both labels and handles by labels
 		labels, handles = zip(*sorted(zip(labels, handles), key = lambda x: float(x[0])))
 
-	axs[0].legend(handles, labels, title=legend_title, loc='upper left', bbox_to_anchor=(1, 1))
+	axs[0].legend(handles, labels, title=legend_title, loc='upper left', bbox_to_anchor=(0.98, 1))
 
 	return axs
 
 
 def RunSystematicSimulation():
-	azimuths = 0
-	elevations = 90
+	"""Automatically runs simulations for the given paramter space.
+	1: Define parameter space and check for loops include all wanted paramters.
+	2: For every other parameters of the simulation, the default value is taken. default value is the value written in the input file: "RS_default.in"
+	3: From the terminal run ./systematic.py
+	4: To plot parameter comparisons run ./systematic.py with the right keyword arguments.
+	"""
+
+	### Define paramter space. All combinations of these parameters will be simulated.
+	azimuths = 180
+	elevations = 45
 	src_dist = [5]
-	dlos = [0.1]
-	alt_min = [0]
-	alt_max = [6, 8, 9, 20, 30, 40]
-	wavelengths = [630, 557.7, 427.8, 391.4]
+	src_az = [0]
+	dlos = [0.1]#, 0.5, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30]
+	alt_min = [0]#, 1, 5, 10, 25, 50, 100]
+	alt_max = [60, 70, 80, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95]#[1, 2, 3, 4, 5, 7.5, 10, 25, 50, 100]
+	wavelengths =  [630, 557.7, 427.8, 391.4]
 
-	for d in src_dist:
-		for dl in dlos:
-			for am in alt_min:
-				for aM in [a for a in alt_max if a > am + dl]:
-					for wl in wavelengths:
-						in_dict = {"azimuts": azimuths,
-								"elevations": elevations,
-								"point_src_dist": d,
-								"resolution_along_los": dl,
-								"RS_min_altitude": am,
-								"RS_max_altitude": aM,
-								"wavelength": wl
-								}
+	for sa in src_az:
+		for d in src_dist:
+			for dl in dlos:
+				for am in alt_min:
+					for aM in [a for a in alt_max if a > am + dl]:
+						for wl in wavelengths:
+							h = 90
+							if wl == 630:
+								h = 220
+							elif wl == 557.7:
+								h = 100
 
-						r_input = RayleighInput()
+							in_dict = {"azimuts": azimuths,
+									"elevations": elevations,
+									"point_src_dist": d,
+									"point_src_az": sa,
+									"resolution_along_los": dl,
+									"RS_min_altitude": am,
+									"RS_max_altitude": aM,
+									"wavelength": wl,
+									"emission_altitude": h
+									}
 
-						r_input.Update(in_dict)
+							r_input = RayleighInput()
 
-						file_name = r_input.WriteInputFile(file_name = "systemic/systemic", **in_dict)
+							r_input.Update(in_dict)
 
-						print(file_name)
+							file_name = r_input.WriteInputFile(file_name = "systemic/systemic", **in_dict)
 
-						log_file_name = "./log/" + file_name + ".out"
-						log_file = open(log_file_name, "w")
+							print(file_name)
 
-						terminal = sys.stdout
-						sys.stdout = log_file
-						sys.stderr = log_file
+							log_file_name = "./log/" + file_name + ".out"
+							log_file = open(log_file_name, "w")
 
-						RunSimulation(file_name, show = False)
+							terminal = sys.stdout
+							sys.stdout = log_file
+							sys.stderr = log_file
 
-						sys.stdout = terminal
-						sys.stderr = terminal
+							RunSimulation(file_name, show = False, output_result_file = "log/systematic_results.csv")
+
+							sys.stdout = terminal
+							sys.stderr = terminal
 
 
 if __name__ == "__main__":
-	# RunSystematicSimulation()
+	#Get the input file from the command arguments
+	arguments = sys.argv
+	nb_args = len(arguments)
 
-	plt.close("all")
-	data = GetData()
-	PlotData(data, "max_alt", "all", a_pc = 0, e_pc = 90, src_dist=5, wl=557.7, min_alt=0, dlos=0.100)
-	plt.show()
+	if nb_args == 1:
+		RunSystematicSimulation()
+	else:
+		plt.close("all")
+		data = GetData()
+		PlotData(data, "a_pc", "max_alt", zaxis="I0", e_pc = 45, a_pc="*", src_dist=5, wl=391.4, min_alt=0, max_alt="*", dlos=0.1)
+		plt.show()

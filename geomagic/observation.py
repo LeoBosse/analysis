@@ -45,6 +45,7 @@ class ObservationPoint:
 			self.GetRayleighAngle(self.RD_src_azimut, self.RD_src_elevation)
 
 
+
 	def GetPCoordinatesFromRange(self, range):
 		"""Get lon, lat, alt from range. Range is the distance to the instrument along the line of sight in km.
 		alt is the absolute altitude (above see level)"""

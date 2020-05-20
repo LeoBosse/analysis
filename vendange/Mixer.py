@@ -33,11 +33,13 @@ class Mixer:
 			if self.mag_data is not False:
 				self.mag_data.StripTime(bottle.DateTime("start"), bottle.DateTime("end"))
 
-			self.allsky_data = AllSkyData(bottle)
-			self.allsky_data_available = bool(self.allsky_data.all_datetimes)
+			self.allsky_data_available = False
+			if bottle.observation_type == "fixed":
+				self.allsky_data = AllSkyData(bottle)
+				self.allsky_data_available = bool(self.allsky_data.all_datetimes)
 
 			self.eiscat_data = Eiscat(bottle)
-			print("DEBUG:", self.eiscat_data.valid )
+			# print("DEBUG:", self.eiscat_data.valid )
 
 			self.mode = mode
 
@@ -45,11 +47,13 @@ class Mixer:
 			self.MakeXAxis(bottle)
 			self.MakeFigure()
 			self.MakePlots(bottle)
+			self.MakeSNratio(bottle)
 
 			if self.comp_bottles:
 				self.SetGraphParameter(self.comp_bottles[ib], comp=True)
 				self.MakeXAxis(self.comp_bottles[ib])
 				self.MakePlots(self.comp_bottles[ib])
+				self.MakeSNratio(self.comp_bottles[ib])
 
 				self.SetGraphParameter(bottle)
 				self.MakeXAxis(bottle)
@@ -77,6 +81,7 @@ class Mixer:
 					self.MakeXAxis(bottle)
 					self.MakeFigure()
 					self.MakePlots(bottle)
+					self.MakeSNratio(bottle)
 					self.CompareAnglesPlots(bottle)
 
 
@@ -95,7 +100,7 @@ class Mixer:
 				nb_points = len([t for t in bottle.all_times if start <= t <= end ])
 
 				self.x_axis_list = np.append(self.x_axis_list, np.linspace(360 * ir, 360 * (ir+1), nb_points))
-			print(len(self.x_axis_list), len(bottle.all_times))
+			# print(len(self.x_axis_list), len(bottle.all_times))
 			self.xlabel = "Azimut"
 
 			if bottle.nb_continue_rotation <= 2:
@@ -124,7 +129,7 @@ class Mixer:
 			if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_discrete_rotation":
 				self.xlabel = "Azimut (degrees)"
 				self.x_axis_ticks_pos = bottle.discrete_rotation_times
-				print(bottle.discrete_rotation_azimuts * RtoD)
+				# print(bottle.discrete_rotation_azimuts * RtoD)
 				self.x_axis_ticks_label = np.round(bottle.discrete_rotation_azimuts * RtoD % 360)
 				self.x_axis_ticks_label = [int(x) for x in self.x_axis_ticks_label]
 
@@ -156,7 +161,9 @@ class Mixer:
 		self.marker_size = 3
 		self.single_star_size = self.marker_size*5
 
-		self.show_allsky = True
+		self.show_legend = False
+
+		self.show_allsky = False
 		self.show_eiscat = False
 
 		self.show_mag_data 	= False
@@ -167,14 +174,20 @@ class Mixer:
 		self.show_Iref = False
 
 		self.show_time = not comp
-		self.time_format = "LT" #LT or UT
+		self.time_format = "UT" #LT or UT
 
 
-		self.show_raw_data = False
+		self.show_raw_data = True
 
-		self.show_error_bars 		= False
+		self.show_error_bars 		= True
 		self.show_smooth_error_bars = True
 		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
+		self.show_SN = True
+
+		self.show_avg_I0 = False
+		self.show_avg_Iref = False
+		self.show_avg_DoLP = False
+		self.show_avg_AoLP = False
 
 		#If True Will show the azimut on the xaxis instead of time for rotations
 		self.xaxis_azimut = True
@@ -195,6 +208,8 @@ class Mixer:
 		self.smooth_I0_color = "xkcd:red"
 
 		self.raw_error_bars_color = "grey"
+
+
 
 		self.smooth_ref_color = "xkcd:green"
 		self.AoBapp_color = "xkcd:turquoise"
@@ -241,6 +256,8 @@ class Mixer:
 				else: self.smooth_ref_color = "green"
 
 
+		self.all_SN_color = "black"
+		self.smooth_SN_color = self.smooth_I0_color
 
 	def MakePlots(self, bottle):
 		#Plotting the mean intensity I0, DoLP, AoLP for each rotation and more!
@@ -260,6 +277,7 @@ class Mixer:
 			else:
 				l_all_I0 = self.ax1.errorbar(self.x_axis_list, bottle.all_I0, yerr = bottle.std_I0, fmt=".", ecolor=self.raw_error_bars_color, color = self.all_I0_color , linestyle = 'none', markersize=self.marker_size, label="Intensity", zorder=0, errorevery=self.error_step)
 
+
 		if not self.show_smooth_error_bars:
 			# l_smooth_I0, = self.ax1.plot(self.x_axis_list, bottle.smooth_I0, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 			y = bottle.smooth_I0
@@ -274,11 +292,13 @@ class Mixer:
 			l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, y, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
 
+		if self.show_avg_I0:
+			l_avg_I0, = self.ax1.plot(self.x_axis_list,[bottle.I0_average] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.I0_average)[:4])
+			self.ax1_lines.append([l_avg_I0, l_avg_I0.get_label()])
+
 		if self.show_raw_data:
 			self.ax1_lines.append([l_all_I0, l_all_I0.get_label()])
 		self.ax1_lines.append([l_smooth_I0, l_smooth_I0.get_label()])
-		# l_avg_I0, = self.ax1.plot(self.x_axis_list,[bottle.I0_average] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.I0_average)[:4])
-		# self.ax1_lines.append([l_avg_I0, l_avg_I0.get_label()])
 
 
 		# ### Graph the I0 * DoLP line on the first subplot
@@ -305,8 +325,9 @@ class Mixer:
 			l_smooth_Iref, = self.ax13.plot(self.x_axis_list, bottle.smooth_Iref, ".", color = self.smooth_ref_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Ref Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=2)
 			self.ax1_lines.append([l_smooth_Iref, l_smooth_Iref.get_label()])
 
-			# l_avg_Iref, = self.ax13.plot(self.x_axis_list, [bottle.Iref_average] * len(self.x_axis_list), color = self.smooth_ref_color, label="Avg Ref Intensity " + str(bottle.Iref_average)[:4], zorder=2)
-			# self.ax1_lines.append([l_avg_Iref, l_avg_Iref.get_label()])
+			if self.show_avg_Iref:
+				l_avg_Iref, = self.ax13.plot(self.x_axis_list, [bottle.Iref_average] * len(self.x_axis_list), color = self.smooth_ref_color, label="Avg Ref Intensity " + str(bottle.Iref_average)[:4], zorder=2)
+				self.ax1_lines.append([l_avg_Iref, l_avg_Iref.get_label()])
 			self.ax13.set_ylabel("Ref intensity")
 
 
@@ -321,7 +342,7 @@ class Mixer:
 
 			l_ASI, = self.ax14.plot(self.allsky_data.GetNormTimes(bottle.DateTime("start", format=self.time_format), self.divisor), self.allsky_data.brightness, "*", color = "orange", linestyle = 'none', markersize=self.marker_size, label="AllSKy Imager", zorder=2)
 			self.ax1_lines.append([l_ASI, l_ASI.get_label()])
-			print(self.ax14.get_yticklabels())
+			# print(self.ax14.get_yticklabels())
 			# self.ax14.set_yticklabels([l.get_text() for l in self.ax14.get_yticklabels()], horizontalalignment = "left")
 			# self.ax14.tick_params(direction='in', labelright=True, pad=-5)
 			self.ax14.set_ylabel("ASI Brightness")
@@ -355,8 +376,10 @@ class Mixer:
 
 		if bottle.location.lower() == "skibotn" and bottle.filters == "br" and bottle.DateTime().date() == dt.date(2019, 3, 7):
 			self.ax2.set_ylim((0, 5))
-		# l_avg_DoLP, = self.ax2.plot(self.x_axis_list,[bottle.DoLP_average] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.DoLP_average)[:4])
-		# self.ax2_lines.append([l_avg_DoLP, l_avg_DoLP.get_label()])
+
+		if self.show_avg_DoLP:
+			l_avg_DoLP, = self.ax2.plot(self.x_axis_list,[bottle.DoLP_average] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.DoLP_average)[:4])
+			self.ax2_lines.append([l_avg_DoLP, l_avg_DoLP.get_label()])
 
 		if self.mag_data and self.show_mag_data:
 			self.ax21 = self.ax2.twinx()
@@ -447,8 +470,10 @@ class Mixer:
 			self.ax3_lines.append([l_all_AoLP, l_all_AoLP.get_label()])
 
 		self.ax3_lines.append([l_smooth_AoLP, l_smooth_AoLP.get_label()])
-		# l_avg_AoLP, = self.ax3.plot(self.x_axis_list,[bottle.AoLP_average * RtoD] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.AoLP_average * RtoD)[:4])
-		# self.ax3_lines.append([l_avg_AoLP, l_avg_AoLP.get_label()])
+
+		if self.show_avg_AoLP:
+			l_avg_AoLP, = self.ax3.plot(self.x_axis_list,[bottle.AoLP_average * RtoD] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.AoLP_average * RtoD)[:4])
+			self.ax3_lines.append([l_avg_AoLP, l_avg_AoLP.get_label()])
 
 
 		# self.ax3.set_ylim(45, 60)
@@ -514,7 +539,7 @@ class Mixer:
 				self.ax2.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax2_lim, "--k")
 				self.ax3.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax3_lim, "--k")
 				if i != 0: # Draw red lines to delimit the rotations
-					print(i * 360)
+					# print(i * 360)
 					self.ax1.plot([i * 360, i * 360], ax1_lim, "r")
 					self.ax2.plot([i * 360, i * 360], ax2_lim, "r")
 					self.ax3.plot([i * 360, i * 360], ax3_lim, "r")
@@ -560,9 +585,10 @@ class Mixer:
 			self.ax12.set_xticklabels([st.strftime("%H:%M") for st in xticks])
 			self.ax12.set_xlabel(self.time_format)
 
-		# self.ax1.legend(list(zip(*self.ax1_lines))[0], list(zip(*self.ax1_lines))[1])
-		# self.ax2.legend(list(zip(*self.ax2_lines))[0], list(zip(*self.ax2_lines))[1])
-		# self.ax3.legend(list(zip(*self.ax3_lines))[0], list(zip(*self.ax3_lines))[1], loc = "lower center")
+		if self.show_legend:
+			self.ax1.legend(list(zip(*self.ax1_lines))[0], list(zip(*self.ax1_lines))[1])
+			self.ax2.legend(list(zip(*self.ax2_lines))[0], list(zip(*self.ax2_lines))[1])
+			self.ax3.legend(list(zip(*self.ax3_lines))[0], list(zip(*self.ax3_lines))[1], loc = "lower center")
 
 
 		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_graphs.png')
@@ -572,6 +598,16 @@ class Mixer:
 		else:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.png', bbox_inches='tight')
 			# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
+
+	def MakeSNratio(self, bottle):
+		if not self.show_SN:
+			return 0
+
+		f5, ax = plt.subplots(1, figsize=(10, 20))
+
+		ax.plot(self.x_axis_list, bottle.all_SN, "--", color = self.all_SN_color, label="all SN")
+
+		ax.plot(self.x_axis_list, bottle.smooth_SN, "--", color = self.smooth_SN_color, label="smooth SN")
 
 
 	def DrawEiscatParam(self, axe, param, alt):

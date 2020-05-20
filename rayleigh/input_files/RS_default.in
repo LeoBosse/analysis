@@ -6,7 +6,7 @@ saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for in
 
 # ###############################################################################
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
-azimuts 									 	0;45;90;135;180;225;270;315 								# In degrees, 0 is north, east is 90
+azimuts 									 	164 ;45;90;135;180;225;270;315 								# In degrees, 0 is north, east is 90
 elevations 									45 								#90 may have some bugs...
 
 location 										lagorge   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens
@@ -14,13 +14,13 @@ location 										lagorge   #Accepted locations: lagorge, skibotn, stveran, nya
 instrument_opening_angle 		1	  		# Angle de DEMI-ouverture de l'instrument en degrés
 instrument_area 20 #Area of Petit Cru in cm^2
 
-wavelength 391.4
+wavelength 557.7 391.4
 
 # ###############################################################################
 ### Atmosphere parameters
-RS_min_altitude	 						1.41	  		# Minimum altitude of the scatering layer
-RS_max_altitude	 						1.42 			# Maximum altitude of the scatering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
-resolution_along_los				0.5			# Distance between every RS points along the line of sight (in km)
+RS_min_altitude	 						0	  		# Minimum altitude of the scatering layer
+RS_max_altitude	 						100 			# Maximum altitude of the scatering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
+resolution_along_los				0.1			# Distance between every RS points along the line of sight (in km)
 # Nb_points_along_los 			0			  # WARNING: Should not use! Use the resolution parameter instead! Number of bins along the line of sight between H_r_min and h_r_max
 
 Atmospheric_profile atm_profiles/win.atm   #name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure).
@@ -32,24 +32,25 @@ Atmospheric_profile atm_profiles/win.atm   #name of the atmospheric profile file
 # "uniform_I",											uniform sky with intensity I
 # "[1, 2, 3...]_moving_EW_band",    east-west auroral band passing from north to south in the sky. (can be doubled or tripled)
 # "[1, 2, 3...]_band_eEE",          east-west auroral band at elevation EE. (can be doubled or tripled)
-# "spot_aAA_eEE" 										bright source at elevation EE and azimut AA
+# "spot_aAAA_eEE" 										Single sky pixel source at elevation EE and azimut AAA. Change the "I_zone_*" parameters and the "Nb_emission_points" for faster computations. Else, just a small aurora.
 # "image"														use an all-sky camera picture defined by the sky_file parameter
-sky_mode image
+sky_mode image 1_moving_EW_band
 
 emission_altitude	110			# Altitude of the emission in km. Put 0 if emission on ground
 
-Nb_emission_points 10000				 # Number of bins to compute
+Nb_emission_points 5000				 # Number of bins to compute
 Nb_emission_maps 1						 # Number of emission maps to compute. Use it for time changing emissions (auroras). Should be put to 1 when not varying !
 
 #Zone of emission (constant for the moment (all sky))
-I_zone_a_min 	0
-I_zone_a_max 	360
-I_zone_e_min 	0
-I_zone_e_max 	90
+I_zone_a_min 	0 179 0
+I_zone_a_max 	360 180 360
+I_zone_e_min 	0 44.5 0
+I_zone_e_max 	90 45.5 90
 
 #If loading the sky from a picture (not functional for now)
 sky_path /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
-sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_204523_5577_cal.png
+sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_203908_5577_cal.png
+# sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_204523_5577_cal.png
 sky_wavelength 557.7 # To be able to pass from Rayleigh to nW
 
 
@@ -61,7 +62,7 @@ use_alt_map 0
 alt_map_path /home/bossel/These/Analysis/data/elevation/
 alt_map_radius 100 #in km
 alt_map_N_bins_max 1000000
-alt_map_resolution 0.1 # en km. Minimum 1arcsec (31m)
+alt_map_resolution 1 # en km. Minimum 1arcsec (31m)
 
 # ###############################################################################
 ### Ground map parameters
@@ -72,7 +73,7 @@ ground_N_bins_max 1000
 ### Use a point source on ground instead of the satellite emission map
 
 point_src_I0 00 		#Point source intensity. If 0, do not use point source and use the satellite map instead
-point_src_az 0 		#Azimut of the point source
+point_src_az 180 		#Azimut of the point source
 point_src_dist 5	 	#distance of the point source in km
 
 
