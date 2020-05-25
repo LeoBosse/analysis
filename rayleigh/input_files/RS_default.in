@@ -34,11 +34,11 @@ Atmospheric_profile atm_profiles/win.atm   #name of the atmospheric profile file
 # "[1, 2, 3...]_band_eEE",          east-west auroral band at elevation EE. (can be doubled or tripled)
 # "spot_aAAA_eEE" 										Single sky pixel source at elevation EE and azimut AAA. Change the "I_zone_*" parameters and the "Nb_emission_points" for faster computations. Else, just a small aurora.
 # "image"														use an all-sky camera picture defined by the sky_file parameter
-sky_mode image 1_moving_EW_band
+sky_mode uniform_100
 
 emission_altitude	110			# Altitude of the emission in km. Put 0 if emission on ground
 
-Nb_emission_points 5000				 # Number of bins to compute
+Nb_emission_points 100				 # Number of bins to compute
 Nb_emission_maps 1						 # Number of emission maps to compute. Use it for time changing emissions (auroras). Should be put to 1 when not varying !
 
 #Zone of emission (constant for the moment (all sky))

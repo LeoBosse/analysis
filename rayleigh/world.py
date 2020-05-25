@@ -292,51 +292,51 @@ class World:
 
 		AR, RE, RD_angle = self.GetGeometryFromAzEl(a, e, alt)
 
-		if RE > 10:
-			geo_list = [a, e, AR, AR, RE, RD_angle, alt]
+		# if RE > 10:
+		# 	geo_list = [a, e, AR, AR, RE, RD_angle, alt]
+		# else:
+		# 	geo_list = self.GetDiscreteRSPoint(a, e, alt, AR, RE)
+		#
+		# for a, e, r, AR, RE, RD_angle, alt in geo_list:
+		I0 = self.sky_map.cube[time, ie, ia]
+		I0 *= self.sky_map.GetPixelArea(ie) / RE ** 2
+
+		if alt != 0:
+			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, self.sky_map.h, alt) * RE / alt
 		else:
-			geo_list = self.GetDiscreteRSPoint(a, e, alt, AR, RE)
+			opt_depth = 0
 
-		for a, e, r, AR, RE, RD_angle, alt in geo_list:
-			I0 = self.sky_map.cube[time, ie, ia]
-			I0 *= self.sky_map.GetPixelArea(ie) / RE ** 2
-
-			if alt != 0:
-				opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, self.sky_map.h, alt) * RE / alt
-			else:
-				opt_depth = 0
-
-			I0 *= np.exp(-opt_depth)
+		I0 *= np.exp(-opt_depth)
 
 
-			I0, w_DoLP = self.GetScattered(I0, AR, RE, RD_angle, alt, elevation = e)
+		I0, w_DoLP = self.GetScattered(I0, AR, RE, RD_angle, alt, elevation = e)
 
-			if alt != 0:
-				opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * AR / alt
-			else:
-				opt_depth = 0
-			# print("opt_depth, p.exp(-opt_depth)", opt_depth, np.exp(-opt_depth))
-			I0 *= np.exp(-opt_depth)
+		if alt != 0:
+			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * AR / alt
+		else:
+			opt_depth = 0
+		# print("opt_depth, p.exp(-opt_depth)", opt_depth, np.exp(-opt_depth))
+		I0 *= np.exp(-opt_depth)
 
 		return I0, w_DoLP
 
-	def GetDiscreteRSPoint(self, a, e, alt, AR, RE, N = 100):
-		n = np.cbrt(N)
-		a_list = np.linspace(a - self.ouv_pc, a + self.ouv_pc, n)
-		e_list = np.linspace(e - self.ouv_pc, e + self.ouv_pc, n)
-		r_list = np.linspace(AR - self.atmosphere.d_los, AR + self.atmosphere.d_los, n)
-
-		geo_list = np.zeros((n, 7))
-
-		for i in range(n):
-			a, e, r = a_list[i], e_list[i], r_list[i]
-			alt = ObservationPoint(self.ground_map.A_lon, self.ground_map.A_lat, self.sky_map.h, a, e, A_alt = self.instrument_altitude).GetPCoordinatesFromRange(r)[2]
-
-			AR, RE, RD_angle = self.GetGeometryFromAzEl(a, e, alt)
-
-			geo_list[i] = a, e, r, AR, RE, RD_angle, alt
-
-		return geo_list
+	# def GetDiscreteRSPoint(self, a, e, alt, AR, RE, N = 100):
+	# 	n = np.cbrt(N)
+	# 	a_list = np.linspace(a - self.ouv_pc, a + self.ouv_pc, n)
+	# 	e_list = np.linspace(e - self.ouv_pc, e + self.ouv_pc, n)
+	# 	r_list = np.linspace(AR - self.atmosphere.d_los, AR + self.atmosphere.d_los, n)
+	#
+	# 	geo_list = np.zeros((n, 7))
+	#
+	# 	for i in range(n):
+	# 		a, e, r = a_list[i], e_list[i], r_list[i]
+	# 		alt = ObservationPoint(self.ground_map.A_lon, self.ground_map.A_lat, self.sky_map.h, a, e, A_alt = self.instrument_altitude).GetPCoordinatesFromRange(r)[2]
+	#
+	# 		AR, RE, RD_angle = self.GetGeometryFromAzEl(a, e, alt)
+	#
+	# 		geo_list[i] = a, e, r, AR, RE, RD_angle, alt
+	#
+	# 	return geo_list
 
 
 
