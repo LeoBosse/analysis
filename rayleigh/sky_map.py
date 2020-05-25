@@ -159,6 +159,9 @@ class SkyMap:
 		self.DoLP_map				= np.zeros(self.data_shape) # DoLP of scattered light from (e,a)
 		self.total_scattering_map 	= np.zeros(self.data_shape) # Intensity from (e, a) reaching us
 		self.AoRD_map 				= np.zeros(self.data_shape) # Angle of polaisation of light from (e,a)
+		self.V_map 					= np.zeros(self.data_shape)
+		self.Vcos_map 				= np.zeros(self.data_shape)
+		self.Vsin_map 				= np.zeros(self.data_shape)
 
 		self.cube_is_done = True
 
@@ -349,3 +352,13 @@ class SkyMap:
 		# print("DEBUG DIRECT:", b, area, b * area, pix_da, pix_de)
 
 		return b * area
+
+
+
+
+	def SetLightParameters(self):
+
+		self.total_scattering_map 	= 2 * self.V_map
+		self.DoLP_map				= 2 * np.sqrt(self.Vcos_map**2 + self.Vsin_map**2) / self.V_map * 100 # DoLP of scattered light from (e,a)
+		self.AoRD_map 				= np.arctan2(self.Vsin_map, self.Vcos_map) / 2. # Angle of polaisation of light from (e,a)
+		self.scattering_map 		= self.total_scattering_map * self.DoLP_map / 100. # Polarized intensity from (e, a) reaching us

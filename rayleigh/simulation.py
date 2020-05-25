@@ -64,6 +64,8 @@ class Simulation:
 						self.time = t
 						self.SingleComputation()
 
+			self.world.sky_map.SetLightParameters()
+
 		if self.world.has_ground_emission: ### Compute how the ground map looks through the instrument for every observations directions
 			self.is_ground_emission = True
 			for ia_pc in range(self.world.Nb_a_pc):
@@ -73,6 +75,8 @@ class Simulation:
 					self.a_pc, self.e_pc = self.world.a_pc, self.world.e_pc
 					self.time = 0
 					self.SingleComputation()
+
+			self.world.ground_map.SetLightParameters()
 
 
 		self.GetLightParametersList()
@@ -162,70 +166,23 @@ class Simulation:
 
 		tmp_start = tm.time()
 		if False:
-			self.DoLP = self.world.ground_map.DoLP_map[ie_pc, ia_pc, 0, 0] *100 # / self.I0 * 100
+			self.DoLP = self.world.ground_map.DoLP_map[ie_pc, ia_pc, 0, 0] * 100 # / self.I0 * 100
 			# self.DoLP = np.sum(self.world.ground_map.scattering_map[time, ie_pc, ia_pc].flatten()) / self.I0 * 100
 			self.AoRD = self.world.ground_map.AoRD_map[ie_pc, ia_pc, 0, 0] * RtoD
 		else:
-			###Compute the AoLP contribution histogram.
-			self.N_bins = 180
-			#bins is the bins limits, so 181 values
-			self.bins, self.width = np.linspace(-np.pi/2, np.pi/2, self.N_bins + 1, endpoint=True, retstep=True)
-			self.bins, self.width = np.linspace(-np.pi/2 - self.width/2, np.pi/2 + self.width/2, self.N_bins + 1, endpoint=True, retstep=True)
-			self.mid_bins = [(self.bins[i+1] + self.bins[i])/2. for i in range(len(self.bins)-1)]
-			 #self.width = np.pi / self.N_bins
-
-			#One value for each bin=180 values
-			self.hst = np.zeros(self.N_bins)
-			# print("DEBUG ROT", self.N_bins, len(self.bins), len(self.mid_bins), len(self.hst))
-
-			###Density=False: hst bins units are similar to intensities. Sum of hst does not depends on self.N_bins
+			hst, bins = np.zeros(self.N_bins), np.zeros(self.N_bins)
 			if sky:
-				sky_hst, b = np.histogram(self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :], density = False)
-				self.hst += sky_hst
+				A = self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :]
+				Ip = self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :]
+				sky_hst, bins = self.world.MakeAoRDHist(A, Ipola = Ip)
+				hst += sky_hst
 			if ground:
-				ground_hst, b = np.histogram(self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :], bins=self.bins, weights=self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :], density = False)
-				self.hst += ground_hst
+				A = self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :]
+				Ip = self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :]
+				ground_hst, bins = self.world.MakeAoRDHist(A, Ipola = Ip)
+				hst += ground_hst
 
-			# print("DEBUG HST:", self.hst[0], self.hst[-1], sum(self.hst))
-			# self.hst[-1] /= 2
-			# self.hst[0] += self.hst[-1]
-			# print("DEBUG HST:", self.hst[0], self.hst[-1])
-
-			# self.hst /= sum(self.hst)
-
-
-
-			###Simulate the instrument with a rotating polarizing filter to get V, Vcos, Vsin and then I, DoLP, AoLP
-			Ns = 10 #5 * len(self.bins)
-			filter_orientation, df = np.linspace(0, 2 * np.pi, Ns, endpoint=False, retstep=True)
-
-			rs_signal = np.zeros(Ns) #+ 0.5 * self.InonPola * len(self.hst) * self.width * df
-
-			for i_f, f in enumerate(filter_orientation):
-				for ihist, hist in enumerate(self.hst):
-					theta = self.mid_bins[ihist]
-					# theta = b[(ihist+1)%len(self.hst)] - b[ihist]
-					rs_signal[i_f] += (hist * np.cos(theta - f) ** 2 + 0.5 * self.InonPola / self.N_bins)
-					# rs_signal[i_f] += hist * np.cos(b[ihist] - f) ** 2 # + 0.5 * self.InonPola
-
-			# plt.plot(filter_orientation, rs_signal)
-			# plt.plot(filter_orientation, [0.5 * self.InonPola * len(self.hst)]*Ns)
-			# plt.show()
-
-			self.V = np.average(rs_signal)
-			self.Vcos = np.average(rs_signal * np.cos(2 * filter_orientation))
-			self.Vsin = np.average(rs_signal * np.sin(2 * filter_orientation))
-
-			# print("DEBUG I0:", 2*self.V, self.I0, abs(2*self.V-self.I0)<10**-15)
-
-			# print("V, Vcos, Vsin", self.V, self.Vcos, self.Vsin)
-
-			# self.I0 = 2 * self.V
-			self.DoLP = 100 * 2 * np.sqrt(self.Vcos ** 2 + self.Vsin ** 2) / self.V #in %
-			self.AoRD = np.arctan2(self.Vsin, self.Vcos) / 2
-
-			# print("DEBUG LIGHT PARAM:", 2 * self.V, self.I0, self.DoLP, self.AoRD)
-		# print("TIME:", tm.time() - tmp_start)
+		self.V, self.Vcos, self.Vsin, self.I0, self.DoLP, self.AoRD = self.world.LockInAmplifier(hst, bins)
 
 		return self.I0, self.DoLP, self.AoRD
 

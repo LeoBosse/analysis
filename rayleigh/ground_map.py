@@ -358,6 +358,9 @@ class GroundMap:
 		self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
 		self.total_scattering_map 	= np.zeros(self.maps_shape) # DoLP of scattered light from (e,a)
 		self.AoRD_map 				= np.zeros(self.maps_shape) # Angle of polaisation of light from (e,a)
+		self.V_map 					= np.zeros(self.maps_shape)
+		self.Vcos_map 				= np.zeros(self.maps_shape)
+		self.Vsin_map 				= np.zeros(self.maps_shape)
 
 	def GetArea(self, ilat):
 		"""Return the area of a pixel on the map in km**2. If we use a point source, the area is set to one."""
@@ -426,3 +429,10 @@ if __name__ == "__main__":
 	# 	plt.plot(xcoll, ycoll, "*g")
 
 	plt.show()
+
+
+	def SetLightParameters(self):
+		self.total_scattering_map 	= 2 * self.V_map
+		self.DoLP_map				= 2 * np.sqrt(self.Vcos_map**2 + self.Vsin_map**2) / self.V_map * 100 # DoLP of scattered light from (e,a)
+		self.AoRD_map 				= np.arctan2(self.Vsin_map, self.Vcos_map) / 2. # Angle of polaisation of light from (e,a)
+		self.scattering_map 		= self.total_scattering_map * self.DoLP_map / 100. # Polarized intensity from (e, a) reaching us
