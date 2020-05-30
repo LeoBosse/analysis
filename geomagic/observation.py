@@ -198,7 +198,6 @@ class ObservationPoint:
 
 		return plane
 
-
 	def GetBatP(self):
 		"""Return the mag field of igrf and chaos at the observation point"""
 		#Writing the input file for igrf and chaos code
@@ -265,7 +264,7 @@ class ObservationPoint:
 		return Raspp
 
 
-	def GetApparentAngle(self, Bp):
+	def GetApparentAngle(self, Bp, Blos=False):
 		"""Return the apparent angle of the input vector Bp (horizontal(1,3)) and the z axis of SPP"""
 		#Reshaping of Bp horizontal to vertical (1,3) to (3,1)
 		Bpu, Bpe, Bpn = Bp[0], Bp[1], Bp[2]
@@ -286,10 +285,16 @@ class ObservationPoint:
 
 		#Calculating the projection of B on the line of sight
 		if np.linalg.norm(Bspp) != 0:
-			self.Blos = np.arccos(BsppX / np.linalg.norm(Bspp))
+			self.Blos = abs(np.arccos(BsppX / np.linalg.norm(Bspp)))
+			if self.Blos > np.pi/2:
+				self.Blos = np.pi - self.Blos
 		else:
 			self.Blos = 0
-		return eta
+
+		if Blos:
+			return eta, self.Blos
+		else:
+			return eta
 
 	def GetAllParameters(self):
 		"""Return a list of all interesting parmaters of the observation to print in a terminal"""

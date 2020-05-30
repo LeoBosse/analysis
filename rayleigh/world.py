@@ -32,8 +32,8 @@ class World:
 		### Get all the azimuts and elevations of the instruments.
 		self.a_pc_list		= np.array(in_dict["azimuts"].split(";"))  # List of azimuts for the observations
 		if self.a_pc_list[0] == "all":
-			self.a_pc_list = np.arange(179.5, 180.5, 0.005) * DtoR
-			# self.a_pc_list = np.arange(0, 360, 10) * DtoR
+			# self.a_pc_list = np.arange(179.5, 180.5, 0.005) * DtoR
+			self.a_pc_list = np.arange(0, 360, 10) * DtoR
 		else:
 			self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
 
@@ -68,8 +68,8 @@ class World:
 
 		##Show the skymaps if they change in time or we move the instrument
 		# if self.has_sky_emission and (self.is_time_dependant or not self.is_single_observation):
-		self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
-		plt.show()
+		# self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
+		# plt.show()
 			# plt.close("all")
 		print("Has_sky_emission:", self.has_sky_emission)
 
@@ -93,9 +93,6 @@ class World:
 		# self.alt_map.PlotMap()
 
 		self.instrument_altitude = self.alt_map.GetAltitudeFromLonLat(self.ground_map.A_lon, self.ground_map.A_lat) / 1000. #In km
-
-		self.all_light = np.array((self.sky_map.Nt, self.N_a_pc, self.N_e_pc, 3, 0))
-
 
 
 	def SetObservation(self, a_pc, e_pc):
@@ -240,7 +237,7 @@ class World:
 
 							if sca_from_E_is_visible:
 
-								V, Vcos, Vsin, I0, w_DoLP, AoLP = self.ComputeSingleRSGroundPointSource(ilon, ilat, a_rd, e_rd, sca_alt)
+								V, Vcos, Vsin = self.ComputeSingleRSGroundPointSource(ilon, ilat, a_rd, e_rd, sca_alt)
 
 								self.ground_map.V_map[ie_pc, ia_pc, ilat, ilon] += V
 								self.ground_map.Vcos_map[ie_pc, ia_pc, ilat, ilon] += Vcos
@@ -262,15 +259,15 @@ class World:
 
 
 
-	def ComputeSingleRSGroundPointSource(self, ilon, ilat, a_rd, e_rd, alt):
+	def ComputeSingleRSGroundPointSource(self, ilon, ilat, a_E, e_E, alt):
 
 		I0 = self.ground_map.I_map[ilat, ilon]
 
-		AR, RE, RD_angle = self.GetGeometryFromAzDist(a_rd, e_rd, alt)
+		AR, RE, RD_angle = self.GetGeometryFromAzDist(a_E, e_E, alt)
 		# print("DEBUG: AR, RE, RD_angle, alt", AR, RE, RD_angle*RtoD, alt)
 
 		if RE > 10:
-			geo_list = [self.a_pc, self.e_pc, AR, AR, RE, RD_angle, alt]
+			geo_list = self.GetDiscreteRSPoint(self.a_pc, self.e_pc, alt, AR, RE, a_E, e_E, N=1)
 		else:
 			geo_list = self.GetDiscreteRSPoint(self.a_pc, self.e_pc, alt, AR, RE, a_E, e_E)
 
@@ -310,8 +307,6 @@ class World:
 			Vcos_T += Vcos
 			Vsin_T += Vsin
 
-		np.append(self.all_light, np.array([V_T, Vcos_T, Vsin_T]), axis=0)
-
 		return V, Vcos, Vsin
 
 	def ComputeSingleRSSkyPointSource(self, time, ia_E, a_E, ie_E, e_E, alt):
@@ -321,7 +316,7 @@ class World:
 		AR, RE, RD_angle = self.GetGeometryFromAzEl(a_E, e_E, alt)
 
 		if RE > 10:
-			geo_list = [self.a_pc, self.e_pc, AR, AR, RE, RD_angle, alt]
+			geo_list = self.GetDiscreteRSPoint(self.a_pc, self.e_pc, alt, AR, RE, a_E, e_E, N=1)
 		else:
 			geo_list = self.GetDiscreteRSPoint(self.a_pc, self.e_pc, alt, AR, RE, a_E, e_E)
 
@@ -353,11 +348,9 @@ class World:
 			Vcos_T += Vcos
 			Vsin_T += Vsin
 
-		np.append(self.all_light, np.array([V_T, Vcos_T, Vsin_T]), axis=0)
-
 		return V, Vcos, Vsin
 
-	def GetVParamFromLightParam(I0, DoLP, AoLP):
+	def GetVParamFromLightParam(self, I0, DoLP, AoLP):
 		V = I0 / 2.
 		Vcos = I0 * DoLP * np.pi * np.cos(2 * AoLP) / 2.
 		Vsin = I0 * DoLP * np.pi * np.sin(2 * AoLP) / 2.
@@ -381,16 +374,60 @@ class World:
 		# print("DEBUG ROT", self.N_bins, len(self.bins), len(self.mid_bins), len(self.hst))
 
 		###Density=False: hst bins units are similar to intensities. Sum of hst does not depends on N_bins
-		hst, _ = np.histogram(A, bins = bins, weights = Ipola, density = False)
+		hst, bins = np.histogram(A, bins = bins, weights = Ipola, density = False)
 
 		return hst, mid_bins
 
-	def LockInAmplifier(self, hst, mid_bins):
+	def DrawAoLPHist(self, hst, bins, I0, DoLP, AoRD, double=True, save=False, save_name=None):
+		"""Make an pyplot histogram of all AoLP contributionsThe histogram is calculated in GetLightParameters()
+		Need a call to plt.show() after calling this function."""
+		f3, ax = plt.subplots(1, figsize=(16, 8))
+
+		ax = plt.subplot(111, projection='polar')
+		ax.set_theta_zero_location("N")
+		ax.set_theta_direction(-1)
+		if double:
+			ax.set_thetamin(-180)
+			ax.set_thetamax(180)
+		else:
+			ax.set_thetamin(-90)
+			ax.set_thetamax(90)
+
+		# I0, DoLP, AoRD = self.I_list[0,0,0], self.DoLP_list[0,0,0], self.AoRD_list[0,0,0]
+		# I0, DoLP, AoRD = self.GetLightParameters(ground=ground, sky=sky)
+
+		N_bins = len(hst)
+		width = bins[1] - bins[0]
+
+		if not double:
+			# bins = bins[:N_bins]
+			h = hst
+		else:
+			bins = np.append(bins[:N_bins], 180 * DtoR + np.array(bins))
+			# bins = np.append(bins[:N_bins], 180 * DtoR + np.array(bins)[:N_bins])
+			h = np.append(hst, hst)
+
+		bars = ax.bar(bins, h, width=width)
+
+		ax.set_title("Weighted AoRD: I0 = " + str(np.format_float_scientific(I0, precision=3)) + " DoLP = " + str(np.round(DoLP, 1)) + " AoRD = " + str(np.round(AoRD*RtoD, 1)))
+
+		if not double:
+			ax.plot([AoRD, AoRD], [0, max(hst)], "r")
+		else:
+			ax.plot([AoRD, AoRD+np.pi], [max(hst), max(hst)], "r")
+
+		if save and save_name is not None:
+			plt.savefig(save_name, bbox_inches='tight')
+
+
+	def LockInAmplifier(self, hst, mid_bins, InonPola):
 		###Simulate the instrument with a rotating polarizing filter to get V, Vcos, Vsin and then I, DoLP, AoLP
-		Ns = 10 #5 * len(self.bins)
+		Ns = 1000 #5 * len(self.bins)
 		filter_orientation, df = np.linspace(0, 2 * np.pi, Ns, endpoint=False, retstep=True)
 
 		rs_signal = np.zeros(Ns) #+ 0.5 * self.InonPola * len(self.hst) * self.width * df
+
+		N_bins = len(hst)
 
 		for i_f, f in enumerate(filter_orientation):
 			for ihist, hist in enumerate(hst):
@@ -421,8 +458,6 @@ class World:
 		return V, Vcos, Vsin, I0, DoLP, AoRD
 
 
-
-
 	def GetDiscreteRSPoint(self, a, e, alt, AR, RE, a_E, e_E, N = 100):
 		"""For a given observation direction and emission point, returns N points of the scattering volume (troncated cone).
 		For each returned point:
@@ -432,10 +467,16 @@ class World:
 		alt: altitude of the point in km
 		AoLP: AoLP of the diffused light"""
 
-		n = np.cbrt(N)
-		a_list = np.linspace(a - self.ouv_pc, a + self.ouv_pc, n)
-		e_list = np.linspace(e - self.ouv_pc, e + self.ouv_pc, n)
-		r_list = np.linspace(AR - self.atmosphere.d_los, AR + self.atmosphere.d_los, n)
+		if N > 1:
+			n = int(np.cbrt(N))
+			a_list = np.linspace(a - self.ouv_pc, a + self.ouv_pc, n)
+			e_list = np.linspace(e - self.ouv_pc, e + self.ouv_pc, n)
+			r_list = np.linspace(AR - self.atmosphere.d_los, AR + self.atmosphere.d_los, n)
+		else:
+			n = 1
+			a_list = [a]
+			e_list = [e]
+			r_list = [AR]
 
 		geo_list = np.zeros((n, 8))
 
@@ -460,7 +501,7 @@ class World:
 		E emission points (a_E, e_E, h)
 		R rayleigh diffusion point (a_pc, e_pc, atmosphere.h_r)"""
 
-		e_rd = max(e_rd, 10**(-30)) # Avoid weird behaviour and division by 0
+		e_E = max(e_E, 10**(-30)) # Avoid weird behaviour and division by 0
 
 		v_rd_u = Getuen(a_E, e_E) # Vector from observer to emission point
 		_, AE = self.obs.GetAH(elevation = e_E, azimut = a_E, altitude = self.sky_map.h)  # Distance between observer and emisison point

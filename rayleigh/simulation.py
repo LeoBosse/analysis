@@ -170,19 +170,28 @@ class Simulation:
 			# self.DoLP = np.sum(self.world.ground_map.scattering_map[time, ie_pc, ia_pc].flatten()) / self.I0 * 100
 			self.AoRD = self.world.ground_map.AoRD_map[ie_pc, ia_pc, 0, 0] * RtoD
 		else:
-			hst, bins = np.zeros(self.N_bins), np.zeros(self.N_bins)
+			# hst, bins = np.zeros(self.N_bins), np.zeros(self.N_bins)
 			if sky:
 				A = self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :]
 				Ip = self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :]
 				sky_hst, bins = self.world.MakeAoRDHist(A, Ipola = Ip)
-				hst += sky_hst
+				# hst += sky_hst
 			if ground:
 				A = self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :]
 				Ip = self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :]
 				ground_hst, bins = self.world.MakeAoRDHist(A, Ipola = Ip)
-				hst += ground_hst
+				# hst += ground_hst
 
-		self.V, self.Vcos, self.Vsin, self.I0, self.DoLP, self.AoRD = self.world.LockInAmplifier(hst, bins)
+			if sky:
+				hst = sky_hst
+				if ground:
+					hst += ground_hst
+			elif ground:
+				hst = ground_hst
+
+		self.V, self.Vcos, self.Vsin, self.I0, self.DoLP, self.AoRD = self.world.LockInAmplifier(hst, bins, self.InonPola)
+
+		self.world.DrawAoLPHist(hst, bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name=self.path + self.save_name + '_hist.png')
 
 		return self.I0, self.DoLP, self.AoRD
 
@@ -210,7 +219,7 @@ class Simulation:
 		else:
 			self.MakeSkyMapPlots()
 
-		self.MakeAoLPHist(ground = self.is_ground_emission, sky = not self.is_ground_emission, double=True)
+		# self.MakeAoLPHist(ground = self.is_ground_emission, sky = not self.is_ground_emission, double=True)
 
 		self.MakeAoLPMap()
 
@@ -298,42 +307,6 @@ class Simulation:
 		if self.save_individual_plots:
 			plt.savefig(self.path + self.save_name + '_groundmaps.png', bbox_inches='tight')
 
-
-	def MakeAoLPHist(self, ground = False, sky = False, double=True):
-		"""Make an pyplot histogram of all AoLP contributionsThe histogram is calculated in GetLightParameters()
-		Need a call to plt.show() after calling this function."""
-		f3, ax = plt.subplots(1, figsize=(16, 8))
-
-		ax = plt.subplot(111, projection='polar')
-		ax.set_theta_zero_location("N")
-		ax.set_theta_direction(-1)
-		if double:
-			ax.set_thetamin(-180)
-			ax.set_thetamax(180)
-		else:
-			ax.set_thetamin(-90)
-			ax.set_thetamax(90)
-
-		I0, DoLP, AoRD = self.I_list[0,0,0], self.DoLP_list[0,0,0], self.AoRD_list[0,0,0]
-		# I0, DoLP, AoRD = self.GetLightParameters(ground=ground, sky=sky)
-
-		if not double:
-			bins = self.bins[:self.N_bins]
-			h = self.hst
-		else:
-			bins = np.append(self.bins[:self.N_bins], 180*DtoR + self.bins[:self.N_bins])
-			h = np.append(self.hst, self.hst)
-		bars = ax.bar(bins, h, width=self.width)
-
-		ax.set_title("Weighted AoRD: I0 = " + str(np.format_float_scientific(I0, precision=3)) + " DoLP = " + str(np.round(DoLP, 1)) + " AoRD = " + str(np.round(AoRD*RtoD, 1)))
-
-		if not double:
-			ax.plot([AoRD, AoRD], [0, max(self.hst)], "r")
-		else:
-			ax.plot([AoRD, AoRD+np.pi], [max(self.hst), max(self.hst)], "r")
-
-		if self.save_individual_plots:
-			plt.savefig(self.path + self.save_name + '_AoRD_hist.png', bbox_inches='tight')
 
 
 	def MakeAoLPMap(self):

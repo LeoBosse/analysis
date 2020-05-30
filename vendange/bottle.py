@@ -65,7 +65,7 @@ class Bottle:
 			print("WARNING: No saving name specified. Will be saved in " + self.data_file_name)
 			self.saving_name = ""
 
-		self.date, self.location, self.filters, self.azimut, self.elevation, self.com = "", "", "", False, False, ""
+		self.date, self.location, self.filters, self.azimut, self.elevation, self.com = "", "", ["0"], False, False, ""
 
 		try:
 			self.azimut = float(self.input_parameters["azimut"]) * DtoR
@@ -209,13 +209,14 @@ class Bottle:
 		# 		self.all_times[i] += 24 * 3600
 
 		# self.AoLP_correction = float(self.input_parameters["AoLP_correction"])*DtoR
-		if self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
-			self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 90) * DtoR
-		elif self.instrument_name == "spp":
+
+		if not self.from_txt and self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
+			self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 45) * DtoR
+		elif not self.from_txt and self.instrument_name == "spp":
 			self.AoLP_correction = float(self.input_parameters["AoLP_correction"])*DtoR
 		else:
 			self.AoLP_correction = 0
-		print("AoLP correction:", self.AoLP_correction*RtoD)
+		print("AoLP correction:", self.AoLP_correction * RtoD)
 
 
 		self.all_V 	  = np.array([r.V    for r in self.rotations])
@@ -379,15 +380,15 @@ class Bottle:
 			self.smooth_AoLP_lower, tmp = UnifyAngles(self.smooth_AoLP_lower, manual_shift = self.graph_angle_shift)
 
 		if self.graph_angle_shift == 1:
-			SetAngleBounds(self.AoLP_average, 0, np.pi)
-			SetAngleBounds(self.smooth_AoLP_upper, 0, np.pi)
-			SetAngleBounds(self.smooth_AoLP_lower, 0, np.pi)
+			self.AoLP_average = SetAngleBounds(self.AoLP_average, 0, np.pi)
+			self.smooth_AoLP_upper = SetAngleBounds(self.smooth_AoLP_upper, 0, np.pi)
+			self.smooth_AoLP_lower = SetAngleBounds(self.smooth_AoLP_lower, 0, np.pi)
 			# if self.AoLP_average < 0:
 			# 	self.AoLP_average += np.pi
 		elif self.graph_angle_shift == 0:
-			SetAngleBounds(self.AoLP_average, -np.pi/2, np.pi/2)
-			SetAngleBounds(self.smooth_AoLP_upper, -np.pi/2, np.pi/2)
-			SetAngleBounds(self.smooth_AoLP_lower, -np.pi/2, np.pi/2)
+			self.AoLP_average = SetAngleBounds(self.AoLP_average, -np.pi/2, np.pi/2)
+			self.smooth_AoLP_upper = SetAngleBounds(self.smooth_AoLP_upper, -np.pi/2, np.pi/2)
+			self.smooth_AoLP_lower = SetAngleBounds(self.smooth_AoLP_lower, -np.pi/2, np.pi/2)
 			# if self.AoLP_average > np.pi/2:
 			# 	self.AoLP_average -= np.pi
 
@@ -633,6 +634,16 @@ class Bottle:
 		elif moment == "midnight": #Datetime written in the config file (== first bad rotation, before head_jump)
 			return dt.datetime(year=self.datetime.year, month=self.datetime.month, day=self.datetime.day) + delta + norm
 
+	def GetInterpolation(self, time):
+		"""Return the linear interpolation of smooth data for the given times in seconds. Time must be in seconds since the start of this bottle."""
+		all_times = list(map(lambda x: x.total_seconds(), self.all_times))
+
+		interp_I0 = np.interp(time, all_times, self.smooth_I0)#, left=0, right=0, period=None)
+		interp_DoLP = np.interp(time, all_times, self.smooth_DoLP)#, left=0, right=0, period=None)
+		interp_AoLP = np.interp(time, all_times, self.smooth_AoLP)#, period=np.pi)
+
+		return interp_I0, interp_DoLP, interp_AoLP
+
 
 	def __add__(self, bottle_to_add):
 
@@ -750,7 +761,7 @@ class PTCUBottle(Bottle):
 			else:
 				self.com += "_" + r
 
-		print(self.instrument_name, self.date, self.location, self.filters, self.azimut*RtoD, self.elevation*RtoD, self.com)
+		print("SetInfoFromDataFileName", self.instrument_name, self.date, self.location, self.filters, self.azimut*RtoD, self.elevation*RtoD, self.com)
 
 	def LoadData(self):
 		if self.instrument_name == "carmen" or self.instrument_name == "corbel" or self.instrument_name == "gdcu":
@@ -1010,9 +1021,9 @@ class PTCUBottle(Bottle):
 			if a < 0:
 				break
 
-		if self.instrument_name in ["corbel", "gdcu"]:
-			self.all_AoLP 		-= 40 * DtoR
-			self.smooth_AoLP 	-= 40 * DtoR
+		# if self.instrument_name in ["corbel", "gdcu"]:
+		# 	self.all_AoLP 		-= 40 * DtoR
+		# 	self.smooth_AoLP 	-= 40 * DtoR
 
 
 

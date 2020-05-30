@@ -15,6 +15,7 @@ from rotation import *
 from bottle import *
 from AllSkyData import *
 from eiscat_data import *
+from MagData import *
 from scipy import signal
 import sys
 import os
@@ -41,6 +42,11 @@ class Mixer:
 			self.eiscat_data = Eiscat(bottle)
 			# print("DEBUG:", self.eiscat_data.valid )
 
+			self.eq_currents = EqCurrent(bottle)
+			if self.eq_currents.valid and bottle.observation_type == "fixed":
+				self.eq_currents.GetApparentAngle(bottle.observation, shift=bottle.graph_angle_shift)
+				self.eq_currents.SaveTXT()
+
 			self.mode = mode
 
 			self.SetGraphParameter(bottle)
@@ -48,6 +54,8 @@ class Mixer:
 			self.MakeFigure()
 			self.MakePlots(bottle)
 			self.MakeSNratio(bottle)
+			if self.eq_currents.valid:
+				self.eq_currents.MakePlot()
 
 			if self.comp_bottles:
 				self.SetGraphParameter(self.comp_bottles[ib], comp=True)
@@ -58,9 +66,7 @@ class Mixer:
 				self.SetGraphParameter(bottle)
 				self.MakeXAxis(bottle)
 
-
-
-
+				self.CompareBottles(self.comp_bottles[ib], bottle)
 
 			self.MakeFFT(bottle)
 
@@ -167,8 +173,9 @@ class Mixer:
 		self.show_eiscat = False
 
 		self.show_mag_data 	= False
-		self.show_AoBapp 	= True
-		self.show_AoRD	 	= True
+		self.show_AoBapp 	= False
+		self.show_AoRD	 	= False
+		self.show_currents	= True
 
 		self.show_Ipola = False
 		self.show_Iref = False
@@ -177,12 +184,12 @@ class Mixer:
 		self.time_format = "UT" #LT or UT
 
 
-		self.show_raw_data = True
+		self.show_raw_data = False
 
-		self.show_error_bars 		= True
-		self.show_smooth_error_bars = True
+		self.show_error_bars 		= False
+		self.show_smooth_error_bars = False
 		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
-		self.show_SN = True
+		self.show_SN = False
 
 		self.show_avg_I0 = False
 		self.show_avg_Iref = False
@@ -209,11 +216,10 @@ class Mixer:
 
 		self.raw_error_bars_color = "grey"
 
-
-
 		self.smooth_ref_color = "xkcd:green"
 		self.AoBapp_color = "xkcd:turquoise"
 		self.AoRD_color = "xkcd:hot pink"
+		self.currents_color = "xkcd:blue"
 		if comp:
 			self.AoBapp_color = "xkcd:blue"
 			self.AoRD_color = "xkcd:salmon"
@@ -476,6 +482,15 @@ class Mixer:
 			self.ax3_lines.append([l_avg_AoLP, l_avg_AoLP.get_label()])
 
 
+		if self.show_currents and self.eq_currents.valid:
+			self.ax23 = self.ax2.twinx()
+			l_AoJlos, = self.ax23.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["AoJlos"] * RtoD, color = self.currents_color, label="AoJlos")
+			self.ax2_lines.append([l_AoJlos, l_AoJlos.get_label()])
+
+			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["AoJapp"] * RtoD, color = self.currents_color, label="AoJapp")
+			self.ax3_lines.append([l_AoJapp, l_AoJapp.get_label()])
+
+
 		# self.ax3.set_ylim(45, 60)
 
 
@@ -609,7 +624,6 @@ class Mixer:
 
 		ax.plot(self.x_axis_list, bottle.smooth_SN, "--", color = self.smooth_SN_color, label="smooth SN")
 
-
 	def DrawEiscatParam(self, axe, param, alt):
 		label = param.replace("_", "\_")
 
@@ -661,6 +675,7 @@ class Mixer:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_magneto.png', bbox_inches='tight')
 
 
+
 	def CompareAngles(self, bottle):
 		if bottle.observation_type == "fixed_elevation_continue_rotation":
 			AoRDs = bottle.AoRD
@@ -689,6 +704,8 @@ class Mixer:
 
 			return x_axis, RD_diff, Bapps_diff
 
+
+
 	def CompareAnglesPlots(self, bottle):
 		f4, ax = plt.subplots(1, figsize=(10, 20), sharex = True)
 
@@ -712,7 +729,7 @@ class Mixer:
 		ax1.set_ylabel("DoLP (\%)")
 		ax1.legend()
 
-		if  not bottle.NoVref:
+		if not bottle.NoVref and bottle.instrument_name=="carmen":
 			ax2.plot(bottle.all_I0, bottle.all_Iref, "k+", label="Raw")
 			ax2.plot(bottle.smooth_I0, bottle.smooth_Iref, "r+", label="Smoothed (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")")
 			ax2.set_xlabel("Ref Intensity (mV)")
@@ -800,3 +817,41 @@ class Mixer:
 		self.ax1.plot(xaxis, FFT_I0, xaxis, smooth_FFT_I0)
 		self.ax2.plot(xaxis, FFT_DoLP, xaxis, smooth_FFT_DoLP)
 		self.ax3.plot(xaxis, FFT_AoLP, xaxis, smooth_FFT_AoLP)
+
+	def CompareBottles(self, b1, b2):
+		f, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, figsize=(16, 8))
+
+		if b1.nb_rot > b2.nb_rot:
+			all_times = list(map(lambda x: x.total_seconds(), b2.all_times))
+			print("DEBUG all_times", len(all_times), all_times[0])
+			I0_1, DoLP_1, AoLP_1 = b1.GetInterpolation(all_times)
+			I0_2, DoLP_2, AoLP_2 = b2.smooth_I0, b2.smooth_DoLP, b2.smooth_AoLP
+		else:
+			all_times = list(map(lambda x: x.total_seconds(), b1.all_times))
+			print("DEBUG all_times", len(all_times), all_times[0])
+			I0_2, DoLP_2, AoLP_2 = b2.GetInterpolation(all_times)
+			I0_1, DoLP_1, AoLP_1 = b1.smooth_I0, b1.smooth_DoLP, b1.smooth_AoLP
+
+		delta = lambda a, b: (b-a) / a * 100
+		ax1.plot(self.x_axis_list, delta(I0_1, I0_2))
+		ax2.plot(self.x_axis_list, delta(DoLP_1, DoLP_2))
+		# ax3.plot(all_times, AoLP_1*RtoD)
+		# ax3.plot(all_times, AoLP_2*RtoD)
+		# ax3.plot(self.x_axis_list, delta(AoLP_1, AoLP_2))
+		ax3.plot(self.x_axis_list, (AoLP_1 - AoLP_2)*RtoD)
+
+		ax1.set_ylabel("I0")
+		ax1.grid(which="both")
+
+		ax2.set_ylabel("DoLP")
+		ax2.grid(which="both")
+
+		ax3.set_ylabel("AoLP")
+		ax3.set_xlabel(self.xlabel)
+		ax3.grid(which="both")
+
+		print("Saving bottle comparison in", b1.data_file_name + "/" + b1.saving_name + '_bottle_comparison.png')
+		if b1.instrument_name in ["carmen", "corbel", "gdcu"]:
+			plt.savefig(b1.data_file_name + "/" + b1.saving_name + '_bottle_comparison.png', bbox_inches='tight')
+		else:
+			plt.savefig("/".join(b1.data_file_name.split("/")[:-1]) + "/" + b1.saving_name + 'bottle_comparison.png', bbox_inches='tight')
