@@ -198,6 +198,7 @@ class PTCURotation(Rotation):
 		# self.tilt 	= self.config["CM_Tilt"]
 
 		### Get I0, DoLP, AoLP
+		self.V = np.absolute(self.V)
 		self.I0, self.DoLP,	self.AoLP = self.GetLightParameters(self.V, self.Vcos, self.Vsin)
 		self.Iref = 2 * self.Vref
 		### Check if 'good'

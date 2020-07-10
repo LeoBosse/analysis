@@ -290,7 +290,7 @@ class Bottle:
 		self.smoothing_unit = self.input_parameters["smoothing_unit"].lower()
 		self.smoothing_method = self.input_parameters["smoothing_method"].lower()
 
-		self.nb_smooth_rot = int(self.nb_rot / self.smoothing_factor)
+		self.nb_smooth_rot = self.nb_rot
 
 		self.avg_dt = 1000 * np.average([self.all_times[i].total_seconds() - self.all_times[i-1].total_seconds() for i in range(1, len(self.all_times))]) #in millisec
 
@@ -331,9 +331,9 @@ class Bottle:
 
 		print("Computing Error bars...")
 		#Get Variance
-		if self.smoothing_unit == "seconds": smoothing_factor = self.smoothing_factor*1000
-		elif self.smoothing_unit == "minutes": smoothing_factor = self.smoothing_factor * 60*1000
-		elif self.smoothing_unit == "hours": smoothing_factor = self.smoothing_factor * 3600*1000
+		if self.smoothing_unit == "seconds": smoothing_factor = self.smoothing_factor * 1000
+		elif self.smoothing_unit == "minutes": smoothing_factor = self.smoothing_factor * 60 * 1000
+		elif self.smoothing_unit == "hours": smoothing_factor = self.smoothing_factor * 3600 * 1000
 
 
 
@@ -350,6 +350,10 @@ class Bottle:
 		self.std_I0 = 		 np.sqrt(4 * self.all_V 	/ self.avg_dt)
 		self.std_smooth_I0 = np.sqrt(4 * self.smooth_V  / smoothing_factor)
 
+		print(self.all_V)
+		print(self.std_I0)
+		print(self.std_smooth_I0)
+
 		self.std_DoLP = 		np.sqrt(4 * (1 + ((self.all_DoLP/100) 	 ** 2 / 2)) / (self.all_I0 	  * self.avg_dt)) * 100
 		self.std_smooth_DoLP = 	np.sqrt(4 * (1 + ((self.smooth_DoLP/100) ** 2 / 2)) / (self.smooth_I0 * smoothing_factor)) * 100
 
@@ -364,12 +368,23 @@ class Bottle:
 		self.all_SN = SN(self.all_I0, self.all_DoLP/100, self.avg_dt)
 		self.smooth_SN = SN(self.smooth_I0, self.smooth_DoLP/100, smoothing_factor)
 
+
+		self.SetUnifyAngles()
+
+		print("Get Smooth Lists: DONE")
+
+	def SetUnifyAngles(self):
 		print("Unifying AoLPs for least deviation")
+
+		self.smooth_AoLP_upper = self.smooth_AoLP + self.std_smooth_AoLP
+		self.smooth_AoLP_lower = self.smooth_AoLP - self.std_smooth_AoLP
+
 		self.smooth_AoLP, smooth_graph_angle_shift = UnifyAngles(self.smooth_AoLP)
 		self.all_AoLP, all_graph_angle_shift = UnifyAngles(self.all_AoLP)
 		self.smooth_AoLP_upper, tmp = UnifyAngles(self.smooth_AoLP_upper)
 		self.smooth_AoLP_lower, tmp = UnifyAngles(self.smooth_AoLP_lower)
 		self.graph_angle_shift = max(all_graph_angle_shift, smooth_graph_angle_shift)
+
 		if all_graph_angle_shift != self.graph_angle_shift:
 			self.all_AoLP, all_graph_angle_shift = UnifyAngles(self.all_AoLP, manual_shift = self.graph_angle_shift)
 			self.smooth_AoLP_upper, tmp = UnifyAngles(self.smooth_AoLP_upper, manual_shift = self.graph_angle_shift)
@@ -395,7 +410,7 @@ class Bottle:
 		# for i, up in enumerate(self.smooth_AoLP_upper):
 		# 	if up < self.smooth_AoLP[i]:
 
-		print("Get Smooth Lists: DONE")
+
 
 	def GetGeometryAngles(self, obs):
 		# print("DEBUG obs", obs)
@@ -655,7 +670,7 @@ class Bottle:
 			bottle_to_add.rotations[ir].time += norm
 			# bottle_to_add.rotations[ir].time += self.rotations[-1].time
 
-		if len(bottle_to_add.rotations) > 0:
+		if len(bottle_to_add.rotations) > 0: #If not read from a file
 
 			# print(len(self.rotations), len(bottle_to_add.rotations))
 			self.rotations = np.append(self.rotations, bottle_to_add.rotations)
@@ -670,7 +685,7 @@ class Bottle:
 				self.CreateLists()
 				self.GetSmoothLists()
 
-		else:
+		else: # If read from a file (-f)
 			bottle_to_add.all_times += bottle_to_add.DateTime("start") - self.DateTime("start")
 			# bottle_to_add.all_times += self.all_times[-1]
 
@@ -695,14 +710,20 @@ class Bottle:
 			self.all_DoLP =  np.append(self.all_DoLP, bottle_to_add.all_DoLP)
 			self.all_AoLP =  np.append(self.all_AoLP, bottle_to_add.all_AoLP)
 
+			self.V_average = np.average(self.all_V)
+			self.Vcos_average = np.average(self.all_Vcos)
+			self.Vsin_average = np.average(self.all_Vsin)
+			self.I0_average, self.DoLP_average, self.AoLP_average = Rotation.GetLightParameters(self.V_average, self.Vcos_average, self.Vsin_average)
+
 			self.std_I0 			= np.append(self.std_I0, bottle_to_add.std_I0)
 			self.std_smooth_I0 		= np.append(self.std_smooth_I0, bottle_to_add.std_smooth_I0)
-
 			self.std_DoLP 			= np.append(self.std_DoLP, bottle_to_add.std_DoLP)
 			self.std_smooth_DoLP 	= np.append(self.std_smooth_DoLP, bottle_to_add.std_smooth_DoLP)
-
 			self.std_AoLP 			= np.append(self.std_AoLP, bottle_to_add.std_AoLP)
 			self.std_smooth_AoLP 	= np.append(self.std_smooth_AoLP, bottle_to_add.std_smooth_AoLP)
+
+			self.SetUnifyAngles()
+
 
 			self.tail_jump = self.all_times[-1]
 

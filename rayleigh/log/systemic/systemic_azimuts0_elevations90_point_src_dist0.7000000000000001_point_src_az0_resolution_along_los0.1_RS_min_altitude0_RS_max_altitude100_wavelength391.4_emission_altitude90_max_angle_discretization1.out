@@ -1,0 +1,19 @@
+Correct input file in use: systemic/systemic_azimuts0_elevations90_point_src_dist0.7000000000000001_point_src_az0_resolution_along_los0.1_RS_min_altitude0_RS_max_altitude100_wavelength391.4_emission_altitude90_max_angle_discretization1
+Has_sky_emission: False
+AzDistToLonLat 0.0 0.7000000000000001 0.0 0.0001098728614032334 0.0 0.7000000000000001
+Has_ground_emission: True
+lagorge 0.10361906322688955 0.7891042478910105
+ALT MAP BOUNDS 5.037613394081269 6.836256605918731 44.31302139408126 46.111664605918726
+0.01569612305760477
+ALT MAP BOUNDS 5.036200993144891 6.8348442049823515 44.309575523615855 46.10821873545331
+ALT MAP BOUNDS 5.036200993144891 6.8348442049823515 44.309575523615855 46.10821873545331
+Initialization DONE
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 0.0, elevation 90.0. Observed point at altitude 90.0, position (5.936935000000001, 45.212343000000004)
+999 bins to compute
+  0%|          | 0/999 [00:00<?, ?it/s]  1%|▏         | 13/999 [00:00<00:08, 116.15it/s]  3%|▎         | 29/999 [00:00<00:07, 126.23it/s]  9%|▉         | 88/999 [00:00<00:05, 165.10it/s] 15%|█▍        | 147/999 [00:00<00:04, 210.44it/s] 34%|███▍      | 340/999 [00:00<00:02, 287.20it/s] 68%|██████▊   | 681/999 [00:00<00:00, 395.96it/s]100%|██████████| 999/999 [00:00<00:00, 1398.11it/s]
+Computing DONE
+1.4744080035291094e-06 1.2587912521925348e-06
+Making and NOT saving plots...
+ALL TIME SINCE START: 1.221365213394165

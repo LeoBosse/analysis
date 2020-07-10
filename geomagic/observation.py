@@ -45,6 +45,12 @@ class ObservationPoint:
 			self.GetRayleighAngle(self.RD_src_azimut, self.RD_src_elevation)
 
 
+	def GetTrigo(self):
+
+		Ce, Se = np.cos(self.e), np.sin(self.e)
+		Ca, Sa = np.cos(self.a), np.sin(self.a)
+
+		return Ce, Se, Ca, Sa
 
 	def GetPCoordinatesFromRange(self, range):
 		"""Get lon, lat, alt from range. Range is the distance to the instrument along the line of sight in km.
@@ -252,8 +258,8 @@ class ObservationPoint:
 	def GetRotMatrixAI(self, transpose = False):
 		""""Return a matrix 3x3. It is the rotation matrix to pass a vector expressed in the reference frame of a point A on the Earth (up-east-north) to the reference frame of the instrument (line of sight-west-up) if instrument points northern horyzon."""
 
-		Ce, Se = m.cos(self.e), m.sin(self.e)
-		Ca, Sa = m.cos(self.a), m.sin(self.a)
+		Ce, Se, Ca, Sa = self.GetTrigo()
+
 		Raspp = np.array([	[Se, 	Ce * Sa,	Ce * Ca],
 						 [	 0,		-Ca,		Sa],
 						 [	 Ce,	-Se * Sa,	-Se * Ca]])
@@ -283,8 +289,10 @@ class ObservationPoint:
 		BsppX, BsppY, BsppZ = Bspp[0][0], Bspp[1][0], Bspp[2][0]
 		eta = m.atan2(BsppY, BsppZ)
 
+
 		#Calculating the projection of B on the line of sight
 		if np.linalg.norm(Bspp) != 0:
+			# print(BsppX, np.linalg.norm(Bspp), abs(np.arccos(BsppX / np.linalg.norm(Bspp))))
 			self.Blos = abs(np.arccos(BsppX / np.linalg.norm(Bspp)))
 			if self.Blos > np.pi/2:
 				self.Blos = np.pi - self.Blos

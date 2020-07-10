@@ -31,6 +31,8 @@ class SkyMap:
 		self.exist = True
 		self.mode = in_dict["sky_mode"].lower()
 
+		self.is_point_src = False
+
 		if "band_e" in self.mode:
 			self.band_elevation = float(self.mode[-2:]) * DtoR
 			# print(self.mode[-2:], self.band_elevation)
@@ -102,6 +104,7 @@ class SkyMap:
 		# print("self.maps_shape", self.maps_shape)
 		# print(self.azimuts * RtoD)
 		# print(self.elevations * RtoD)
+
 		map = np.zeros(self.maps_shape)
 		div = np.zeros(self.maps_shape)
 
@@ -121,6 +124,8 @@ class SkyMap:
 						if ia is not None and ie is not None:
 							map[ie, ia] += pix * self.RtonW
 							div[ie, ia] += 1
+
+
 
 		return map / div
 
@@ -150,6 +155,8 @@ class SkyMap:
 			e = int(self.mode[-2:]) * DtoR
 			self.cube[0, :, :] = self.GetBandSkyMap(a_band = a, e_band = e, length = 50, thickness = 50, height = 50, band_I = 100, nb_sub_bands = 1)
 
+			self.is_point_src = True
+
 		elif self.mode == "image":
 			self.cube[0, :, :] = self.LoadAllSkyImage()
 
@@ -162,6 +169,14 @@ class SkyMap:
 		self.V_map 					= np.zeros(self.data_shape)
 		self.Vcos_map 				= np.zeros(self.data_shape)
 		self.Vsin_map 				= np.zeros(self.data_shape)
+
+		self.V_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+		self.Vcos_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+		self.Vsin_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+
+		self.I0_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+		self.DoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+		self.AoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 
 		self.cube_is_done = True
 
@@ -278,10 +293,15 @@ class SkyMap:
 
 	def GetPixelArea(self, ie):
 		"""Return the flattened area in km2 of a sky pixel from its elevation index."""
-		e = self.mid_elevations[ie] #Get pixel mid elevation
-		em, eM = self.elevations[ie], self.elevations[ie + 1] #Get pixel min em and Max eM elevations
 
-		area = 2 * np.pi * RT**2 * (np.sin(eM) - np.sin(em)) / self.Na
+		if not self.is_point_src:
+			e = self.mid_elevations[ie] #Get pixel mid elevation
+			em, eM = self.elevations[ie], self.elevations[ie + 1] #Get pixel min em and Max eM elevations
+
+			area = 2 * np.pi * RT**2 * (np.sin(eM) - np.sin(em)) / self.Na
+
+		else:
+			area = 1
 
 		### Deprecated version with square areas
 		# de = self.de / 2. # Get pixel half elevation difference
@@ -354,11 +374,33 @@ class SkyMap:
 		return b * area
 
 
-
-
 	def SetLightParameters(self):
 
 		self.total_scattering_map 	= 2 * self.V_map
-		self.DoLP_map				= 2 * np.sqrt(self.Vcos_map**2 + self.Vsin_map**2) / self.V_map * 100 # DoLP of scattered light from (e,a)
+
+		self.DoLP_map				= 2 * np.sqrt(self.Vcos_map**2 + self.Vsin_map**2) * 100 # DoLP of scattered light from (e,a)
+		self.DoLP_map 				= np.divide(self.DoLP_map, self.V_map, out = np.zeros_like(self.DoLP_map), where = self.V_map != 0)
+
 		self.AoRD_map 				= np.arctan2(self.Vsin_map, self.Vcos_map) / 2. # Angle of polaisation of light from (e,a)
+
+
+
 		self.scattering_map 		= self.total_scattering_map * self.DoLP_map / 100. # Polarized intensity from (e, a) reaching us
+
+		# print("self.scattering_map", self.scattering_map)
+		# print(np.where(self.scattering_map < 0))
+
+		for it, t in enumerate(self.V_map):
+			for ie, e in enumerate(t):
+				for ia, a in enumerate(e):
+					self.V_total[it, ie, ia] = np.sum(self.V_map[it, ie, ia, :, :])
+					self.Vcos_total[it, ie, ia] = np.sum(self.Vcos_map[it, ie, ia, :, :])
+					self.Vsin_total[it, ie, ia] = np.sum(self.Vsin_map[it, ie, ia, :, :])
+
+					# self.I0_total[it, ie, ia] = 2 * self.V_total[it, ie, ia]
+					# self.DoLP_total[it, ie, ia] = 100 * 2 * np.sqrt(self.Vcos_total[it, ie, ia] ** 2 + self.Vsin_total[it, ie, ia] ** 2) / self.V_total[it, ie, ia] #in %
+					# self.AoLP_total[it, ie, ia] = np.arctan2(self.Vsin_total[it, ie, ia], self.Vcos_total[it, ie, ia]) / 2
+
+		self.I0_total = 2 * self.V_total
+		self.DoLP_total = 100 * 2 * np.sqrt(self.Vcos_total ** 2 + self.Vsin_total ** 2) / self.V_total[it, ie, ia] #in %
+		self.AoLP_total = np.arctan2(self.Vsin_total, self.Vcos_total) / 2

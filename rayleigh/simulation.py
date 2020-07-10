@@ -9,7 +9,7 @@ from matplotlib import cm
 from matplotlib.patches import Circle
 from matplotlib.patches import Ellipse
 from matplotlib.patches import Arrow
-# from matplotlib.lines import mlines
+# from matplotlib.lines import Line2D
 
 import osgeo.gdal as gdal
 gdal.UseExceptions()  # not required, but a good idea
@@ -39,12 +39,20 @@ class Simulation:
 			print("Cannot compute several observation directions with a time changing sky. Please, my code is already messy enough as it is...")
 			raise SystemExit
 
+		list_shapes = (self.world.sky_map.Nt, len(self.world.e_pc_list), len(self.world.a_pc_list))
 		### Initialize lists to save the final observable of each observation
-		self.I_direct_list 	= np.zeros((self.world.sky_map.Nt, len(self.world.e_pc_list), len(self.world.a_pc_list)))
-		self.I_list 	= np.zeros((self.world.sky_map.Nt, len(self.world.e_pc_list), len(self.world.a_pc_list)))
-		self.InonPola_list 	= np.zeros((self.world.sky_map.Nt, len(self.world.e_pc_list), len(self.world.a_pc_list)))
-		self.DoLP_list 	= np.zeros((self.world.sky_map.Nt, len(self.world.e_pc_list), len(self.world.a_pc_list)))
-		self.AoRD_list 	= np.zeros((self.world.sky_map.Nt, len(self.world.e_pc_list), len(self.world.a_pc_list)))
+		self.I_direct_list 	= np.zeros(list_shapes)
+		self.I_list 	= np.zeros(list_shapes)
+		self.IPola_list 	= np.zeros(list_shapes)
+		self.InonPola_list 	= np.zeros(list_shapes)
+		self.DoLP_list 	= np.zeros(list_shapes)
+		self.AoRD_list = np.zeros(list_shapes)
+
+		self.I_list_err = np.zeros(list_shapes)
+		self.InonPola_list_err = np.zeros(list_shapes)
+		self.IPola_list_err = np.zeros(list_shapes)
+		self.DoLP_list_err = np.zeros(list_shapes)
+		self.AoRD_list_err = np.zeros(list_shapes)
 
 		print("Initialization DONE")
 
@@ -87,11 +95,14 @@ class Simulation:
 		# self.MakePlots()
 
 	def PrintSystematicResults(self):
-		print("t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), I0, DoLP (%), AoRD (°):")
+		# mag = -2.5 * np.log10(self.I_list[0, 0, 0] * 10**-9 / (3.0128 * 10**28))
+		# print("Magnitude", mag)
+
+		print("t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:")
 		for t in range(self.world.sky_map.Nt):
 			for ie_pc in range(self.world.Nb_e_pc):
 				for ia_pc in range(self.world.Nb_a_pc):
-					print(t, self.world.a_pc_list[ia_pc]*RtoD, self.world.e_pc_list[ie_pc]*RtoD, self.world.ground_map.src_dist, self.world.atmosphere.d_los, self.world.atmosphere.h_r_min, self.world.atmosphere.h_r_max, self.world.wavelength, self.I_list[t, ie_pc, ia_pc], self.DoLP_list[t, ie_pc, ia_pc], self.AoRD_list[t, ie_pc, ia_pc] * RtoD, sep = "," )
+					print(t, self.world.a_pc_list[ia_pc]*RtoD, self.world.e_pc_list[ie_pc]*RtoD, self.world.ground_map.src_dist, self.world.atmosphere.d_los, self.world.atmosphere.h_r_min, self.world.atmosphere.h_r_max, self.world.wavelength, self.world.max_angle_discretization, self.I_list[t, ie_pc, ia_pc], self.DoLP_list[t, ie_pc, ia_pc], self.AoRD_list[t, ie_pc, ia_pc] * RtoD, self.I_direct_list[t, ie_pc, ia_pc], sep = "," )
 
 
 	def GetLightParametersList(self):
@@ -101,10 +112,21 @@ class Simulation:
 			for ie_pc in range(self.world.Nb_e_pc):
 				for ia_pc in range(self.world.Nb_a_pc):
 					self.GetLightParameters(ground = self.world.has_ground_emission, sky = self.world.has_sky_emission, time = t, ie_pc = ie_pc, ia_pc = ia_pc)
+
 					self.I_list[t, ie_pc, ia_pc] = self.I0
 					self.InonPola_list[t, ie_pc, ia_pc] = self.InonPola
+					self.IPola_list[t, ie_pc, ia_pc] = self.I0 - self.InonPola
 					self.DoLP_list[t, ie_pc, ia_pc] = self.DoLP
 					self.AoRD_list[t, ie_pc, ia_pc] = self.AoRD
+
+					# shutter_time = 60000 * 1000 #in milliseconds
+					#
+					# self.I_list_err[t, ie_pc, ia_pc] = np.sqrt(2 * self.I0 / shutter_time)
+					# self.InonPola_list_err[t, ie_pc, ia_pc] = np.sqrt(2 * self.InonPola	/ shutter_time)
+					# self.IPola_list_err[t, ie_pc, ia_pc] = np.sqrt(2 * self.IPola_list[t, ie_pc, ia_pc]	/ shutter_time)
+					# self.DoLP_list_err[t, ie_pc, ia_pc] = np.sqrt(4 * (1 + ((self.DoLP/100.) ** 2 / 2)) / (self.I0 * shutter_time)) * 100
+					# self.AoRD_list_err[t, ie_pc, ia_pc] = np.sqrt(1 / ((self.DoLP/100.)** 2 * self.I0 * shutter_time))
+
 
 		# plt.plot(range(self.world.Nb_a_pc), self.InonPola_list[t, ie_pc, :])
 		# plt.show()
@@ -140,6 +162,13 @@ class Simulation:
 
 		print("Computing DONE")
 
+	def GetIDAFromV(self, V, Vc, Vs):
+		I0 = 2 * V
+		DoLP = 100 * 2 * np.sqrt(Vc**2 + Vs**2) / V
+		AoLP = np.arctan2(Vs, Vc) / 2.
+
+		return I0, DoLP, AoLP
+
 
 	def GetLightParameters(self, ground = False, sky = False, time = None, ie_pc = None, ia_pc = None):
 		"""Once the contributions of emmision maps are computed, compute the I, DOLP, AoLP and the AoLP histogram."""
@@ -169,29 +198,45 @@ class Simulation:
 			self.DoLP = self.world.ground_map.DoLP_map[ie_pc, ia_pc, 0, 0] * 100 # / self.I0 * 100
 			# self.DoLP = np.sum(self.world.ground_map.scattering_map[time, ie_pc, ia_pc].flatten()) / self.I0 * 100
 			self.AoRD = self.world.ground_map.AoRD_map[ie_pc, ia_pc, 0, 0] * RtoD
-		else:
+		elif True:
+
+			self.V, self.Vcos, self.Vsin = 0, 0, 0
+			if ground: #If ground and ground exist
+				self.V 		+= self.world.ground_map.V_total[ie_pc, ia_pc]
+				self.Vcos 	+= self.world.ground_map.Vcos_total[ie_pc, ia_pc]
+				self.Vsin 	+= self.world.ground_map.Vsin_total[ie_pc, ia_pc]
+			if sky: #If sky and ground exist
+				self.V 		+= self.world.sky_map.V_total[time, ie_pc, ia_pc]
+				self.Vcos 	+= self.world.sky_map.Vcos_total[time, ie_pc, ia_pc]
+				self.Vsin 	+= self.world.sky_map.Vsin_total[time, ie_pc, ia_pc]
+
+			self.I0, self.DoLP, self.AoRD = self.GetIDAFromV(self.V, self.Vcos, self.Vsin)
+			self.IPola = self.I0 * self.DoLP / 100.
+			self.InonPola = self.I0 - self.IPola
+
 			# hst, bins = np.zeros(self.N_bins), np.zeros(self.N_bins)
 			if sky:
 				A = self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :]
 				Ip = self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :]
-				sky_hst, bins = self.world.MakeAoRDHist(A, Ipola = Ip)
-				# hst += sky_hst
+
+				sky_hst, self.bins = self.world.MakeAoRDHist(A, Ipola = Ip)
+
 			if ground:
 				A = self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :]
 				Ip = self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :]
-				ground_hst, bins = self.world.MakeAoRDHist(A, Ipola = Ip)
-				# hst += ground_hst
+				ground_hst, self.bins = self.world.MakeAoRDHist(A, Ipola = Ip)
 
 			if sky:
-				hst = sky_hst
+				self.hst = sky_hst
 				if ground:
-					hst += ground_hst
+					self.hst += ground_hst
 			elif ground:
-				hst = ground_hst
+				self.hst = ground_hst
 
-		self.V, self.Vcos, self.Vsin, self.I0, self.DoLP, self.AoRD = self.world.LockInAmplifier(hst, bins, self.InonPola)
+			# self.V, self.Vcos, self.Vsin, self.I0, self.DoLP, self.AoRD = self.world.LockInAmplifier(self.hst, self.bins, self.InonPola)
 
-		self.world.DrawAoLPHist(hst, bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name=self.path + self.save_name + '_hist.png')
+			if self.world.is_single_observation:
+				self.world.DrawAoLPHist(self.hst,self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=True)
 
 		return self.I0, self.DoLP, self.AoRD
 
@@ -204,7 +249,7 @@ class Simulation:
 		################################################################################
 		###	Polar plots of intensity
 
-		font = {'family' : 'normal',
+		font = {'family' : 'DejaVu Sans',
 		'weight' : 'bold',
 		'size'   : 24}
 		matplotlib.rc('font', **font)
@@ -220,6 +265,8 @@ class Simulation:
 			self.MakeSkyMapPlots()
 
 		# self.MakeAoLPHist(ground = self.is_ground_emission, sky = not self.is_ground_emission, double=True)
+		# if self.world.is_single_observation:
+		self.world.DrawAoLPHist(self.hst,self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=False)
 
 		self.MakeAoLPMap()
 
@@ -242,7 +289,7 @@ class Simulation:
 		# i1 = ax1.pcolormesh(azimuts, el, scattering_map)
 		i1 = ax1.pcolormesh(self.world.sky_map.azimuts[:], el, self.world.sky_map.cube[self.time, :, :])
 		i2 = ax2.pcolormesh(self.world.sky_map.azimuts[:], el, self.world.sky_map.total_scattering_map[self.time, self.ie_pc, self.ia_pc, :, :])
-		i3 = ax3.pcolormesh(self.world.sky_map.azimuts[:], el, self.world.sky_map.DoLP_map[self.time, self.ie_pc, self.ia_pc, :, :])
+		i3 = ax3.pcolormesh(self.world.sky_map.azimuts[:], el, self.world.sky_map.scattering_map[self.time, self.ie_pc, self.ia_pc, :, :])
 		# i4 = ax4.pcolormesh(azimuts, el, total_scattering_map)
 		i4 = ax4.pcolormesh(self.world.sky_map.azimuts[:], el, self.world.sky_map.AoRD_map[self.time, self.ie_pc, self.ia_pc, :, :]*RtoD, cmap=cm.twilight)
 
@@ -253,7 +300,7 @@ class Simulation:
 		cbar3 = f1.colorbar(i3, extend='both', spacing='proportional', shrink=0.9, ax=ax3)
 		cbar3.set_label('Polarised intensity map')
 		cbar4 = f1.colorbar(i4, extend='both', spacing='proportional', shrink=0.9, ax=ax4)
-		cbar4.set_label('DoLP')
+		cbar4.set_label('AoRD')
 
 		f1.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
 
@@ -314,15 +361,18 @@ class Simulation:
 		Need a call to plt.show() after calling this function."""
 		f4, (ax1) = plt.subplots(1, sharex=True, figsize=(16, 8))
 
-		ax1.set_xlabel("Azimuts")
-		ax1.set_ylabel("Elevations")
+
 
 		if not self.is_ground_emission:
-			X, Y = self.world.sky_map.azimuts * RtoD, self.world.sky_map.elevations * RtoD
+			ax1.set_xlabel("Azimuts")
+			ax1.set_ylabel("Elevations")
+			X, Y = self.world.sky_map.mid_azimuts * RtoD, self.world.sky_map.mid_elevations * RtoD
 			U, V = np.sin(self.world.sky_map.AoRD_map[self.time, self.ie_pc, self.ia_pc, :, :]) * self.world.sky_map.DoLP_map[self.time, self.ie_pc, self.ia_pc, :, :], np.cos(self.world.sky_map.AoRD_map[self.time, self.ie_pc, self.ia_pc, :, :]) * self.world.sky_map.DoLP_map[self.time, self.ie_pc, self.ia_pc, :, :]
 			M = self.world.sky_map.DoLP_map[self.time, self.ie_pc, self.ia_pc, :, :]
 		else:
-			X, Y = self.world.ground_map.longitudes * RtoD, self.world.ground_map.latitudes * RtoD
+			ax1.set_xlabel("Longitudes")
+			ax1.set_ylabel("Latitudes")
+			X, Y = self.world.ground_map.mid_longitudes * RtoD, self.world.ground_map.mid_latitudes * RtoD
 			U, V = np.sin(self.world.ground_map.AoRD_map[self.ie_pc, self.ia_pc, :, :]) * self.world.ground_map.DoLP_map[self.ie_pc, self.ia_pc, :, :], np.cos(self.world.ground_map.AoRD_map[self.ie_pc, self.ia_pc, :, :]) * self.world.ground_map.DoLP_map[self.ie_pc, self.ia_pc, :, :]
 			M = self.world.ground_map.DoLP_map[self.ie_pc, self.ia_pc, :, :]
 
@@ -365,7 +415,7 @@ class Simulation:
 		# 		for ie, e in enumerate(self.e_pc_list):
 		# 			print(a*RtoD, e*RtoD, self.I_list[t][ie][ia], self.DoLP_list[t][ie][ia], self.AoRD_list[t][ie][ia]*RtoD)
 
-		font = {'family' : 'normal',
+		font = {'family' : 'DejaVu Sans',
 		'weight' : 'bold',
 		'size'   : 24}
 		matplotlib.rc('font', **font)
@@ -381,23 +431,56 @@ class Simulation:
 				axs[1] = plt.subplot(312)
 				axs[2] = plt.subplot(313)
 
-				if self.world.Nb_e_pc == 1:
-					axs[0].plot(self.world.a_pc_list*RtoD, self.I_list[0, 0, :].tolist(), label = "All")
-					axs[0].plot(self.world.a_pc_list*RtoD, self.InonPola_list[0, 0, :].tolist(), "r", label = "Non polarized")
-					# axs[0].plot(self.world.a_pc_list*RtoD, (self.I_list[0, 0, :] - self.InonPola_list[0, 0, :]).tolist(), "g", label = "polarized")
-					axs[1].plot(self.world.a_pc_list*RtoD, self.DoLP_list[0, 0, :].tolist())
-					axs[2].plot(self.world.a_pc_list*RtoD, (self.AoRD_list[0, 0, :]*RtoD).tolist())
-					self.save_name = 'results/' + self.world.ground_map.location + "_rot_e" + str(self.world.e_pc_list[0]*RtoD) + ".png"
-				elif self.world.Nb_a_pc == 1:
-					axs[0].plot(self.world.e_pc_list*RtoD, self.I_list[0, :, 0].tolist())
-					axs[1].plot(self.world.e_pc_list*RtoD, self.DoLP_list[0, :, 0].tolist())
-					axs[2].plot(self.world.e_pc_list*RtoD, (self.AoRD_list[0, :, 0]*RtoD).tolist())
-					self.save_name = 'results/' + self.world.ground_map.location + "_rot_a" + str(self.world.a_pc_list[0]*RtoD) + ".png"
-				else:
+				if self.world.Nb_e_pc > 1 and self.world.Nb_a_pc > 1:
 					axs[0].imshow(self.I_list[0,:,:])
 					axs[1].imshow(self.DoLP_list[0,:,:])
 					axs[2].imshow(self.AoRD_list[0,:,:]*RtoD)
 					self.save_name = 'results/' + self.world.ground_map.location + "_skymap" + ".png"
+				else:
+					if self.world.Nb_e_pc == 1:
+						xaxis = self.world.a_pc_list*RtoD
+						I = self.I_list[0, 0, :]
+						Ierr = self.I_list_err[0, 0, :] / 2.
+						InonPola = self.InonPola_list[0, 0, :]
+						InonPolaerr = self.InonPola_list_err[0, 0, :] / 2.
+						IPola = self.IPola_list[0, 0, :]
+						IPolaerr = self.IPola_list_err[0, 0, :] / 2.
+						D = self.DoLP_list[0, 0, :]
+						Derr = self.DoLP_list_err[0, 0, :] / 2.
+						A = self.AoRD_list[0, 0, :] * RtoD
+						Aerr = self.AoRD_list_err[0, 0, :] / 2. * RtoD
+						self.save_name = 'results/' + self.world.ground_map.location + "_rot_e" + str(self.world.e_pc_list[0]*RtoD) + ".png"
+
+						print(I - Ierr)
+
+					elif self.world.Nb_a_pc == 1:
+						xaxis = self.world.e_pc_list*RtoD
+						I = self.I_list[0, :, 0]
+						Ierr = self.I_list_err[0, :, 0] / 2.
+						InonPola = self.InonPola_list[0, :, 0]
+						InonPolaerr = self.InonPola_list_err[0, :, 0] / 2.
+						IPola = self.IPola_list[0, :, 0]
+						IPolaerr = self.IPola_list_err[0, :, 0] / 2.
+						D = self.DoLP_list[0, :, 0]
+						Derr = self.DoLP_list_err[0, :, 0] / 2.
+						A = self.I_list[0, :, 0]
+						Aerr = self.I_list_err[0, :, 0] / 2.
+						self.save_name = 'results/' + self.world.ground_map.location + "_rot_a" + str(self.world.a_pc_list[0]*RtoD) + ".png"
+
+					axs[0].plot(xaxis, I, label = "All")
+					axs[0].fill_between(xaxis, I - Ierr, I + Ierr, alpha = 0.2)
+
+					axs[0].plot(xaxis, InonPola, "r", label = "Non polarized")
+					axs[0].fill_between(xaxis, InonPola - InonPolaerr, InonPola + InonPolaerr, alpha = 0.2)
+
+					axs[0].plot(xaxis, IPola, "g", label = "Polarized")
+					axs[0].fill_between(xaxis, IPola - IPolaerr, IPola + IPolaerr, alpha = 0.2)
+
+					axs[1].plot(xaxis, D)
+					axs[1].fill_between(xaxis, D - Derr, D + Derr, alpha = 0.2)
+
+					axs[2].plot(xaxis, A)
+					axs[2].fill_between(xaxis, A - Aerr, A + Aerr, alpha = 0.2)
 
 				axs[0].set_ylabel("Intensity (nW)")
 				axs[1].set_ylabel("DoLP (\%)")

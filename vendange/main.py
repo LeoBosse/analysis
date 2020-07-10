@@ -4,7 +4,12 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
+from matplotlib import rc
+#matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
+rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+## for Palatino and other serif fonts use:
+#rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=False)
 from utils import *
 from rotation import *
 from bottle import *
@@ -55,9 +60,9 @@ def GetNbLines(bottle_name):
 		nb_lines = len(ls)
 	else:
 		###SHOULD BE 2. USE ONLY IF COMPARING 2 INSTRUMENTS WITH DIFFERENT NB_LINES !!!
-		nb_lines = 1
+		# nb_lines = 1
 		###BY DEFAULT SHOULD BE 2
-		# nb_lines = 2
+		nb_lines = 1
 
 	return nb_lines
 

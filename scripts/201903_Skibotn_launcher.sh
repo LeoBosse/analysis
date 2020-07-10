@@ -20,7 +20,6 @@ folder="ptcu/20190307_Skibotn/"
 #$folder"vr_a164_e90_densite_suite"  -s False
 #$folder"vr_a164_e90_suite"  -s False
 
-
 folder="ptcu/20190308_Skibotn/"
 ../vendange/main.py $folder"br_a164_e45"  -s False
 ../vendange/main.py $folder"br_a164_e90"  -s False

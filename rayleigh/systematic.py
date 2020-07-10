@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
-
 from main import *
 from rayleigh_input import *
 import pandas as pd
@@ -12,12 +11,19 @@ import sys
 
 def GetData():
 	# data = np.genfromtxt("./log/systematic_results.csv", delimiter=",", comments = "t", names=['t', 'a_pc', 'e_pc', 'src_dist', 'dlos', 'min_alt', 'max_alt', 'I0', 'DoLP', 'AoRD'])
-	data = pd.read_csv("./log/systematic_results.csv", sep=",", comment = "t", names=['t', 'a_pc', 'e_pc', 'src_dist', 'dlos', 'min_alt', 'max_alt', "wl", 'I0', 'DoLP', 'AoRD'])
+	data = pd.read_csv("./log/systematic_results.csv", sep=",", comment = "t", names=['t', 'a_pc', 'e_pc', 'src_dist', 'dlos', 'min_alt', 'max_alt', "wl", "mad", 'I0', 'DoLP', 'AoRD', 'Idir'])
 
 	data = data.drop('t', 1)
 
-	data["Ipola"] = data["I0"] * data["DoLP"]
-	data["Inonpola"] = data["I0"] * (1 - data["DoLP"])
+	data["Ipola"] = data["I0"] * data["DoLP"] / 100.
+	data["Inonpola"] = data["I0"] * (1 - data["DoLP"] / 100.)
+
+	data["mag"] = -2.5 * np.log10(data["I0"])
+
+	try:
+		data["mad"] = np.round((data["mad"] * RtoD) % 360)
+	except:
+		pass
 
 	# nb_data = data.index.stop
 	#
@@ -28,6 +34,7 @@ def GetData():
 	#
 	# data['wl'] = pd.Series(wl, index=data.index)
 
+	# print(data)
 	return data
 
 # def PlotData(data, x_axis, y_axis, t=None, a_pc=None, e_pc=None, src_dist=None, dlos=None, min_alt=None, max_alt=None, wl=None):
@@ -39,7 +46,7 @@ def PlotData(data, x_axis_name, y_axis_name, zaxis=None, **kwargs):
 
 	missing = []
 	for c in data.columns:
-		if ((c not in kwargs.keys() or (c in kwargs.keys() and kwargs[c] == "*")) and c not in [x_axis_name, y_axis_name, zaxis, "I0", "DoLP", "AoRD", "Ipola", "Inonpola"]) :
+		if ((c not in kwargs.keys() or (c in kwargs.keys() and kwargs[c] == "*")) and c not in [x_axis_name, y_axis_name, zaxis, "I0", "DoLP", "AoRD", "Ipola", "Inonpola", "mag", "Idir"]) :
 			missing.append(c)
 			# print(missing)
 
@@ -64,6 +71,7 @@ def PlotData(data, x_axis_name, y_axis_name, zaxis=None, **kwargs):
 		axs = SimplePlot(data, x_axis_name, y_axis_name, **kwargs)
 	else:
 		axs = ParameterMap(data, x_axis_name, y_axis_name, zaxis, **kwargs)
+
 
 
 	axs[-1].set_xlabel(x_axis_name.replace("_", "-"))
@@ -104,7 +112,7 @@ def ParameterMap(data, x_axis_name, y_axis_name, z_axis_name, **kwargs):
 	print(z_map.shape[-1])
 
 
-	m = axs[0].pcolormesh(x_axis_bins, y_axis_bins, z_map)
+	m = axs[0].pcolormesh(x_axis_bins, y_axis_bins, z_map, norm=matplotlib.colors.LogNorm())
 
 	axs[0].set_xlabel(x_axis_name.replace("_", "-"))
 	axs[0].set_ylabel(y_axis_name.replace("_", "-"))
@@ -116,33 +124,62 @@ def ParameterMap(data, x_axis_name, y_axis_name, z_axis_name, **kwargs):
 
 
 def SimplePlot(data, x_axis_name, y_axis_name, **kwargs):
+	print("SimplePlot")
+
+	### Experimentation to test effect of dlos parameter on flux
+	# ranges = lambda dlos: np.arange(dlos/2, 100/np.sin(np.pi/4)-dlos/2, dlos)
+	# def closest(R, ranges):
+	# 	c = ranges[-1]
+	# 	R = R / np.sin(np.pi/4.)
+	# 	for r in ranges:
+	# 		if abs(R-r) < c:
+	# 			c = abs(R-r)
+	# 	return c
 
 	if y_axis_name == "all":
-		fig, axs = plt.subplots(3, sharex=True, figsize=(16, 8))
+		fig, axs = plt.subplots(2, sharex=True, figsize=(16, 8))
 		fig.subplots_adjust(hspace=0)
-		axs_names = ["I0", "DoLP", "Ipola"]
+		axs_names = ["I0;Ipola;Inonpola", "DoLP"]
+		# fig, axs = plt.subplots(3, sharex=True, figsize=(16, 8))
+		# fig.subplots_adjust(hspace=0)
+		# axs_names = ["I0", "DoLP", "Ipola"]
 	else:
 		fig, axs = plt.subplots(1, sharex=True, figsize=(16, 8))
 		axs = [axs]
 		axs_names = [y_axis_name]
 
-
 	for iax, ax in enumerate(axs):
-		x_axis, y_axis = [], []
-		y_axis_name = axs_names[iax]
-		for i in data.index:
-			x_axis.append(data[x_axis_name][i])
-			y_axis.append(data[y_axis_name][i])
+		for yax in axs_names[iax].split(";"):
+			x_axis, y_axis = [], []
+			y_axis_name = yax
+			# y_axis_name = axs_names[iax]
+			for i in data.index:
+				x_axis.append(data[x_axis_name][i])
+				y_axis.append(data[y_axis_name][i])
 
-		x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key=lambda x: x[0]))
-		ax.plot(x_axis, y_axis, "-*")
-		x_axis, y_axis = [], []
+			x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key=lambda x: x[0]))
+			ax.plot(x_axis, y_axis, "-*", label=y_axis_name)
 
-		ax.set_ylabel(y_axis_name.replace("_", "-"))
+			### Experimentation to test effect of dlos parameter on flux
+			# dist = [closest(90, ranges(dlos)) for dlos in x_axis]
+			# a = axs[0].twinx()
+			# print(x_axis, dist)
+			# a.plot(x_axis, dist, "r-*")
+
+			x_axis, y_axis = [], []
+
+
+		if len(axs_names[iax].split(";")) > 1:
+			ax.legend()
+		ax.set_ylabel(axs_names[iax].replace("_", "-"))
+
+
+
 
 	return axs
 
 def PlotMissingData(data, missing, x_axis_name, y_axis_name, **kwargs):
+	print("PlotMissingData")
 
 	x_axis_shift = 0
 	x_axis_mod = 0
@@ -158,9 +195,9 @@ def PlotMissingData(data, missing, x_axis_name, y_axis_name, **kwargs):
 
 
 	if y_axis_name == "all":
-		fig, axs = plt.subplots(3, sharex=True, figsize=(16, 8))
+		fig, axs = plt.subplots(2, sharex=True, figsize=(16, 8))
 		fig.subplots_adjust(hspace=0)
-		axs_names = ["I0", "DoLP", "Ipola"]
+		axs_names = ["I0", "DoLP"]#, "Ipola"]
 	else:
 		fig, axs = plt.subplots(1, sharex=True, figsize=(16, 8))
 		axs = [axs]
@@ -172,8 +209,6 @@ def PlotMissingData(data, missing, x_axis_name, y_axis_name, **kwargs):
 	missing_value_list = sorted(list(set(data[missing[0]])))
 
 	for iax, ax in enumerate(axs):
-
-
 		#### Code from here to next "####" comment works best for only 1 missing argument
 		# Set the default color cycle
 		colors = [(i, 0, 1-i) for i in np.linspace(0, 1, nb_plots)]
@@ -181,7 +216,6 @@ def PlotMissingData(data, missing, x_axis_name, y_axis_name, **kwargs):
 
 		x_axis, y_axis = [], []
 		y_axis_name = axs_names[iax]
-
 
 		for m in missing_value_list:
 			tmp = data[data[missing[0]] == m]
@@ -216,9 +250,14 @@ def PlotMissingData(data, missing, x_axis_name, y_axis_name, **kwargs):
 		ax.set_ylabel(y_axis_name.replace("_", "-"))
 		handles, labels = ax.get_legend_handles_labels()
 		# sort both labels and handles by labels
-		labels, handles = zip(*sorted(zip(labels, handles), key = lambda x: float(x[0])))
+		try:
+			labels, handles = zip(*sorted(zip(labels, handles), key = lambda x: float(x[0])))
+		except:
+			labels, handles = zip(*sorted(zip(labels, handles), key = lambda x: x[0]))
 
-	axs[0].legend(handles, labels, title=legend_title, loc='upper left', bbox_to_anchor=(0.98, 1))
+	axs[0].legend(handles, labels, title=legend_title)#, loc='upper left', bbox_to_anchor=(0.98, 1))
+
+
 
 	return axs
 
@@ -233,56 +272,59 @@ def RunSystematicSimulation():
 
 	### Define paramter space. All combinations of these parameters will be simulated.
 	azimuths = 180
-	elevations = 45
+	elevations = 90
 	src_dist = [5]
-	src_az = [0]
-	dlos = [0.1]#, 0.5, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30]
-	alt_min = [0]#, 1, 5, 10, 25, 50, 100]
-	alt_max = [60, 70, 80, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95]#[1, 2, 3, 4, 5, 7.5, 10, 25, 50, 100]
-	wavelengths =  [630, 557.7, 427.8, 391.4]
+	src_az = [180]
+	dlos = [0.1]
+	alt_min = [0] #, 1, 5, 10, 25, 50, 100]
+	alt_max = [1, 100] #np.arange(5, 100, 5) #[91, 92, 93, 94]
+	wavelengths =  [391.4]
+	max_angle_discretization = [360, 0, 1]#[1, 2, 5, 10, 15, 20, 40, 50, 90, 180, 360]
 
-	for sa in src_az:
-		for d in src_dist:
-			for dl in dlos:
-				for am in alt_min:
-					for aM in [a for a in alt_max if a > am + dl]:
-						for wl in wavelengths:
-							h = 90
-							if wl == 630:
-								h = 220
-							elif wl == 557.7:
-								h = 100
+	for mad in max_angle_discretization:
+		for sa in src_az:
+			for d in src_dist:
+				for dl in dlos:
+					for am in alt_min:
+						for aM in [a for a in alt_max if a > am]:
+							for wl in wavelengths:
+								h = 90
+								if wl == 630:
+									h = 220
+								elif wl == 557.7:
+									h = 100
 
-							in_dict = {"azimuts": azimuths,
-									"elevations": elevations,
-									"point_src_dist": d,
-									"point_src_az": sa,
-									"resolution_along_los": dl,
-									"RS_min_altitude": am,
-									"RS_max_altitude": aM,
-									"wavelength": wl,
-									"emission_altitude": h
-									}
+								in_dict = {"azimuts": azimuths,
+										"elevations": elevations,
+										"point_src_dist": d,
+										"point_src_az": sa,
+										"resolution_along_los": dl,
+										"RS_min_altitude": am,
+										"RS_max_altitude": aM,
+										"wavelength": wl,
+										"emission_altitude": h,
+										"max_angle_discretization": mad
+										}
 
-							r_input = RayleighInput()
+								r_input = RayleighInput()
 
-							r_input.Update(in_dict)
+								r_input.Update(in_dict)
 
-							file_name = r_input.WriteInputFile(file_name = "systemic/systemic", **in_dict)
+								file_name = r_input.WriteInputFile(file_name = "systemic/systemic", **in_dict)
 
-							print(file_name)
+								print(file_name)
 
-							log_file_name = "./log/" + file_name + ".out"
-							log_file = open(log_file_name, "w")
+								log_file_name = "./log/" + file_name + ".out"
+								log_file = open(log_file_name, "w")
 
-							terminal = sys.stdout
-							sys.stdout = log_file
-							sys.stderr = log_file
+								terminal = sys.stdout
+								sys.stdout = log_file
+								sys.stderr = log_file
 
-							RunSimulation(file_name, show = False, output_result_file = "log/systematic_results.csv")
+								RunSimulation(file_name, show = False, output_result_file = "log/systematic_results.csv")
 
-							sys.stdout = terminal
-							sys.stderr = terminal
+								sys.stdout = terminal
+								sys.stderr = terminal
 
 
 if __name__ == "__main__":
@@ -295,5 +337,7 @@ if __name__ == "__main__":
 	else:
 		plt.close("all")
 		data = GetData()
-		PlotData(data, "a_pc", "max_alt", zaxis="I0", e_pc = 45, a_pc="*", src_dist=5, wl=391.4, min_alt=0, max_alt="*", dlos=0.1)
+		# PlotData(data, "src_dist", "max_alt", zaxis="I0", e_pc = 90, a_pc=0, src_dist="*", wl=391.4, min_alt=0, max_alt="*", dlos=0.1, mad=1)
+		PlotData(data, "max_alt", "all", e_pc = 90, a_pc=180, src_dist="None", wl=391.4, min_alt=0, max_alt="*", dlos=0.1, mad="*")
+		# PlotData(data, "max_alt", "all", e_pc = 90, a_pc=0, src_dist=5, wl=391.4, min_alt=0, max_alt="*", dlos=0.1, mad=1)
 		plt.show()

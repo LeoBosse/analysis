@@ -1,0 +1,20 @@
+Correct input file in use: systemic/systemic_azimuts180_elevations45_point_src_dist5_point_src_az0_resolution_along_los0.1_RS_min_altitude0_RS_max_altitude100_wavelength391.4_emission_altitude90_max_angle_discretization0.5
+Loading the sky emission cube...
+Has_sky_emission: True
+Has_ground_emission: False
+lagorge 0.10361906322688955 0.7891042478910105
+ALT MAP BOUNDS 5.037613394081269 6.836256605918731 44.31302139408126 46.111664605918726
+0.01569612305760477
+ALT MAP BOUNDS 5.036200993144891 6.8348442049823515 44.309575523615855 46.10821873545331
+ALT MAP BOUNDS 5.036200993144891 6.8348442049823515 44.309575523615855 46.10821873545331
+Initialization DONE
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (5.936935, 45.212343), azimuth 180.0, elevation 45.0. Observed point at altitude 90.0, position (5.936935000000001, 44.4196935987303)
+1414.0 bins to compute
+  0%|          | 0/1414.0 [00:00<?, ?it/s] 14%|█▍        | 196/1414.0 [00:00<00:00, 1957.27it/s] 26%|██▋       | 372/1414.0 [00:00<00:00, 1893.50it/s] 39%|███▊      | 547/1414.0 [00:00<00:00, 1845.41it/s] 47%|████▋     | 665/1414.0 [00:00<00:00, 1532.75it/s] 55%|█████▌    | 781/1414.0 [00:00<00:00, 1364.13it/s] 63%|██████▎   | 895/1414.0 [00:00<00:00, 1080.33it/s] 71%|███████   | 997/1414.0 [00:00<00:00, 861.54it/s]  77%|███████▋  | 1086/1414.0 [00:01<00:00, 629.96it/s] 82%|████████▏ | 1160/1414.0 [00:01<00:00, 375.90it/s] 86%|████████▌ | 1218/1414.0 [00:01<00:00, 219.13it/s] 89%|████████▉ | 1262/1414.0 [00:02<00:01, 112.70it/s] 92%|█████████▏| 1294/1414.0 [00:04<00:02, 48.95it/s]  93%|█████████▎| 1318/1414.0 [00:04<00:01, 51.29it/s] 94%|█████████▍| 1336/1414.0 [00:04<00:01, 59.12it/s] 96%|█████████▌| 1352/1414.0 [00:05<00:00, 69.47it/s] 97%|█████████▋| 1367/1414.0 [00:05<00:00, 81.73it/s] 98%|█████████▊| 1384/1414.0 [00:05<00:00, 95.95it/s] 99%|█████████▉| 1403/1414.0 [00:05<00:00, 112.12it/s]100%|██████████| 1414/1414.0 [00:05<00:00, 259.58it/s]
+Computing DONE
+/home/bossel/These/Analysis/src/rayleigh/sky_map.py:379: RuntimeWarning: invalid value encountered in true_divide
+  self.DoLP_map				= 2 * np.sqrt(self.Vcos_map**2 + self.Vsin_map**2) / self.V_map * 100 # DoLP of scattered light from (e,a)
+Making and NOT saving plots...
+ALL TIME SINCE START: 5.751990556716919

@@ -28,7 +28,6 @@ class Atmosphere:
 		# 	self.h_r_max += 0.01
 		self.d_los = float(in_dict["resolution_along_los"]) 	# Lenth bin along line of sight
 
-
 		self.d_0 	= 2.5468 * 10 ** 25 	#=1.2250 kg/m3	sea level density
 		self.T 		= 288.15 				# K, sea level standard temperature
 		self.g 		= 9.80665 				# m/s², earth-surface gravitational acceleration
@@ -96,15 +95,34 @@ class Atmosphere:
 			return value + d * (alt - self.profiles["HGT"][im])
 
 
-	def GetVolume(self, AR, ouv_pc, unit="m"):
-		"""Get the volume of a truncated cone of length d_los, and opening angle ouv_pc.
+	def GetVolume(self, AR, ouv_pc, da = None, dr=None, unit="m", type="cone"):
+		"""Get the volume of a truncated cone of length d_los, and half opening angle ouv_pc.
 		Unit defines the unit you want it in. can be "cm", "m" or "km". (the cube is implicit)"""
-		V = (np.pi * np.tan(ouv_pc) ** 2) / 3
+		if dr is None:
+			dr = self.d_los
 
-		h1, h2 = AR - self.d_los/2, AR + self.d_los/2
+		if type == "cone":
+			V = (np.pi * np.tan(ouv_pc) ** 2) / 3
 
-		V *= self.d_los
-		V *= (h1 ** 2 + h2 ** 2 + h1 * h2)
+			h1, h2 = AR - dr/2, AR + dr/2
+
+			V *= dr
+			V *= (h1 ** 2 + h2 ** 2 + h1 * h2)
+		elif type == "pole":
+
+			R1, R2 = AR - dr/2., AR + dr/2.
+			V = 2. * np.pi / 3. * (1 - np.cos(ouv_pc)) * (R2 ** 3 - R1 ** 3)
+
+		elif type == "slice" and len(ouv_pc) == 2:
+
+			R1, R2 = AR - dr/2., AR + dr/2.
+
+			V = da / 3. * (R2 ** 3 - R1 ** 3) * (np.cos(ouv_pc[0]) - np.cos(ouv_pc[1]))
+
+		else:
+			raise ValueError("Incorrect arguments passed to atmosphere.GetVolume()")
+
+
 
 		# Every length is given in km
 		if unit == "m":
@@ -133,7 +151,7 @@ class Atmosphere:
 		return beta_s * (P / 101325) * (288.15 / T)
 
 	def GetRSOpticalDepth(self, wl, E_alt, R_alt):
-		"""Return VERTICAL optical depth between two altitudes aas calculated in Bucholtz 95."""
+		"""Return VERTICAL optical depth between two altitudes as calculated in Bucholtz 95."""
 		tau_E = self.GetSquareLawFit(wl, "Optical Depth")
 		P_E = self.GetProfileValue(E_alt, "PRE")
 		tau_E *= (P_E / 101325)

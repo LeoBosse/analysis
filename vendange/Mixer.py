@@ -4,7 +4,12 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
+from matplotlib import rc
+#matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
+rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+## for Palatino and other serif fonts use:
+#rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=False)
 matplotlib.rcParams['font.size'] = 16
 matplotlib.rcParams['svg.fonttype'] = 'none'
 import datetime as dt
@@ -42,9 +47,14 @@ class Mixer:
 			self.eiscat_data = Eiscat(bottle)
 			# print("DEBUG:", self.eiscat_data.valid )
 
-			self.eq_currents = EqCurrent(bottle)
+			self.eq_currents = EqCurrent(bottle, file_type=None)
 			if self.eq_currents.valid and bottle.observation_type == "fixed":
-				self.eq_currents.GetApparentAngle(bottle.observation, shift=bottle.graph_angle_shift)
+
+				AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
+				self.eq_currents.FindJup(bottle.observation, AoLPs)
+
+				self.eq_currents.GetApparentAngle(bottle.observation)#, shift=bottle.graph_angle_shift)
+
 				self.eq_currents.SaveTXT()
 
 			self.mode = mode
@@ -54,6 +64,7 @@ class Mixer:
 			self.MakeFigure()
 			self.MakePlots(bottle)
 			self.MakeSNratio(bottle)
+			self.MakeI0SNratio(bottle)
 			if self.eq_currents.valid:
 				self.eq_currents.MakePlot()
 
@@ -128,7 +139,7 @@ class Mixer:
 				self.xlabel = "Time (seconds)"
 
 			# self.x_axis_list 	   = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
-			norm =  bottle.all_times[0].total_seconds()
+			norm = bottle.all_times[0].total_seconds()
 			# self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
 			self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
 
@@ -184,10 +195,11 @@ class Mixer:
 		self.time_format = "UT" #LT or UT
 
 
-		self.show_raw_data = False
+		self.show_raw_data = True
+		self.show_smooth_data = True
 
-		self.show_error_bars 		= False
-		self.show_smooth_error_bars = False
+		self.show_error_bars 		= True
+		self.show_smooth_error_bars = True
 		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
 		self.show_SN = False
 
@@ -284,13 +296,13 @@ class Mixer:
 				l_all_I0 = self.ax1.errorbar(self.x_axis_list, bottle.all_I0, yerr = bottle.std_I0, fmt=".", ecolor=self.raw_error_bars_color, color = self.all_I0_color , linestyle = 'none', markersize=self.marker_size, label="Intensity", zorder=0, errorevery=self.error_step)
 
 
-		if not self.show_smooth_error_bars:
+		if self.show_smooth_data and not self.show_smooth_error_bars:
 			# l_smooth_I0, = self.ax1.plot(self.x_axis_list, bottle.smooth_I0, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 			y = bottle.smooth_I0
 			if self.show_Ipola:
 				y *= bottle.smooth_DoLP / 100.
 			l_smooth_I0, = self.ax1.plot(self.x_axis_list, y, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
-		else:
+		elif self.show_smooth_data:
 			# l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, bottle.smooth_I0, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 			y = bottle.smooth_I0
 			if self.show_Ipola:
@@ -304,7 +316,8 @@ class Mixer:
 
 		if self.show_raw_data:
 			self.ax1_lines.append([l_all_I0, l_all_I0.get_label()])
-		self.ax1_lines.append([l_smooth_I0, l_smooth_I0.get_label()])
+		if  self.show_smooth_data:
+			self.ax1_lines.append([l_smooth_I0, l_smooth_I0.get_label()])
 
 
 		# ### Graph the I0 * DoLP line on the first subplot
@@ -369,16 +382,17 @@ class Mixer:
 			else:
 				(l_all_DoLP, _, _) = self.ax2.errorbar(self.x_axis_list, bottle.all_DoLP, yerr = bottle.std_DoLP, fmt=".", ecolor=self.raw_error_bars_color, color = self.all_I0_color, linestyle = 'none', markersize=self.marker_size, label="DoLP", zorder=0, errorevery=self.error_step)
 
-		if not self.show_smooth_error_bars:
+		if self.show_smooth_data and not self.show_smooth_error_bars:
 			l_smooth_DoLP, = self.ax2.plot(self.x_axis_list, bottle.smooth_DoLP, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
-		else:
+		elif  self.show_smooth_data:
 			(l_smooth_DoLP, _, _) = self.ax2.errorbar(self.x_axis_list, bottle.smooth_DoLP, yerr = bottle.std_smooth_DoLP, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
 		self.ax2.set_ylim(bottom = 0)
 
 		if self.show_raw_data:
 			self.ax2_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
-		self.ax2_lines.append([l_smooth_DoLP, l_smooth_DoLP.get_label()])
+		if  self.show_smooth_data:
+			self.ax2_lines.append([l_smooth_DoLP, l_smooth_DoLP.get_label()])
 
 		if bottle.location.lower() == "skibotn" and bottle.filters == "br" and bottle.DateTime().date() == dt.date(2019, 3, 7):
 			self.ax2.set_ylim((0, 5))
@@ -429,7 +443,7 @@ class Mixer:
 			if not self.show_error_bars:
 				l_all_AoLP, = self.ax3.plot(self.x_axis_list, bottle.all_AoLP * RtoD, ".", color = self.all_I0_color, linestyle = 'none', markersize=self.marker_size, label="AoLP", zorder=0)
 
-		if not self.show_smooth_error_bars:
+		if self.show_smooth_data and not self.show_smooth_error_bars:
 			l_smooth_AoLP, = self.ax3.plot(self.x_axis_list, bottle.smooth_AoLP * RtoD, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth AoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 
 		if (self.show_error_bars and self.show_raw_data) or self.show_smooth_error_bars:
@@ -452,7 +466,7 @@ class Mixer:
 					elif angle < mid and angle - error < min:
 						temp = angle - error + 180
 						ls_all.update({x:[max, temp]})
-				if self.show_smooth_error_bars:
+				if (self.show_smooth_data and self.show_smooth_error_bars):
 					if s_angle > mid and s_angle + s_error > max:
 						temp = s_angle + s_error - 180
 						ls_smooth.update({x:[min, temp]})
@@ -466,7 +480,7 @@ class Mixer:
 				for i, a in ls_all.items():
 					self.ax3.vlines(i, a[0], a[1], colors = self.raw_error_bars_color, zorder=0) #"green", linewidth=5)#
 
-			if self.show_smooth_error_bars:
+			if self.show_smooth_data and self.show_smooth_error_bars:
 				l_smooth_AoLP = self.ax3.errorbar(self.x_axis_list, bottle.smooth_AoLP * RtoD, yerr = bottle.std_smooth_AoLP * RtoD, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="AoLP", zorder=1, errorevery=self.error_step)
 				# plt.errorbar(list(ls.keys()), [-90, 90], yerr=list(ls.values()), fmt='C0 ')
 				for i, a in ls_smooth.items():
@@ -475,7 +489,8 @@ class Mixer:
 		if (self.show_error_bars and self.show_raw_data):
 			self.ax3_lines.append([l_all_AoLP, l_all_AoLP.get_label()])
 
-		self.ax3_lines.append([l_smooth_AoLP, l_smooth_AoLP.get_label()])
+		if  self.show_smooth_data and self.show_smooth_error_bars:
+			self.ax3_lines.append([l_smooth_AoLP, l_smooth_AoLP.get_label()])
 
 		if self.show_avg_AoLP:
 			l_avg_AoLP, = self.ax3.plot(self.x_axis_list,[bottle.AoLP_average * RtoD] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.AoLP_average * RtoD)[:4])
@@ -484,10 +499,11 @@ class Mixer:
 
 		if self.show_currents and self.eq_currents.valid:
 			self.ax23 = self.ax2.twinx()
-			l_AoJlos, = self.ax23.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["AoJlos"] * RtoD, color = self.currents_color, label="AoJlos")
+			l_AoJlos, = self.ax23.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["AoJlos"] * RtoD, "*", color = self.currents_color, label="AoJlos")
+			# l_AoJlos, = self.ax23.plot(self.eq_currents.GetNormTimes(self.divisor), np.sin(self.eq_currents.data["AoJlos"]) * self.eq_currents.data["J_norm"], color = self.currents_color, label="AoJlos")
 			self.ax2_lines.append([l_AoJlos, l_AoJlos.get_label()])
 
-			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["AoJapp"] * RtoD, color = self.currents_color, label="AoJapp")
+			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["AoJapp"] * RtoD, "*", color = self.currents_color, label="AoJapp")
 			self.ax3_lines.append([l_AoJapp, l_AoJapp.get_label()])
 
 
@@ -495,7 +511,7 @@ class Mixer:
 
 
 		if bottle.observation_type == "fixed":
-			if bottle.AoRD is not False:
+			if bottle.AoRD is not False and self.show_AoRD:
 				if bottle.graph_angle_shift == 1:
 					AoRD = SetAngleBounds(bottle.AoRD, 0, np.pi)
 				elif bottle.graph_angle_shift == 0:
@@ -503,7 +519,7 @@ class Mixer:
 				l_AoRD, = self.ax3.plot(self.x_axis_list,[bottle.AoRD * RtoD] * len(self.x_axis_list), linewidth=3, color=self.AoRD_color, label="AoRD: " + str(bottle.AoRD*RtoD)[:5], zorder=2)
 				self.ax3_lines.append([l_AoRD, l_AoRD.get_label()])
 				# l54, = self.ax3.plot(self.x_axis_list,[bottle.AoRD_ortho * RtoD] * len(self.x_axis_list), ":g", linewidth=self.marker_size, label="AoRD ortho: " + str(bottle.AoRD_ortho*RtoD)[:5])
-			if (bottle.AoBapp and bottle.AoBlos) is not False:
+			if (bottle.AoBapp and bottle.AoBlos) is not False and self.show_AoBapp:
 				if bottle.graph_angle_shift == 1:
 					AoBapp = SetAngleBounds(bottle.AoBapp, 0, np.pi)
 				elif bottle.graph_angle_shift == 0:
@@ -595,7 +611,7 @@ class Mixer:
 			self.ax12 = self.ax1.twiny()
 			self.ax12.set_xlim(self.ax1.get_xlim())
 			xticks = plt.xticks()[0] * self.divisor
-			xticks = [bottle.DateTime(format=self.time_format) + time.timedelta(seconds = t) for t in xticks]
+			xticks = [bottle.DateTime("start", format=self.time_format) + time.timedelta(seconds = t) for t in xticks]
 			# xticks = [bottle.DateTime() + time.timedelta(seconds = t) + bottle.head_jump for t in xticks]
 			self.ax12.set_xticklabels([st.strftime("%H:%M") for st in xticks])
 			self.ax12.set_xlabel(self.time_format)
@@ -621,8 +637,41 @@ class Mixer:
 		f5, ax = plt.subplots(1, figsize=(10, 20))
 
 		ax.plot(self.x_axis_list, bottle.all_SN, "--", color = self.all_SN_color, label="all SN")
+		ax.set_ylabel("Raw")
+		ax1 = plt.twinx(ax)
+		ax1.plot(self.x_axis_list, bottle.smooth_SN, "--", color = self.smooth_SN_color, label="smooth SN")
+		ax1.set_ylabel("Smooth")
 
-		ax.plot(self.x_axis_list, bottle.smooth_SN, "--", color = self.smooth_SN_color, label="smooth SN")
+		ax.set_title("SN ratio")
+		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_SNratio.png')
+		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_SNratio.png', bbox_inches='tight')
+			# plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
+		else:
+			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_SNratio.png', bbox_inches='tight')
+			# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
+
+	def MakeI0SNratio(self, bottle):
+		f6, ax = plt.subplots(1, figsize=(10, 20))
+
+		print(bottle.all_I0,  bottle.std_I0, bottle.all_I0 / bottle.std_I0)
+		print(bottle.smooth_I0, bottle.std_smooth_I0, bottle.smooth_I0 / bottle.std_smooth_I0)
+
+		ax.plot(self.x_axis_list, bottle.all_I0 / bottle.std_I0, "--", color = self.all_SN_color, label="I0 SN")
+		ax.set_ylabel("Raw")
+		ax1 = plt.twinx(ax)
+		ax1.plot(self.x_axis_list, bottle.smooth_I0 / bottle.std_smooth_I0, "--", color = self.smooth_SN_color, label="smooth I0 SN")
+		ax1.set_ylabel("Smooth")
+
+		ax.set_title("Intensity SN ratio")
+		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_I0SNratio.png')
+		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_I0SNratio.png', bbox_inches='tight')
+			# plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
+		else:
+			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_I0SNratio.png', bbox_inches='tight')
+			# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
+
 
 	def DrawEiscatParam(self, axe, param, alt):
 		label = param.replace("_", "\_")
