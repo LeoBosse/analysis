@@ -1,6 +1,12 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+from mpi4py import MPI
+mpi_comm = MPI.COMM_WORLD
+mpi_rank = mpi_comm.Get_rank()
+mpi_size = mpi_comm.Get_size()
+mpi_name = mpi_comm.Get_name()
+
 import sys as sys
 import numpy as np
 import time as tm
@@ -39,30 +45,43 @@ def RunSimulation(file_name = "", show = True, output_result_file=None):
 	#Init the rayleigh object
 	simu = Simulation(in_dict)
 	simu.ComputeAllMaps()
-	simu.MakeSummaryPlot()
 
+	# simu.GatherResults(root = 0)
 
-	old = sys.stdout
-	if output_result_file:
-		f = open(output_result_file, "a")
-		sys.stdout = f
+	if mpi_rank == 0:
+		simu.MakeSummaryPlot()
 
-	simu.PrintSystematicResults()
-	sys.stdout = old
+		old = sys.stdout
+		if output_result_file:
+			f = open(output_result_file, "a")
+			sys.stdout = f
 
-	print("ALL TIME SINCE START:", tm.time() - all_time_start)
+		simu.PrintSystematicResults()
+		sys.stdout = old
 
-	if show:
-		plt.show()
+		print("ALL TIME SINCE START:", tm.time() - all_time_start)
+
+		if show:
+			plt.show()
+
 
 if __name__ == "__main__":
-
+	print("DEBUG")
 	#Get the input file from the command arguments
 	arguments = sys.argv
 	nb_args = len(arguments)
+
+	print("DEBUG")
+	# mpi_comm = MPI.COMM_WORLD
+	# mpi_rank = mpi_comm.Get_rank()
+	# mpi_size = mpi_comm.Get_size()
+	# mpi_name = mpi_comm.Get_name()
+	print(mpi_size, mpi_rank, mpi_name)
 
 	if nb_args == 2:
 		file_name = arguments[1]
 	else:
 		file_name = "./input_files/RS_default.in"
+
+	# if mpi_rank == 0:
 	RunSimulation(file_name)

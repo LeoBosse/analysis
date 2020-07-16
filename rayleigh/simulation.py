@@ -1,6 +1,12 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+from mpi4py import MPI
+mpi_comm = MPI.COMM_WORLD
+mpi_rank = mpi_comm.Get_rank()
+mpi_size = mpi_comm.Get_size()
+mpi_name = mpi_comm.Get_name()
+
 import sys as sys
 import numpy as np
 import time as tm
@@ -56,6 +62,9 @@ class Simulation:
 
 		print("Initialization DONE")
 
+	def GatherResults(root = 0):
+		self.world.GatherResults()
+
 
 	def ComputeAllMaps(self):
 		"""Will compute what the instrument sees for all the maps and all the observations directions"""
@@ -72,7 +81,22 @@ class Simulation:
 						self.time = t
 						self.SingleComputation()
 
-			self.world.sky_map.SetLightParameters()
+			reciever_V = None
+			reciever_Vcos = None
+			reciever_Vsin = None
+			if mpi_rank == 0:
+				reciever_V = np.empty_like(self.world.sky_map.V_map)
+				reciever_Vcos = np.empty_like(self.world.sky_map.Vcos_map)
+				reciever_Vsin = np.empty_like(self.world.sky_map.Vsin_map)
+			mpi_comm.Reduce(self.world.sky_map.V_map, reciever_V, op = MPI.SUM, root=0)
+			self.world.sky_map.V_map = reciever_V
+			mpi_comm.Reduce(self.world.sky_map.Vcos_map, reciever_Vcos, op = MPI.SUM, root=0)
+			self.world.sky_map.Vcos_map = reciever_Vcos
+			mpi_comm.Reduce(self.world.sky_map.Vsin_map, reciever_Vsin, op = MPI.SUM, root=0)
+			self.world.sky_map.Vsin_map = reciever_Vsin
+
+			if mpi_rank == 0:
+				self.world.sky_map.SetLightParameters()
 
 		if self.world.has_ground_emission: ### Compute how the ground map looks through the instrument for every observations directions
 			self.is_ground_emission = True
@@ -84,10 +108,25 @@ class Simulation:
 					self.time = 0
 					self.SingleComputation()
 
-			self.world.ground_map.SetLightParameters()
+			reciever_V = None
+			reciever_Vcos = None
+			reciever_Vsin = None
+			if mpi_rank == 0:
+				reciever_V = np.empty_like(self.world.ground_map.V_map)
+				reciever_Vcos = np.empty_like(self.world.ground_map.Vcos_map)
+				reciever_Vsin = np.empty_like(self.world.ground_map.Vsin_map)
+			mpi_comm.Reduce(self.world.ground_map.V_map, reciever_V, op = MPI.SUM, root=0)
+			self.world.ground_map.V_map = reciever_V
+			mpi_comm.Reduce(self.world.ground_map.Vcos_map, reciever_Vcos, op = MPI.SUM, root=0)
+			self.world.ground_map.Vcos_map = reciever_Vcos
+			mpi_comm.Reduce(self.world.ground_map.Vsin_map, reciever_Vsin, op = MPI.SUM, root=0)
+			self.world.ground_map.Vsin_map = reciever_Vsin
 
+			if mpi_rank == 0:
+				self.world.ground_map.SetLightParameters()
 
-		self.GetLightParametersList()
+		if mpi_rank == 0:
+			self.GetLightParametersList()
 
 	def SingleComputation(self):
 		"""Will compute and show what the instrument sees for one given I_map and one observation"""
@@ -164,7 +203,10 @@ class Simulation:
 
 	def GetIDAFromV(self, V, Vc, Vs):
 		I0 = 2 * V
-		DoLP = 100 * 2 * np.sqrt(Vc**2 + Vs**2) / V
+		if V != 0:
+			DoLP = 100 * 2 * np.sqrt(Vc**2 + Vs**2) / V
+		else:
+			DoLP = 0
 		AoLP = np.arctan2(Vs, Vc) / 2.
 
 		return I0, DoLP, AoLP
@@ -268,7 +310,7 @@ class Simulation:
 		# if self.world.is_single_observation:
 		self.world.DrawAoLPHist(self.hst,self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=False)
 
-		self.MakeAoLPMap()
+		# self.MakeAoLPMap()
 
 		# if self.world.is_single_observation and not self.world.is_time_dependant:
 		# 	plt.show()
@@ -361,11 +403,10 @@ class Simulation:
 		Need a call to plt.show() after calling this function."""
 		f4, (ax1) = plt.subplots(1, sharex=True, figsize=(16, 8))
 
-
-
 		if not self.is_ground_emission:
 			ax1.set_xlabel("Azimuts")
 			ax1.set_ylabel("Elevations")
+
 			X, Y = self.world.sky_map.mid_azimuts * RtoD, self.world.sky_map.mid_elevations * RtoD
 			U, V = np.sin(self.world.sky_map.AoRD_map[self.time, self.ie_pc, self.ia_pc, :, :]) * self.world.sky_map.DoLP_map[self.time, self.ie_pc, self.ia_pc, :, :], np.cos(self.world.sky_map.AoRD_map[self.time, self.ie_pc, self.ia_pc, :, :]) * self.world.sky_map.DoLP_map[self.time, self.ie_pc, self.ia_pc, :, :]
 			M = self.world.sky_map.DoLP_map[self.time, self.ie_pc, self.ia_pc, :, :]

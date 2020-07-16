@@ -21,7 +21,7 @@ from rayleigh_utils import *
 from AllSkyData import *
 
 class SkyMap:
-	def __init__(self, in_dict):
+	def __init__(self, in_dict, Nb_a_pc, Nb_e_pc):
 
 		self.path = in_dict["sky_path"]
 		self.file = in_dict["sky_file"]
@@ -58,6 +58,8 @@ class SkyMap:
 		self.N = float(in_dict["Nb_emission_points"]) # Number of bins to compute (if h!=0)
 		if self.N > 1:
 			self.Na, self.Ne = int(2 * np.sqrt(self.N)), int(np.sqrt(self.N) / 2) # Numbers of bins in azimut/elevation. Na = 4*Ne and Na*Ne = N
+		elif "spot" in self.mode:
+			self.Na, self.Ne = 1, 1
 		else:
 			self.Na, self.Ne = 1, 1
 		self.da = (self.I_zone_a_max - self.I_zone_a_min) / self.Na # Length of an azimut bin
@@ -92,6 +94,8 @@ class SkyMap:
 		# self.sky_I_map = np.zeros(self.maps_shape) # Intensity of the emission at point (e,a)
 
 		self.cube_is_done = False
+		if self.exist:
+			self.LoadSkyEmmisionsCube(Nb_a_pc, Nb_e_pc)
 
 	def LoadAllSkyImage(self):
 
@@ -153,7 +157,9 @@ class SkyMap:
 		elif self.mode[:4] == "spot":
 			a = int(self.mode[6:9]) * DtoR
 			e = int(self.mode[-2:]) * DtoR
-			self.cube[0, :, :] = self.GetBandSkyMap(a_band = a, e_band = e, length = 50, thickness = 50, height = 50, band_I = 100, nb_sub_bands = 1)
+			# self.cube[0, :, :] = self.GetBandSkyMap(a_band = a, e_band = e, length = 50, thickness = 50, height = 50, band_I = 100, nb_sub_bands = 1)
+			self.cube[0, 0, 0] = 100
+			print("self.cube", self.cube)
 
 			self.is_point_src = True
 
@@ -382,8 +388,6 @@ class SkyMap:
 		self.DoLP_map 				= np.divide(self.DoLP_map, self.V_map, out = np.zeros_like(self.DoLP_map), where = self.V_map != 0)
 
 		self.AoRD_map 				= np.arctan2(self.Vsin_map, self.Vcos_map) / 2. # Angle of polaisation of light from (e,a)
-
-
 
 		self.scattering_map 		= self.total_scattering_map * self.DoLP_map / 100. # Polarized intensity from (e, a) reaching us
 

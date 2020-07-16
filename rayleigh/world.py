@@ -1,6 +1,12 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+from mpi4py import MPI
+mpi_comm = MPI.COMM_WORLD
+mpi_rank = mpi_comm.Get_rank()
+mpi_size = mpi_comm.Get_size()
+mpi_name = mpi_comm.Get_name()
+
 import sys as sys
 import numpy as np
 import time as tm
@@ -62,9 +68,10 @@ class World:
 		self.PTCU_area	= float(in_dict["instrument_area"]) * 10 ** (-4)
 
 		### Initialize the skymap. Even if we don't use it, some parameters must be initialized
-		self.sky_map = SkyMap(in_dict)
-		if self.sky_map.exist:
-			self.sky_map.LoadSkyEmmisionsCube(self.Nb_a_pc, self.Nb_e_pc)
+		self.sky_map = SkyMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+
+		print("self.sky_map.cube", self.sky_map.cube)
+
 		self.has_sky_emission = self.sky_map.exist
 		self.is_time_dependant = self.sky_map.is_time_dependant
 
@@ -118,7 +125,7 @@ class World:
 		self.dlos_list = [self.obs.GetPCoordinatesFromRange(d) for d in dlos_list]
 
 		#list of absolute altitudes (above sea level) for each scattering point
-		self.altitudes = [d[2] for d in self.dlos_list]
+		self.altitudes = np.array([d[2] for d in self.dlos_list])
 		# self.altitudes = [self.alt_map.GetAltitudeAboveGround(lon, lat, a) for lon, lat, a in dlos_list]
 		self.Nalt = len(self.altitudes)
 
@@ -174,6 +181,9 @@ class World:
 		# 	self.sky_AoRD_map 				= np.zeros(self.world.sky_maps_shape) # Angle of polaisation of light from (e,a)
 		# 	self.sky_already_done = False
 
+		# mpi_size = MPI.COMM_WORLD.Get_size()
+		# mpi_rank = MPI.COMM_WORLD.Get_rank()
+		# mpi_name = MPI.Get_processor_name()
 
 		count = 0
 		start_time = tm.time()
@@ -182,8 +192,10 @@ class World:
 		with tqdm(total=N, file=sys.stdout) as pbar:
 			for ie, e in enumerate(self.sky_map.mid_elevations):
 				for ia, a in enumerate(self.sky_map.mid_azimuts):
-					if self.sky_map.cube[time, ie, ia] >= 0:
-						for ialt, alt in enumerate(self.altitudes): #for every altitude between minimum and maximum scattering altitude
+					if self.sky_map.cube[time, ie, ia] > 0:
+						for alt in self.altitudes[mpi_rank::mpi_size]: #for every altitude between minimum and maximum scattering altitude
+							# ialt = ialt * mpi_size + mpi_rank
+							# print("DEBUG MPI:", mpi_size, mpi_rank, ialt)
 
 							sca_from_E_is_visible = True
 							if self.use_elevation_map:
@@ -191,7 +203,8 @@ class World:
 
 							if sca_from_E_is_visible:
 								V, Vcos, Vsin = self.ComputeSingleRSSkyPointSource(time, ia, a, ie, e, alt)
-								self.sky_map.V_map[time, ie_pc, ia_pc, ie, ia] += V
+								# print("DEBUG Vs:", V, Vcos, Vsin)
+								self.sky_map.V_map[time, ie_pc, ia_pc, ie, ia]    += V
 								self.sky_map.Vcos_map[time, ie_pc, ia_pc, ie, ia] += Vcos
 								self.sky_map.Vsin_map[time, ie_pc, ia_pc, ie, ia] += Vsin
 								# self.sky_map.total_scattering_map[time, ie_pc, ia_pc, ie, ia] += I0 # Intensity of light scattered from a given (e, a)
@@ -219,8 +232,12 @@ class World:
 		# 	self.world.ground_map.AoRD_map 				= np.zeros(self.world.ground_maps_shape) # Angle of polaisation of light from (e,a)
 		# 	self.ground_already_done = False
 
-		count = 0
 		start_time = tm.time()
+
+
+		# mpi_size = MPI.COMM_WORLD.Get_size()
+		# mpi_rank = MPI.COMM_WORLD.Get_rank()
+		# mpi_name = MPI.Get_processor_name()
 
 		N = len(self.ground_map.mid_longitudes) * len(self.ground_map.mid_latitudes) * self.Nalt
 		print(N, "bins to compute")
@@ -229,7 +246,11 @@ class World:
 				for ilon, lon in enumerate(self.ground_map.mid_longitudes):
 					if self.ground_map.I_map[ilat, ilon] > 0:
 						a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
-						for sca_lon, sca_lat, sca_alt in self.dlos_list: #for every altitude between minimum and maximum scattering altitude
+						# print(self.dlos_list)
+						for icount, sca_pos in enumerate(self.dlos_list[mpi_rank::mpi_size]): #for every altitude between minimum and maximum scattering altitude
+							sca_lon, sca_lat, sca_alt = sca_pos
+							print("DEBUG MPI:", mpi_size, mpi_rank, icount*mpi_size+mpi_rank)
+							# print(sca_lon, sca_lat, sca_alt)
 
 							sca_from_E_is_visible = True
 							if self.use_elevation_map:
@@ -356,6 +377,8 @@ class World:
 		ia_E, a_E, ie_E, e_E: az and el and their indexes of the emission point E."""
 
 		I0 = self.sky_map.cube[time, ie_E, ia_E]
+
+		# print("DEBUG I0", I0)
 
 		AR, RE, RD_angle = self.GetGeometryFromAzEl(a_E, e_E, alt)
 		vol = self.atmosphere.GetVolume(AR, self.ouv_pc, unit="km", type="pole")

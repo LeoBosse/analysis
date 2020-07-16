@@ -305,7 +305,7 @@ class GroundMap:
 		# self.exist = ((self.radius > 0 and self.file) or float(in_dict["point_src_I0"]) > 0)
 		# self.is_point_source = float(in_dict["point_src_I0"]) > 0
 
-		self.exist = self.mode != "None"
+		self.exist = self.mode != "none"
 		self.is_point_source = "point" in self.mode
 
 		self.src_I0, self.src_az, self.src_dist = None, None, None
@@ -341,14 +341,19 @@ class GroundMap:
 			az = float(s[3][1:]) * DtoR
 			dist = float(s[4][1:])
 			self.LoadGaussianMap(I0, width, az, dist, Nb_a_pc, Nb_e_pc)
+		elif "none" in self.mode:
+			self.longitudes = self.latitudes = []
+			self.dlon = self.dlat = 0
+			self.exist = False
+
 		else:
 			print("WARNING: Ground map mode is not correct. Ground map not used.")
 			self.exist = False
 
-		self.mid_longitudes	= self.longitudes[:-1] + self.dlon/2.
-		self.mid_latitudes	= self.latitudes[:-1] + self.dlat/2.
 
 		if self.exist:
+			self.mid_longitudes	= self.longitudes[:-1] + self.dlon/2.
+			self.mid_latitudes	= self.latitudes[:-1] + self.dlat/2.
 			self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
 			self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
 			self.total_scattering_map 	= np.zeros(self.maps_shape) # DoLP of scattered light from (e,a)
@@ -487,9 +492,10 @@ class GroundMap:
 
 		src_lon, src_lat = AzDistToLonLat(src_az, src_dist, self.A_lon, self.A_lat)
 
-		self.longitudes = np.linspace(src_lon, src_lon, 1) # list of pixel longitudes
-		self.latitudes = np.linspace(src_lat, src_lat, 1) # list of pixel latitudes
+		self.longitudes, self.dlon = np.linspace(src_lon, src_lon + 1/RT, 2, retstep=True) # list of pixel longitudes
+		self.latitudes, self.dlat = np.linspace(src_lat, src_lat + 1/RT, 2, retstep=True) # list of pixel latitudes
 
+		print(self.longitudes)
 		self.I_map = np.ones((1, 1)) * src_I0
 
 		self.maps_shape = (Nb_e_pc, Nb_a_pc, 1, 1)
