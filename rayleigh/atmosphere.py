@@ -11,8 +11,8 @@ from matplotlib.patches import Ellipse
 from matplotlib.patches import Arrow
 # from matplotlib.lines import mlines
 
-import osgeo.gdal as gdal
-gdal.UseExceptions()  # not required, but a good idea
+# import osgeo.gdal as gdal
+# gdal.UseExceptions()  # not required, but a good idea
 
 import imageio
 
@@ -22,17 +22,19 @@ from rayleigh_utils import *
 class Atmosphere:
 	def __init__(self, in_dict):
 
+		self.wavelength = float(in_dict["wavelength"])
+
 		self.h_r_min			= float(in_dict["RS_min_altitude"])  			# Minimum altitude of the scatering layer
 		self.h_r_max			= float(in_dict["RS_max_altitude"]) 			# Maximum altitude of the scatering layer
 		# if self.h_r_max == self.h: 		# h_r_max must be != h or it crashes...
 		# 	self.h_r_max += 0.01
 		self.d_los = float(in_dict["resolution_along_los"]) 	# Lenth bin along line of sight
 
-		self.d_0 	= 2.5468 * 10 ** 25 	#=1.2250 kg/m3	sea level density
-		self.T 		= 288.15 				# K, sea level standard temperature
-		self.g 		= 9.80665 				# m/s², earth-surface gravitational acceleration
-		self.M 		= 0.0289654 			# kg/mol, molar mass of dry air
-		self.R 		= 8.31447 				# J/(mol·K), ideal (universal) gas constant
+		# self.d_0 	= 2.5468 * 10 ** 25 	#=1.2250 kg/m3	sea level density
+		# self.T 		= 288.15 				# K, sea level standard temperature
+		# self.g 		= 9.80665 				# m/s², earth-surface gravitational acceleration
+		# self.M 		= 0.0289654 			# kg/mol, molar mass of dry air
+		# self.R 		= 8.31447 				# J/(mol·K), ideal (universal) gas constant
 
 		Ang3toMeter3 = 10 ** (-30)
 		self.names = ["N2", "O2", "H2O", "CO2", "O3"]
@@ -40,6 +42,21 @@ class Atmosphere:
 
 		self.profile_name = in_dict["Atmospheric_profile"] #name of the atmospheric profile file to use
 		self.LoadAllProfiles(self.profile_name)
+
+		self.beta_0 = self.GetSquareLawFit(self.wavelength, "Volume CS") #in km-1
+		self.tau_0 = self.GetSquareLawFit(self.wavelength, "Optical Depth")
+
+		self.depola = 0
+		if self.wavelength == 630:
+			self.depola = 2.787e-2
+		elif self.wavelength in [557.7, 550, 500]:
+			self.depola = 2.843e-2
+		elif self.wavelength == 427.8:
+			self.depola = 2.923e-2
+		elif self.wavelength == 391.4:
+			self.depola = 2.954e-2
+
+
 
 		# self.MakePlots()
 		# plt.show()
@@ -140,25 +157,25 @@ class Atmosphere:
 		return V
 
 
-	def GetRSVolumeCS(self, wl, alt):
+	def GetRSVolumeCS(self, alt):
 		"""Return the Rayleigh scattering volume cross section as calculated in Bucholtz 95 in km-1.
 		"""
 
-		beta_s = self.GetSquareLawFit(wl, "Volume CS") #in cm-1
+		# beta_s = self.GetSquareLawFit(wl, "Volume CS") #in km-1
 		P = self.GetProfileValue(alt, "PRE") #in Pa
 		T = self.GetProfileValue(alt, "TEM") #in K
 
-		return beta_s * (P / 101325) * (288.15 / T)
+		return self.beta_0 * (P / 101325) * (288.15 / T)
 
-	def GetRSOpticalDepth(self, wl, E_alt, R_alt):
+	def GetRSOpticalDepth(self, E_alt, R_alt):
 		"""Return VERTICAL optical depth between two altitudes as calculated in Bucholtz 95."""
-		tau_E = self.GetSquareLawFit(wl, "Optical Depth")
+		# tau_E = self.GetSquareLawFit(wl, "Optical Depth")
 		P_E = self.GetProfileValue(E_alt, "PRE")
-		tau_E *= (P_E / 101325)
+		tau_E = self.tau_0 * (P_E / 101325)
 
-		tau_R = self.GetSquareLawFit(wl, "Optical Depth")
+		# tau_R = self.GetSquareLawFit(wl, "Optical Depth")
 		P_R = self.GetProfileValue(R_alt, "PRE")
-		tau_R *= (P_R / 101325)
+		tau_R = self.tau_0 * (P_R / 101325)
 
 		tau_ER = abs(tau_E - tau_R)
 		return tau_ER
@@ -181,7 +198,7 @@ class Atmosphere:
 			gamma = 1.499 * 0.01
 		elif wl == 427.8:
 			gamma = 1.483 * 0.01
-		elif wl == 557.7:
+		elif wl in [557.7, 550, 500]:
 			gamma = 1.442 * 0.01
 		elif wl == 630:
 			gamma = 1.413 * 0.01

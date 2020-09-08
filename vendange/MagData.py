@@ -123,44 +123,46 @@ class EqCurrent:
 	def LoadData(self):
 		if not self.file_type:
 			data = pd.DataFrame(columns=["date", "time", "Jn", "Je"])
-			print(data)
-			print(self.files)
+			# print(data)
+			# print(self.files)
 			for f in self.files:
 				try:
 					data = data.append(pd.read_csv(self.path + f, delimiter=" ", names=["date", "time", "Jn", "Je"], skiprows=1))
 				except:
 					print("Equivalent current file not valid.")
-				print(data)
-			print(data)
+					self.valid = False
+					return 0
+			# 	print(data)
+			# print(data)
 			data = data.reset_index(drop=True)
-			print(data)
+			# print(data)
 
 			data["Ju"] = np.zeros(data.index.stop)
 			data["datetime"] = [time.datetime.strptime(d + " " + t, "%Y-%m-%d %H:%M:%S") for d, t in zip(data["date"], data["time"])]
-			print(data)
+			# print(data)
 
 		elif self.file_type == "digisonde":
 			# print(self.path + self.file)
 			data = pd.DataFrame(columns=["date", "time", "Jn", "Je", "Ju"])
-			print(data)
+			# print(data)
 			for f in self.files:
 				data = data.append(pd.read_fwf(self.path + f, header=0, usecols=(5, 7, 8, 10, 16), names=("date", "time", "Jn", "Je", "Ju")))
-				print(data)
+				# print(data)
 			data = data.reset_index(drop=True)
 			data["datetime"] = [time.datetime.strptime(d, "%Y.%m.%d%H:%M:%S") for d in data["date"] + data["time"]]
-			print(data)
+			# print(data)
 
 		if self.start_time is None:
 			print(data.index, data.index.start, data.index.stop-1)
 			self.start_time = data["datetime"][data.index.start]
 			self.end_time = data["datetime"][data.index.stop-1]
 
-		print(data)
+		# print(data)
 		data["seconds"] = [(dt - self.start_time).total_seconds() for dt in data["datetime"]]
-		print(data)
+		# print(data)
 
 		data["J_norm"] = np.sqrt(data["Jn"] ** 2 + data["Je"] ** 2 + data["Ju"] ** 2)
-		print(data)
+		# print(data)
 
 		self.data = data
 
@@ -193,7 +195,7 @@ class EqCurrent:
 			self.data["AoJapp"] = app_angle
 			self.data["AoJapp"] = SetAngleBounds(np.array(app_angle), 0, np.pi)
 
-		self.data["AoJapp"]	+= np.pi/2
+		# self.data["AoJapp"]	+= np.pi/2
 		self.data["AoJapp"] = SetAngleBounds(np.array(app_angle), -np.pi/2, np.pi/2)
 
 		self.data["AoJlos"] = J_los_angle

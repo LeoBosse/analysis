@@ -17,8 +17,8 @@ from matplotlib.patches import Ellipse
 from matplotlib.patches import Arrow
 # from matplotlib.lines import Line2D
 
-import osgeo.gdal as gdal
-gdal.UseExceptions()  # not required, but a good idea
+# import osgeo.gdal as gdal
+# gdal.UseExceptions()  # not required, but a good idea
 
 import imageio
 
@@ -42,7 +42,7 @@ class Simulation:
 		self.save_individual_plots = bool(int(in_dict["saving_graphs"]))
 
 		if not self.world.is_single_observation and self.world.is_time_dependant:
-			print("Cannot compute several observation directions with a time changing sky. Please, my code is already messy enough as it is...")
+			if mpi_rank==0: print("Cannot compute several observation directions with a time changing sky. Please, my code is already messy enough as it is...")
 			raise SystemExit
 
 		list_shapes = (self.world.sky_map.Nt, len(self.world.e_pc_list), len(self.world.a_pc_list))
@@ -60,7 +60,7 @@ class Simulation:
 		self.DoLP_list_err = np.zeros(list_shapes)
 		self.AoRD_list_err = np.zeros(list_shapes)
 
-		print("Initialization DONE")
+		if mpi_rank==0: print("Initialization DONE")
 
 	def GatherResults(root = 0):
 		self.world.GatherResults()
@@ -100,20 +100,22 @@ class Simulation:
 
 		if self.world.has_ground_emission: ### Compute how the ground map looks through the instrument for every observations directions
 			self.is_ground_emission = True
-			for ia_pc in range(self.world.Nb_a_pc):
-				for ie_pc in range(self.world.Nb_e_pc):
-					self.ia_pc, self.ie_pc = ia_pc, ie_pc
-					self.world.a_pc, self.world.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
-					self.a_pc, self.e_pc = self.world.a_pc, self.world.e_pc
-					self.time = 0
-					self.SingleComputation()
+			for t in range(self.world.sky_map.Nt):
+				for ia_pc in range(self.world.Nb_a_pc):
+					for ie_pc in range(self.world.Nb_e_pc):
+						self.ia_pc, self.ie_pc = ia_pc, ie_pc
+						self.world.a_pc, self.world.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
+						self.a_pc, self.e_pc = self.world.a_pc, self.world.e_pc
+						if t == 0 or (t > 0 and self.world.ground_albedo > 0):
+							self.time = t
+							self.SingleComputation()
 
 			reciever_V = None
 			reciever_Vcos = None
 			reciever_Vsin = None
 			if mpi_rank == 0:
 				reciever_V = np.empty_like(self.world.ground_map.V_map)
-				reciever_Vcos = np.empty_like(self.world.ground_map.Vcos_map)
+				reciever_Vcos =  np.empty_like(self.world.ground_map.Vcos_map)
 				reciever_Vsin = np.empty_like(self.world.ground_map.Vsin_map)
 			mpi_comm.Reduce(self.world.ground_map.V_map, reciever_V, op = MPI.SUM, root=0)
 			self.world.ground_map.V_map = reciever_V
@@ -137,11 +139,11 @@ class Simulation:
 		# mag = -2.5 * np.log10(self.I_list[0, 0, 0] * 10**-9 / (3.0128 * 10**28))
 		# print("Magnitude", mag)
 
-		print("t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:")
+		if mpi_rank==0: print("t, datetime, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:")
 		for t in range(self.world.sky_map.Nt):
 			for ie_pc in range(self.world.Nb_e_pc):
 				for ia_pc in range(self.world.Nb_a_pc):
-					print(t, self.world.a_pc_list[ia_pc]*RtoD, self.world.e_pc_list[ie_pc]*RtoD, self.world.ground_map.src_dist, self.world.atmosphere.d_los, self.world.atmosphere.h_r_min, self.world.atmosphere.h_r_max, self.world.wavelength, self.world.max_angle_discretization, self.I_list[t, ie_pc, ia_pc], self.DoLP_list[t, ie_pc, ia_pc], self.AoRD_list[t, ie_pc, ia_pc] * RtoD, self.I_direct_list[t, ie_pc, ia_pc], sep = "," )
+					print(t, self.world.sky_map.times[t].strftime("%Y%m%d-%H%M%S"), self.world.a_pc_list[ia_pc]*RtoD, self.world.e_pc_list[ie_pc]*RtoD, self.world.ground_map.src_dist, self.world.atmosphere.d_los, self.world.atmosphere.h_r_min, self.world.atmosphere.h_r_max, self.world.wavelength, self.world.max_angle_discretization, self.I_list[t, ie_pc, ia_pc], self.DoLP_list[t, ie_pc, ia_pc], self.AoRD_list[t, ie_pc, ia_pc] * RtoD, self.I_direct_list[t, ie_pc, ia_pc], sep = "," )
 
 
 	def GetLightParametersList(self):
@@ -152,9 +154,12 @@ class Simulation:
 				for ia_pc in range(self.world.Nb_a_pc):
 					self.GetLightParameters(ground = self.world.has_ground_emission, sky = self.world.has_sky_emission, time = t, ie_pc = ie_pc, ia_pc = ia_pc)
 
-					self.I_list[t, ie_pc, ia_pc] = self.I0
-					self.InonPola_list[t, ie_pc, ia_pc] = self.InonPola
-					self.IPola_list[t, ie_pc, ia_pc] = self.I0 - self.InonPola
+					self.I_list[t, ie_pc, ia_pc] = self.world.SetFluxUnit(self.I0)
+					self.InonPola_list[t, ie_pc, ia_pc] = self.world.SetFluxUnit(self.InonPola)
+					self.IPola_list[t, ie_pc, ia_pc] = self.world.SetFluxUnit(self.I0 - self.InonPola)
+					# self.I_list[t, ie_pc, ia_pc] = self.I0 * self.world.luminosity_efficiency
+					# self.InonPola_list[t, ie_pc, ia_pc] = self.InonPola * self.world.luminosity_efficiency
+					# self.IPola_list[t, ie_pc, ia_pc] = (self.I0 - self.InonPola) * self.world.luminosity_efficiency
 					self.DoLP_list[t, ie_pc, ia_pc] = self.DoLP
 					self.AoRD_list[t, ie_pc, ia_pc] = self.AoRD
 
@@ -170,7 +175,6 @@ class Simulation:
 		# plt.plot(range(self.world.Nb_a_pc), self.InonPola_list[t, ie_pc, :])
 		# plt.show()
 
-
 	def SetSaveName(self):
 		### Get the base name for the saving file -> unique for each parameter set
 		self.save_name = "results/" + self.world.ground_map.location + "_" + self.world.sky_map.mode + "_a" + str(np.round(self.a_pc*RtoD, 0)) + "_e" + str(np.round(self.e_pc*RtoD, 0)) + "_h" + str(np.round(self.world.sky_map.h, 0)) + "_" + str(np.round(self.world.atmosphere.h_r_min, 0)) + "-" + str(np.round(self.world.atmosphere.h_r_max, 0)) + "_dlos" + str(np.round(self.world.atmosphere.d_los))
@@ -184,22 +188,25 @@ class Simulation:
 
 		self.already_done = False
 		if self.already_done:
-			print("Observation already done. Loading old results from file", self.save_name)
+			if mpi_rank==0: print("Observation already done. Loading old results from file", self.save_name)
 		else:
 			self.world.SetObservation(self.a_pc, self.e_pc)
 
 			self.SetSaveName()
-			print("*******************************************************************************************************************************")
+			if mpi_rank==0: print("*******************************************************************************************************************************")
 
-			print("STARTING calculation for obs:")
-			print(self.world.obs)
+			if mpi_rank==0: print("STARTING calculation for obs:")
+			if mpi_rank==0: print(self.world.obs)
+			start_time = dt.datetime.now()
+			if mpi_rank==0: print("Starting time: ", start_time.time().strftime("%H:%M:%S"))
 
 			if self.is_ground_emission == True:
 				self.world.ComputeGroundMaps(self.time, self.ia_pc, self.ie_pc)
 			else:
 				self.world.ComputeSkyMaps(self.time, self.ia_pc, self.ie_pc)
 
-		print("Computing DONE")
+		if mpi_rank==0: print("Computing DONE in: ", dt.datetime.now() - start_time)
+
 
 	def GetIDAFromV(self, V, Vc, Vs):
 		I0 = 2 * V
@@ -223,16 +230,16 @@ class Simulation:
 			self.I_direct_list[time, ie_pc, ia_pc] = self.world.GetDirect(time, ia_pc, ie_pc)
 			self.I0  = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
 			self.I0 += np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
-			# self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
+			self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
 			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten()) - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
 		elif ground: #If sky doesn't exist
 			self.I0 = np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
 			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten())
-			print(self.I0, self.InonPola)
+			# print(self.I0, self.InonPola)
 		elif sky:  #If ground doesn't exist
 			self.I_direct_list[time, ie_pc, ia_pc] = self.world.GetDirect(time, ia_pc, ie_pc)
 			self.I0  = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
-			# self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
+			self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
 			self.InonPola = self.I0 - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
 
 		tmp_start = tm.time()
@@ -248,7 +255,7 @@ class Simulation:
 				self.Vcos 	+= self.world.ground_map.Vcos_total[ie_pc, ia_pc]
 				self.Vsin 	+= self.world.ground_map.Vsin_total[ie_pc, ia_pc]
 			if sky: #If sky and ground exist
-				self.V 		+= self.world.sky_map.V_total[time, ie_pc, ia_pc]
+				self.V 		+= self.world.sky_map.V_total[time, ie_pc, ia_pc] + self.I_direct_list[time, ie_pc, ia_pc] / 2.
 				self.Vcos 	+= self.world.sky_map.Vcos_total[time, ie_pc, ia_pc]
 				self.Vsin 	+= self.world.sky_map.Vsin_total[time, ie_pc, ia_pc]
 
@@ -275,10 +282,11 @@ class Simulation:
 			elif ground:
 				self.hst = ground_hst
 
+			# print(self.hst)
 			# self.V, self.Vcos, self.Vsin, self.I0, self.DoLP, self.AoRD = self.world.LockInAmplifier(self.hst, self.bins, self.InonPola)
 
-			if self.world.is_single_observation:
-				self.world.DrawAoLPHist(self.hst,self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=True)
+			# if self.world.is_single_observation:
+			# 	self.world.DrawAoLPHist(self.hst,self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=True)
 
 		return self.I0, self.DoLP, self.AoRD
 
@@ -291,19 +299,19 @@ class Simulation:
 		################################################################################
 		###	Polar plots of intensity
 
-		font = {'family' : 'DejaVu Sans',
-		'weight' : 'bold',
+		font = {'weight' : 'bold',
 		'size'   : 24}
 		matplotlib.rc('font', **font)
 
-		if self.save_individual_plots:
-			print("Making and saving plots...")
-		else:
-			print("Making and NOT saving plots...")
+		if mpi_rank == 0:
+			if self.save_individual_plots:
+				print("Making and saving plots...")
+			else:
+				print("Making and NOT saving plots...")
 
-		if self.is_ground_emission:
+		if self.world.has_ground_emission:
 			self.MakeGroundMapPlots()
-		else:
+		if self.world.has_sky_emission:
 			self.MakeSkyMapPlots()
 
 		# self.MakeAoLPHist(ground = self.is_ground_emission, sky = not self.is_ground_emission, double=True)
@@ -344,7 +352,7 @@ class Simulation:
 		cbar4 = f1.colorbar(i4, extend='both', spacing='proportional', shrink=0.9, ax=ax4)
 		cbar4.set_label('AoRD')
 
-		f1.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
+		# f1.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
 
 		for a in [ax1, ax2, ax3, ax4]:
 			a.set_theta_zero_location("N")
@@ -386,12 +394,12 @@ class Simulation:
 		cbar4 = f2.colorbar(i4, extend='both', spacing='proportional', shrink=0.9, ax=ax4)
 		cbar4.set_label('DoLP')
 
-		f2.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
+		# f2.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
 
 		dy = np.cos(self.a_pc) * self.world.atmosphere.h_r_max / np.tan(self.e_pc)
 		dx = np.sin(self.a_pc) * self.world.atmosphere.h_r_max / np.tan(self.e_pc)
-		for a in [ax1, ax2, ax3, ax4]:
-			a.add_artist(Arrow(0, 0, dx, dy, color="red"))
+		# for a in [ax1, ax2, ax3, ax4]:
+		# 	a.add_artist(Arrow(0, 0, dx, dy, color="red"))
 
 		if self.save_individual_plots:
 			plt.savefig(self.path + self.save_name + '_groundmaps.png', bbox_inches='tight')
@@ -456,8 +464,7 @@ class Simulation:
 		# 		for ie, e in enumerate(self.e_pc_list):
 		# 			print(a*RtoD, e*RtoD, self.I_list[t][ie][ia], self.DoLP_list[t][ie][ia], self.AoRD_list[t][ie][ia]*RtoD)
 
-		font = {'family' : 'DejaVu Sans',
-		'weight' : 'bold',
+		font = {'weight' : 'bold',
 		'size'   : 24}
 		matplotlib.rc('font', **font)
 
@@ -492,7 +499,7 @@ class Simulation:
 						Aerr = self.AoRD_list_err[0, 0, :] / 2. * RtoD
 						self.save_name = 'results/' + self.world.ground_map.location + "_rot_e" + str(self.world.e_pc_list[0]*RtoD) + ".png"
 
-						print(I - Ierr)
+						# print(I - Ierr)
 
 					elif self.world.Nb_a_pc == 1:
 						xaxis = self.world.e_pc_list*RtoD
@@ -523,7 +530,7 @@ class Simulation:
 					axs[2].plot(xaxis, A)
 					axs[2].fill_between(xaxis, A - Aerr, A + Aerr, alpha = 0.2)
 
-				axs[0].set_ylabel("Intensity (nW)")
+				axs[0].set_ylabel("Intensity ({})".format(self.world.flux_unit))
 				axs[1].set_ylabel("DoLP (\%)")
 				axs[2].set_ylabel("AoLP (°)")
 		else:
@@ -532,7 +539,7 @@ class Simulation:
 			axs[1] = plt.subplot(312)
 			axs[2] = plt.subplot(313)
 			axs[0].set_ylabel("Intensity (nW)")
-			axs[1].set_ylabel("DoLP, (\%)")
+			axs[1].set_ylabel("DoLP (\%)")
 			axs[2].set_ylabel("AoLP (°)")
 
 			self.world.sky_map.MakeSkyCubePlot(self.world.a_pc_list, self.world.e_pc_list, self.world.ouv_pc)

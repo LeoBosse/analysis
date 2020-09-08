@@ -14,6 +14,10 @@ from matplotlib.patches import Arrow
 
 import imageio
 
+import osgeo.gdal as gdal
+gdal.UseExceptions()  # not required, but a good idea
+
+
 from observation import *
 from rayleigh_utils import *
 
@@ -29,7 +33,7 @@ class ElevationMap():
 		self.location = in_dict["location"]
 		self.A_lon, self.A_lat = GetLonLatFromName(self.location)
 		# self.A_lon, self.A_lat = self.A_lon, self.A_lat
-		print(self.location, self.A_lon, self.A_lat)
+		# print(self.location, self.A_lon, self.A_lat)
 
 		self.nb_pix_max = int(in_dict["alt_map_N_bins_max"])
 		self.resolution = float(in_dict["alt_map_resolution"]) / RT #in radian
@@ -41,15 +45,15 @@ class ElevationMap():
 		self.lon_min, self.lon_max = self.A_lon - self.radius, self.A_lon + self.radius
 		self.lat_min, self.lat_max = self.A_lat - self.radius, self.A_lat + self.radius
 
-		print("ALT MAP BOUNDS", self.lon_min*RtoD, self.lon_max*RtoD, self.lat_min*RtoD, self.lat_max*RtoD)
+		# print("ALT MAP BOUNDS", self.lon_min*RtoD, self.lon_max*RtoD, self.lat_min*RtoD, self.lat_max*RtoD)
 
-		print(self.radius)
+		# print(self.radius)
 
 		self.SetMapProperties()
 
-		print("ALT MAP BOUNDS", self.lon_min*RtoD, self.lon_max*RtoD, self.lat_min*RtoD, self.lat_max*RtoD)
+		# print("ALT MAP BOUNDS", self.lon_min*RtoD, self.lon_max*RtoD, self.lat_min*RtoD, self.lat_max*RtoD)
 		self.LoadMultipleTiles()
-		print("ALT MAP BOUNDS", self.lon_min*RtoD, self.lon_max*RtoD, self.lat_min*RtoD, self.lat_max*RtoD)
+		# print("ALT MAP BOUNDS", self.lon_min*RtoD, self.lon_max*RtoD, self.lat_min*RtoD, self.lat_max*RtoD)
 
 		self.A_alt = self.GetAltitudeFromLonLat(self.A_lon, self.A_lat)
 
@@ -352,8 +356,12 @@ class GroundMap:
 
 
 		if self.exist:
+
+			self.I_map_bu = self.I_map
+
 			self.mid_longitudes	= self.longitudes[:-1] + self.dlon/2.
 			self.mid_latitudes	= self.latitudes[:-1] + self.dlat/2.
+
 			self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
 			self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
 			self.total_scattering_map 	= np.zeros(self.maps_shape) # DoLP of scattered light from (e,a)
@@ -390,7 +398,7 @@ class GroundMap:
 
 		d = np.sqrt((x-x0)**2 + (y-y0)**2)
 
-		self.I_map = I0 * np.exp(-0.5 * (d / width) ** 2)
+		self.I_map = I0 * np.exp(-0.5 * (d / width) ** 2) #[nW / m2/ sr]
 
 		self.maps_shape = (Nb_e_pc, Nb_a_pc, nb_lat, nb_lon)
 
@@ -406,7 +414,7 @@ class GroundMap:
 
 		# print(self.longitudes * RT, self.latitudes * RT)
 
-		self.I_map = I0 * np.ones((nb_lat, nb_lon))
+		self.I_map = I0 * np.ones((nb_lat, nb_lon)) # [nW / m2/ sr]
 
 		# print(self.I_map)
 
@@ -440,18 +448,19 @@ class GroundMap:
 		nb_lon  = int( 2 * self.radius / pixel_width)
 		nb_lat  = int(-2 * self.radius / pixel_height)
 
-		print("GROUND MAP", nb_lon, nb_lat)
+		# print("GROUND MAP", nb_lon, nb_lat)
 
 		self.longitudes, self.dlon = np.linspace(lon_min, lon_max, nb_lon, retstep=True) # list of pixel longitudes
 		self.latitudes, self.dlat = np.linspace(lat_max, lat_min, nb_lat, retstep=True) # list of pixel latitudes
 
 		map_band = map.GetRasterBand(1)
-		self.I_map = map_band.ReadAsArray(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat) # Emission map we will use
+		self.I_map = map_band.ReadAsArray(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat) # Emission map we will use in #[nW / m2/ sr]
+		self.I_map *= 1e4
 
 		if nb_lon * nb_lat > self.N_bins_max and self.N_bins_max > 0:
-			print("GROUND MAP TOO BIG", nb_lon * nb_lat, self.N_bins_max)
+			# print("GROUND MAP TOO BIG", nb_lon * nb_lat, self.N_bins_max)
 			new_nb_lon, new_nb_lat = int(np.sqrt(self.N_bins_max)), int(np.sqrt(self.N_bins_max))
-			print("GROUND MAP", new_nb_lon, new_nb_lat)
+			# print("GROUND MAP", new_nb_lon, new_nb_lat)
 
 			self.longitudes, self.dlon = np.linspace(lon_min, lon_max, new_nb_lon, retstep=True) # list of pixel longitudes
 			self.latitudes, self.dlat = np.linspace(lat_max, lat_min, new_nb_lat, retstep=True) # list of pixel latitudes
@@ -460,7 +469,7 @@ class GroundMap:
 
 
 		self.maps_shape = (Nb_e_pc, Nb_a_pc, len(self.latitudes), len(self.longitudes))
-		print("GROUND MAP SHAPE",self.maps_shape )
+		# print("GROUND MAP SHAPE",self.maps_shape )
 		#
 		# self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
 		# self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
@@ -479,9 +488,9 @@ class GroundMap:
 		# self.AoLP_total	= np.zeros((Nb_e_pc, Nb_a_pc))
 
 	def GetArea(self, ilat):
-		"""Return the area of a pixel on the map in km**2. If we use a point source, the area is set to one."""
+		"""Return the area of a pixel on the map in m**2. If we use a point source, the area is set to one."""
 		if not self.is_point_source:
-			return RT ** 2 * abs(self.dlat) * abs(self.dlon) * np.cos(self.latitudes[ilat])
+			return RT ** 2 * abs(self.dlat) * abs(self.dlon) * np.cos(self.latitudes[ilat])**2 * 1e6
 		else:
 			return 1
 
@@ -492,11 +501,11 @@ class GroundMap:
 
 		src_lon, src_lat = AzDistToLonLat(src_az, src_dist, self.A_lon, self.A_lat)
 
-		self.longitudes, self.dlon = np.linspace(src_lon, src_lon + 1/RT, 2, retstep=True) # list of pixel longitudes
-		self.latitudes, self.dlat = np.linspace(src_lat, src_lat + 1/RT, 2, retstep=True) # list of pixel latitudes
+		self.longitudes, self.dlon = np.linspace(src_lon - 0.5/RT, src_lon + 0.5/RT, 2, retstep=True) # list of pixel longitudes
+		self.latitudes, self.dlat = np.linspace(src_lat - 0.5/RT, src_lat + 0.5/RT, 2, retstep=True) # list of pixel latitudes
 
 		print(self.longitudes)
-		self.I_map = np.ones((1, 1)) * src_I0
+		self.I_map = np.ones((1, 1)) * src_I0 #[nW / m2 / sr]
 
 		self.maps_shape = (Nb_e_pc, Nb_a_pc, 1, 1)
 

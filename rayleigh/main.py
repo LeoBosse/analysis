@@ -9,7 +9,7 @@ mpi_name = mpi_comm.Get_name()
 
 import sys as sys
 import numpy as np
-import time as tm
+import datetime as dt
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.patches import Circle
@@ -17,8 +17,8 @@ from matplotlib.patches import Ellipse
 from matplotlib.patches import Arrow
 # from matplotlib.lines import mlines
 
-import osgeo.gdal as gdal
-gdal.UseExceptions()  # not required, but a good idea
+# import osgeo.gdal as gdal
+# gdal.UseExceptions()  # not required, but a good idea
 
 import imageio
 
@@ -33,20 +33,18 @@ from input import *
 
 def RunSimulation(file_name = "", show = True, output_result_file=None):
 
-	all_time_start = tm.time()
+	datetime_start = dt.datetime.now()
 
 	try:
 		in_dict = ReadInputFile("./input_files/" + file_name + ".in")
-		print("Correct input file in use:", file_name)
+		if mpi_rank == 0: print("Correct input file in use:", file_name)
 	except:
 		in_dict = ReadInputFile("./input_files/RS_default.in")
-		print("WARNING: Wrong or no input file specified, default in use.")
+		if mpi_rank == 0: print("WARNING: Wrong or no input file specified, default in use.")
 
 	#Init the rayleigh object
 	simu = Simulation(in_dict)
 	simu.ComputeAllMaps()
-
-	# simu.GatherResults(root = 0)
 
 	if mpi_rank == 0:
 		simu.MakeSummaryPlot()
@@ -59,19 +57,17 @@ def RunSimulation(file_name = "", show = True, output_result_file=None):
 		simu.PrintSystematicResults()
 		sys.stdout = old
 
-		print("ALL TIME SINCE START:", tm.time() - all_time_start)
+		print("Simulation ran in:", dt.datetime.now() - datetime_start)
 
 		if show:
 			plt.show()
 
 
 if __name__ == "__main__":
-	print("DEBUG")
 	#Get the input file from the command arguments
 	arguments = sys.argv
 	nb_args = len(arguments)
 
-	print("DEBUG")
 	# mpi_comm = MPI.COMM_WORLD
 	# mpi_rank = mpi_comm.Get_rank()
 	# mpi_size = mpi_comm.Get_size()

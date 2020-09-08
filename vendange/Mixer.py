@@ -51,7 +51,7 @@ class Mixer:
 			if self.eq_currents.valid and bottle.observation_type == "fixed":
 
 				AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
-				self.eq_currents.FindJup(bottle.observation, AoLPs)
+				# self.eq_currents.FindJup(bottle.observation, AoLPs)
 
 				self.eq_currents.GetApparentAngle(bottle.observation)#, shift=bottle.graph_angle_shift)
 
@@ -186,7 +186,7 @@ class Mixer:
 		self.show_mag_data 	= False
 		self.show_AoBapp 	= False
 		self.show_AoRD	 	= False
-		self.show_currents	= True
+		self.show_currents	= False
 
 		self.show_Ipola = False
 		self.show_Iref = False
@@ -195,7 +195,7 @@ class Mixer:
 		self.time_format = "UT" #LT or UT
 
 
-		self.show_raw_data = True
+		self.show_raw_data = False
 		self.show_smooth_data = True
 
 		self.show_error_bars 		= True
@@ -213,8 +213,7 @@ class Mixer:
 
 		self.SetColors(bottle, comp=comp)
 
-		font = {'family' : 'normal',
-        'weight' : 'bold',
+		font = {'weight' : 'bold',
         'size'   : 24}
 		matplotlib.rc('font', **font)
 
@@ -597,6 +596,23 @@ class Mixer:
 		# self.ax4.plot(self.x_axis_list, bottle.all_TempAmbiant, "b.", linestyle = 'none', markersize=self.marker_size, label="Ambiant")
 		# self.ax2.plot(self.x_axis_list,[DoLP_average] * nb_rot, "b", label="Avg: " + str(DoLP_average))
 
+		fn = "/home/bossel/These/Analysis/results/rayleigh/skymap_20200307_20h_5577.txt"
+		t, I, D, A = self.GetDataFromTxt(fn, t="datetime", I = "I0", DoLP="DoLP", AoLP = "AoRD")
+		td = [t - bottle.DateTime(moment="start", format="UT") for t in t if bottle.DateTime(moment="start", format="UT") < t < bottle.DateTime(moment="end", format="UT")]
+		ts = np.array([t.total_seconds() for t in td])
+		if I is not None:
+			I = np.where((bottle.DateTime(moment="start", format="UT") < t) & (t < bottle.DateTime(moment="end", format="UT")), I, None)
+			self.ax11 = self.ax1.twinx()
+			self.ax11.plot(ts / self.divisor, [i for i in I if i is not None], "k")
+		if D is not None:
+			D = np.where((bottle.DateTime(moment="start", format="UT") < t) & (t < bottle.DateTime(moment="end", format="UT")), D, None)
+			self.ax2.plot(ts / self.divisor, [i for i in D if i is not None], "k")
+		if A is not None:
+			A = np.where((bottle.DateTime(moment="start", format="UT") < t) & (t < bottle.DateTime(moment="end", format="UT")), A, None)
+			self.ax3.plot(ts / self.divisor, [i for i in A if i is not None], "k")
+
+
+
 		self.f1.subplots_adjust(hspace=0)
 
 		###Set title
@@ -904,3 +920,21 @@ class Mixer:
 			plt.savefig(b1.data_file_name + "/" + b1.saving_name + '_bottle_comparison.png', bbox_inches='tight')
 		else:
 			plt.savefig("/".join(b1.data_file_name.split("/")[:-1]) + "/" + b1.saving_name + 'bottle_comparison.png', bbox_inches='tight')
+
+
+
+	def GetDataFromTxt(self, filename, t=None, I=None, DoLP=None, AoLP=None, **kwargs):
+
+		data = pd.read_csv(filename, **kwargs)
+		print("DEBUG NEW")
+		print(data)
+		print(data.columns)
+		if t:
+			t = data[t]
+			t = np.array([dt.datetime.strptime(t, "%Y%m%d-%H%M%S") for t in t])
+
+		if I: 		I = data[I]
+		if DoLP: 	DoLP = data[DoLP]
+		if AoLP: 	AoLP = data[AoLP]
+
+		return t, I, DoLP, AoLP

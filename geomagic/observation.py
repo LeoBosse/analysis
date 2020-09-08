@@ -46,7 +46,6 @@ class ObservationPoint:
 
 
 	def GetTrigo(self):
-
 		Ce, Se = np.cos(self.e), np.sin(self.e)
 		Ca, Sa = np.cos(self.a), np.sin(self.a)
 
@@ -58,12 +57,11 @@ class ObservationPoint:
 
 		AH_vect = (self.AH / self.AH_norm) * range
 		# print(AH_vect)
-		lon, lat = self.GetPCoordinates(AH=AH_vect)
+		lon, lat = self.GetPCoordinates(AH = AH_vect)
 
 		alt = self.A_alt + np.sin(self.e) * range
 
 		return lon, lat, alt
-
 
 
 	def GetRayleighAngle(self, source_azimut, source_elevation, unit="radians"): #obs_azimut, source_azimut, elevation, unit="radians"):
@@ -117,6 +115,11 @@ class ObservationPoint:
 									[	 m.sin(lat)]])
 		return OA
 
+	@staticmethod
+	def GetAHNorm(elevation, altitude, A_alt=0):
+		RT = 6371 #km
+		return - (RT + A_alt) * m.sin(elevation) + m.sqrt(abs(- m.cos(elevation)**2 * (RT + A_alt)**2 + (RT + altitude) ** 2))
+
 	def GetAH(self, **kwargs):
 		"""Return the vector AH and its norm in the reference frame of O. From A:observer to H: the observed aurora"""
 
@@ -142,7 +145,8 @@ class ObservationPoint:
 		#Norm of AH. Distance between observer and observed aurora
 		# print(np.cos(e), RT + self.A_alt, - m.cos(e)**2 * (RT + self.A_alt)**2 + (RT + altitude) ** 2)
 
-		AH_norm =  - (RT + self.A_alt) * m.sin(e) + m.sqrt(abs(- m.cos(e)**2 * (RT + self.A_alt)**2 + (RT + altitude) ** 2))
+		AH_norm =  self.GetAHNorm(e, altitude, A_alt=self.A_alt)
+		# AH_norm =  - (RT + self.A_alt) * m.sin(e) + m.sqrt(abs(- m.cos(e)**2 * (RT + self.A_alt)**2 + (RT + altitude) ** 2))
 		AH = losO * AH_norm
 
 		return AH, AH_norm

@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from matplotlib.patches import Ellipse
 
-import osgeo.gdal as gdal
-gdal.UseExceptions()  # not required, but a good idea
+# import osgeo.gdal as gdal
+# gdal.UseExceptions()  # not required, but a good idea
 
 import sys as sys
 from observation import *
@@ -42,6 +42,10 @@ def GetRotMatrixAO(lonA, latA):
 						 [	Slon*Clat, 	Clon, 	-Slon*Slat],
 						 [	Slat, 		0, 		Clat]])
 
+
+def AzEltoLonLat(a, e, h, A_lon, A_lat):
+	obs = ObservationPoint(A_lon, A_lat, h, a, e)
+	return obs.P_lon, obs.P_lat
 
 def LonLatToAzEl(E_lon, E_lat, h, A_lon, A_lat):
 	OE = (RT + h) * np.array([		[np.cos(E_lon) * np.cos(E_lat)],

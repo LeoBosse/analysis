@@ -17,8 +17,8 @@ from matplotlib.patches import Ellipse
 from matplotlib.patches import Arrow
 # from matplotlib.lines import mlines
 
-import osgeo.gdal as gdal
-gdal.UseExceptions()  # not required, but a good idea
+# import osgeo.gdal as gdal
+# gdal.UseExceptions()  # not required, but a good idea
 
 import imageio
 
@@ -34,6 +34,43 @@ from atmosphere import *
 class World:
 	def __init__(self, in_dict):
 		self.wavelength = float(in_dict["wavelength"])
+		self.src_path = in_dict["src_path"]
+
+		# Angle de demi-ouverture de l'instrument (1 deg pour les crus)
+		self.ouv_pc		= float(in_dict["instrument_opening_angle"]) * DtoR
+		self.inst_solid_angle = 2 * np.pi * (1 - np.cos(self.ouv_pc))
+		# Aire de l'instrument donnée en cm^2, transformée en km^2
+		self.PTCU_area	= float(in_dict["instrument_area"]) * 10 ** (-10) #in km**2
+
+
+		self.SetFluxUnit = lambda f: f
+		self.flux_unit = in_dict["flux_unit"]
+		if "W" not in self.flux_unit:
+			if self.flux_unit == "ph":
+				self.SetFluxUnit = lambda f: f * self.wavelength * 1e-18 / (6.62607015e-34 * 299792458) # f[nW] * lambda[m]/(hc) * 1e-9[W/nW]
+			# elif self.flux_unit == "mag":
+			# 	self.SetFluxUnit = lambda f: 41.438 - 1.0857 * np.log(f * self.wavelength * 1e-18 / (6.62607015e-34 * 299792458)) # f[nW] * lambda[m]/(hc) * 1e-9[W/nW]
+
+			elif self.flux_unit in ["lm", "cd", "cd/m2", "mag"]: #unit == lm or cd*
+				data = pd.read_csv(self.src_path + "/linCIE2008v2e_fine.csv", names=["wl", "func"])
+				if self.flux_unit == "lm":
+					self.SetFluxUnit = lambda f: f * 683.002 * np.interp(self.wavelength, data["wl"], data["func"])
+					self.flux_unit = "nlm"
+
+				elif self.flux_unit == "cd":
+					self.SetFluxUnit = lambda f: f * 683.002 * np.interp(self.wavelength, data["wl"], data["func"]) / self.inst_solid_angle
+					self.flux_unit = "ncd"
+
+				elif self.flux_unit == "cd/m2":
+					print("EYE DATA",np.interp(self.wavelength, data["wl"], data["func"]))
+					self.SetFluxUnit = lambda f: f * 683.002 * np.interp(self.wavelength, data["wl"], data["func"]) / self.inst_solid_angle / (self.PTCU_area * 1e6)
+					self.flux_unit = "ncd/m2"
+
+				elif self.flux_unit == "mag":
+					self.SetFluxUnit = lambda f: 26.331 - 1.0857 * np.log(f * 683.002 * np.interp(self.wavelength, data["wl"], data["func"]) / self.inst_solid_angle / (self.PTCU_area * 1e6) * np.pi * 1e-4) # f[nW] * lambda[m]/(hc) * 1e-9[W/nW]
+
+		else:
+			self.flux_unit = "nW"
 
 		### Get all the azimuts and elevations of the instruments.
 		self.a_pc_list		= np.array(in_dict["azimuts"].split(";"))  # List of azimuts for the observations
@@ -62,18 +99,11 @@ class World:
 		else:
 			self.max_angle_discretization = None
 
-		# Angle de demi-ouverture de l'instrument (1deg pour les crus)
-		self.ouv_pc		= float(in_dict["instrument_opening_angle"]) * DtoR
-		# Aire de l'instrument donnée en cm^2, transformée en m^2
-		self.PTCU_area	= float(in_dict["instrument_area"]) * 10 ** (-4)
-
 		### Initialize the skymap. Even if we don't use it, some parameters must be initialized
 		self.sky_map = SkyMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
 
-		print("self.sky_map.cube", self.sky_map.cube)
-
 		self.has_sky_emission = self.sky_map.exist
-		self.is_time_dependant = self.sky_map.is_time_dependant
+		self.is_time_dependant = self.sky_map.exist and self.sky_map.is_time_dependant
 
 		self.is_single_observation = False
 		if self.Nb_a_pc == self.Nb_e_pc == 1:
@@ -85,14 +115,15 @@ class World:
 		# plt.show()
 		# plt.close("all")
 
-		print("Has_sky_emission:", self.has_sky_emission)
+		if mpi_rank==0: print("Has_sky_emission:", self.has_sky_emission)
 
 		### Initialize the groundmap. Even if we don't use it, some parameters must be initialized
 		self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
 
 		self.has_ground_emission = self.ground_map.exist
-		print("Has_ground_emission:", self.has_ground_emission)
+		if mpi_rank==0: print("Has_ground_emission:", self.has_ground_emission)
 
+		self.ground_albedo = float(in_dict["ground_albedo"])
 
 		### Initialize the atlitude maps
 		self.alt_map = ElevationMap(in_dict)
@@ -103,7 +134,6 @@ class World:
 
 
 	def SetObservation(self, a_pc, e_pc):
-
 		#Create an observation object
 		self.obs = ObservationPoint(self.ground_map.A_lon, self.ground_map.A_lat, self.sky_map.h, a_pc, e_pc, A_alt = self.instrument_altitude) # Usefull observation object
 
@@ -187,37 +217,37 @@ class World:
 
 		count = 0
 		start_time = tm.time()
-		N = self.sky_map.N * self.Nalt
-		print(N, "bins to compute")
-		with tqdm(total=N, file=sys.stdout) as pbar:
-			for ie, e in enumerate(self.sky_map.mid_elevations):
-				for ia, a in enumerate(self.sky_map.mid_azimuts):
-					if self.sky_map.cube[time, ie, ia] > 0:
-						for alt in self.altitudes[mpi_rank::mpi_size]: #for every altitude between minimum and maximum scattering altitude
-							# ialt = ialt * mpi_size + mpi_rank
-							# print("DEBUG MPI:", mpi_size, mpi_rank, ialt)
+		N = self.sky_map.N * self.Nalt / mpi_size
+		if mpi_rank==0: print(N, "bins to compute per processor")
+		# with tqdm(total=N, file=sys.stdout) as pbar:
+		for ie, e in enumerate(self.sky_map.mid_elevations):
+			for ia, a in enumerate(self.sky_map.mid_azimuts):
+				if self.sky_map.cube[time, ie, ia] > 0:
+					for alt in self.altitudes[mpi_rank::mpi_size]: #for every altitude between minimum and maximum scattering altitude
+						# ialt = ialt * mpi_size + mpi_rank
+						# print("DEBUG MPI:", mpi_size, mpi_rank, ialt)
 
-							sca_from_E_is_visible = True
-							if self.use_elevation_map:
-								sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
+						sca_from_E_is_visible = True
+						if self.use_elevation_map:
+							sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
 
-							if sca_from_E_is_visible:
-								V, Vcos, Vsin = self.ComputeSingleRSSkyPointSource(time, ia, a, ie, e, alt)
-								# print("DEBUG Vs:", V, Vcos, Vsin)
-								self.sky_map.V_map[time, ie_pc, ia_pc, ie, ia]    += V
-								self.sky_map.Vcos_map[time, ie_pc, ia_pc, ie, ia] += Vcos
-								self.sky_map.Vsin_map[time, ie_pc, ia_pc, ie, ia] += Vsin
-								# self.sky_map.total_scattering_map[time, ie_pc, ia_pc, ie, ia] += I0 # Intensity of light scattered from a given (e, a)
-								# self.sky_map.scattering_map[time, ie_pc, ia_pc, ie, ia] += DoLP * I0 # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
+						if sca_from_E_is_visible:
+							V, Vcos, Vsin = self.ComputeSingleRSSkyPointSource(time, ia, a, ie, e, alt)
+							# print("DEBUG Vs:", V, Vcos, Vsin)
+							self.sky_map.V_map[time, ie_pc, ia_pc, ie, ia]    += V
+							self.sky_map.Vcos_map[time, ie_pc, ia_pc, ie, ia] += Vcos
+							self.sky_map.Vsin_map[time, ie_pc, ia_pc, ie, ia] += Vsin
+							# self.sky_map.total_scattering_map[time, ie_pc, ia_pc, ie, ia] += I0 # Intensity of light scattered from a given (e, a)
+							# self.sky_map.scattering_map[time, ie_pc, ia_pc, ie, ia] += DoLP * I0 # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
 
-							pbar.update(1)
+							# pbar.update(1)
 
 					# 	self.sky_map.DoLP_map = self.sky_map.scattering_map / self.sky_map.total_scattering_map # DoLP of a given (e, a)
 					#
 					# self.sky_map.AoRD_map[time, ie_pc, ia_pc, ie, ia] = AoLP
 
 	def ComputeGroundMaps(self, time, ia_pc, ie_pc):
-		"""Compute the contribution of the ground map at the time set"""
+		"""Compute the contribution of the ground map at a given time"""
 		# try:
 		# 	self.world.ground_map.total_scattering_map = np.loadtxt(self.path + self.save_name + "_scattering_map.cvs")
 		# 	self.world.ground_map.DoLP_map = np.loadtxt(self.path + self.save_name + "_DoLP_map.cvs")
@@ -234,42 +264,48 @@ class World:
 
 		start_time = tm.time()
 
+		if self.has_ground_emission and self.has_sky_emission and 0 < self.ground_albedo <= 1:
+			self.ground_map.I_map =  self.ground_map.I_map_bu + self.sky_map.GetFlatMap(self.ground_map.A_lon, self.ground_map.A_lat, mid_lon = self.ground_map.mid_longitudes, mid_lat = self.ground_map.mid_latitudes, time = time, Nmax = 10000)[0] * self.ground_albedo
+
+
 
 		# mpi_size = MPI.COMM_WORLD.Get_size()
 		# mpi_rank = MPI.COMM_WORLD.Get_rank()
 		# mpi_name = MPI.Get_processor_name()
 
-		N = len(self.ground_map.mid_longitudes) * len(self.ground_map.mid_latitudes) * self.Nalt
-		print(N, "bins to compute")
-		with tqdm(total=N, file=sys.stdout) as pbar:
-			for ilat, lat in enumerate(self.ground_map.mid_latitudes):
-				for ilon, lon in enumerate(self.ground_map.mid_longitudes):
-					if self.ground_map.I_map[ilat, ilon] > 0:
-						a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
-						# print(self.dlos_list)
-						for icount, sca_pos in enumerate(self.dlos_list[mpi_rank::mpi_size]): #for every altitude between minimum and maximum scattering altitude
-							sca_lon, sca_lat, sca_alt = sca_pos
-							print("DEBUG MPI:", mpi_size, mpi_rank, icount*mpi_size+mpi_rank)
-							# print(sca_lon, sca_lat, sca_alt)
+		N = len(self.ground_map.mid_longitudes) * len(self.ground_map.mid_latitudes) * self.Nalt / mpi_size
+		if mpi_rank==0: print(N, "bins to compute per processor")
+		# with tqdm(total=N, file=sys.stdout) as pbar:
+		for ilat, lat in enumerate(self.ground_map.mid_latitudes):
+			for ilon, lon in enumerate(self.ground_map.mid_longitudes):
+				if self.ground_map.I_map[ilat, ilon] > 0:
+					a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
+					# print(self.dlos_list)
+					for icount, sca_pos in enumerate(self.dlos_list[mpi_rank::mpi_size]): #for every altitude between minimum and maximum scattering altitude
+						sca_lon, sca_lat, sca_alt = sca_pos
+						# print("DEBUG MPI:", mpi_size, mpi_rank, icount*mpi_size+mpi_rank)
+						# print(sca_lon, sca_lat, sca_alt)
 
-							sca_from_E_is_visible = True
-							if self.use_elevation_map:
-								sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
+						sca_from_E_is_visible = True
+						if self.use_elevation_map:
+							sca_from_E_is_visible = self.alt_map.IsVisible(sca_lon, sca_lat, alt1=sca_alt, lon2=lon, lat2=lat, dlos = 0.5)
 
-							if sca_from_E_is_visible:
+						if sca_from_E_is_visible:
 
-								V, Vcos, Vsin = self.ComputeSingleRSGroundPointSource(ilon, ilat, a_rd, e_rd, sca_alt)
+							V, Vcos, Vsin = self.ComputeSingleRSGroundPointSource(ilon, ilat, a_rd, e_rd, sca_alt)
+							if sca_alt == 0:
+								print(ilon, ilat, a_rd, e_rd, sca_alt)
 
-								self.ground_map.V_map[ie_pc, ia_pc, ilat, ilon] += V
-								self.ground_map.Vcos_map[ie_pc, ia_pc, ilat, ilon] += Vcos
-								self.ground_map.Vsin_map[ie_pc, ia_pc, ilat, ilon] += Vsin
+							self.ground_map.V_map[ie_pc, ia_pc, ilat, ilon] += V
+							self.ground_map.Vcos_map[ie_pc, ia_pc, ilat, ilon] += Vcos
+							self.ground_map.Vsin_map[ie_pc, ia_pc, ilat, ilon] += Vsin
 
-								# self.ground_map.total_scattering_map[ie_pc, ia_pc, ilat, ilon] += I0 # Intensity of light scattered from a given (e, a)
-								# self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
+							# self.ground_map.total_scattering_map[ie_pc, ia_pc, ilat, ilon] += I0 # Intensity of light scattered from a given (e, a)
+							# self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
 
 							# count += 1
 							# self.Progress(count, N, suffix="of ground point sources done")
-							pbar.update(1)
+							# pbar.update(1)
 
 
 						# self.ground_map.DoLP_map = self.ground_map.scattering_map / self.ground_map.total_scattering_map # DoLP of a given (e, a)
@@ -294,9 +330,10 @@ class World:
 
 	def ComputeSingleRSGroundPointSource(self, ilon, ilat, a_E, e_E, alt):
 
-		I0 = self.ground_map.I_map[ilat, ilon]
+		I0 = self.ground_map.I_map[ilat, ilon] #[nW/m2/sr]
 
 		AR, RE, RD_angle = self.GetGeometryFromAzDist(a_E, e_E, alt)
+
 		vol = self.atmosphere.GetVolume(AR, self.ouv_pc, unit="km", type="pole")
 
 		cut_V = self.CutVolume(RE, vol, max_angle = self.max_angle_discretization)
@@ -310,50 +347,58 @@ class World:
 		vol_T = 0
 
 		for a_A, e_A, r, AR, RE, RD_angle, alt, AoLP, dvol, dr in geo_list:
-
+			if RE == 0:
+				print("WARNING: ER = 0 !!!")
+				continue
 			# print(a_A*RtoD, e_A*RtoD, r, AR, RE, RD_angle*RtoD, alt, AoLP*RtoD, da*RtoD, dr)
 
 			# print("DEBUG I0 1:", I0, I0*self.ground_map.GetArea(ilat) / RE ** 2)
-			I0 = self.ground_map.I_map[ilat, ilon]
-			I0 *= self.ground_map.GetArea(ilat) / RE ** 2
+			I0 = self.ground_map.I_map[ilat, ilon] #[nW/m2/sr]
+			I0 *= self.ground_map.GetArea(ilat) # [nW / m2 / sr * m2]
+
+			if RE > 0:
+				I0 /= RE ** 2 # [nW / m2 / sr * m2 / km2] = [nW / km2]
+			else:
+				I0 = 0
 
 			if alt != 0:
-				opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * RE / alt
+				opt_depth = self.atmosphere.GetRSOpticalDepth(0, alt) * RE / alt
 				# print("DEBUG opt_depth: ER", opt_depth, 1-opt_depth, np.exp(-opt_depth))
 			else:
 				opt_depth = 0
 
-			I0 *= np.exp(-opt_depth)
+			I0 *= np.exp(-opt_depth) # [nW / km2]
 
 			# print("DEBUG I0 2:", I0)
 			# print("DEBUG scattered:", self.GetScattered(I0, AR, RE, RD_angle, alt)[0]/I0)
 
 			# Vol = self.atmosphere.GetVolume(AR, da, dr=dr, unit="km") #in km3
 			vol_T += dvol
-			Crs = self.atmosphere.GetRSVolumeCS(self.wavelength, alt) #in km-1
-			P = self.atmosphere.GetRSPhaseFunction(self.wavelength, RD_angle)
+			Crs = self.atmosphere.GetRSVolumeCS(alt) #in km-1
+			P = self.atmosphere.GetRSPhaseFunction(self.wavelength, RD_angle)# in sr
 
 			# print("DEBUG V, Crs, P", V, Crs, P)
 
 			if AR != 0:
-				I0 *= Crs * P * dvol * self.PTCU_area / AR ** 2 / 4 / np.pi
+				I0 *= Crs * P * dvol * self.PTCU_area / AR ** 2 / 4 / np.pi # [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
 				# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)
 			else:
 				I0 = 0
 				# print("WARNING!!!! I0==0")
 
-			DoLP = np.sin(RD_angle)**2 / (1 + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
+			f = 1 #(1 + self.atmosphere.depola) / (1 - self.atmosphere.depola)
+			DoLP = np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
 
 
 			# print("DEBUG I0 3:", I0)
 
 			if alt != 0:
-				opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * AR / alt
+				opt_depth = self.atmosphere.GetRSOpticalDepth(0, alt) * AR / alt
 				# print("DEBUG opt_depth: RA", opt_depth, 1-opt_depth, np.exp(-opt_depth))
 			else:
 				opt_depth = 0
 
-			I0 *= np.exp(-opt_depth)
+			I0 *= np.exp(-opt_depth) #[nW]
 			# print("DEBUG I0 4:", I0)
 
 			V, Vcos, Vsin = self.GetVParamFromLightParam(I0, DoLP, AoLP)
@@ -376,7 +421,7 @@ class World:
 		"""t: time of the map
 		ia_E, a_E, ie_E, e_E: az and el and their indexes of the emission point E."""
 
-		I0 = self.sky_map.cube[time, ie_E, ia_E]
+		I0 = self.sky_map.cube[time, ie_E, ia_E] # [nW / m2/ sr]
 
 		# print("DEBUG I0", I0)
 
@@ -396,36 +441,39 @@ class World:
 
 			# print(a_A*RtoD, e_A*RtoD, r, AR, RE, RD_angle*RtoD, alt, AoLP*RtoD, da*RtoD, dr)
 
-			I0 = self.sky_map.cube[time, ie_E, ia_E]
+			I0 = self.sky_map.cube[time, ie_E, ia_E] # [nW / m2/ sr]
 
-			I0 *= self.sky_map.GetPixelArea(ie_E) / RE ** 2
+			if RE > 0:
+				I0 *= self.sky_map.GetPixelArea(ie_E) / RE ** 2 # [nW / m2]
+			else:
+				I0 = 0
 
 			if alt != 0:
-				opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, self.sky_map.h, alt) * RE / alt
+				opt_depth = self.atmosphere.GetRSOpticalDepth(self.sky_map.h, alt) * RE / alt
 			else:
 				opt_depth = 0
 
-			I0 *= np.exp(-opt_depth)
+			I0 *= np.exp(-opt_depth) # [nW / m2]
 
 			# Vol = self.atmosphere.GetVolume(AR, da, dr=dr, unit="km") #in km3
 			vol_T += dvol
-			Crs = self.atmosphere.GetRSVolumeCS(self.wavelength, alt) #in km-1
+			Crs = self.atmosphere.GetRSVolumeCS(alt) #in km-1
 			P = self.atmosphere.GetRSPhaseFunction(self.wavelength, RD_angle)
 
 			# print("DEBUG V, Crs, P", V, Crs, P)
 
 			if AR != 0:
-				I0 *= Crs * P * dvol * self.PTCU_area / AR ** 2 / 4 / np.pi
+				I0 *= Crs * P * dvol * self.PTCU_area / AR ** 2 / 4 / np.pi # [nW / m2] * [km-1 * km3 * m2 * km-2] = [nW]
 				# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)
 			else:
 				I0 = 0
 				# print("WARNING!!!! I0==0")
 
-			DoLP = np.sin(RD_angle)**2 / (1 + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
-
+			f = 1 #(1 + self.atmosphere.depola) / (1 - self.atmosphere.depola)
+			DoLP = np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
 
 			if alt != 0:
-				opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, 0, alt) * AR / alt
+				opt_depth = self.atmosphere.GetRSOpticalDepth(0, alt) * AR / alt
 			else:
 				opt_depth = 0
 			# print("opt_depth, p.exp(-opt_depth)", opt_depth, np.exp(-opt_depth))
@@ -455,10 +503,11 @@ class World:
 			ap_list, dap = np.linspace(0, 2 * np.pi, n, retstep=True, endpoint=True)
 			ep_list, dep = np.linspace(0, self.ouv_pc, n, retstep=True, endpoint=True)
 			r_list, dr = np.linspace(AR - self.atmosphere.d_los/2., AR + self.atmosphere.d_los/2., n, retstep=True)
-
+			# if mpi_rank == 0: print(r_list)
 			ap_list_mid = np.array([ia + dap / 2. for ia in ap_list[:-1]])
 			ep_list_mid = np.array([ie + dep / 2. for ie in ep_list[:-1]])
 			r_list_mid = np.array([ir + dr / 2. for ir in r_list[:-1]])
+			# if mpi_rank == 0: print(r_list_mid)
 		else:
 			n = 1
 			ap_list, dap = np.array([0, 2 * np.pi]), 2 * np.pi
@@ -471,7 +520,7 @@ class World:
 
 
 		### Returned list of interesting numbers for each subvolumes
-		geo_list = np.zeros((len(ap_list_mid) * len(ep_list_mid) * len(r_list), 10))
+		geo_list = np.zeros((len(ap_list_mid) * len(ep_list_mid) * len(r_list_mid), 10))
 
 		i = 0
 
@@ -481,7 +530,6 @@ class World:
 		Ria = np.array([	[se, 		0,		ce],
 							[	 ce * sa,	-ca,	-se * sa],
 							[	 ce * ca,	sa,		-se * ca]])
-
 
 		# print("ap_list")
 		# print(ap_list* RtoD)
@@ -553,7 +601,8 @@ class World:
 		# print("DEBUG ROT", self.N_bins, len(self.bins), len(self.mid_bins), len(self.hst))
 
 		###Density=False: hst bins units are similar to intensities. Sum of hst does not depends on N_bins
-		hst, bins = np.histogram(A, bins = bins, weights = Ipola, density = False)
+		###Density=True: hst bins are NOT intensities! But a probability density function (sum height*width == 1)
+		hst, bins = np.histogram(A, bins = bins, weights = Ipola, density = True)
 
 		return hst, mid_bins
 
@@ -561,6 +610,8 @@ class World:
 		"""Make an pyplot histogram of all AoLP contributionsThe histogram is calculated in GetLightParameters()
 		Need a call to plt.show() after calling this function."""
 		f3, ax = plt.subplots(1, figsize=(16, 8))
+		# font = {'size'   : 24}
+		# matplotlib.rc('font', **font)
 
 		ax = plt.subplot(111, projection='polar')
 		ax.set_theta_zero_location("N")
@@ -586,9 +637,10 @@ class World:
 			# bins = np.append(bins[:N_bins], 180 * DtoR + np.array(bins)[:N_bins])
 			h = np.append(hst, hst)
 
-		bars = ax.bar(bins, h, width=width)
+		# print(h)
+		bars = ax.bar(bins, h, width=width, bottom = 0)
 
-		ax.set_title("Weighted AoRD: I0 = " + str(np.format_float_scientific(I0, precision=3)) + " DoLP = " + str(np.round(DoLP, 1)) + " AoRD = " + str(np.round(AoRD*RtoD, 1)))
+		ax.set_title("Weighted AoRD: I0 = " + str(np.format_float_scientific(I0, precision=3)) + " DoLP = " + str(np.round(DoLP, 2)) + " AoRD = " + str(np.round(AoRD*RtoD, 1)))
 
 		if not double:
 			ax.plot([AoRD, AoRD], [0, max(hst)], "r")
@@ -697,27 +749,28 @@ class World:
 
 		return AR, RE, ARE#, AER
 
-	def GetScattered(self, I0, AR, RD_angle, alt):
-		"""Given an initial intensity of a source and some geometrical parameter, returns the intensity mesured at the instrument and its DoLP.
-		Input parameters: elevation, altitude of scattering, scattering angle, distance between emission and scattering."""
-
-		V = self.atmosphere.GetVolume(AR, self.ouv_pc, unit="km") #in km3
-		Crs = self.atmosphere.GetRSVolumeCS(self.wavelength, alt) #in km-1
-		P = self.atmosphere.GetRSPhaseFunction(self.wavelength, RD_angle)
-
-		# print("DEBUG V, Crs, P", V, Crs, P)
-
-		if AR != 0:
-			I0 *= Crs * P * V * self.PTCU_area / AR ** 2 / 4 / np.pi
-			# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)
-		else:
-			I0 = 0
-			# print("WARNING!!!! I0==0")
-
-		DoLP = np.sin(RD_angle)**2 / (1 + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
-
-		# print("DEBUG DOLP:", w_DoLP * 100)
-		return I0, DoLP
+	# def GetScattered(self, I0, AR, RD_angle, alt):
+	# 	"""Given an initial intensity of a source and some geometrical parameter, returns the intensity mesured at the instrument and its DoLP.
+	# 	Input parameters: elevation, altitude of scattering, scattering angle, distance between emission and scattering."""
+	#
+	# 	V = self.atmosphere.GetVolume(AR, self.ouv_pc, unit="km") #in km3
+	# 	Crs = self.atmosphere.GetRSVolumeCS(self.wavelength, alt) #in km-1
+	# 	P = self.atmosphere.GetRSPhaseFunction(self.wavelength, RD_angle)
+	#
+	# 	# print("DEBUG V, Crs, P", V, Crs, P)
+	#
+	# 	if AR != 0:
+	# 		I0 *= Crs * P * V * self.PTCU_area / AR ** 2 / 4 / np.pi #Unit
+	#
+	# 		# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)
+	# 	else:
+	# 		I0 = 0
+	# 		# print("WARNING!!!! I0==0")
+	#
+	# 	DoLP = np.sin(RD_angle)**2 / (1 + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
+	#
+	# 	# print("DEBUG DOLP:", w_DoLP * 100)
+	# 	return I0, DoLP
 
 
 	def GetDirect(self, t, ia, ie):
@@ -726,8 +779,8 @@ class World:
 		e = self.e_pc_list[ie]
 
 		if self.has_sky_emission:
-			opt_depth = self.atmosphere.GetRSOpticalDepth(self.wavelength, self.sky_map.h, 0) / np.sin(e)
-			direct = self.sky_map.GetFlux(a, e, self.ouv_pc, t = t, area = self.PTCU_area)
+			opt_depth = self.atmosphere.GetRSOpticalDepth(self.sky_map.h, 0) / np.sin(e)
+			direct = self.sky_map.GetFlux(a, e, self.ouv_pc, t = t) * self.PTCU_area * 1e6 * self.inst_solid_angle
 			print("opt_depth, direct:")
 			print(opt_depth, direct)
 			return direct * np.exp(-opt_depth)
