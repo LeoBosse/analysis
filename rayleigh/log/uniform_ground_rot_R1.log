@@ -1,0 +1,119 @@
+4 0 MPI_COMM_WORLD
+WARNING: Wrong or no input file specified, default in use.
+All input parameter from the input file:
+path: /home/bossel/These/Analysis/data/Night_pollution/
+src_path: /home/bossel/These/Analysis/src/rayleigh/
+saving_graphs: 0
+flux_unit: W
+azimuts: 0;10;20;30;40;50;60;70;80;90
+elevations: 45
+location: skibotn
+instrument_opening_angle: 1
+instrument_area: 20
+wavelength: 630
+RS_min_altitude: 0
+RS_max_altitude: 100
+resolution_along_los: 1
+max_angle_discretization: 0
+Atmospheric_profile: atm_profiles/win.atm
+sky_mode: none
+emission_altitude: 220
+Nb_emission_points: 100
+Nb_emission_maps: 1
+I_zone_a_min: 0
+I_zone_a_max: 360
+I_zone_e_min: 0
+I_zone_e_max: 90
+sky_path: /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
+sky_file: nya6/6300/2020/20200217/all_night/
+sky_wavelength: 557.7
+use_alt_map: 0
+alt_map_path: /home/bossel/These/Analysis/data/elevation/
+alt_map_radius: 50
+alt_map_N_bins_max: 10000
+alt_map_resolution: 0.2
+ground_mode: uniform_I100
+ground_emission_radius: 1
+ground_N_bins_max: 100
+ground_albedo: 0
+ground_path: /home/bossel/These/Analysis/data/Night_pollution/
+ground_file: nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm_v10_c201807311200.avg_rade9.tif
+Has_sky_emission: False
+Has_ground_emission: True
+4 2 MPI_COMM_WORLD
+4 3 MPI_COMM_WORLD
+4 1 MPI_COMM_WORLD
+Initialization DONE
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 1/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 0.0, elevation 45.0. Observed point at altitude 220.0, position (20.363109, 71.22992796375796)
+Starting time:  14:06:21
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.713344
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 2/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 10.0, elevation 45.0. Observed point at altitude 220.0, position (21.376942857790624, 71.19862117907104)
+Starting time:  14:06:24
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.821149
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 3/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 45.0. Observed point at altitude 220.0, position (22.350827382871636, 71.10594677896476)
+Starting time:  14:06:27
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.689935
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 4/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 29.999999999999996, elevation 45.0. Observed point at altitude 220.0, position (23.24749293087614, 70.9555555300364)
+Starting time:  14:06:29
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.663853
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 5/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 40.0, elevation 45.0. Observed point at altitude 220.0, position (24.03464233371032, 70.75325534079995)
+Starting time:  14:06:32
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.748641
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 6/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 50.0, elevation 45.0. Observed point at altitude 220.0, position (24.686572150785445, 70.50663991973308)
+Starting time:  14:06:35
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.678284
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 7/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 59.99999999999999, elevation 45.0. Observed point at altitude 220.0, position (25.185000817292458, 70.22464387473036)
+Starting time:  14:06:38
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.722700
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 8/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 70.0, elevation 45.0. Observed point at altitude 220.0, position (25.51914644165194, 69.91707551893282)
+Starting time:  14:06:40
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.670720
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 9/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 80.0, elevation 45.0. Observed point at altitude 220.0, position (25.68521452682124, 69.59417000502808)
+Starting time:  14:06:43
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.727797
+*******************************************************************************************************************************
+STARTING calculation for GROUND observation 10/10:
+Observation at point (20.363109, 69.34802700000002), azimuth 90.0, elevation 45.0. Observed point at altitude 220.0, position (25.685507245251088, 69.26619159966718)
+Starting time:  14:06:46
+5076.0 bins to compute per processor
+Computing DONE in:  0:00:02.687580
+Warning: Ignoring XDG_SESSION_TYPE=wayland on Gnome. Use QT_QPA_PLATFORM=wayland to run on Wayland anyway.
+t, datetime, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,10101-000001,0.0,45.0,None,1.0,0.0,100.0,630.0,0.0,1.4877155470034994e-06,0.6109146929901734,-2.2144359463727992e-07,0.0
+0,10101-000001,10.0,45.0,None,1.0,0.0,100.0,630.0,0.0,1.4884385638986416e-06,0.6467849784755646,-23.5458382004036,0.0
+0,10101-000001,20.0,45.0,None,1.0,0.0,100.0,630.0,0.0,1.4902724732504021e-06,0.7308795836116309,-44.75229961547644,0.0
+0,10101-000001,29.999999999999996,45.0,None,1.0,0.0,100.0,630.0,0.0,1.4923792246627668e-06,0.8176327500540819,-63.691629434249336,0.0
+0,10101-000001,40.0,45.0,None,1.0,0.0,100.0,630.0,0.0,1.4937745082622277e-06,0.8701016084672826,-81.37943323319455,0.0
+0,10101-000001,50.0,45.0,None,1.0,0.0,100.0,630.0,0.0,1.4937727638965202e-06,0.8699911177328313,81.308202198243,0.0
+0,10101-000001,59.99999999999999,45.0,None,1.0,0.0,100.0,630.0,0.0,1.4923752363263752e-06,0.8173813495807951,63.612156926207206,0.0
+0,10101-000001,70.0,45.0,None,1.0,0.0,100.0,630.0,0.0,1.4902693180557092e-06,0.7307351003521373,44.65626205509324,0.0
+0,10101-000001,80.0,45.0,None,1.0,0.0,100.0,630.0,0.0,1.4884397554240936e-06,0.6471511936060934,23.430997459485706,0.0
+0,10101-000001,90.0,45.0,None,1.0,0.0,100.0,630.0,0.0,1.48772383289441e-06,0.6121546024104639,-0.11415173563105577,0.0
+Simulation ran in: 0:00:27.826454

@@ -596,7 +596,17 @@ class Mixer:
 		# self.ax4.plot(self.x_axis_list, bottle.all_TempAmbiant, "b.", linestyle = 'none', markersize=self.marker_size, label="Ambiant")
 		# self.ax2.plot(self.x_axis_list,[DoLP_average] * nb_rot, "b", label="Avg: " + str(DoLP_average))
 
-		fn = "/home/bossel/These/Analysis/results/rayleigh/skymap_20200307_20h_5577.txt"
+		### Text file without albedo?...not so sure...
+		# fn = "/home/bossel/These/Analysis/results/rayleigh/20200307_20h_5577_movie_results.txt"
+		### Text file without albedo = 0.5
+		# fn = "/home/bossel/These/Analysis/results/rayleigh/Uniform_ground_study/20200307_20h_last_mad0_a0.5_results.txt"
+		# fn = "/home/bossel/These/Analysis/results/rayleigh/Uniform_ground_study/20200307_20h_last_mad0.txt"
+
+		###First comp with sky only
+		# fn = "/home/bossel/These/Analysis/results/rayleigh/skymap_20200307_20h_5577.txt"
+
+		fn = "/home/bossel/These/Analysis/results/rayleigh/20200217_corbel_skyonly_results.txt"
+
 		t, I, D, A = self.GetDataFromTxt(fn, t="datetime", I = "I0", DoLP="DoLP", AoLP = "AoRD")
 		td = [t - bottle.DateTime(moment="start", format="UT") for t in t if bottle.DateTime(moment="start", format="UT") < t < bottle.DateTime(moment="end", format="UT")]
 		ts = np.array([t.total_seconds() for t in td])

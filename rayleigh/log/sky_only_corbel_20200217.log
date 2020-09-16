@@ -1,0 +1,2264 @@
+4 0 MPI_COMM_WORLD
+WARNING: Wrong or no input file specified, default in use.
+Loading the sky emission cube...
+Importing all sky movie data...
+1/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_210000_6300_cal.png
+4 3 MPI_COMM_WORLD
+4 1 MPI_COMM_WORLD
+4 2 MPI_COMM_WORLD
+4/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_210730_6300_cal.png
+2/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_210230_6300_cal.png
+3/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_210500_6300_cal.png
+8/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_211730_6300_cal.png
+7/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_211500_6300_cal.png
+5/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_211000_6300_cal.png
+6/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_211230_6300_cal.png
+9/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_212000_6300_cal.png
+12/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_212730_6300_cal.png
+10/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_212230_6300_cal.png
+11/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_212500_6300_cal.png
+13/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_213000_6300_cal.png
+16/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_213730_6300_cal.png
+14/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_213230_6300_cal.png
+15/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_213500_6300_cal.png
+17/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_214000_6300_cal.png
+20/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_214730_6300_cal.png
+18/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_214230_6300_cal.png
+19/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_214500_6300_cal.png
+21/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_215000_6300_cal.png
+24/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_215730_6300_cal.png
+23/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_215500_6300_cal.png
+22/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_215230_6300_cal.png
+25/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_220000_6300_cal.png
+28/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_220730_6300_cal.png
+27/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_220500_6300_cal.png
+26/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_220230_6300_cal.png
+29/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_221000_6300_cal.png
+32/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_221730_6300_cal.png
+31/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_221500_6300_cal.png
+30/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_221230_6300_cal.png
+33/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_222000_6300_cal.png
+36/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_222730_6300_cal.png
+35/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_222500_6300_cal.png
+34/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_222230_6300_cal.png
+37/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_223000_6300_cal.png
+40/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_223730_6300_cal.png
+39/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_223500_6300_cal.png
+38/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_223230_6300_cal.png
+41/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_224000_6300_cal.png
+44/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_224730_6300_cal.png
+43/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_224500_6300_cal.png
+42/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_224230_6300_cal.png
+45/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_225000_6300_cal.png
+48/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_225730_6300_cal.png
+47/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_225500_6300_cal.png
+46/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_225230_6300_cal.png
+49/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_230000_6300_cal.png
+52/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_230730_6300_cal.png
+51/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_230500_6300_cal.png
+50/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_230230_6300_cal.png
+53/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_231000_6300_cal.png
+56/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_231730_6300_cal.png
+55/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_231500_6300_cal.png
+54/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_231230_6300_cal.png
+57/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_232000_6300_cal.png
+60/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_232730_6300_cal.png
+59/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_232500_6300_cal.png
+58/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_232230_6300_cal.png
+61/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_233000_6300_cal.png
+64/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_233730_6300_cal.png
+63/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_233500_6300_cal.png
+62/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_233230_6300_cal.png
+65/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_234000_6300_cal.png
+68/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_234730_6300_cal.png
+67/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_234500_6300_cal.png
+66/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_234230_6300_cal.png
+69/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_235000_6300_cal.png
+72/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_235730_6300_cal.png
+71/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_235500_6300_cal.png
+70/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200217_235230_6300_cal.png
+73/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_000000_6300_cal.png
+75/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_000500_6300_cal.png
+76/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_000730_6300_cal.png
+74/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_000230_6300_cal.png
+77/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_001000_6300_cal.png
+80/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_001730_6300_cal.png
+79/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_001500_6300_cal.png
+78/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_001230_6300_cal.png
+81/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_002000_6300_cal.png
+83/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_002500_6300_cal.png
+84/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_002730_6300_cal.png
+82/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_002230_6300_cal.png
+85/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_003000_6300_cal.png
+87/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_003500_6300_cal.png
+88/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_003730_6300_cal.png
+86/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_003230_6300_cal.png
+89/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_004000_6300_cal.png
+91/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_004500_6300_cal.png
+92/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_004730_6300_cal.png
+90/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_004230_6300_cal.png
+93/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_005000_6300_cal.png
+95/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_005500_6300_cal.png
+96/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_005730_6300_cal.png
+94/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_005230_6300_cal.png
+97/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_010000_6300_cal.png
+99/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_010500_6300_cal.png
+100/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_010730_6300_cal.png
+98/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_010230_6300_cal.png
+101/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_011000_6300_cal.png
+103/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_011500_6300_cal.png
+104/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_011730_6300_cal.png
+102/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_011230_6300_cal.png
+105/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_012000_6300_cal.png
+107/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_012500_6300_cal.png
+108/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_012730_6300_cal.png
+106/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_012230_6300_cal.png
+109/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_013000_6300_cal.png
+112/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_013730_6300_cal.png
+111/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_013500_6300_cal.png
+110/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_013230_6300_cal.png
+113/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_014000_6300_cal.png
+116/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_014730_6300_cal.png
+115/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_014500_6300_cal.png
+114/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_014230_6300_cal.png
+117/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_015000_6300_cal.png
+119/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_015500_6300_cal.png
+120/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_015730_6300_cal.png
+118/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_015230_6300_cal.png
+121/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_020000_6300_cal.png
+123/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_020500_6300_cal.png
+124/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_020730_6300_cal.png
+122/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_020230_6300_cal.png
+125/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_021000_6300_cal.png
+127/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_021500_6300_cal.png
+128/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_021730_6300_cal.png
+126/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_021230_6300_cal.png
+129/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_022000_6300_cal.png
+131/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_022500_6300_cal.png
+132/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_022730_6300_cal.png
+130/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_022230_6300_cal.png
+133/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_023000_6300_cal.png
+135/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_023500_6300_cal.png
+136/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_023730_6300_cal.png
+134/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_023230_6300_cal.png
+137/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_024000_6300_cal.png
+139/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_024500_6300_cal.png
+140/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_024730_6300_cal.png
+138/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_024230_6300_cal.png
+141/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_025000_6300_cal.png
+143/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_025500_6300_cal.png
+144/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_025730_6300_cal.png
+142/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_025230_6300_cal.png
+145/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_030000_6300_cal.png
+148/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_030730_6300_cal.png
+147/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_030500_6300_cal.png
+146/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_030230_6300_cal.png
+149/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_031000_6300_cal.png
+152/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_031730_6300_cal.png
+151/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_031500_6300_cal.png
+150/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_031230_6300_cal.png
+153/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_032000_6300_cal.png
+155/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_032500_6300_cal.png
+156/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_032730_6300_cal.png
+154/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_032230_6300_cal.png
+157/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_033000_6300_cal.png
+159/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_033500_6300_cal.png
+160/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_033730_6300_cal.png
+158/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_033230_6300_cal.png
+161/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_034000_6300_cal.png
+163/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_034500_6300_cal.png
+164/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_034730_6300_cal.png
+162/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_034230_6300_cal.png
+165/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_035000_6300_cal.png
+167/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_035500_6300_cal.png
+168/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_035730_6300_cal.png
+166/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_035230_6300_cal.png
+169/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_040000_6300_cal.png
+171/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_040500_6300_cal.png
+172/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_040730_6300_cal.png
+170/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_040230_6300_cal.png
+173/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_041000_6300_cal.png
+175/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_041500_6300_cal.png
+176/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_041730_6300_cal.png
+174/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_041230_6300_cal.png
+177/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_042000_6300_cal.png
+180/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_042730_6300_cal.png
+179/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_042500_6300_cal.png
+178/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_042230_6300_cal.png
+181/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_043000_6300_cal.png
+184/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_043730_6300_cal.png
+183/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_043500_6300_cal.png
+182/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_043230_6300_cal.png
+185/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_044000_6300_cal.png
+187/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_044500_6300_cal.png
+188/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_044730_6300_cal.png
+186/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_044230_6300_cal.png
+189/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_045000_6300_cal.png
+191/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_045500_6300_cal.png
+192/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_045730_6300_cal.png
+190/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_045230_6300_cal.png
+193/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_050000_6300_cal.png
+195/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_050500_6300_cal.png
+196/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_050730_6300_cal.png
+194/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_050230_6300_cal.png
+197/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_051000_6300_cal.png
+199/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_051500_6300_cal.png
+200/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_051730_6300_cal.png
+198/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_051230_6300_cal.png
+201/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_052000_6300_cal.png
+203/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_052500_6300_cal.png
+204/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_052730_6300_cal.png
+202/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_052230_6300_cal.png
+205/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_053000_6300_cal.png
+207/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_053500_6300_cal.png
+208/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_053730_6300_cal.png
+206/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_053230_6300_cal.png
+209/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_054000_6300_cal.png
+211/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_054500_6300_cal.png
+212/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_054730_6300_cal.png
+210/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_054230_6300_cal.png
+213/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_055000_6300_cal.png
+215/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_055500_6300_cal.png
+216/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_055730_6300_cal.png
+214/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_055230_6300_cal.png
+217/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_060000_6300_cal.png
+219/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_060500_6300_cal.png
+220/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_060730_6300_cal.png
+218/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_060230_6300_cal.png
+221/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_061000_6300_cal.png
+223/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_061500_6300_cal.png
+224/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_061730_6300_cal.png
+222/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_061230_6300_cal.png
+225/225: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/nya6/6300/2020/20200217/all_night/nya6_20200218_062000_6300_cal.png
+Sky cube loaded!
+Has_sky_emission: True
+Has_ground_emission: False
+Initialization DONE
+*******************************************************************************************************************************
+Starting calculation for SKY observation 1/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:28:08
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.836459
+*******************************************************************************************************************************
+Starting calculation for SKY observation 2/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:28:26
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.932256
+*******************************************************************************************************************************
+Starting calculation for SKY observation 3/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:28:44
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.036202
+*******************************************************************************************************************************
+Starting calculation for SKY observation 4/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:29:02
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.911695
+*******************************************************************************************************************************
+Starting calculation for SKY observation 5/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:29:19
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.264159
+*******************************************************************************************************************************
+Starting calculation for SKY observation 6/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:29:38
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.091292
+*******************************************************************************************************************************
+Starting calculation for SKY observation 7/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:29:56
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.026341
+*******************************************************************************************************************************
+Starting calculation for SKY observation 8/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:30:14
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.966553
+*******************************************************************************************************************************
+Starting calculation for SKY observation 9/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:30:32
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.021282
+*******************************************************************************************************************************
+Starting calculation for SKY observation 10/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:30:50
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.993742
+*******************************************************************************************************************************
+Starting calculation for SKY observation 11/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:31:08
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.111115
+*******************************************************************************************************************************
+Starting calculation for SKY observation 12/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:31:26
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.036449
+*******************************************************************************************************************************
+Starting calculation for SKY observation 13/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:31:44
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.068807
+*******************************************************************************************************************************
+Starting calculation for SKY observation 14/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:32:02
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.991510
+*******************************************************************************************************************************
+Starting calculation for SKY observation 15/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:32:20
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.104072
+*******************************************************************************************************************************
+Starting calculation for SKY observation 16/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:32:38
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.193914
+*******************************************************************************************************************************
+Starting calculation for SKY observation 17/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:32:56
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.276509
+*******************************************************************************************************************************
+Starting calculation for SKY observation 18/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:33:15
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.994285
+*******************************************************************************************************************************
+Starting calculation for SKY observation 19/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:33:33
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.167137
+*******************************************************************************************************************************
+Starting calculation for SKY observation 20/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:33:51
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.003325
+*******************************************************************************************************************************
+Starting calculation for SKY observation 21/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:34:09
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.139237
+*******************************************************************************************************************************
+Starting calculation for SKY observation 22/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:34:27
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.954424
+*******************************************************************************************************************************
+Starting calculation for SKY observation 23/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:34:45
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.188568
+*******************************************************************************************************************************
+Starting calculation for SKY observation 24/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:35:03
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.880180
+*******************************************************************************************************************************
+Starting calculation for SKY observation 25/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:35:21
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.279095
+*******************************************************************************************************************************
+Starting calculation for SKY observation 26/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:35:39
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.042099
+*******************************************************************************************************************************
+Starting calculation for SKY observation 27/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:35:57
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.266768
+*******************************************************************************************************************************
+Starting calculation for SKY observation 28/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:36:16
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.036418
+*******************************************************************************************************************************
+Starting calculation for SKY observation 29/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:36:34
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.102831
+*******************************************************************************************************************************
+Starting calculation for SKY observation 30/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:36:52
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.011187
+*******************************************************************************************************************************
+Starting calculation for SKY observation 31/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:37:10
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.075194
+*******************************************************************************************************************************
+Starting calculation for SKY observation 32/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:37:28
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.983657
+*******************************************************************************************************************************
+Starting calculation for SKY observation 33/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:37:46
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.129912
+*******************************************************************************************************************************
+Starting calculation for SKY observation 34/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:38:04
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.973849
+*******************************************************************************************************************************
+Starting calculation for SKY observation 35/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:38:22
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.080431
+*******************************************************************************************************************************
+Starting calculation for SKY observation 36/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:38:40
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.000568
+*******************************************************************************************************************************
+Starting calculation for SKY observation 37/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:38:58
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.091541
+*******************************************************************************************************************************
+Starting calculation for SKY observation 38/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:39:16
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.142708
+*******************************************************************************************************************************
+Starting calculation for SKY observation 39/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:39:34
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.090808
+*******************************************************************************************************************************
+Starting calculation for SKY observation 40/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:39:52
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.949367
+*******************************************************************************************************************************
+Starting calculation for SKY observation 41/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:40:10
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.188725
+*******************************************************************************************************************************
+Starting calculation for SKY observation 42/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:40:28
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.133933
+*******************************************************************************************************************************
+Starting calculation for SKY observation 43/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:40:47
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.172420
+*******************************************************************************************************************************
+Starting calculation for SKY observation 44/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:41:05
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.979214
+*******************************************************************************************************************************
+Starting calculation for SKY observation 45/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:41:23
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.085588
+*******************************************************************************************************************************
+Starting calculation for SKY observation 46/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:41:41
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.944323
+*******************************************************************************************************************************
+Starting calculation for SKY observation 47/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:41:59
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.207301
+*******************************************************************************************************************************
+Starting calculation for SKY observation 48/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:42:17
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.899198
+*******************************************************************************************************************************
+Starting calculation for SKY observation 49/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:42:35
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.240202
+*******************************************************************************************************************************
+Starting calculation for SKY observation 50/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:42:53
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.007887
+*******************************************************************************************************************************
+Starting calculation for SKY observation 51/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:43:11
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.141094
+*******************************************************************************************************************************
+Starting calculation for SKY observation 52/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:43:29
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.948732
+*******************************************************************************************************************************
+Starting calculation for SKY observation 53/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:43:47
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.235485
+*******************************************************************************************************************************
+Starting calculation for SKY observation 54/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:44:06
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.059073
+*******************************************************************************************************************************
+Starting calculation for SKY observation 55/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:44:24
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.206287
+*******************************************************************************************************************************
+Starting calculation for SKY observation 56/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:44:42
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.079419
+*******************************************************************************************************************************
+Starting calculation for SKY observation 57/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:45:00
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.104577
+*******************************************************************************************************************************
+Starting calculation for SKY observation 58/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:45:18
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.173834
+*******************************************************************************************************************************
+Starting calculation for SKY observation 59/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:45:36
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.279703
+*******************************************************************************************************************************
+Starting calculation for SKY observation 60/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:45:54
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.138942
+*******************************************************************************************************************************
+Starting calculation for SKY observation 61/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:46:13
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.230019
+*******************************************************************************************************************************
+Starting calculation for SKY observation 62/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:46:31
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.218972
+*******************************************************************************************************************************
+Starting calculation for SKY observation 63/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:46:49
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.247506
+*******************************************************************************************************************************
+Starting calculation for SKY observation 64/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:47:07
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.083467
+*******************************************************************************************************************************
+Starting calculation for SKY observation 65/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:47:25
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.214305
+*******************************************************************************************************************************
+Starting calculation for SKY observation 66/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:47:44
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.081079
+*******************************************************************************************************************************
+Starting calculation for SKY observation 67/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:48:02
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.287305
+*******************************************************************************************************************************
+Starting calculation for SKY observation 68/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:48:20
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.138169
+*******************************************************************************************************************************
+Starting calculation for SKY observation 69/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:48:38
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.263175
+*******************************************************************************************************************************
+Starting calculation for SKY observation 70/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:48:56
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.079862
+*******************************************************************************************************************************
+Starting calculation for SKY observation 71/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:49:14
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.321511
+*******************************************************************************************************************************
+Starting calculation for SKY observation 72/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:49:33
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.130476
+*******************************************************************************************************************************
+Starting calculation for SKY observation 73/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:49:51
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.321377
+*******************************************************************************************************************************
+Starting calculation for SKY observation 74/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:50:09
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.042141
+*******************************************************************************************************************************
+Starting calculation for SKY observation 75/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:50:27
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.356455
+*******************************************************************************************************************************
+Starting calculation for SKY observation 76/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:50:46
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.071288
+*******************************************************************************************************************************
+Starting calculation for SKY observation 77/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:51:04
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.375894
+*******************************************************************************************************************************
+Starting calculation for SKY observation 78/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:51:22
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.109486
+*******************************************************************************************************************************
+Starting calculation for SKY observation 79/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:51:40
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.288520
+*******************************************************************************************************************************
+Starting calculation for SKY observation 80/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:51:58
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.115681
+*******************************************************************************************************************************
+Starting calculation for SKY observation 81/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:52:17
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.245076
+*******************************************************************************************************************************
+Starting calculation for SKY observation 82/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:52:35
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.130902
+*******************************************************************************************************************************
+Starting calculation for SKY observation 83/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:52:53
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.225551
+*******************************************************************************************************************************
+Starting calculation for SKY observation 84/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:53:11
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.127242
+*******************************************************************************************************************************
+Starting calculation for SKY observation 85/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:53:29
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.123643
+*******************************************************************************************************************************
+Starting calculation for SKY observation 86/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:53:47
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.114542
+*******************************************************************************************************************************
+Starting calculation for SKY observation 87/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:54:06
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.136749
+*******************************************************************************************************************************
+Starting calculation for SKY observation 88/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:54:24
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.049996
+*******************************************************************************************************************************
+Starting calculation for SKY observation 89/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:54:42
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.239346
+*******************************************************************************************************************************
+Starting calculation for SKY observation 90/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:55:00
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.410955
+*******************************************************************************************************************************
+Starting calculation for SKY observation 91/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:55:18
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.277394
+*******************************************************************************************************************************
+Starting calculation for SKY observation 92/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:55:37
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.110273
+*******************************************************************************************************************************
+Starting calculation for SKY observation 93/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:55:55
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.275408
+*******************************************************************************************************************************
+Starting calculation for SKY observation 94/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:56:13
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.046511
+*******************************************************************************************************************************
+Starting calculation for SKY observation 95/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:56:31
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.295942
+*******************************************************************************************************************************
+Starting calculation for SKY observation 96/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:56:49
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.108520
+*******************************************************************************************************************************
+Starting calculation for SKY observation 97/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:57:08
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.388510
+*******************************************************************************************************************************
+Starting calculation for SKY observation 98/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:57:26
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.893762
+*******************************************************************************************************************************
+Starting calculation for SKY observation 99/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:57:44
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.227729
+*******************************************************************************************************************************
+Starting calculation for SKY observation 100/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:58:02
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.040711
+*******************************************************************************************************************************
+Starting calculation for SKY observation 101/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:58:20
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.309596
+*******************************************************************************************************************************
+Starting calculation for SKY observation 102/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:58:38
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.097570
+*******************************************************************************************************************************
+Starting calculation for SKY observation 103/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:58:57
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.279273
+*******************************************************************************************************************************
+Starting calculation for SKY observation 104/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:59:15
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.125206
+*******************************************************************************************************************************
+Starting calculation for SKY observation 105/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:59:33
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.227033
+*******************************************************************************************************************************
+Starting calculation for SKY observation 106/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  14:59:51
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.187776
+*******************************************************************************************************************************
+Starting calculation for SKY observation 107/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:00:09
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.309547
+*******************************************************************************************************************************
+Starting calculation for SKY observation 108/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:00:28
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.072321
+*******************************************************************************************************************************
+Starting calculation for SKY observation 109/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:00:46
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.229965
+*******************************************************************************************************************************
+Starting calculation for SKY observation 110/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:01:04
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.208635
+*******************************************************************************************************************************
+Starting calculation for SKY observation 111/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:01:22
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.190320
+*******************************************************************************************************************************
+Starting calculation for SKY observation 112/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:01:40
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.169647
+*******************************************************************************************************************************
+Starting calculation for SKY observation 113/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:01:59
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.279375
+*******************************************************************************************************************************
+Starting calculation for SKY observation 114/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:02:17
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.096093
+*******************************************************************************************************************************
+Starting calculation for SKY observation 115/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:02:35
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.249393
+*******************************************************************************************************************************
+Starting calculation for SKY observation 116/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:02:53
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.142404
+*******************************************************************************************************************************
+Starting calculation for SKY observation 117/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:03:11
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.265068
+*******************************************************************************************************************************
+Starting calculation for SKY observation 118/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:03:30
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.999239
+*******************************************************************************************************************************
+Starting calculation for SKY observation 119/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:03:48
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.323427
+*******************************************************************************************************************************
+Starting calculation for SKY observation 120/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:04:06
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.079504
+*******************************************************************************************************************************
+Starting calculation for SKY observation 121/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:04:24
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.314213
+*******************************************************************************************************************************
+Starting calculation for SKY observation 122/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:04:42
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.097850
+*******************************************************************************************************************************
+Starting calculation for SKY observation 123/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:05:00
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.246144
+*******************************************************************************************************************************
+Starting calculation for SKY observation 124/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:05:19
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.100218
+*******************************************************************************************************************************
+Starting calculation for SKY observation 125/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:05:37
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.325970
+*******************************************************************************************************************************
+Starting calculation for SKY observation 126/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:05:55
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.111756
+*******************************************************************************************************************************
+Starting calculation for SKY observation 127/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:06:13
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.247488
+*******************************************************************************************************************************
+Starting calculation for SKY observation 128/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:06:31
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.095913
+*******************************************************************************************************************************
+Starting calculation for SKY observation 129/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:06:50
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.251168
+*******************************************************************************************************************************
+Starting calculation for SKY observation 130/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:07:08
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.124046
+*******************************************************************************************************************************
+Starting calculation for SKY observation 131/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:07:26
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.285282
+*******************************************************************************************************************************
+Starting calculation for SKY observation 132/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:07:44
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.097389
+*******************************************************************************************************************************
+Starting calculation for SKY observation 133/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:08:02
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.208996
+*******************************************************************************************************************************
+Starting calculation for SKY observation 134/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:08:21
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.152569
+*******************************************************************************************************************************
+Starting calculation for SKY observation 135/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:08:39
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.296931
+*******************************************************************************************************************************
+Starting calculation for SKY observation 136/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:08:57
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.013891
+*******************************************************************************************************************************
+Starting calculation for SKY observation 137/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:09:15
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.086665
+*******************************************************************************************************************************
+Starting calculation for SKY observation 138/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:09:33
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.956976
+*******************************************************************************************************************************
+Starting calculation for SKY observation 139/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:09:51
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.080642
+*******************************************************************************************************************************
+Starting calculation for SKY observation 140/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:10:09
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.958560
+*******************************************************************************************************************************
+Starting calculation for SKY observation 141/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:10:27
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.137826
+*******************************************************************************************************************************
+Starting calculation for SKY observation 142/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:10:45
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.028294
+*******************************************************************************************************************************
+Starting calculation for SKY observation 143/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:11:03
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.112702
+*******************************************************************************************************************************
+Starting calculation for SKY observation 144/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:11:21
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.988972
+*******************************************************************************************************************************
+Starting calculation for SKY observation 145/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:11:39
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.131070
+*******************************************************************************************************************************
+Starting calculation for SKY observation 146/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:11:57
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.924061
+*******************************************************************************************************************************
+Starting calculation for SKY observation 147/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:12:15
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.023531
+*******************************************************************************************************************************
+Starting calculation for SKY observation 148/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:12:33
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.945745
+*******************************************************************************************************************************
+Starting calculation for SKY observation 149/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:12:51
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.096582
+*******************************************************************************************************************************
+Starting calculation for SKY observation 150/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:13:09
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.898002
+*******************************************************************************************************************************
+Starting calculation for SKY observation 151/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:13:27
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.031204
+*******************************************************************************************************************************
+Starting calculation for SKY observation 152/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:13:45
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.923574
+*******************************************************************************************************************************
+Starting calculation for SKY observation 153/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:14:03
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.051365
+*******************************************************************************************************************************
+Starting calculation for SKY observation 154/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:14:21
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.895886
+*******************************************************************************************************************************
+Starting calculation for SKY observation 155/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:14:39
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.048730
+*******************************************************************************************************************************
+Starting calculation for SKY observation 156/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:14:57
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.038109
+*******************************************************************************************************************************
+Starting calculation for SKY observation 157/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:15:15
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.119034
+*******************************************************************************************************************************
+Starting calculation for SKY observation 158/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:15:34
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.254316
+*******************************************************************************************************************************
+Starting calculation for SKY observation 159/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:15:52
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.135103
+*******************************************************************************************************************************
+Starting calculation for SKY observation 160/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:16:10
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.458864
+*******************************************************************************************************************************
+Starting calculation for SKY observation 161/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:16:28
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.150837
+*******************************************************************************************************************************
+Starting calculation for SKY observation 162/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:16:47
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.130692
+*******************************************************************************************************************************
+Starting calculation for SKY observation 163/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:17:05
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.124163
+*******************************************************************************************************************************
+Starting calculation for SKY observation 164/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:17:23
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.137781
+*******************************************************************************************************************************
+Starting calculation for SKY observation 165/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:17:41
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.145896
+*******************************************************************************************************************************
+Starting calculation for SKY observation 166/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:17:59
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.080423
+*******************************************************************************************************************************
+Starting calculation for SKY observation 167/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:18:17
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.232251
+*******************************************************************************************************************************
+Starting calculation for SKY observation 168/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:18:35
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.151952
+*******************************************************************************************************************************
+Starting calculation for SKY observation 169/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:18:54
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.333697
+*******************************************************************************************************************************
+Starting calculation for SKY observation 170/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:19:12
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.130768
+*******************************************************************************************************************************
+Starting calculation for SKY observation 171/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:19:30
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.242816
+*******************************************************************************************************************************
+Starting calculation for SKY observation 172/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:19:48
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.063588
+*******************************************************************************************************************************
+Starting calculation for SKY observation 173/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:20:06
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.061473
+*******************************************************************************************************************************
+Starting calculation for SKY observation 174/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:20:24
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.915193
+*******************************************************************************************************************************
+Starting calculation for SKY observation 175/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:20:42
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.074125
+*******************************************************************************************************************************
+Starting calculation for SKY observation 176/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:21:00
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.994699
+*******************************************************************************************************************************
+Starting calculation for SKY observation 177/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:21:18
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.103399
+*******************************************************************************************************************************
+Starting calculation for SKY observation 178/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:21:36
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.939905
+*******************************************************************************************************************************
+Starting calculation for SKY observation 179/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:21:54
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.070098
+*******************************************************************************************************************************
+Starting calculation for SKY observation 180/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:22:12
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.949002
+*******************************************************************************************************************************
+Starting calculation for SKY observation 181/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:22:30
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.028690
+*******************************************************************************************************************************
+Starting calculation for SKY observation 182/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:22:48
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.059734
+*******************************************************************************************************************************
+Starting calculation for SKY observation 183/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:23:07
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.991842
+*******************************************************************************************************************************
+Starting calculation for SKY observation 184/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:23:25
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.022078
+*******************************************************************************************************************************
+Starting calculation for SKY observation 185/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:23:43
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.017615
+*******************************************************************************************************************************
+Starting calculation for SKY observation 186/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:24:01
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.003467
+*******************************************************************************************************************************
+Starting calculation for SKY observation 187/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:24:19
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.975515
+*******************************************************************************************************************************
+Starting calculation for SKY observation 188/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:24:37
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.969707
+*******************************************************************************************************************************
+Starting calculation for SKY observation 189/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:24:55
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.023507
+*******************************************************************************************************************************
+Starting calculation for SKY observation 190/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:25:13
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.017032
+*******************************************************************************************************************************
+Starting calculation for SKY observation 191/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:25:31
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.031250
+*******************************************************************************************************************************
+Starting calculation for SKY observation 192/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:25:49
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.042275
+*******************************************************************************************************************************
+Starting calculation for SKY observation 193/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:26:07
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.012957
+*******************************************************************************************************************************
+Starting calculation for SKY observation 194/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:26:25
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.947884
+*******************************************************************************************************************************
+Starting calculation for SKY observation 195/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:26:43
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.027624
+*******************************************************************************************************************************
+Starting calculation for SKY observation 196/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:27:01
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.020965
+*******************************************************************************************************************************
+Starting calculation for SKY observation 197/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:27:19
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.110245
+*******************************************************************************************************************************
+Starting calculation for SKY observation 198/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:27:37
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.930963
+*******************************************************************************************************************************
+Starting calculation for SKY observation 199/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:27:55
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.075234
+*******************************************************************************************************************************
+Starting calculation for SKY observation 200/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:28:13
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.787736
+*******************************************************************************************************************************
+Starting calculation for SKY observation 201/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:28:31
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.051260
+*******************************************************************************************************************************
+Starting calculation for SKY observation 202/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:28:49
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.867775
+*******************************************************************************************************************************
+Starting calculation for SKY observation 203/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:29:06
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.126102
+*******************************************************************************************************************************
+Starting calculation for SKY observation 204/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:29:25
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.883882
+*******************************************************************************************************************************
+Starting calculation for SKY observation 205/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:29:43
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.060090
+*******************************************************************************************************************************
+Starting calculation for SKY observation 206/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:30:01
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.986270
+*******************************************************************************************************************************
+Starting calculation for SKY observation 207/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:30:19
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.016099
+*******************************************************************************************************************************
+Starting calculation for SKY observation 208/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:30:37
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.957803
+*******************************************************************************************************************************
+Starting calculation for SKY observation 209/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:30:55
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.083039
+*******************************************************************************************************************************
+Starting calculation for SKY observation 210/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:31:13
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.974510
+*******************************************************************************************************************************
+Starting calculation for SKY observation 211/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:31:31
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.995243
+*******************************************************************************************************************************
+Starting calculation for SKY observation 212/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:31:49
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.991338
+*******************************************************************************************************************************
+Starting calculation for SKY observation 213/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:32:07
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.991493
+*******************************************************************************************************************************
+Starting calculation for SKY observation 214/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:32:25
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.950788
+*******************************************************************************************************************************
+Starting calculation for SKY observation 215/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:32:43
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:18.005492
+*******************************************************************************************************************************
+Starting calculation for SKY observation 216/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:33:01
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.864789
+*******************************************************************************************************************************
+Starting calculation for SKY observation 217/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:33:18
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.640965
+*******************************************************************************************************************************
+Starting calculation for SKY observation 218/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:33:36
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.691036
+*******************************************************************************************************************************
+Starting calculation for SKY observation 219/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:33:54
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.622978
+*******************************************************************************************************************************
+Starting calculation for SKY observation 220/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:34:11
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.602737
+*******************************************************************************************************************************
+Starting calculation for SKY observation 221/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:34:29
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.698564
+*******************************************************************************************************************************
+Starting calculation for SKY observation 222/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:34:47
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.541379
+*******************************************************************************************************************************
+Starting calculation for SKY observation 223/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:35:04
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.273615
+*******************************************************************************************************************************
+Starting calculation for SKY observation 224/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:35:22
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:17.018347
+*******************************************************************************************************************************
+Starting calculation for SKY observation 225/225:
+Observation at point (20.363109, 69.34802700000002), azimuth 20.0, elevation 37.0. Observed point at altitude 220.0, position (23.04447650620056, 71.64875394081372)
+Starting time:  15:35:39
+41500.0 bins to compute per processor
+Computing DONE in:  0:00:16.938285
+opt_depth, direct:
+0.09257281352175895 2.7010739540426995e-13
+opt_depth, direct:
+0.09257281352175895 2.787231241644425e-13
+opt_depth, direct:
+0.09257281352175895 3.0532177947517164e-13
+opt_depth, direct:
+0.09257281352175895 3.3057317292911536e-13
+opt_depth, direct:
+0.09257281352175895 3.15842291226166e-13
+opt_depth, direct:
+0.09257281352175895 3.183515934801824e-13
+opt_depth, direct:
+0.09257281352175895 3.234929231461617e-13
+opt_depth, direct:
+0.09257281352175895 3.175072584016684e-13
+opt_depth, direct:
+0.09257281352175895 3.070236674818924e-13
+opt_depth, direct:
+0.09257281352175895 2.893337050114362e-13
+opt_depth, direct:
+0.09257281352175895 2.9804393382023384e-13
+opt_depth, direct:
+0.09257281352175895 3.137651420030507e-13
+opt_depth, direct:
+0.09257281352175895 3.370835506255807e-13
+opt_depth, direct:
+0.09257281352175895 3.4645774457709683e-13
+opt_depth, direct:
+0.09257281352175895 3.4672227741880537e-13
+opt_depth, direct:
+0.09257281352175895 3.4943077310565875e-13
+opt_depth, direct:
+0.09257281352175895 3.5141062996884054e-13
+opt_depth, direct:
+0.09257281352175895 3.403833407644419e-13
+opt_depth, direct:
+0.09257281352175895 3.381534412561324e-13
+opt_depth, direct:
+0.09257281352175895 3.2691922379990925e-13
+opt_depth, direct:
+0.09257281352175895 3.564245881641858e-13
+opt_depth, direct:
+0.09257281352175895 3.5734140235207875e-13
+opt_depth, direct:
+0.09257281352175895 2.9519047549037714e-13
+opt_depth, direct:
+0.09257281352175895 2.713135847544001e-13
+opt_depth, direct:
+0.09257281352175895 2.407420825657905e-13
+opt_depth, direct:
+0.09257281352175895 2.5096601157309935e-13
+opt_depth, direct:
+0.09257281352175895 2.724339561990642e-13
+opt_depth, direct:
+0.09257281352175895 2.7471473560888736e-13
+opt_depth, direct:
+0.09257281352175895 2.9707976697699354e-13
+opt_depth, direct:
+0.09257281352175895 3.0686154098239584e-13
+opt_depth, direct:
+0.09257281352175895 3.2074079921595386e-13
+opt_depth, direct:
+0.09257281352175895 3.200250110040465e-13
+opt_depth, direct:
+0.09257281352175895 3.1660893763910603e-13
+opt_depth, direct:
+0.09257281352175895 3.1737333695576125e-13
+opt_depth, direct:
+0.09257281352175895 3.0812065702800055e-13
+opt_depth, direct:
+0.09257281352175895 2.95103301916846e-13
+opt_depth, direct:
+0.09257281352175895 2.805495860392438e-13
+opt_depth, direct:
+0.09257281352175895 2.5275182358919227e-13
+opt_depth, direct:
+0.09257281352175895 2.3515395801121204e-13
+opt_depth, direct:
+0.09257281352175895 1.9577587849729657e-13
+opt_depth, direct:
+0.09257281352175895 1.6361715898595497e-13
+opt_depth, direct:
+0.09257281352175895 1.527405961590201e-13
+opt_depth, direct:
+0.09257281352175895 1.444215182657237e-13
+opt_depth, direct:
+0.09257281352175895 1.3847802660835675e-13
+opt_depth, direct:
+0.09257281352175895 1.3618789130771395e-13
+opt_depth, direct:
+0.09257281352175895 1.4530138484742086e-13
+opt_depth, direct:
+0.09257281352175895 1.612571674653903e-13
+opt_depth, direct:
+0.09257281352175895 1.8204517206685386e-13
+opt_depth, direct:
+0.09257281352175895 1.9237936409975549e-13
+opt_depth, direct:
+0.09257281352175895 1.8243241622002068e-13
+opt_depth, direct:
+0.09257281352175895 1.6504019110674088e-13
+opt_depth, direct:
+0.09257281352175895 1.5156208138644292e-13
+opt_depth, direct:
+0.09257281352175895 1.4137166275408453e-13
+opt_depth, direct:
+0.09257281352175895 1.3659500231501043e-13
+opt_depth, direct:
+0.09257281352175895 1.3589795128272013e-13
+opt_depth, direct:
+0.09257281352175895 1.320695460450484e-13
+opt_depth, direct:
+0.09257281352175895 1.319410811226204e-13
+opt_depth, direct:
+0.09257281352175895 1.300242992447897e-13
+opt_depth, direct:
+0.09257281352175895 1.2672786255699653e-13
+opt_depth, direct:
+0.09257281352175895 1.2082954129238545e-13
+opt_depth, direct:
+0.09257281352175895 1.1498110205141043e-13
+opt_depth, direct:
+0.09257281352175895 1.0528829124622363e-13
+opt_depth, direct:
+0.09257281352175895 9.966941218853502e-14
+opt_depth, direct:
+0.09257281352175895 1.051705789631443e-13
+opt_depth, direct:
+0.09257281352175895 9.888722854992952e-14
+opt_depth, direct:
+0.09257281352175895 9.824040002972766e-14
+opt_depth, direct:
+0.09257281352175895 9.483541606959174e-14
+opt_depth, direct:
+0.09257281352175895 9.287835410822944e-14
+opt_depth, direct:
+0.09257281352175895 9.067811130349008e-14
+opt_depth, direct:
+0.09257281352175895 8.8601435500211e-14
+opt_depth, direct:
+0.09257281352175895 8.715628897001061e-14
+opt_depth, direct:
+0.09257281352175895 8.586131483025841e-14
+opt_depth, direct:
+0.09257281352175895 8.85770111880662e-14
+opt_depth, direct:
+0.09257281352175895 9.04381121943309e-14
+opt_depth, direct:
+0.09257281352175895 9.629031298801704e-14
+opt_depth, direct:
+0.09257281352175895 1.0717377548416924e-13
+opt_depth, direct:
+0.09257281352175895 1.2181853660966706e-13
+opt_depth, direct:
+0.09257281352175895 1.3763774255830084e-13
+opt_depth, direct:
+0.09257281352175895 1.9924946208945298e-13
+opt_depth, direct:
+0.09257281352175895 1.4124825040998891e-13
+opt_depth, direct:
+0.09257281352175895 1.379301099516723e-13
+opt_depth, direct:
+0.09257281352175895 1.3589300534529446e-13
+opt_depth, direct:
+0.09257281352175895 1.592608846768204e-13
+opt_depth, direct:
+0.09257281352175895 1.7997911775653804e-13
+opt_depth, direct:
+0.09257281352175895 1.7834044390129643e-13
+opt_depth, direct:
+0.09257281352175895 1.6811394674023308e-13
+opt_depth, direct:
+0.09257281352175895 1.7115208846736377e-13
+opt_depth, direct:
+0.09257281352175895 1.6733446145826824e-13
+opt_depth, direct:
+0.09257281352175895 1.5206306666016122e-13
+opt_depth, direct:
+0.09257281352175895 1.4772269406062322e-13
+opt_depth, direct:
+0.09257281352175895 1.6778011973636132e-13
+opt_depth, direct:
+0.09257281352175895 1.7033758966326287e-13
+opt_depth, direct:
+0.09257281352175895 1.5966956646999351e-13
+opt_depth, direct:
+0.09257281352175895 1.5149253100050348e-13
+opt_depth, direct:
+0.09257281352175895 1.4090431663020416e-13
+opt_depth, direct:
+0.09257281352175895 1.3397038237882085e-13
+opt_depth, direct:
+0.09257281352175895 1.3707467208086587e-13
+opt_depth, direct:
+0.09257281352175895 1.398668572537964e-13
+opt_depth, direct:
+0.09257281352175895 1.396418319100451e-13
+opt_depth, direct:
+0.09257281352175895 1.3834452111808595e-13
+opt_depth, direct:
+0.09257281352175895 1.3682368003331821e-13
+opt_depth, direct:
+0.09257281352175895 1.3816041362505863e-13
+opt_depth, direct:
+0.09257281352175895 1.368365274320854e-13
+opt_depth, direct:
+0.09257281352175895 1.3753172675799473e-13
+opt_depth, direct:
+0.09257281352175895 1.3482084661922609e-13
+opt_depth, direct:
+0.09257281352175895 1.3140922358689488e-13
+opt_depth, direct:
+0.09257281352175895 1.2709976292732895e-13
+opt_depth, direct:
+0.09257281352175895 1.2119705524580309e-13
+opt_depth, direct:
+0.09257281352175895 1.1928135016828104e-13
+opt_depth, direct:
+0.09257281352175895 1.2006802986095535e-13
+opt_depth, direct:
+0.09257281352175895 1.1602021162062529e-13
+opt_depth, direct:
+0.09257281352175895 1.1405585851438802e-13
+opt_depth, direct:
+0.09257281352175895 1.0884762305240709e-13
+opt_depth, direct:
+0.09257281352175895 1.0839909005982744e-13
+opt_depth, direct:
+0.09257281352175895 1.0907995338752138e-13
+opt_depth, direct:
+0.09257281352175895 1.114826671499824e-13
+opt_depth, direct:
+0.09257281352175895 1.0477752303355882e-13
+opt_depth, direct:
+0.09257281352175895 9.743683000607118e-14
+opt_depth, direct:
+0.09257281352175895 9.560745484806733e-14
+opt_depth, direct:
+0.09257281352175895 9.570557704102517e-14
+opt_depth, direct:
+0.09257281352175895 9.743491505974552e-14
+opt_depth, direct:
+0.09257281352175895 9.660304397508373e-14
+opt_depth, direct:
+0.09257281352175895 9.696023209502986e-14
+opt_depth, direct:
+0.09257281352175895 9.611284732118234e-14
+opt_depth, direct:
+0.09257281352175895 9.710450107488971e-14
+opt_depth, direct:
+0.09257281352175895 9.678956660924961e-14
+opt_depth, direct:
+0.09257281352175895 9.779372843352063e-14
+opt_depth, direct:
+0.09257281352175895 1.0080603225724255e-13
+opt_depth, direct:
+0.09257281352175895 1.0051444506118894e-13
+opt_depth, direct:
+0.09257281352175895 9.91373476057405e-14
+opt_depth, direct:
+0.09257281352175895 1.0139093762608632e-13
+opt_depth, direct:
+0.09257281352175895 1.088063033347846e-13
+opt_depth, direct:
+0.09257281352175895 1.0590851459418764e-13
+opt_depth, direct:
+0.09257281352175895 1.0813464099829586e-13
+opt_depth, direct:
+0.09257281352175895 1.1336038725671626e-13
+opt_depth, direct:
+0.09257281352175895 1.1816221042353987e-13
+opt_depth, direct:
+0.09257281352175895 1.2423795557327217e-13
+opt_depth, direct:
+0.09257281352175895 1.3801276277440554e-13
+opt_depth, direct:
+0.09257281352175895 1.4867738609389778e-13
+opt_depth, direct:
+0.09257281352175895 1.5288842679726593e-13
+opt_depth, direct:
+0.09257281352175895 1.494437753650627e-13
+opt_depth, direct:
+0.09257281352175895 1.5570725776389893e-13
+opt_depth, direct:
+0.09257281352175895 1.949450059662616e-13
+opt_depth, direct:
+0.09257281352175895 2.0463073985188593e-13
+opt_depth, direct:
+0.09257281352175895 1.903989006176039e-13
+opt_depth, direct:
+0.09257281352175895 1.9893583505866985e-13
+opt_depth, direct:
+0.09257281352175895 2.299546517106742e-13
+opt_depth, direct:
+0.09257281352175895 2.5815825905587897e-13
+opt_depth, direct:
+0.09257281352175895 2.902816758370871e-13
+opt_depth, direct:
+0.09257281352175895 2.8234752784648095e-13
+opt_depth, direct:
+0.09257281352175895 2.745612679328203e-13
+opt_depth, direct:
+0.09257281352175895 2.927791962089049e-13
+opt_depth, direct:
+0.09257281352175895 3.1716769236006453e-13
+opt_depth, direct:
+0.09257281352175895 3.358662063102037e-13
+opt_depth, direct:
+0.09257281352175895 3.6038349769775257e-13
+opt_depth, direct:
+0.09257281352175895 5.90404776260172e-13
+opt_depth, direct:
+0.09257281352175895 5.917658134599125e-13
+opt_depth, direct:
+0.09257281352175895 6.952113165853604e-13
+opt_depth, direct:
+0.09257281352175895 8.844782257627095e-13
+opt_depth, direct:
+0.09257281352175895 8.298345213943915e-13
+opt_depth, direct:
+0.09257281352175895 8.365060863879255e-13
+opt_depth, direct:
+0.09257281352175895 6.567814187819114e-13
+opt_depth, direct:
+0.09257281352175895 5.395491710232674e-13
+opt_depth, direct:
+0.09257281352175895 4.743841170766885e-13
+opt_depth, direct:
+0.09257281352175895 4.754874301710176e-13
+opt_depth, direct:
+0.09257281352175895 5.10840211609663e-13
+opt_depth, direct:
+0.09257281352175895 5.911292366064972e-13
+opt_depth, direct:
+0.09257281352175895 6.622358871796005e-13
+opt_depth, direct:
+0.09257281352175895 7.878115511705104e-13
+opt_depth, direct:
+0.09257281352175895 6.884610112179226e-13
+opt_depth, direct:
+0.09257281352175895 5.383680476157212e-13
+opt_depth, direct:
+0.09257281352175895 3.826812506641824e-13
+opt_depth, direct:
+0.09257281352175895 3.951834280937774e-13
+opt_depth, direct:
+0.09257281352175895 3.299748148685335e-13
+opt_depth, direct:
+0.09257281352175895 2.765492058026868e-13
+opt_depth, direct:
+0.09257281352175895 2.647753824130126e-13
+opt_depth, direct:
+0.09257281352175895 2.6399113170796454e-13
+opt_depth, direct:
+0.09257281352175895 2.556897252864672e-13
+opt_depth, direct:
+0.09257281352175895 2.3855892237461505e-13
+opt_depth, direct:
+0.09257281352175895 2.3511607695283294e-13
+opt_depth, direct:
+0.09257281352175895 2.5931435723155594e-13
+opt_depth, direct:
+0.09257281352175895 2.799042449582413e-13
+opt_depth, direct:
+0.09257281352175895 3.222136851829007e-13
+opt_depth, direct:
+0.09257281352175895 3.230439049655059e-13
+opt_depth, direct:
+0.09257281352175895 3.571777242044387e-13
+opt_depth, direct:
+0.09257281352175895 4.0528795332798566e-13
+opt_depth, direct:
+0.09257281352175895 4.0085169980503e-13
+opt_depth, direct:
+0.09257281352175895 3.053574904981976e-13
+opt_depth, direct:
+0.09257281352175895 2.6777547107166496e-13
+opt_depth, direct:
+0.09257281352175895 2.4534664870433375e-13
+opt_depth, direct:
+0.09257281352175895 2.434040732420554e-13
+opt_depth, direct:
+0.09257281352175895 2.353973729443846e-13
+opt_depth, direct:
+0.09257281352175895 2.3959454553587814e-13
+opt_depth, direct:
+0.09257281352175895 2.352889971721421e-13
+opt_depth, direct:
+0.09257281352175895 2.2925639920868433e-13
+opt_depth, direct:
+0.09257281352175895 2.2285225127008793e-13
+opt_depth, direct:
+0.09257281352175895 2.1965542977344712e-13
+opt_depth, direct:
+0.09257281352175895 2.2108515611012994e-13
+opt_depth, direct:
+0.09257281352175895 2.2131893350522898e-13
+opt_depth, direct:
+0.09257281352175895 2.2414461612462126e-13
+opt_depth, direct:
+0.09257281352175895 2.2985408501335363e-13
+opt_depth, direct:
+0.09257281352175895 2.32058328751845e-13
+opt_depth, direct:
+0.09257281352175895 2.372223256795055e-13
+opt_depth, direct:
+0.09257281352175895 2.442128387331695e-13
+opt_depth, direct:
+0.09257281352175895 2.5115956359486933e-13
+opt_depth, direct:
+0.09257281352175895 2.5558056491816036e-13
+opt_depth, direct:
+0.09257281352175895 2.6461838422678267e-13
+opt_depth, direct:
+0.09257281352175895 2.697995724871618e-13
+opt_depth, direct:
+0.09257281352175895 2.744334908722908e-13
+opt_depth, direct:
+0.09257281352175895 2.8624184351402447e-13
+opt_depth, direct:
+0.09257281352175895 2.9625185782386766e-13
+opt_depth, direct:
+0.09257281352175895 3.1248022130600866e-13
+opt_depth, direct:
+0.09257281352175895 3.415324398082385e-13
+opt_depth, direct:
+0.09257281352175895 3.764880040014367e-13
+opt_depth, direct:
+0.09257281352175895 3.994598638087185e-13
+opt_depth, direct:
+0.09257281352175895 4.340609287908692e-13
+opt_depth, direct:
+0.09257281352175895 4.994743315975574e-13
+opt_depth, direct:
+0.09257281352175895 5.022637240001791e-13
+opt_depth, direct:
+0.09257281352175895 5.455582546412846e-13
+opt_depth, direct:
+0.09257281352175895 5.943170353567775e-13
+opt_depth, direct:
+0.09257281352175895 6.370517801980758e-13
+opt_depth, direct:
+0.09257281352175895 6.875131811266489e-13
+opt_depth, direct:
+0.09257281352175895 7.453869197435676e-13
+opt_depth, direct:
+0.09257281352175895 8.121356060857638e-13
+opt_depth, direct:
+0.09257281352175895 8.853258127003804e-13
+Warning: Ignoring XDG_SESSION_TYPE=wayland on Gnome. Use QT_QPA_PLATFORM=wayland to run on Wayland anyway.
+t, datetime, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,20200217-210000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.5099233041454587e-13,0.1990810071118519,-75.21869056190394,2.462252647145632e-13
+1,20200217-210230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.596042862139735e-13,0.2847517944829092,-71.34269889498019,2.540792151460471e-13
+2,20200217-210500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.846965946066575e-13,0.3874176843964622,-71.10627541761086,2.7832609270796433e-13
+3,20200217-210730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.081177836216641e-13,0.357374701105986,-78.61199536802631,3.013448294896918e-13
+4,20200217-211000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.938372956167287e-13,0.2530603265046046,-81.63227567175956,2.8791641061445547e-13
+5,20200217-211230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.953066063713093e-13,0.12124167095828588,-77.70037022454066,2.902038474720036e-13
+6,20200217-211500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.001443412577935e-13,0.1144085758963109,-64.64823490840347,2.9489059533425995e-13
+7,20200217-211730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.9472952543685994e-13,0.14236414768987282,-63.29467015515433,2.8943416610913774e-13
+8,20200217-212000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.8508703816442794e-13,0.11827498562829428,-69.92198136707334,2.7987750459856505e-13
+9,20200217-212230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.6872440209006933e-13,0.09071966159475943,-75.76423459093442,2.637516384942343e-13
+10,20200217-212500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.768288526212714e-13,0.11127814093394237,-81.81224986604016,2.716917335477617e-13
+11,20200217-212730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.910007350662496e-13,0.09201843943180715,-67.90301100970102,2.860229170411021e-13
+12,20200217-213000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.1236399298010697e-13,0.10203432183972529,-63.96988169053945,3.0727957803407994e-13
+13,20200217-213230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.221179764057411e-13,0.2531819040570162,-60.94054766182853,3.1582493231341427e-13
+14,20200217-213500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.225346055178031e-13,0.24564508596865617,-67.9861438206296,3.1606607591067824e-13
+15,20200217-213730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.2518425094786923e-13,0.24559095013727006,-78.48927096183708,3.1853509408204513e-13
+16,20200217-214000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.2686606440668847e-13,0.26986332198104557,-72.55168892532842,3.2033989761030194e-13
+17,20200217-214230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.162474325152077e-13,0.2509106885302425,-73.12462432721902,3.102876100771403e-13
+18,20200217-214500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.14220262543373e-13,0.25542280440740905,-78.96762656249479,3.082548719660693e-13
+19,20200217-214730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.0385100685301173e-13,0.2768983984949946,-76.43267582887913,2.9801395219088354e-13
+20,20200217-215000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.30953698403534e-13,0.2390020103078538,-83.13521360063883,3.2491053582651536e-13
+21,20200217-215230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.315737772836561e-13,0.23779118465652826,-78.02305865330483,3.257462879012416e-13
+22,20200217-215500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.741908592661231e-13,0.22275426954637212,-76.27440881027206,2.6909056991960793e-13
+23,20200217-215730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.5250199661257955e-13,0.25976076075080823,-70.66629320209724,2.4732480621947893e-13
+24,20200217-220000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.2472025587844038e-13,0.3170278151441169,-66.70585087801504,2.1945634964558218e-13
+25,20200217-220230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.3384034096719154e-13,0.2563695771690223,-63.76786862921461,2.2877630781436817e-13
+26,20200217-220500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.5341460863884834e-13,0.2401957548490845,-61.388484096673274,2.4834611759500856e-13
+27,20200217-220730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.551112923851368e-13,0.1948956133633197,-64.85834406708533,2.5042523695084366e-13
+28,20200217-221000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.7560628249361667e-13,0.20891373114777786,-63.393584964479864,2.708128156053243e-13
+29,20200217-221230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.8473883084427986e-13,0.18923888161756142,-67.91569676241718,2.7972971286485097e-13
+30,20200217-221500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.974287519724696e-13,0.17189748252765608,-71.4538872445099,2.9238180640521753e-13
+31,20200217-221730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.965841022109691e-13,0.15020643167787098,-76.225355892379,2.9172930615918513e-13
+32,20200217-222000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.934543500881823e-13,0.14698107597382198,-78.63494788428059,2.886152723234661e-13
+33,20200217-222230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.9424429765709727e-13,0.16249464600297303,-83.39039575609473,2.893120856180794e-13
+34,20200217-222500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.85497771019353e-13,0.13646248630302568,-89.4980804836444,2.808775014367683e-13
+35,20200217-222730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.735916001002381e-13,0.15188578310939252,-88.26527129234942,2.690111039864864e-13
+36,20200217-223000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.604596418321653e-13,0.1735935232129925,-83.94250298977887,2.557441864362293e-13
+37,20200217-223230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.3519626067565034e-13,0.23921117240908957,-82.73111392067257,2.304042233911883e-13
+38,20200217-223500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.1899274682344225e-13,0.24629807210429935,-80.56081111211715,2.1436231123301056e-13
+39,20200217-223730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.828682688656794e-13,0.2872964347249113,-81.37066058135964,1.7846592995195336e-13
+40,20200217-224000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.5335277620502185e-13,0.3424648660012832,-80.72485148277717,1.491505933144275e-13
+41,20200217-224230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.431119261784495e-13,0.35497479698604656,-75.69986634300109,1.3923570535944085e-13
+42,20200217-224500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3529759469585047e-13,0.3763403636549452,-72.57873249915136,1.3165217676559326e-13
+43,20200217-224730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2955595328572044e-13,0.348004411524795,-71.79650737736829,1.262341918027097e-13
+44,20200217-225000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2737772192205057e-13,0.35005050952458955,-69.0074126493068,1.2414654377741604e-13
+45,20200217-225230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3551518564726685e-13,0.2830269504908698,-67.11212738095345,1.3245424803679126e-13
+46,20200217-225500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.5002023454317571e-13,0.25299767876700513,-62.86833358385844,1.4699926555827538e-13
+47,20200217-225730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.687907342432639e-13,0.16621159390535864,-61.8353849889167,1.659492536851166e-13
+48,20200217-230000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.7820888703947716e-13,0.14315530873977259,-62.00119944984124,1.7536972573514663e-13
+49,20200217-230230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.6921629090807408e-13,0.1648470250079623,-58.27733875294819,1.663022588073198e-13
+50,20200217-230500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.534494830934656e-13,0.17289165555125086,-58.58879640338268,1.5044780496653134e-13
+51,20200217-230730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.4110047519816458e-13,0.18395551760636072,-59.47207579120729,1.3816139152433267e-13
+52,20200217-231000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3175589943336481e-13,0.17664002173931376,-60.29784604246347,1.2887198083807866e-13
+53,20200217-231230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2738959353641561e-13,0.18110576901548736,-61.64313024885684,1.2451765918278938e-13
+54,20200217-231500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2680124589387477e-13,0.20839317041534192,-63.521034496555004,1.2388223942803457e-13
+55,20200217-231730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2335346428325345e-13,0.24347346073381057,-65.73440901184496,1.2039233093563851e-13
+56,20200217-232000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.232593350225456e-13,0.2786658224678482,-68.23824819267375,1.2027522451771159e-13
+57,20200217-232230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2142066165038702e-13,0.29352334910831573,-66.57893567498446,1.1852791906329202e-13
+58,20200217-232500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.182659045446025e-13,0.2771407991213612,-67.43485091519574,1.155229439686566e-13
+59,20200217-232730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.1279902237826939e-13,0.27798296345978585,-69.47843687358602,1.1014613556036878e-13
+60,20200217-233000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0742971127632546e-13,0.29694133237379366,-70.42697828682894,1.0481479874850247e-13
+61,20200217-233230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.847190712967419e-14,0.2935830139965638,-70.24325597839047,9.597899881506025e-14
+62,20200217-233500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.334895252635276e-14,0.3144683050230776,-67.64149477228527,9.085692512541621e-14
+63,20200217-233730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.838419336719837e-14,0.2705716643083433,-66.76201232047528,9.587169431857292e-14
+64,20200217-234000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.244600686048063e-14,0.2354775635777339,-58.60163617243036,9.014389994821666e-14
+65,20200217-234230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.180173003860367e-14,0.1798086146268732,-55.829055551993314,8.955426217331139e-14
+66,20200217-234500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.876432880656419e-14,0.10615501202387137,-54.93845069144171,8.645033724864027e-14
+67,20200217-234730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.706127430130206e-14,0.10554055203730378,-43.30014586984122,8.466631316156185e-14
+68,20200217-235000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.500873044958407e-14,0.14760336068327654,-24.254379390164075,8.26606095923485e-14
+69,20200217-235230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.314700551543029e-14,0.23120273695925544,-18.4790219806172,8.07675475803906e-14
+70,20200217-235500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.197892778938252e-14,0.34456359855094365,-18.35651730196362,7.945017681230277e-14
+71,20200217-235730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.10744449034158e-14,0.5291099869571116,-23.59589627672264,7.826970061733682e-14
+72,20200218-000000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.3846775911383e-14,0.5406582945469985,-28.411822248976716,8.074528279673177e-14
+73,20200218-000230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.592848775987715e-14,0.7089551168136049,-34.72938545713814,8.244183052450576e-14
+74,20200218-000500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.1791894318233e-14,0.790827635694226,-42.520987089233095,8.777659630324892e-14
+75,20200218-000730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0274002904443183e-13,0.9905988558756325,-53.53150855805808,9.769777387824742e-14
+76,20200218-001000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.172031323256885e-13,1.1018830340910661,-56.00457814066899,1.1104768671351162e-13
+77,20200218-001230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3231648082183614e-13,1.0042936863495735,-50.106623707109776,1.2546820328784221e-13
+78,20200218-001500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.8781664369180507e-13,0.5610070244859637,-51.40447584369021,1.8163238912352385e-13
+79,20200218-001730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3400170378860924e-13,0.5926110760441853,-52.32519748351949,1.2875948026382186e-13
+80,20200218-002000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3051148824041926e-13,0.49168589310070154,-48.2307057455344,1.257347203845661e-13
+81,20200218-002230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2812830448891653e-13,0.3410363873809474,-45.58232259226324,1.2387773079638428e-13
+82,20200218-002500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.4915946235120358e-13,0.2847113442329995,-47.0964338657786,1.4517948843841879e-13
+83,20200218-002730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.680012199055278e-13,0.20963331092929663,-45.76279008850559,1.6406587404380473e-13
+84,20200218-003000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.6659278668066381e-13,0.20479773458096318,-49.90805466799781,1.6257208708849459e-13
+85,20200218-003230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.5689792041516168e-13,0.1472693161235986,-50.06241214340444,1.5324978783483355e-13
+86,20200218-003500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.593736693590291e-13,0.11428464538158514,-50.17616906843056,1.5601930567748086e-13
+87,20200218-003730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.5587225583266116e-13,0.14743315451967906,-49.53314074020957,1.5253922243322492e-13
+88,20200218-004000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.4194025475778084e-13,0.15629076845330436,-48.25953761723799,1.3861808109943578e-13
+89,20200218-004230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3799092419867896e-13,0.1508819195334154,-49.73169151187949,1.3466147194891053e-13
+90,20200218-004500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.5646773736672302e-13,0.15418046920428546,-60.68636410493561,1.529454768689151e-13
+91,20200218-004730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.5895945017397003e-13,0.20223938750191597,-51.45871625372413,1.5527682255017043e-13
+92,20200218-005000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.4920360426069217e-13,0.20506522110484907,-42.598635742701696,1.4555203574523156e-13
+93,20200218-005230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.4183254801791985e-13,0.2115739495751698,-34.770595797660555,1.3809799058648235e-13
+94,20200218-005500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3206911120005975e-13,0.21279134983684445,-37.67694883931985,1.2844595613448422e-13
+95,20200218-005730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2568567476312604e-13,0.19893968914005686,-38.86476072610574,1.2212510070583187e-13
+96,20200218-010000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2851640934873584e-13,0.17871435728038906,-45.48942273010347,1.2495491790684822e-13
+97,20200218-010230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3109349859286786e-13,0.19123881552432326,-47.386105858721336,1.275002259770249e-13
+98,20200218-010500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3082262346703373e-13,0.17678036497950536,-50.212179564705124,1.2729509673667322e-13
+99,20200218-010730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2962355549601873e-13,0.16341860405559716,-54.78038905459452,1.2611249048966873e-13
+100,20200218-011000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2809284211792316e-13,0.12349498112780757,-60.04680256947266,1.247261178650864e-13
+101,20200218-011230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.292804390629838e-13,0.1146306307970948,-64.88327653823647,1.2594466125959994e-13
+102,20200218-011500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.280426115577069e-13,0.10051856863881513,-68.50037535966246,1.2473782933325116e-13
+103,20200218-011730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2865154228039098e-13,0.0978584482726856,-73.65931760185406,1.2537156110425734e-13
+104,20200218-012000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2620732993483881e-13,0.09014657343700916,-71.904836540383,1.229003693074584e-13
+105,20200218-012230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.2310624352833788e-13,0.10063610096988702,-72.08331972110261,1.1979039231854705e-13
+106,20200218-012500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.1924681241477854e-13,0.10330766314509798,-74.59753193117315,1.158619619618348e-13
+107,20200218-012730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.1383109784424755e-13,0.10216480730032189,-73.23416705162695,1.1048115497118911e-13
+108,20200218-013000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.1206617702443266e-13,0.11006195141294224,-64.12792031767131,1.0873483110944548e-13
+109,20200218-013230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.1287681945694169e-13,0.20736394327628566,-60.3940823704873,1.0945195481235037e-13
+110,20200218-013500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0923368491691845e-13,0.29464352059063087,-59.51117146387709,1.0576203319339587e-13
+111,20200218-013730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0748949940280457e-13,0.37166605072411385,-70.69036107664394,1.0397136262381657e-13
+112,20200218-014000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0277461392454922e-13,0.38250985360547823,-79.59371609723225,9.92236245864975e-14
+113,20200218-014230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0229678636243865e-13,0.3859093980196853,-82.21682754731071,9.881474961043162e-14
+114,20200218-014500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0282501279264383e-13,0.3483229387249058,-87.48804759260737,9.943541293157085e-14
+115,20200218-014730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0509087647888631e-13,0.3816653298094755,89.49000316697469,1.0162568555002258e-13
+116,20200218-015000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.894498567987771e-14,0.41730466387333415,-88.74488167539391,9.551339128075729e-14
+117,20200218-015230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.215961164151231e-14,0.43817238555133287,88.70924951159002,8.882174153463961e-14
+118,20200218-015500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.047860491567634e-14,0.4265973333271549,87.35323913483074,8.715411454550229e-14
+119,20200218-015730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.053738247393612e-14,0.4341489382284231,89.66356886711297,8.724356105213814e-14
+120,20200218-020000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.230919646630615e-14,0.5086196095886806,-85.95166055333678,8.881999590244304e-14
+121,20200218-020230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.170970168058661e-14,0.6216937244500886,89.25027841344523,8.806167650240338e-14
+122,20200218-020500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.179860053425569e-14,0.5466887838157833,86.11328801143404,8.838728306069476e-14
+123,20200218-020730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.093323970460438e-14,0.5188637388858102,83.47821469250655,8.761482164791702e-14
+124,20200218-021000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.182681190369388e-14,0.4958994612553416,82.27120694808997,8.851879618606819e-14
+125,20200218-021230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.152062266484714e-14,0.4695860174244218,83.4792033195467,8.823170733367334e-14
+126,20200218-021500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.238720561945074e-14,0.44168002784266,85.70231809935828,8.914708401422417e-14
+127,20200218-021730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.530274410447623e-14,0.4889946972216728,-88.88972127896751,9.189304846768354e-14
+128,20200218-022000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.505893595764402e-14,0.5054135271300196,-88.07214590840113,9.162724258544097e-14
+129,20200218-022230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.365780343749208e-14,0.5024805049951517,86.93285019612647,9.037190418569798e-14
+130,20200218-022500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.571942580742719e-14,0.4971364908442764,87.63470242031383,9.242623816084605e-14
+131,20200218-022730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0246256168528431e-13,0.44233836477355604,87.1367468865333,9.91859582412488e-14
+132,20200218-023000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,9.994252302919324e-14,0.4743913380518965,83.98409996855746,9.654438377168473e-14
+133,20200218-023230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0208409549169231e-13,0.46362405685568286,84.18979289051082,9.857368238573874e-14
+134,20200218-023500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.0699724537351989e-13,0.43152060656153535,85.97113491163734,1.0333738296448402e-13
+135,20200218-023730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.1161734487267072e-13,0.4501235454563896,85.526925267712,1.0771464253042101e-13
+136,20200218-024000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.1749448194920142e-13,0.4982274264906296,88.7277814616768,1.1325318750654797e-13
+137,20200218-024230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.3045648982254252e-13,0.5065587277478204,89.21698280292574,1.2581006527886801e-13
+138,20200218-024500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.4066387525555157e-13,0.45197233190498265,-87.09364682024544,1.355317528172373e-13
+139,20200218-024730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.4484411939244945e-13,0.3690558263262017,-84.25599028956486,1.393704652314559e-13
+140,20200218-025000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.416918552167438e-13,0.32973204449381693,-81.05020364103359,1.3623038012022005e-13
+141,20200218-025230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.4764621464188294e-13,0.37956533361511485,-79.71792539089849,1.419400631497432e-13
+142,20200218-025500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.8414400527337786e-13,0.41714535475392983,-80.38488009122965,1.777085208162577e-13
+143,20200218-025730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.9375488778335849e-13,0.4568663736303756,-83.22168108779034,1.865378695513163e-13
+144,20200218-030000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.8064404319211554e-13,0.48076577958077243,-80.46393226352443,1.7356436922345078e-13
+145,20200218-030230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,1.8864895747246898e-13,0.44426164854444855,-85.12741538654322,1.8134649210629988e-13
+146,20200218-030500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.1777792435130698e-13,0.4512329656516922,-88.69887869856537,2.0962271286597602e-13
+147,20200218-030730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.42961884492117e-13,0.36737198750955397,88.22651309239424,2.3533263715029594e-13
+148,20200218-031000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.7167250721016734e-13,0.26981600257099975,82.58889338338845,2.646157924250744e-13
+149,20200218-031230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.6416155221035104e-13,0.25140701986327607,79.64820790383352,2.573831593224243e-13
+150,20200218-031500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.570113065622962e-13,0.23154092243313384,74.81562446549728,2.5028533845192183e-13
+151,20200218-031730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.741771235888333e-13,0.24768724407505677,73.22590638954462,2.668924891210699e-13
+152,20200218-032000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.974850455839817e-13,0.2571604959474661,71.69787433596495,2.8912462353494477e-13
+153,20200218-032230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.1545607903198573e-13,0.24118164970822192,69.86668218783397,3.061698678543426e-13
+154,20200218-032500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.384162325152543e-13,0.25933623782624055,67.26667091184665,3.28519409794681e-13
+155,20200218-032730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,5.489236568324708e-13,0.1465762211077104,69.58734066331529,5.382028585549242e-13
+156,20200218-033000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,5.512446000639125e-13,0.1629143273109542,73.50708588899326,5.394435567012704e-13
+157,20200218-033230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,6.459860994579851e-13,0.18512483032958987,76.01248080135035,6.33742701500591e-13
+158,20200218-033500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.184399530585986e-13,0.15387902401619238,78.72320736210587,8.062751667600122e-13
+159,20200218-033730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,7.687402985658286e-13,0.14076172467374154,79.69019707484951,7.564629039267942e-13
+160,20200218-034000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,7.749128828779121e-13,0.14692530682908028,76.34443832723721,7.625445880440866e-13
+161,20200218-034230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,6.105834017201413e-13,0.19834631706895564,73.04419126761621,5.987106663893515e-13
+162,20200218-034500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,5.029388618854327e-13,0.21091626133083938,69.7321446060462,4.918437618595725e-13
+163,20200218-034730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,4.430786449955562e-13,0.23631848011957296,68.91507085201872,4.324404173709102e-13
+164,20200218-035000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,4.4407077099237384e-13,0.22632826924725943,72.35440809013053,4.334461786471152e-13
+165,20200218-035230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,4.762388870461527e-13,0.20490325060992648,69.90197625745442,4.656731673050827e-13
+166,20200218-035500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,5.495353565639232e-13,0.2057922781695026,74.68576238633132,5.388632641698173e-13
+167,20200218-035730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,6.137659388465757e-13,0.19158577099121635,68.14580486104488,6.036828661437791e-13
+168,20200218-040000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,7.276542391530991e-13,0.13807172645982815,66.83751670604481,7.181554856793938e-13
+169,20200218-040230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,6.369660536758538e-13,0.16771815638843623,73.0317078674133,6.275892390101847e-13
+170,20200218-040500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,4.997891960040501e-13,0.24160745743434903,76.90413114093899,4.90767070037609e-13
+171,20200218-040730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.570875166560636e-13,0.29194650614828227,78.1059326754862,3.488456586131624e-13
+172,20200218-041000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.6855050180594603e-13,0.31554079156023157,81.42993259833273,3.6024242893299423e-13
+173,20200218-041230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.091362687085075e-13,0.38853092854952076,84.27459854560367,3.0079937655368337e-13
+174,20200218-041500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.6039845760785893e-13,0.48537329324660583,86.47389256583213,2.5209750848714574e-13
+175,20200218-041730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.4930368230691994e-13,0.46888049457868974,-86.9728737046461,2.4136469320644563e-13
+176,20200218-042000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.487098078235067e-13,0.5376493902860924,-84.41567854058769,2.406497837269624e-13
+177,20200218-042230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.410117362351745e-13,0.5515420717485177,-81.08528932827343,2.3308236414344057e-13
+178,20200218-042500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.2573069005932095e-13,0.6677348245185961,-77.78756878258551,2.1746621829363636e-13
+179,20200218-042730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.225798344843044e-13,0.6327641195797759,-78.88286609853209,2.1432777951049661e-13
+180,20200218-043000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.4470829271607366e-13,0.5598570405897578,-77.98549038456048,2.363865164004958e-13
+181,20200218-043230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.6391133740771196e-13,0.473133459170455,-80.67721325281214,2.551559045853633e-13
+182,20200218-043500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.0286898186730607e-13,0.41999530498321064,-78.52452485476407,2.9372446396764023e-13
+183,20200218-043730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.0326884888171676e-13,0.38569085742443104,-77.11626041409245,2.94481278069073e-13
+184,20200218-044000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.3419169538456446e-13,0.33189393424259056,-79.30060103570237,3.2559708171171706e-13
+185,20200218-044230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.7765017523513085e-13,0.24507602701592346,-80.37391477729145,3.6945354067202725e-13
+186,20200218-044500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.7354411309414064e-13,0.2353351370109739,-81.6243163915413,3.654095281177031e-13
+187,20200218-044730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.8615973539275463e-13,0.26914990942487144,-82.64475940572466,2.7835864626350336e-13
+188,20200218-045000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.5129260566075995e-13,0.2637014571063152,-84.27348026290234,2.4409952252512546e-13
+189,20200218-045230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.3029592307434954e-13,0.2599654150991884,-83.11820841209516,2.2365379309085192e-13
+190,20200218-045500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.2818683621720574e-13,0.269238304781476,-84.16858449555161,2.2188297464764856e-13
+191,20200218-045730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.2057184062781076e-13,0.257621623958255,-83.7539911064097,2.1458420410738445e-13
+192,20200218-050000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.2405176623407064e-13,0.2138974783808087,-88.3858731517563,2.184102745888921e-13
+193,20200218-050230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.1998522772189602e-13,0.20963399007616973,88.04369910778054,2.1448541061389596e-13
+194,20200218-050500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.1436174233910163e-13,0.20564955323973894,85.3884164781185,2.0898619787206874e-13
+195,20200218-050730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.084558416376331e-13,0.19973759396006094,84.17071893134562,2.0314828655130676e-13
+196,20200218-051000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.0557439867307165e-13,0.21733102386677083,80.35544335172635,2.00234118954831e-13
+197,20200218-051230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.0692804554748822e-13,0.23663844572092316,76.03033290805394,2.0153743293922678e-13
+198,20200218-051500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.0714330092460062e-13,0.2534095653258663,72.09129975805477,2.0175054039934053e-13
+199,20200218-051730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.0977549230022294e-13,0.26574322355973035,70.22917415022599,2.043263841666608e-13
+200,20200218-052000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.1512407481572492e-13,0.2784591275023724,69.61244024404749,2.0953103799112795e-13
+201,20200218-052230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.1722117473432657e-13,0.28640417250461936,68.10875667780134,2.1154038874286555e-13
+202,20200218-052500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.2211717985397798e-13,0.30231426888208524,68.22339916629771,2.162477996917414e-13
+203,20200218-052730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.286990818753285e-13,0.31756261853126677,67.88237529076692,2.2262023138526405e-13
+204,20200218-053000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.3516997682500795e-13,0.32933165098193223,65.83784132060909,2.2895274651470445e-13
+205,20200218-053230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.394494970095613e-13,0.34550635267586455,66.03449469495254,2.32982855425649e-13
+206,20200218-053500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.4794854968778434e-13,0.3514428235891708,66.15153342307929,2.4122157635506766e-13
+207,20200218-053730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.529663491968406e-13,0.36558678746747947,66.12412151238505,2.4594465862772605e-13
+208,20200218-054000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.57622574313705e-13,0.3970339783446897,66.29987426612004,2.501688590770931e-13
+209,20200218-054230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.6884833010175174e-13,0.41674567339672275,65.57757058157858,2.609331506312066e-13
+210,20200218-054500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.784983032746329e-13,0.4457990618278305,64.67750643050796,2.7005810783405827e-13
+211,20200218-054730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,2.9394787542507043e-13,0.46952266532789727,64.95012871435576,2.8485160539192316e-13
+212,20200218-055000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.213622393100766e-13,0.4887357610486524,65.69543474937963,3.1133510903887217e-13
+213,20200218-055230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.542790661603901e-13,0.5078786265223013,66.03108163620632,3.4320000127492185e-13
+214,20200218-055500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,3.75822055136695e-13,0.5262648846000719,64.75163655296856,3.64140754317126e-13
+215,20200218-055730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,4.083963006865242e-13,0.5441417743368646,64.48599124597,3.9568249115807576e-13
+216,20200218-060000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,4.692629282475797e-13,0.5249932655514062,64.21312423553216,4.553122262042067e-13
+217,20200218-060230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,4.727474278197606e-13,0.5627726706573205,64.49020009680255,4.578549884329135e-13
+218,20200218-060500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,5.138233711992483e-13,0.5747404509298686,65.45558589152252,4.973215393277671e-13
+219,20200218-060730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,5.59999226538123e-13,0.5906636392523116,66.06469631948698,5.417692067856045e-13
+220,20200218-061000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,6.00469491183946e-13,0.6011888974183878,66.06711948091983,5.807254665552014e-13
+221,20200218-061230,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,6.484205861742968e-13,0.6183172126446544,66.58107669247701,6.267252133703869e-13
+222,20200218-061500,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,7.031365593755265e-13,0.6371373248850317,66.19455759345747,6.794819199746037e-13
+223,20200218-061730,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,7.663679434566897e-13,0.6658097622483851,66.02840146555742,7.403288765688798e-13
+224,20200218-062000,20.0,37.0,None,1.0,0.0,100.0,630.0,0.0,8.359395346836057e-13,0.6898270650576912,66.08090731186489,8.070478124618609e-13
+Simulation ran in: 1:18:45.829415

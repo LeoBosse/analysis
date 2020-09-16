@@ -42,6 +42,12 @@ def RunSimulation(file_name = "", show = True, output_result_file=None):
 		in_dict = ReadInputFile("./input_files/RS_default.in")
 		if mpi_rank == 0: print("WARNING: Wrong or no input file specified, default in use.")
 
+	if mpi_rank == 0:
+		print("All input parameter from the input file:")
+		for k, v in in_dict.items():
+			if k[0] != "#":
+				print(f"{k}: {v}")
+
 	#Init the rayleigh object
 	simu = Simulation(in_dict)
 	simu.ComputeAllMaps()

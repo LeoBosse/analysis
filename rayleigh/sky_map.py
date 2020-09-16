@@ -175,7 +175,7 @@ class SkyMap:
 
 		ls = sorted([f for f in os.listdir(self.image_file) if ".png" in f and len(f) == 33])
 
-		ls = ls[::2]
+		ls = ls[::5] #20200307_20h_5577
 		self.times = ["_".join(n.split("_")[1:3]) for n in ls]
 		self.times = [dt.datetime.strptime(n, "%Y%m%d_%H%M%S") for n in self.times]
 		# print(ls)
@@ -183,9 +183,21 @@ class SkyMap:
 		self.Nt = len(ls)
 		self.cube = np.zeros((self.Nt, self.Ne, self.Na))
 
-		for i, f in enumerate(ls):
-			if mpi_rank==0: print(str(i+1) + "/" + str(len(ls)) + ": Importing all sky image data from " + self.image_file + f)
-			self.cube[i, :, :] = self.LoadAllSkyImage(filename = self.image_file + f, verbose=False)
+		reciever_cube = np.empty_like(self.cube)
+
+		filenames = ls[mpi_rank::mpi_size]
+		for i, f in enumerate(filenames):
+			t = i * mpi_size + mpi_rank
+			print(str(t+1) + "/" + str(len(ls)) + ": Importing all sky image data from " + self.image_file + f)
+			self.cube[t, :, :] = self.LoadAllSkyImage(filename = self.image_file + f, verbose=False)
+
+		# self.MakeSkyCubePlot([0*DtoR], [90*DtoR], 1*DtoR)
+
+		mpi_comm.Allreduce(self.cube, reciever_cube, op = MPI.SUM)
+		self.cube = reciever_cube
+
+
+		# if mpi_rank == 0: self.MakeSkyCubePlot([0*DtoR], [90*DtoR], 1*DtoR)
 
 
 	def LoadAllSkyImage(self, filename = "", verbose=True):
@@ -481,11 +493,12 @@ class SkyMap:
 					# self.AoLP_total[it, ie, ia] = np.arctan2(self.Vsin_total[it, ie, ia], self.Vcos_total[it, ie, ia]) / 2
 
 		self.I0_total = 2 * self.V_total
-		self.DoLP_total = 100 * 2 * np.sqrt(self.Vcos_total ** 2 + self.Vsin_total ** 2) / self.V_total[it, ie, ia] #in %
+		self.DoLP_total = 100 * 2 * np.sqrt(self.Vcos_total ** 2 + self.Vsin_total ** 2)
+		self.DoLP_total = np.divide(self.DoLP_total, self.V_total[it, ie, ia], out = np.zeros_like(self.DoLP_total), where = self.V_total[it, ie, ia] != 0) #in %
 		self.AoLP_total = np.arctan2(self.Vsin_total, self.Vcos_total) / 2
 
 
-	def GetFlatMap(self, A_lon, A_lat, mid_lon = None, mid_lat = None, time = 0, Nmax = 1000):
+	def GetFlatMap(self, A_lon, A_lat, mid_lon = None, mid_lat = None, time = 0, Nmax = 1000, tau0 = 0):
 		if mid_lon is None or mid_lat is None:
 			lon_m = AzEltoLonLat(-90*DtoR, 0, self.h, A_lon, A_lat)[0]
 			lon_M = AzEltoLonLat(90*DtoR, 0, self.h, A_lon, A_lat)[0]
@@ -513,7 +526,7 @@ class SkyMap:
 					for ilat, ground_lat in enumerate(mid_latitudes):
 						L = np.sqrt((sky_lon - ground_lon)**2 + (sky_lat - ground_lat)**2) * RT * np.cos(sky_lat)
 						theta = np.arctan(L / self.h)
-						I = I0 * sky_area * np.cos(theta)**3 / (2 * np.pi * self.h**2 * 1e6) #nW/m2/sr
+						I = I0 * sky_area * np.cos(theta)**3 * np.exp(- tau0 / np.cos(theta)) / (2 * np.pi * self.h**2 * 1e6) #nW/m2/sr
 
 						flat_map[ilat, ilon] += I
 

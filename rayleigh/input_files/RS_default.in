@@ -15,24 +15,24 @@ flux_unit W cd/m2
 
 # ###############################################################################
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
-azimuts 									 	0 ;45;90;135;180;225;270;315 								# In degrees, 0 is north, east is 90
-elevations 									45 								#90 may have some bugs...
+azimuts 									 	0;10;20;30;40;45;50;60;70;80;90 ;45;90;135;180;225;270;315 								# In degrees, 0 is north, east is 90
+elevations 									45 								# 90 may have some bugs...
 
-location 										lagorge   #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
+location 										skibotn     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
 
 instrument_opening_angle 		1	  		# Angle de DEMI-ouverture de l'instrument en degrés
 instrument_area 20 									#Area of Petit Cru in cm^2 (gets converted in m**2 in the code)
 
-wavelength 557.7     630   #in nm
+wavelength 557.7 630      630   #in nm
 
 # ###############################################################################
 ### Atmosphere parameters
-RS_min_altitude	 						0	 	    # Minimum altitude of the scatering layer
-RS_max_altitude	 						100 		# Maximum altitude of the scatering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
+RS_min_altitude	 						0	 	    # Minimum altitude of the scattering layer
+RS_max_altitude	 						100 		# Maximum altitude of the scattering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
 resolution_along_los				1			# Distance between every RS points along the line of sight (in km)
 # Nb_points_along_los 			0			  # WARNING: Should not use! Use the resolution parameter instead! Number of bins along the line of sight between H_r_min and h_r_max
 
-max_angle_discretization		2				# In degrees. If scattering volume solid angle seen from E is larger than that, cut the volume in pieces.
+max_angle_discretization		0				# In degrees. If scattering volume solid angle seen from E is larger than that, cut the volume in pieces.
 
 Atmospheric_profile atm_profiles/win.atm   #name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure).
 
@@ -46,11 +46,11 @@ Atmospheric_profile atm_profiles/win.atm   #name of the atmospheric profile file
 # "spot_aAAA_eEE" 										Single sky pixel source at elevation EE and azimut AAA. Change the "I_zone_*" parameters and the "Nb_emission_points" for faster computations. Else, just a small aurora.
 # "image"														use an all-sky camera picture defined by the sky_file parameter
 # "movie"
-sky_mode none image 1_moving_EW_band  image uniform_100  spot_I100_a90_e45  uniform_219  uniform_219  uniform_100  spot_a180_e45
+sky_mode none uniform_100 1_moving_EW_band image uniform_100  spot_I100_a90_e45  uniform_219  uniform_219  uniform_100  spot_a180_e45
 
-emission_altitude	110 384402			# Altitude of the emission in km. Put 0 if emission on ground
+emission_altitude	220 384402			# Altitude of the emission in km. Put 0 if emission on ground
 
-Nb_emission_points 1000				 # Number of bins to compute
+Nb_emission_points 100				 # Number of bins to compute
 Nb_emission_maps 1						 # Number of emission maps to compute. Use it for time changing emissions (auroras). Should be put to 1 when not varying !
 
 #Zone of emission
@@ -63,9 +63,10 @@ I_zone_e_max 90 18.4 45.5 	#Do not touch: obsolete
 sky_path /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
 
 #sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_203908_5577_cal.png
-sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_204523_5577_cal.png
+#sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_204523_5577_cal.png
 #sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_204908_5577_cal.png
 #sky_file skn4/5577/2019/20190307/ut20/
+sky_file nya6/6300/2020/20200217/all_night/
 
 sky_wavelength 557.7 # To be able to pass from Rayleigh to nW
 
@@ -89,8 +90,8 @@ alt_map_resolution 0.2 # en km. Minimum 1arcsec (31m)
 
 ground_mode uniform_I100 point_I100_a180_d5 uniform_I100 gaussian_I100_w1_a45_d10
 
-ground_emission_radius 500  # in km.
-ground_N_bins_max 10000
+ground_emission_radius 200  # in km.
+ground_N_bins_max 100
 
 ground_albedo 0 #in [0, 1]. Albedo of the ground. The reflection of the sky emission will be added to the ground map. DO not work with sky movies!
 

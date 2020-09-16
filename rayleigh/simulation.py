@@ -71,10 +71,17 @@ class Simulation:
 
 		if self.world.has_sky_emission: ### Compute how the sky maps looks through the instrument for every time and observations directions
 			self.is_ground_emission = False
+			observations_number = self.world.sky_map.Nt * self.world.Nb_a_pc * self.world.Nb_e_pc
+			count = 0
 			for t in range(self.world.sky_map.Nt):
 				# self.SetIMap(time = t)
 				for ia_pc in range(self.world.Nb_a_pc):
 					for ie_pc in range(self.world.Nb_e_pc):
+						count += 1
+						if mpi_rank == 0:
+							print("*******************************************************************************************************************************")
+							print(f"Starting calculation for SKY observation {count}/{observations_number}:")
+
 						self.ia_pc, self.ie_pc = ia_pc, ie_pc
 						self.world.a_pc, self.world.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
 						self.a_pc, self.e_pc = self.world.a_pc, self.world.e_pc
@@ -99,10 +106,17 @@ class Simulation:
 				self.world.sky_map.SetLightParameters()
 
 		if self.world.has_ground_emission: ### Compute how the ground map looks through the instrument for every observations directions
+			observations_number = self.world.sky_map.Nt * self.world.Nb_a_pc * self.world.Nb_e_pc
+			count = 0
 			self.is_ground_emission = True
 			for t in range(self.world.sky_map.Nt):
 				for ia_pc in range(self.world.Nb_a_pc):
 					for ie_pc in range(self.world.Nb_e_pc):
+						count += 1
+						if mpi_rank==0:
+							print("*******************************************************************************************************************************")
+							print(f"STARTING calculation for GROUND observation {count}/{observations_number}:")
+
 						self.ia_pc, self.ie_pc = ia_pc, ie_pc
 						self.world.a_pc, self.world.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
 						self.a_pc, self.e_pc = self.world.a_pc, self.world.e_pc
@@ -193,20 +207,19 @@ class Simulation:
 			self.world.SetObservation(self.a_pc, self.e_pc)
 
 			self.SetSaveName()
-			if mpi_rank==0: print("*******************************************************************************************************************************")
 
-			if mpi_rank==0: print("STARTING calculation for obs:")
-			if mpi_rank==0: print(self.world.obs)
+
 			start_time = dt.datetime.now()
-			if mpi_rank==0: print("Starting time: ", start_time.time().strftime("%H:%M:%S"))
+			if mpi_rank==0:
+				print(self.world.obs)
+				print("Starting time: ", start_time.time().strftime("%H:%M:%S"))
 
 			if self.is_ground_emission == True:
 				self.world.ComputeGroundMaps(self.time, self.ia_pc, self.ie_pc)
 			else:
 				self.world.ComputeSkyMaps(self.time, self.ia_pc, self.ie_pc)
 
-		if mpi_rank==0: print("Computing DONE in: ", dt.datetime.now() - start_time)
-
+			if mpi_rank==0: print("Computing DONE in: ", dt.datetime.now() - start_time)
 
 	def GetIDAFromV(self, V, Vc, Vs):
 		I0 = 2 * V
@@ -229,12 +242,12 @@ class Simulation:
 		if sky and ground: #If sky and ground exist
 			self.I_direct_list[time, ie_pc, ia_pc] = self.world.GetDirect(time, ia_pc, ie_pc)
 			self.I0  = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
-			self.I0 += np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
+			self.I0 += np.sum(self.world.ground_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
 			self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
-			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten()) - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
+			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[time, ie_pc, ia_pc].flatten()) - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
 		elif ground: #If sky doesn't exist
-			self.I0 = np.sum(self.world.ground_map.total_scattering_map[ie_pc, ia_pc].flatten())
-			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[ie_pc, ia_pc].flatten())
+			self.I0 = np.sum(self.world.ground_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
+			self.InonPola = self.I0 - np.sum(self.world.ground_map.scattering_map[time, ie_pc, ia_pc].flatten())
 			# print(self.I0, self.InonPola)
 		elif sky:  #If ground doesn't exist
 			self.I_direct_list[time, ie_pc, ia_pc] = self.world.GetDirect(time, ia_pc, ie_pc)
@@ -243,50 +256,45 @@ class Simulation:
 			self.InonPola = self.I0 - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
 
 		tmp_start = tm.time()
-		if False:
-			self.DoLP = self.world.ground_map.DoLP_map[ie_pc, ia_pc, 0, 0] * 100 # / self.I0 * 100
-			# self.DoLP = np.sum(self.world.ground_map.scattering_map[time, ie_pc, ia_pc].flatten()) / self.I0 * 100
-			self.AoRD = self.world.ground_map.AoRD_map[ie_pc, ia_pc, 0, 0] * RtoD
-		elif True:
 
-			self.V, self.Vcos, self.Vsin = 0, 0, 0
-			if ground: #If ground and ground exist
-				self.V 		+= self.world.ground_map.V_total[ie_pc, ia_pc]
-				self.Vcos 	+= self.world.ground_map.Vcos_total[ie_pc, ia_pc]
-				self.Vsin 	+= self.world.ground_map.Vsin_total[ie_pc, ia_pc]
-			if sky: #If sky and ground exist
-				self.V 		+= self.world.sky_map.V_total[time, ie_pc, ia_pc] + self.I_direct_list[time, ie_pc, ia_pc] / 2.
-				self.Vcos 	+= self.world.sky_map.Vcos_total[time, ie_pc, ia_pc]
-				self.Vsin 	+= self.world.sky_map.Vsin_total[time, ie_pc, ia_pc]
+		self.V, self.Vcos, self.Vsin = 0, 0, 0
+		if ground: #If ground and ground exist
+			self.V 		+= self.world.ground_map.V_total[time, ie_pc, ia_pc]
+			self.Vcos 	+= self.world.ground_map.Vcos_total[time, ie_pc, ia_pc]
+			self.Vsin 	+= self.world.ground_map.Vsin_total[time, ie_pc, ia_pc]
+		if sky: #If sky and ground exist
+			self.V 		+= self.world.sky_map.V_total[time, ie_pc, ia_pc] + self.I_direct_list[time, ie_pc, ia_pc] / 2.
+			self.Vcos 	+= self.world.sky_map.Vcos_total[time, ie_pc, ia_pc]
+			self.Vsin 	+= self.world.sky_map.Vsin_total[time, ie_pc, ia_pc]
 
-			self.I0, self.DoLP, self.AoRD = self.GetIDAFromV(self.V, self.Vcos, self.Vsin)
-			self.IPola = self.I0 * self.DoLP / 100.
-			self.InonPola = self.I0 - self.IPola
+		self.I0, self.DoLP, self.AoRD = self.GetIDAFromV(self.V, self.Vcos, self.Vsin)
+		self.IPola = self.I0 * self.DoLP / 100.
+		self.InonPola = self.I0 - self.IPola
 
-			# hst, bins = np.zeros(self.N_bins), np.zeros(self.N_bins)
-			if sky:
-				A = self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :]
-				Ip = self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :]
+		# hst, bins = np.zeros(self.N_bins), np.zeros(self.N_bins)
+		if sky:
+			A = self.world.sky_map.AoRD_map[time, ie_pc, ia_pc, :, :]
+			Ip = self.world.sky_map.scattering_map[time, ie_pc, ia_pc, :, :]
 
-				sky_hst, self.bins = self.world.MakeAoRDHist(A, Ipola = Ip)
+			sky_hst, self.bins = self.world.MakeAoRDHist(A, Ipola = Ip)
 
+		if ground:
+			A = self.world.ground_map.AoRD_map[time, ie_pc, ia_pc, :, :]
+			Ip = self.world.ground_map.scattering_map[time, ie_pc, ia_pc, :, :]
+			ground_hst, self.bins = self.world.MakeAoRDHist(A, Ipola = Ip)
+
+		if sky:
+			self.hst = sky_hst
 			if ground:
-				A = self.world.ground_map.AoRD_map[ie_pc, ia_pc, :, :]
-				Ip = self.world.ground_map.scattering_map[ie_pc, ia_pc, :, :]
-				ground_hst, self.bins = self.world.MakeAoRDHist(A, Ipola = Ip)
+				self.hst += ground_hst
+		elif ground:
+			self.hst = ground_hst
 
-			if sky:
-				self.hst = sky_hst
-				if ground:
-					self.hst += ground_hst
-			elif ground:
-				self.hst = ground_hst
+		# print(self.hst)
+		# self.V, self.Vcos, self.Vsin, self.I0, self.DoLP, self.AoRD = self.world.LockInAmplifier(self.hst, self.bins, self.InonPola)
 
-			# print(self.hst)
-			# self.V, self.Vcos, self.Vsin, self.I0, self.DoLP, self.AoRD = self.world.LockInAmplifier(self.hst, self.bins, self.InonPola)
-
-			# if self.world.is_single_observation:
-			# 	self.world.DrawAoLPHist(self.hst,self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=True)
+		# if self.world.is_single_observation:
+		# 	self.world.DrawAoLPHist(self.hst,self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=True)
 
 		return self.I0, self.DoLP, self.AoRD
 
@@ -378,9 +386,9 @@ class Simulation:
 		ax4 = plt.subplot(224)
 
 		i1 = ax1.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.I_map)
-		i2 = ax2.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.total_scattering_map[self.ie_pc, self.ia_pc, :, :])		# Intensity from (e, a) reaching us
-		i3 = ax3.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.scattering_map[self.ie_pc, self.ia_pc, :, :])				# Polarized intensity from (e, a) reaching us
-		i4 = ax4.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.DoLP_map[self.ie_pc, self.ia_pc, :, :])	# DoLP of scattered light from (e,a)
+		i2 = ax2.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.total_scattering_map[0, self.ie_pc, self.ia_pc, :, :])		# Intensity from (e, a) reaching us
+		i3 = ax3.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.scattering_map[0, self.ie_pc, self.ia_pc, :, :])				# Polarized intensity from (e, a) reaching us
+		i4 = ax4.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.DoLP_map[0, self.ie_pc, self.ia_pc, :, :])	# DoLP of scattered light from (e,a)
 		# i4 = ax4.pcolormesh((longitudes-A_lon) * RT, (latitudes-A_lat) * RT, AoRD_map * RtoD, cmap=cm.twilight)			# AoLP of scattered light from (e,a)
 
 

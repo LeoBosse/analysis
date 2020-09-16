@@ -125,6 +125,21 @@ class World:
 
 		self.ground_albedo = float(in_dict["ground_albedo"])
 
+		if self.has_ground_emission and self.has_sky_emission and 0 < self.ground_albedo <= 1:
+			if mpi_rank == 0: print("Calculating sky on ground reflection with albedo", self.ground_albedo)
+			self.ground_map.ProlongateTime(self.sky_map.Nt)
+
+			reciever_cube = np.empty_like(self.ground_map.cube)
+
+			for t in range(self.sky_map.Nt)[mpi_rank::mpi_size]:
+				# t = i * mpi_size + mpi_rank
+				self.ground_map.cube[t, :, :] += self.ground_map.I_map
+				self.ground_map.cube[t, :, :] += self.sky_map.GetFlatMap(self.ground_map.A_lon, self.ground_map.A_lat, mid_lon = self.ground_map.mid_longitudes, mid_lat = self.ground_map.mid_latitudes, time = t, Nmax = 10000, tau0 = self.atmosphere.tau_0)[0] * self.ground_albedo
+
+			mpi_comm.Allreduce(self.ground_map.cube, reciever_cube, op = MPI.SUM)
+			self.ground_map.cube = reciever_cube
+
+
 		### Initialize the atlitude maps
 		self.alt_map = ElevationMap(in_dict)
 		self.use_elevation_map = bool(int(in_dict["use_alt_map"]))
@@ -264,9 +279,6 @@ class World:
 
 		start_time = tm.time()
 
-		if self.has_ground_emission and self.has_sky_emission and 0 < self.ground_albedo <= 1:
-			self.ground_map.I_map =  self.ground_map.I_map_bu + self.sky_map.GetFlatMap(self.ground_map.A_lon, self.ground_map.A_lat, mid_lon = self.ground_map.mid_longitudes, mid_lat = self.ground_map.mid_latitudes, time = time, Nmax = 10000)[0] * self.ground_albedo
-
 
 
 		# mpi_size = MPI.COMM_WORLD.Get_size()
@@ -278,7 +290,7 @@ class World:
 		# with tqdm(total=N, file=sys.stdout) as pbar:
 		for ilat, lat in enumerate(self.ground_map.mid_latitudes):
 			for ilon, lon in enumerate(self.ground_map.mid_longitudes):
-				if self.ground_map.I_map[ilat, ilon] > 0:
+				if self.ground_map.cube[time, ilat, ilon] > 0:
 					a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
 					# print(self.dlos_list)
 					for icount, sca_pos in enumerate(self.dlos_list[mpi_rank::mpi_size]): #for every altitude between minimum and maximum scattering altitude
@@ -292,13 +304,13 @@ class World:
 
 						if sca_from_E_is_visible:
 
-							V, Vcos, Vsin = self.ComputeSingleRSGroundPointSource(ilon, ilat, a_rd, e_rd, sca_alt)
+							V, Vcos, Vsin = self.ComputeSingleRSGroundPointSource(time, ilon, ilat, a_rd, e_rd, sca_alt)
 							if sca_alt == 0:
 								print(ilon, ilat, a_rd, e_rd, sca_alt)
 
-							self.ground_map.V_map[ie_pc, ia_pc, ilat, ilon] += V
-							self.ground_map.Vcos_map[ie_pc, ia_pc, ilat, ilon] += Vcos
-							self.ground_map.Vsin_map[ie_pc, ia_pc, ilat, ilon] += Vsin
+							self.ground_map.V_map[time, ie_pc, ia_pc, ilat, ilon] += V
+							self.ground_map.Vcos_map[time, ie_pc, ia_pc, ilat, ilon] += Vcos
+							self.ground_map.Vsin_map[time, ie_pc, ia_pc, ilat, ilon] += Vsin
 
 							# self.ground_map.total_scattering_map[ie_pc, ia_pc, ilat, ilon] += I0 # Intensity of light scattered from a given (e, a)
 							# self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
@@ -328,9 +340,9 @@ class World:
 		return N
 
 
-	def ComputeSingleRSGroundPointSource(self, ilon, ilat, a_E, e_E, alt):
+	def ComputeSingleRSGroundPointSource(self, time, ilon, ilat, a_E, e_E, alt):
 
-		I0 = self.ground_map.I_map[ilat, ilon] #[nW/m2/sr]
+		I0 = self.ground_map.cube[time, ilat, ilon] #[nW/m2/sr]
 
 		AR, RE, RD_angle = self.GetGeometryFromAzDist(a_E, e_E, alt)
 
@@ -353,7 +365,7 @@ class World:
 			# print(a_A*RtoD, e_A*RtoD, r, AR, RE, RD_angle*RtoD, alt, AoLP*RtoD, da*RtoD, dr)
 
 			# print("DEBUG I0 1:", I0, I0*self.ground_map.GetArea(ilat) / RE ** 2)
-			I0 = self.ground_map.I_map[ilat, ilon] #[nW/m2/sr]
+			I0 = self.ground_map.cube[time, ilat, ilon] #[nW/m2/sr]
 			I0 *= self.ground_map.GetArea(ilat) # [nW / m2 / sr * m2]
 
 			if RE > 0:
