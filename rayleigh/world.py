@@ -134,10 +134,19 @@ class World:
 			for t in range(self.sky_map.Nt)[mpi_rank::mpi_size]:
 				# t = i * mpi_size + mpi_rank
 				self.ground_map.cube[t, :, :] += self.ground_map.I_map
-				self.ground_map.cube[t, :, :] += self.sky_map.GetFlatMap(self.ground_map.A_lon, self.ground_map.A_lat, mid_lon = self.ground_map.mid_longitudes, mid_lat = self.ground_map.mid_latitudes, time = t, Nmax = 10000, tau0 = self.atmosphere.tau_0)[0] * self.ground_albedo
+				flat_map = self.sky_map.GetFlatMap(self.ground_map.A_lon, self.ground_map.A_lat, self.ground_map.mid_azimuts, self.ground_map.mid_distances, time = t, Nmax = 1000, tau0 = self.atmosphere.tau_0)
+				# flat_map, lon, lat = self.sky_map.GetFlatMap(self.ground_map.A_lon, self.ground_map.A_lat, self.ground_map.radius, time = t, Nmax = 1000, tau0 = self.atmosphere.tau_0)
+				# flat_map, lon, lat = self.sky_map.GetFlatMap(self.ground_map.A_lon, self.ground_map.A_lat, mid_lon = self.ground_map.mid_longitudes, mid_lat = self.ground_map.mid_latitudes, time = t, Nmax = 10000, tau0 = self.atmosphere.tau_0)
+
+				self.ground_map.cube[t, :, :] += flat_map * self.ground_albedo
 
 			mpi_comm.Allreduce(self.ground_map.cube, reciever_cube, op = MPI.SUM)
 			self.ground_map.cube = reciever_cube
+
+			# if mpi_rank == 0:
+			# 	self.ground_map.MakePlots(0, 0)
+			# 	self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
+			# 	plt.show()
 
 
 		### Initialize the atlitude maps
@@ -285,13 +294,14 @@ class World:
 		# mpi_rank = MPI.COMM_WORLD.Get_rank()
 		# mpi_name = MPI.Get_processor_name()
 
-		N = len(self.ground_map.mid_longitudes) * len(self.ground_map.mid_latitudes) * self.Nalt / mpi_size
+		N = len(self.ground_map.mid_azimuts) * len(self.ground_map.mid_distances) * self.Nalt / mpi_size
 		if mpi_rank==0: print(N, "bins to compute per processor")
 		# with tqdm(total=N, file=sys.stdout) as pbar:
-		for ilat, lat in enumerate(self.ground_map.mid_latitudes):
-			for ilon, lon in enumerate(self.ground_map.mid_longitudes):
-				if self.ground_map.cube[time, ilat, ilon] > 0:
-					a_rd, e_rd = LonLatToAzDist(lon, lat, self.ground_map.A_lon, self.ground_map.A_lat)
+		for iaz, az in enumerate(self.ground_map.mid_azimuts):
+			for idist, dist in enumerate(self.ground_map.mid_distances):
+				if self.ground_map.cube[time, idist, iaz] > 0:
+					a_rd, e_rd = az, dist
+					# print(a_rd * RtoD, e_rd * RT)
 					# print(self.dlos_list)
 					for icount, sca_pos in enumerate(self.dlos_list[mpi_rank::mpi_size]): #for every altitude between minimum and maximum scattering altitude
 						sca_lon, sca_lat, sca_alt = sca_pos
@@ -304,13 +314,13 @@ class World:
 
 						if sca_from_E_is_visible:
 
-							V, Vcos, Vsin = self.ComputeSingleRSGroundPointSource(time, ilon, ilat, a_rd, e_rd, sca_alt)
+							V, Vcos, Vsin = self.ComputeSingleRSGroundPointSource(time, iaz, idist, a_rd, e_rd, sca_alt)
 							if sca_alt == 0:
-								print(ilon, ilat, a_rd, e_rd, sca_alt)
+								print(iaz, idist, a_rd, e_rd, sca_alt)
 
-							self.ground_map.V_map[time, ie_pc, ia_pc, ilat, ilon] += V
-							self.ground_map.Vcos_map[time, ie_pc, ia_pc, ilat, ilon] += Vcos
-							self.ground_map.Vsin_map[time, ie_pc, ia_pc, ilat, ilon] += Vsin
+							self.ground_map.V_map[time, ie_pc, ia_pc, idist, iaz] += V
+							self.ground_map.Vcos_map[time, ie_pc, ia_pc, idist, iaz] += Vcos
+							self.ground_map.Vsin_map[time, ie_pc, ia_pc, idist, iaz] += Vsin
 
 							# self.ground_map.total_scattering_map[ie_pc, ia_pc, ilat, ilon] += I0 # Intensity of light scattered from a given (e, a)
 							# self.ground_map.scattering_map[ie_pc, ia_pc, ilat, ilon] += (w_DoLP * I0) # Intensity of polarized light scattered from a given (e, a). Given a point source, the AoRD is the same for every altitude -> the addition makes sens
@@ -340,9 +350,9 @@ class World:
 		return N
 
 
-	def ComputeSingleRSGroundPointSource(self, time, ilon, ilat, a_E, e_E, alt):
+	def ComputeSingleRSGroundPointSource(self, time, iaz, idist, a_E, e_E, alt):
 
-		I0 = self.ground_map.cube[time, ilat, ilon] #[nW/m2/sr]
+		I0 = self.ground_map.cube[time, idist, iaz] #[nW/m2/sr]
 
 		AR, RE, RD_angle = self.GetGeometryFromAzDist(a_E, e_E, alt)
 
@@ -365,8 +375,8 @@ class World:
 			# print(a_A*RtoD, e_A*RtoD, r, AR, RE, RD_angle*RtoD, alt, AoLP*RtoD, da*RtoD, dr)
 
 			# print("DEBUG I0 1:", I0, I0*self.ground_map.GetArea(ilat) / RE ** 2)
-			I0 = self.ground_map.cube[time, ilat, ilon] #[nW/m2/sr]
-			I0 *= self.ground_map.GetArea(ilat) # [nW / m2 / sr * m2]
+			I0 = self.ground_map.cube[time, idist, iaz] #[nW/m2/sr]
+			I0 *= self.ground_map.GetArea(idist) # [nW / m2 / sr * m2]
 
 			if RE > 0:
 				I0 /= RE ** 2 # [nW / m2 / sr * m2 / km2] = [nW / km2]
@@ -602,11 +612,33 @@ class World:
 			Inonpola = I - Ipola
 
 		###Compute the AoLP contribution histogram.
-		N_bins = 180
-		#bins is the bins limits, so 181 values
+		# N_bins = 180
+		# #bins is the bins limits, so 181 values
+		# bins, width = np.linspace(-np.pi/2, np.pi/2, N_bins + 1, endpoint=True, retstep=True)
+		# bins, width = np.linspace(-np.pi/2 - width/2, np.pi/2 + width/2, N_bins + 1, endpoint=True, retstep=True)
+		# mid_bins = [(bins[i+1] + bins[i])/2. for i in range(len(bins)-1)]
+
+		if self.has_ground_emission and not self.has_sky_emission:
+			# bins, width = self.ground_map.azimuts, self.ground_map.daz
+			N_bins = int(self.ground_map.Naz / 2) + 1
+		elif self.has_sky_emission and not self.has_ground_emission:
+			# bins, width = self.sky_map.azimuts, self.sky_map.da
+			N_bins = int(self.sky_map.Na / 2) + 1
+		elif self.sky_map.da >= self.ground_map.daz:
+			# bins, width = self.sky_map.azimuts, self.sky_map.da
+			N_bins = int(self.sky_map.Na / 2) + 1
+		elif self.ground_map.daz >= self.sky_map.da:
+			# bins, width = self.ground_map.azimuts, self.ground_map.daz
+			N_bins = int(self.ground_map.Naz / 2) + 1
+		else:
+			print("Error: No ground nor sky emmision. Should terminate before...")
+
+
 		bins, width = np.linspace(-np.pi/2, np.pi/2, N_bins + 1, endpoint=True, retstep=True)
 		bins, width = np.linspace(-np.pi/2 - width/2, np.pi/2 + width/2, N_bins + 1, endpoint=True, retstep=True)
-		mid_bins = [(bins[i+1] + bins[i])/2. for i in range(len(bins)-1)]
+
+
+		# print("DEBUG", N_bins, bins)
 
 		#One value for each bin = 180 values
 		hst = np.zeros(N_bins)
@@ -616,7 +648,7 @@ class World:
 		###Density=True: hst bins are NOT intensities! But a probability density function (sum height*width == 1)
 		hst, bins = np.histogram(A, bins = bins, weights = Ipola, density = True)
 
-		return hst, mid_bins
+		return hst, bins
 
 	def DrawAoLPHist(self, hst, bins, I0, DoLP, AoRD, double=True, save=False, save_name=None, show=True):
 		"""Make an pyplot histogram of all AoLP contributionsThe histogram is calculated in GetLightParameters()
@@ -638,8 +670,10 @@ class World:
 		# I0, DoLP, AoRD = self.I_list[0,0,0], self.DoLP_list[0,0,0], self.AoRD_list[0,0,0]
 		# I0, DoLP, AoRD = self.GetLightParameters(ground=ground, sky=sky)
 
+		# print("DEBUG ", hst, bins)
 		N_bins = len(hst)
 		width = bins[1] - bins[0]
+		bins = [(bins[i+1] + bins[i])/2. for i in range(len(bins)-1)]
 
 		if not double:
 			# bins = bins[:N_bins]

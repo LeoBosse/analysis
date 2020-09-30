@@ -38,7 +38,7 @@ class Rotation:
 		"""Given V, Vcos, Vsin, returns the initial intensity, DoLP and AoLP. This method is shared for spp and ptcu. It is also a static method, that can be called outside of the object. This way it can be used everywhere, each time you need I0, DoLP, AoLP to decrease the chances of making a mistake."""
 		I0 = 2 * V
 		DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
-		AoLP = np.arctan2(Vsin, Vcos) / 2
+		AoLP = np.arctan2(-Vsin, Vcos) / 2
 		return abs(I0), abs(DoLP), AoLP
 	GetLightParameters = staticmethod(GetLightParameters)
 

@@ -211,7 +211,8 @@ class Bottle:
 		# self.AoLP_correction = float(self.input_parameters["AoLP_correction"])*DtoR
 
 		if not self.from_txt and self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
-			self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 45) * DtoR
+			self.AoLP_correction = ( - self.config['IS_PolarizerOffset' + str(self.line)] - 45) * DtoR
+			# self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 45) * DtoR
 		elif not self.from_txt and self.instrument_name == "spp":
 			self.AoLP_correction = float(self.input_parameters["AoLP_correction"]) * DtoR
 		else:

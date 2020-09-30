@@ -62,6 +62,8 @@ class SkyMap:
 		if self.exist:
 			self.LoadSkyEmmisionsCube(Nb_a_pc, Nb_e_pc)
 			self.is_time_dependant = self.Nt > 1
+
+			self.SetPixelsAreas()
 			# print("DEBUG SKYMAP", self.Na, self.Ne, len(self.azimuts), len(self.elevations), len(self.mid_azimuts), len(self.mid_elevations))
 			# # print("DEBUG SKYMAP", self.azimuts*RtoD, self.elevations*RtoD)
 			# print("DEBUG SKYMAP: elevations", self.elevations*RtoD)
@@ -89,14 +91,20 @@ class SkyMap:
 		else:
 			self.Na, self.Ne = 1, 1
 
-		self.da = (self.I_zone_a_max - self.I_zone_a_min) / self.Na # Length of an azimut bin
-		self.de = (self.I_zone_e_max - self.I_zone_e_min) / self.Ne # Length of an elevation bin
+		# self.da = (self.I_zone_a_max - self.I_zone_a_min) / self.Na # Length of an azimut bin
+		# self.de = (self.I_zone_e_max - self.I_zone_e_min) / self.Ne # Length of an elevation bin
+		#
+		# self.mid_azimuts = np.linspace(self.I_zone_a_min, self.I_zone_a_max, self.Na)
+		# self.mid_elevations = np.linspace(self.I_zone_e_min, self.I_zone_e_max, self.Ne)
+		#
+		# self.azimuts = np.append(self.mid_azimuts - self.da/2., self.mid_azimuts[-1] + self.da/2.)
+		# self.elevations = np.append(self.mid_elevations - self.de/2., self.mid_elevations[-1] + self.de/2.)
 
-		self.mid_azimuts = np.linspace(self.I_zone_a_min, self.I_zone_a_max, self.Na)
-		self.mid_elevations = np.linspace(self.I_zone_e_min, self.I_zone_e_max, self.Ne)
+		self.azimuts, self.da = np.linspace(self.I_zone_a_min, self.I_zone_a_max, self.Na+1, retstep = True)
+		self.elevations, self.de = np.linspace(self.I_zone_e_min, self.I_zone_e_max, self.Ne+1, retstep = True)
 
-		self.azimuts = np.append(self.mid_azimuts - self.da/2., self.mid_azimuts[-1] + self.da/2.)
-		self.elevations = np.append(self.mid_elevations - self.de/2., self.mid_elevations[-1] + self.de/2.)
+		self.mid_azimuts = self.azimuts[:-1] + self.da / 2
+		self.mid_elevations = self.elevations[:-1] + self.de / 2
 
 		self.Nt = 1
 		self.times = [dt.datetime(year=1, month=1, day=1, second = 1)]
@@ -175,7 +183,8 @@ class SkyMap:
 
 		ls = sorted([f for f in os.listdir(self.image_file) if ".png" in f and len(f) == 33])
 
-		ls = ls[::5] #20200307_20h_5577
+		ls = ls[134:178]
+		# ls = ls[133::2]
 		self.times = ["_".join(n.split("_")[1:3]) for n in ls]
 		self.times = [dt.datetime.strptime(n, "%Y%m%d_%H%M%S") for n in self.times]
 		# print(ls)
@@ -367,27 +376,31 @@ class SkyMap:
 
 	def GetPixelArea(self, ie):
 		"""Return the flattened area in m**2 of a sky pixel from its elevation index."""
-		if not self.is_point_src:
-			e = self.mid_elevations[ie] #Get pixel mid elevation
-			em, eM = self.elevations[ie], self.elevations[ie + 1] #Get pixel min em and Max eM elevations
-
-			area = self.GetArea(em, eM, self.h, self.Na)
-			# om, oM = ObservationPoint(0, 0, self.h, 0, em), ObservationPoint(0, 0, self.h, 0, eM)
-			# true_el = lambda e, o: np.arcsin(o.AH_norm * np.cos(e) / (RT + self.h))
-			# tem, teM = true_el(em, om), true_el(eM, oM)
-			#
-			# area = 2 * np.pi * (RT + self.h)**2 * (np.cos(teM) - np.cos(tem)) / self.Na * 1e6
-		else:
-			area = 1
-
-		### Deprecated version with square areas
-		# de = self.de / 2. # Get pixel half elevation difference
-		# AEm, AE = self.h / np.sin(em), self.h / np.sin(e) #Get lenght of segment AE and AEm for an given emission altitude
-		# Hm, HM = AEm * np.sin(de) / np.sin(e), AE * np.tan(de) / np.sin(e) #Get length of segment H
+		return self.pix_areas[ie]
+		# if not self.is_point_src:
+		# 	e = self.mid_elevations[ie] #Get pixel mid elevation
+		# 	em, eM = self.elevations[ie], self.elevations[ie + 1] #Get pixel min em and Max eM elevations
 		#
-		# area = (Hm + HM) * self.da * AE * np.cos(e) #km2
+		# 	area = self.GetArea(em, eM, self.h, self.Na)
+		# 	# om, oM = ObservationPoint(0, 0, self.h, 0, em), ObservationPoint(0, 0, self.h, 0, eM)
+		# 	# true_el = lambda e, o: np.arcsin(o.AH_norm * np.cos(e) / (RT + self.h))
+		# 	# tem, teM = true_el(em, om), true_el(eM, oM)
+		# 	#
+		# 	# area = 2 * np.pi * (RT + self.h)**2 * (np.cos(teM) - np.cos(tem)) / self.Na * 1e6
+		# else:
+		# 	area = 1
+		# return area # in m2
 
-		return area # in m2
+	def SetPixelsAreas(self):
+		self.pix_areas = np.empty(self.Ne)
+		if not self.is_point_src:
+			for ie in range(self.Ne):
+				e = self.mid_elevations[ie] #Get pixel mid elevation
+				em, eM = self.elevations[ie], self.elevations[ie + 1] #Get pixel min em and Max eM elevations
+
+				self.pix_areas[ie] = self.GetArea(em, eM, self.h, self.Na)
+		else:
+			self.pix_areas[0] = 1
 
 
 	def GetFlux(self, az, el, r, t=0, area=1):
@@ -498,39 +511,30 @@ class SkyMap:
 		self.AoLP_total = np.arctan2(self.Vsin_total, self.Vcos_total) / 2
 
 
-	def GetFlatMap(self, A_lon, A_lat, mid_lon = None, mid_lat = None, time = 0, Nmax = 1000, tau0 = 0):
-		if mid_lon is None or mid_lat is None:
-			lon_m = AzEltoLonLat(-90*DtoR, 0, self.h, A_lon, A_lat)[0]
-			lon_M = AzEltoLonLat(90*DtoR, 0, self.h, A_lon, A_lat)[0]
-			lat_m = AzEltoLonLat(180*DtoR, 0, self.h, A_lon, A_lat)[1]
-			lat_M = AzEltoLonLat(0*DtoR, 0, self.h, A_lon, A_lat)[1]
+	def GetFlatMap(self, A_lon, A_lat, azimuts, distances, time = 0, Nmax = 1000, tau0 = 0):
 
-			Nlon = Nlat = int(np.sqrt(Nmax))
-			mid_longitudes, dlon = np.linspace(lon_m, lon_M, Nlon, retstep = True)
-			mid_latitudes, dlat  = np.linspace(lat_m, lat_M, Nlat, retstep = True)
+		Naz = len(azimuts)
+		Ndist = len(distances)
 
-		else:
-			Nlon = len(mid_lon)
-			Nlat = len(mid_lat)
-			mid_longitudes = mid_lon
-			mid_latitudes  = mid_lat
+		flat_map = np.zeros((Ndist, Naz))
 
-		flat_map = np.zeros((Nlat, Nlon))
+		for idist, dist in enumerate(distances):
+			for iaz, az in enumerate(azimuts):
+				ground_lon, ground_lat = AzDistToLonLat(az, dist, A_lon, A_lat)
 
-		for ie, e in enumerate(self.mid_elevations):
-			for ia, a in enumerate(self.mid_azimuts):
-				sky_lon, sky_lat = AzEltoLonLat(a, e, self.h, A_lon, A_lat)
-				I0 = self.cube[time, ie, ia]
-				sky_area = self.GetPixelArea(ie)
-				for ilon, ground_lon in enumerate(mid_longitudes):
-					for ilat, ground_lat in enumerate(mid_latitudes):
-						L = np.sqrt((sky_lon - ground_lon)**2 + (sky_lat - ground_lat)**2) * RT * np.cos(sky_lat)
+				for ie, e in enumerate(self.mid_elevations):
+					for ia, a in enumerate(self.mid_azimuts):
+						sky_lon, sky_lat = AzEltoLonLat(a, e, self.h, A_lon, A_lat)
+						sky_area = self.GetPixelArea(ie)
+
+						I0 = self.cube[time, ie, ia]
+
+						# L = np.sqrt((sky_lon - ground_lon)**2  + (sky_lat - ground_lat)**2) * RT
+						L = np.sqrt((sky_lon - ground_lon)**2 * np.cos(A_lat)**2 + (sky_lat - ground_lat)**2) * RT
+
 						theta = np.arctan(L / self.h)
 						I = I0 * sky_area * np.cos(theta)**3 * np.exp(- tau0 / np.cos(theta)) / (2 * np.pi * self.h**2 * 1e6) #nW/m2/sr
 
-						flat_map[ilat, ilon] += I
+						flat_map[idist, iaz] += I
 
-		# if mpi_rank == 0: plt.imshow(flat_map)
-		# if mpi_rank == 0: plt.show()
-
-		return flat_map, mid_longitudes, mid_latitudes
+		return flat_map

@@ -35,6 +35,8 @@ class Simulation:
 	def __init__(self, in_dict):
 		"""Initialize the rayleigh object. It will be able to calculate a whole bunch of things!"""
 
+		self.in_dict = in_dict
+
 		self.path = in_dict["path"]
 
 		self.world = World(in_dict)
@@ -80,7 +82,7 @@ class Simulation:
 						count += 1
 						if mpi_rank == 0:
 							print("*******************************************************************************************************************************")
-							print(f"Starting calculation for SKY observation {count}/{observations_number}:")
+							print(f"Starting calculation for SKY map {count}/{observations_number}:")
 
 						self.ia_pc, self.ie_pc = ia_pc, ie_pc
 						self.world.a_pc, self.world.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
@@ -115,7 +117,7 @@ class Simulation:
 						count += 1
 						if mpi_rank==0:
 							print("*******************************************************************************************************************************")
-							print(f"STARTING calculation for GROUND observation {count}/{observations_number}:")
+							print(f"STARTING calculation for GROUND map {count}/{observations_number}:")
 
 						self.ia_pc, self.ie_pc = ia_pc, ie_pc
 						self.world.a_pc, self.world.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
@@ -149,15 +151,43 @@ class Simulation:
 		self.ComputeMaps()
 		# self.MakePlots()
 
-	def PrintSystematicResults(self):
+	def PrintSystematicResults(self, header = True):
 		# mag = -2.5 * np.log10(self.I_list[0, 0, 0] * 10**-9 / (3.0128 * 10**28))
 		# print("Magnitude", mag)
 
-		if mpi_rank==0: print("t, datetime, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:")
+		if header:
+			str_header = ""
+			for key in self.in_dict.keys():
+				if key[0] != "#":
+					str_header += key + ","
+
+			str_header += "datetime,I0,DoLP,AoRD,DI0"
+			print(str_header)
+
+
 		for t in range(self.world.sky_map.Nt):
 			for ie_pc in range(self.world.Nb_e_pc):
 				for ia_pc in range(self.world.Nb_a_pc):
-					print(t, self.world.sky_map.times[t].strftime("%Y%m%d-%H%M%S"), self.world.a_pc_list[ia_pc]*RtoD, self.world.e_pc_list[ie_pc]*RtoD, self.world.ground_map.src_dist, self.world.atmosphere.d_los, self.world.atmosphere.h_r_min, self.world.atmosphere.h_r_max, self.world.wavelength, self.world.max_angle_discretization, self.I_list[t, ie_pc, ia_pc], self.DoLP_list[t, ie_pc, ia_pc], self.AoRD_list[t, ie_pc, ia_pc] * RtoD, self.I_direct_list[t, ie_pc, ia_pc], sep = "," )
+
+					values = ""
+					for k, v in self.in_dict.items():
+						if k[0] != "#":
+							values += v + ","
+
+					values += self.world.sky_map.times[t].strftime("%Y%m%d-%H%M%S") + ","
+					values += f"{self.I_list[t, ie_pc, ia_pc]},"
+					values += f"{self.DoLP_list[t, ie_pc, ia_pc]},"
+					values += f"{self.AoRD_list[t, ie_pc, ia_pc] * RtoD},"
+					values += f"{self.I_direct_list[t, ie_pc, ia_pc]}"
+
+					print(values[:])
+
+		# print("t,datetime,a_pc,e_pc,src_dist,dlos,min_alt,max_alt,wavelength,max_angle_discr,I0,DoLP,AoRD,Direct_I0:")
+		#
+		# for t in range(self.world.sky_map.Nt):
+		# 	for ie_pc in range(self.world.Nb_e_pc):
+		# 		for ia_pc in range(self.world.Nb_a_pc):
+		# 			print(t, self.world.sky_map.times[t].strftime("%Y%m%d-%H%M%S"), self.world.a_pc_list[ia_pc]*RtoD, self.world.e_pc_list[ie_pc]*RtoD, self.world.ground_map.src_dist, self.world.atmosphere.d_los, self.world.atmosphere.h_r_min, self.world.atmosphere.h_r_max, self.world.wavelength, self.world.max_angle_discretization, self.I_list[t, ie_pc, ia_pc], self.DoLP_list[t, ie_pc, ia_pc], self.AoRD_list[t, ie_pc, ia_pc] * RtoD, self.I_direct_list[t, ie_pc, ia_pc], sep = "," )
 
 
 	def GetLightParametersList(self):
@@ -317,14 +347,15 @@ class Simulation:
 			else:
 				print("Making and NOT saving plots...")
 
-		if self.world.has_ground_emission:
-			self.MakeGroundMapPlots()
+		if self.world.has_ground_emission and not self.world.ground_map.is_point_source:
+			self.world.ground_map.MakePlots(self.ie_pc, self.ia_pc, self.e_pc, self.a_pc, 10, save = self.save_individual_plots)
+			# self.MakeGroundMapPlots()
 		if self.world.has_sky_emission:
 			self.MakeSkyMapPlots()
 
-		# self.MakeAoLPHist(ground = self.is_ground_emission, sky = not self.is_ground_emission, double=True)
+		# self.world.MakeAoRDHist(ground = self.is_ground_emission, sky = not self.is_ground_emission, double=True)
 		# if self.world.is_single_observation:
-		self.world.DrawAoLPHist(self.hst,self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=False)
+		self.world.DrawAoLPHist(self.hst, self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=False)
 
 		# self.MakeAoLPMap()
 
@@ -377,41 +408,77 @@ class Simulation:
 		if self.save_individual_plots:
 			plt.savefig(self.path + self.save_name + '_skymaps.png', bbox_inches='tight')
 
-	def MakeGroundMapPlots(self):
-		"""Make plots of the ground emission map contributions. Plot the initial intensity, the scattered intensity, the DOLP..."""
-		f2, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex = True, sharey = True, figsize=(16, 8))
-		ax1 = plt.subplot(221)
-		ax2 = plt.subplot(222)
-		ax3 = plt.subplot(223)
-		ax4 = plt.subplot(224)
+	# def MakeGroundMapPlots(self):
+	# 	"""Make plots of the ground emission map contributions. Plot the initial intensity, the scattered intensity, the DOLP..."""
+	# 	f2, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex = True, sharey = True, figsize=(16, 8))
+	# 	ax1 = plt.subplot(221, projection='polar')
+	# 	ax2 = plt.subplot(222, projection='polar')
+	# 	ax3 = plt.subplot(223, projection='polar')
+	# 	ax4 = plt.subplot(224, projection='polar')
+	#
+	# 	i1 = ax1.pcolormesh(self.world.ground_map.azimuts, self.world.ground_map.distances * RT, self.world.ground_map.I_map)
+	# 	i2 = ax2.pcolormesh(self.world.ground_map.azimuts, self.world.ground_map.distances * RT, self.world.ground_map.total_scattering_map[0, self.ie_pc, self.ia_pc, :, :])		# Intensity from (e, a) reaching us
+	# 	i3 = ax3.pcolormesh(self.world.ground_map.azimuts, self.world.ground_map.distances * RT, self.world.ground_map.scattering_map[0, self.ie_pc, self.ia_pc, :, :])				# Polarized intensity from (e, a) reaching us
+	# 	i4 = ax4.pcolormesh(self.world.ground_map.azimuts, self.world.ground_map.distances * RT, self.world.ground_map.DoLP_map[0, self.ie_pc, self.ia_pc, :, :])	# DoLP of scattered light from (e,a)
+	# 	# i4 = ax4.pcolormesh((azimuts-A_lon) * RT, (distances-A_lat) * RT, AoRD_map * RtoD, cmap=cm.twilight)			# AoLP of scattered light from (e,a)
+	#
+	#
+	# # Angle of polaisation of light from (e,a)
+	# 	cbar1 = f2.colorbar(i1, extend='both', spacing='proportional', shrink=0.9, ax=ax1)
+	# 	cbar1.set_label('Initial emission map')
+	# 	cbar2 = f2.colorbar(i2, extend='both', spacing='proportional', shrink=0.9, ax=ax2)
+	# 	cbar2.set_label('Total intensity map')
+	# 	cbar3 = f2.colorbar(i3, extend='both', spacing='proportional', shrink=0.9, ax=ax3)
+	# 	cbar3.set_label('Polarised intensity map')
+	# 	cbar4 = f2.colorbar(i4, extend='both', spacing='proportional', shrink=0.9, ax=ax4)
+	# 	cbar4.set_label('DoLP')
+	#
+	# 	# f2.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
+	#
+	# 	for a in [ax1, ax2, ax3, ax4]:
+	# 		a.set_theta_zero_location("N")
+	# 		a.set_theta_direction(-1)
+	#
+	# 		a.add_artist(Arrow(0, 0, self.a_pc, self.world.atmosphere.h_r_max / np.tan(self.e_pc), color="red", width = 0.3))
+	#
+	# 	if self.save_individual_plots:
+	# 		plt.savefig(self.path + self.save_name + '_groundmaps.png', bbox_inches='tight')
 
-		i1 = ax1.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.I_map)
-		i2 = ax2.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.total_scattering_map[0, self.ie_pc, self.ia_pc, :, :])		# Intensity from (e, a) reaching us
-		i3 = ax3.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.scattering_map[0, self.ie_pc, self.ia_pc, :, :])				# Polarized intensity from (e, a) reaching us
-		i4 = ax4.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.DoLP_map[0, self.ie_pc, self.ia_pc, :, :])	# DoLP of scattered light from (e,a)
-		# i4 = ax4.pcolormesh((longitudes-A_lon) * RT, (latitudes-A_lat) * RT, AoRD_map * RtoD, cmap=cm.twilight)			# AoLP of scattered light from (e,a)
-
-
-	# Angle of polaisation of light from (e,a)
-		cbar1 = f2.colorbar(i1, extend='both', spacing='proportional', shrink=0.9, ax=ax1)
-		cbar1.set_label('Initial emission map')
-		cbar2 = f2.colorbar(i2, extend='both', spacing='proportional', shrink=0.9, ax=ax2)
-		cbar2.set_label('Total intensity map')
-		cbar3 = f2.colorbar(i3, extend='both', spacing='proportional', shrink=0.9, ax=ax3)
-		cbar3.set_label('Polarised intensity map')
-		cbar4 = f2.colorbar(i4, extend='both', spacing='proportional', shrink=0.9, ax=ax4)
-		cbar4.set_label('DoLP')
-
-		# f2.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
-
-		dy = np.cos(self.a_pc) * self.world.atmosphere.h_r_max / np.tan(self.e_pc)
-		dx = np.sin(self.a_pc) * self.world.atmosphere.h_r_max / np.tan(self.e_pc)
-		# for a in [ax1, ax2, ax3, ax4]:
-		# 	a.add_artist(Arrow(0, 0, dx, dy, color="red"))
-
-		if self.save_individual_plots:
-			plt.savefig(self.path + self.save_name + '_groundmaps.png', bbox_inches='tight')
-
+	# def MakeGroundMapPlots(self):
+	# 	"""Make plots of the ground emission map contributions. Plot the initial intensity, the scattered intensity, the DOLP..."""
+	# 	f2, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex = True, sharey = True, figsize=(16, 8))
+	# 	ax1 = plt.subplot(221)
+	# 	ax2 = plt.subplot(222)
+	# 	ax3 = plt.subplot(223)
+	# 	ax4 = plt.subplot(224)
+	#
+	# 	i1 = ax1.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.I_map)
+	# 	i2 = ax2.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.total_scattering_map[0, self.ie_pc, self.ia_pc, :, :])		# Intensity from (e, a) reaching us
+	# 	i3 = ax3.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.scattering_map[0, self.ie_pc, self.ia_pc, :, :])				# Polarized intensity from (e, a) reaching us
+	# 	i4 = ax4.pcolormesh((self.world.ground_map.longitudes-self.world.ground_map.A_lon) * RT, (self.world.ground_map.latitudes-self.world.ground_map.A_lat) * RT, self.world.ground_map.DoLP_map[0, self.ie_pc, self.ia_pc, :, :])	# DoLP of scattered light from (e,a)
+	# 	# i4 = ax4.pcolormesh((longitudes-A_lon) * RT, (latitudes-A_lat) * RT, AoRD_map * RtoD, cmap=cm.twilight)			# AoLP of scattered light from (e,a)
+	#
+	#
+	# # Angle of polaisation of light from (e,a)
+	# 	cbar1 = f2.colorbar(i1, extend='both', spacing='proportional', shrink=0.9, ax=ax1)
+	# 	cbar1.set_label('Initial emission map')
+	# 	cbar2 = f2.colorbar(i2, extend='both', spacing='proportional', shrink=0.9, ax=ax2)
+	# 	cbar2.set_label('Total intensity map')
+	# 	cbar3 = f2.colorbar(i3, extend='both', spacing='proportional', shrink=0.9, ax=ax3)
+	# 	cbar3.set_label('Polarised intensity map')
+	# 	cbar4 = f2.colorbar(i4, extend='both', spacing='proportional', shrink=0.9, ax=ax4)
+	# 	cbar4.set_label('DoLP')
+	#
+	# 	# f2.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
+	#
+	# 	dy = np.cos(self.a_pc) * self.world.atmosphere.h_r_max / np.tan(self.e_pc)
+	# 	dx = np.sin(self.a_pc) * self.world.atmosphere.h_r_max / np.tan(self.e_pc)
+	# 	# for a in [ax1, ax2, ax3, ax4]:
+	# 	# 	a.add_artist(Arrow(0, 0, dx, dy, color="red"))
+	#
+	# 	if self.save_individual_plots:
+	# 		plt.savefig(self.path + self.save_name + '_groundmaps.png', bbox_inches='tight')
+	#
 
 
 	def MakeAoLPMap(self):

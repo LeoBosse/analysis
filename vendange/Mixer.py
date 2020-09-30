@@ -605,7 +605,7 @@ class Mixer:
 		###First comp with sky only
 		# fn = "/home/bossel/These/Analysis/results/rayleigh/skymap_20200307_20h_5577.txt"
 
-		fn = "/home/bossel/These/Analysis/results/rayleigh/20200217_corbel_skyonly_results.txt"
+		fn = "/home/bossel/These/Analysis/results/rayleigh/20200307_20h_5577_movie_polar_results.txt"
 
 		t, I, D, A = self.GetDataFromTxt(fn, t="datetime", I = "I0", DoLP="DoLP", AoLP = "AoRD")
 		td = [t - bottle.DateTime(moment="start", format="UT") for t in t if bottle.DateTime(moment="start", format="UT") < t < bottle.DateTime(moment="end", format="UT")]
@@ -613,13 +613,13 @@ class Mixer:
 		if I is not None:
 			I = np.where((bottle.DateTime(moment="start", format="UT") < t) & (t < bottle.DateTime(moment="end", format="UT")), I, None)
 			self.ax11 = self.ax1.twinx()
-			self.ax11.plot(ts / self.divisor, [i for i in I if i is not None], "k")
+			self.ax11.plot(ts / self.divisor, [i for i in I if i is not None], "k*")
 		if D is not None:
 			D = np.where((bottle.DateTime(moment="start", format="UT") < t) & (t < bottle.DateTime(moment="end", format="UT")), D, None)
-			self.ax2.plot(ts / self.divisor, [i for i in D if i is not None], "k")
+			self.ax2.plot(ts / self.divisor, [i for i in D if i is not None], "k*")
 		if A is not None:
 			A = np.where((bottle.DateTime(moment="start", format="UT") < t) & (t < bottle.DateTime(moment="end", format="UT")), A, None)
-			self.ax3.plot(ts / self.divisor, [i for i in A if i is not None], "k")
+			self.ax3.plot(ts / self.divisor, [i for i in A if i is not None], "k*")
 
 
 

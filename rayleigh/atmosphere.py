@@ -211,7 +211,8 @@ class Atmosphere:
 		A = 3 / (4 + 8 * gamma)
 		B = (1 + 3 * gamma) + (1 - gamma) * np.cos(theta) ** 2
 
-		return A * B
+		return 1
+		# return A * B
 
 	def GetSquareLawParam(self, wl, purpose):
 		"""Return the necessary parameters for calculating the result of the square law fit function presented in Bucholtz 1995. Purpose can be:

@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
+from mpi4py import MPI
+mpi_comm = MPI.COMM_WORLD
+mpi_rank = mpi_comm.Get_rank()
+mpi_size = mpi_comm.Get_size()
+mpi_name = mpi_comm.Get_name()
 
 import sys as sys
 import numpy as np
@@ -291,7 +296,6 @@ class ElevationMap():
 
 		return name
 
-# class GroundMap
 class GroundMap:
 	def __init__(self, in_dict, Nb_a_pc, Nb_e_pc):
 
@@ -302,6 +306,7 @@ class GroundMap:
 		self.A_lon, self.A_lat 	= GetLonLatFromName(self.location)
 
 		self.mode = in_dict["ground_mode"].lower()
+		self.shader = in_dict["shader_mode"].lower()
 
 		self.radius = float(in_dict["ground_emission_radius"]) / RT #in radians
 		self.N_bins_max = int(in_dict["ground_N_bins_max"])
@@ -319,28 +324,34 @@ class GroundMap:
 
 		if self.exist:
 			self.LoadMap(Nb_a_pc, Nb_e_pc)
-			# if self.is_point_source:
-			# 	I0 = float(in_dict["point_src_I0"])
-			# 	az = float(in_dict["point_src_az"]) * DtoR
-			# 	dist = float(in_dict["point_src_dist"])
-			# 	self.LoadPointSourceMap(I0, az, dist, Nb_a_pc, Nb_e_pc)
-			# elif self.is_uniform:
-			# 	self.LoadUniformMap(Nb_a_pc, Nb_e_pc)
-			# else:
-			# 	self.LoadGroundEmmisionsMap(Nb_a_pc, Nb_e_pc)
+			# if mpi_rank == 0:
+			# 	self.MakePlots(0, 0)
+			# 	plt.show()
+
+
 
 	def LoadMap(self, Nb_a_pc, Nb_e_pc):
+
+		self.Naz, self.Ndist = int(np.sqrt(self.N_bins_max)/2+1) * 2, int(np.sqrt(self.N_bins_max)/2+1) * 2
+
+		self.azimuts,   self.daz   = np.linspace(0, 2 * np.pi, self.Naz + 1, retstep=True)
+		self.distances, self.ddist = np.linspace(0, self.radius, self.Ndist + 1, retstep=True)
+		self.mid_distances			= self.distances[:-1] + self.ddist / 2.
+		self.mid_azimuts			= self.azimuts[:-1] + self.daz / 2.
+
+		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, self.Ndist, self.Naz)
+
 		if "image" in self.mode:
-			self.LoadGroundImageMap(Nb_a_pc, Nb_e_pc)
+			self.LoadGroundImageMap()
 		elif "point" in self.mode:
 			s = self.mode.split("_")
 			I0 = float(s[1][1:])
 			az = float(s[2][1:]) * DtoR
-			dist = float(s[3][1:])
+			dist = float(s[3][1:]) / RT
 			self.LoadPointSourceMap(I0, az, dist, Nb_a_pc, Nb_e_pc)
 		elif "uniform" in self.mode:
 			I0 = float(self.mode.split("_")[1][1:])
-			self.LoadUniformMap(I0, Nb_a_pc, Nb_e_pc)
+			self.LoadUniformMap(I0)
 		elif "gaussian" in self.mode:
 			s = self.mode.split("_")
 			I0 = float(s[1][1:])
@@ -349,23 +360,48 @@ class GroundMap:
 			dist = float(s[4][1:])
 			self.LoadGaussianMap(I0, width, az, dist, Nb_a_pc, Nb_e_pc)
 		elif "none" in self.mode:
-			self.longitudes = self.latitudes = []
-			self.dlon = self.dlat = 0
+			self.distances = self.azimuts = []
+			self.ddist = self.daz = 0
 			self.exist = False
 
 		else:
 			print("WARNING: Ground map mode is not correct. Ground map not used.")
 			self.exist = False
 
+		if self.shader != "none":
+			if "half" in self.shader:
+				mid_a = (float(self.shader.split("_")[1][1:]) * DtoR)%(2*np.pi)
+				a1, a2 = (mid_a - np.pi/2)%(np.pi*2), (mid_a + np.pi/2)%(np.pi*2)
+				print("DEBUG condition", mid_a*RtoD, a1*RtoD, a2*RtoD, a1 >= a2)
+				condition = lambda d, a: a > a1 or a < a2 if a1 > a2 else a1 < a < a2
+				# condition = lambda d, a: min(a1, a2) <= a < max(a1, a2)
+
+			elif "random" in self.shader:
+				percentage = float(self.shader.split("_")[1][:]) / 100.
+				condition = lambda d, a: np.random.random() < percentage
+			elif "in_dist" in self.shader:
+				min_dist = float(self.shader.split("_")[2][1:]) / RT
+				max_dist = float(self.shader.split("_")[3][1:]) / RT
+				condition = lambda d, a: min_dist < d < max_dist
+			elif "out_dist" in self.shader:
+				min_dist = float(self.shader.split("_")[2][1:]) / RT
+				max_dist = float(self.shader.split("_")[3][1:]) / RT
+				condition = lambda d, a: d < min_dist  or d > max_dist
+
+			for id, d in enumerate(self.mid_distances):
+				for ia, a in enumerate(self.mid_azimuts):
+					if condition(d, a):
+						self.I_map[id, ia] = 0
+
 
 		if self.exist:
-			self.mid_longitudes			= self.longitudes[:-1] + self.dlon/2.
-			self.mid_latitudes			= self.latitudes[:-1] + self.dlat/2.
+			self.mid_distances			= self.distances[:-1] + self.ddist / 2.
+			self.mid_azimuts			= self.azimuts[:-1] + self.daz / 2.
 
-			self.Nlat 					= len(self.mid_latitudes)
-			self.Nlon 					= len(self.mid_longitudes)
+			self.Ndist 					= len(self.mid_distances)
+			self.Naz 					= len(self.mid_azimuts)
 
-			self.cube 					= np.zeros((self.Nt, self.Nlat, self.Nlon))
+			self.cube 					= np.zeros((self.Nt, self.Ndist, self.Naz))
 			self.cube[0] 				+= self.I_map
 
 			self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
@@ -384,53 +420,15 @@ class GroundMap:
 			self.DoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 			self.AoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 
-
-	def LoadGaussianMap(self, I0, width, a, d, Nb_a_pc, Nb_e_pc):
-		nb_lon, nb_lat = int(np.sqrt(self.N_bins_max)/2+1)*2, int(np.sqrt(self.N_bins_max)/2+1)*2
-
-		lon_min, lon_max = self.A_lon - self.radius / np.cos(self.A_lat), self.A_lon + self.radius / np.cos(self.A_lat)
-
-		lat_min, lat_max = self.A_lat - self.radius, self.A_lat + self.radius
-
-		self.longitudes, self.dlon = np.linspace(lon_min, lon_max, nb_lon + 1, retstep=True) # list of pixel longitudes
-		self.latitudes, self.dlat = np.linspace(lat_max, lat_min, nb_lat + 1, retstep=True) # list of pixel latitudes
-
-		self.mid_longitudes	= self.longitudes[:-1] + self.dlon/2.
-		self.mid_latitudes	= self.latitudes[:-1] + self.dlat/2.
-
-		x, y = np.meshgrid(self.mid_longitudes, self.mid_latitudes)
-
-		x0 = self.A_lon + d / RT * np.sin(a)
-		y0 = self.A_lat + d / RT * np.cos(a)
-
-		d = np.sqrt((x-x0)**2 + (y-y0)**2)
-
-		self.I_map = I0 * np.exp(-0.5 * (d / width) ** 2) #[nW / m2/ sr]
-
-		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, nb_lat, nb_lon)
+	def LoadUniformMap(self, I0):
+		self.I_map = I0 * np.ones((self.Ndist, self.Naz)) # [nW / m2/ sr]
 
 
-	def LoadUniformMap(self, I0, Nb_a_pc, Nb_e_pc):
-		nb_lon, nb_lat = int(np.sqrt(self.N_bins_max)/2+1)*2, int(np.sqrt(self.N_bins_max)/2+1)*2
-
-		lon_min, lon_max = self.A_lon - self.radius / np.cos(self.A_lat), self.A_lon + self.radius / np.cos(self.A_lat)
-		lat_min, lat_max = self.A_lat - self.radius, self.A_lat + self.radius
-
-		self.longitudes, self.dlon = np.linspace(lon_min, lon_max, nb_lon + 1, retstep=True) # list of pixel longitudes
-		self.latitudes, self.dlat = np.linspace(lat_max, lat_min, nb_lat + 1, retstep=True) # list of pixel latitudes
-
-		# print(self.longitudes * RT, self.latitudes * RT)
-
-		self.I_map = I0 * np.ones((nb_lat, nb_lon)) # [nW / m2/ sr]
-
-		# print(self.I_map)
-
-		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, nb_lat, nb_lon)
-		# print(self.maps_shape)
-
-
-	def LoadGroundImageMap(self, Nb_a_pc, Nb_e_pc):
+	def LoadGroundImageMap(self):
 		"""In the case where h==0, load the emission map from the geotiff files"""
+
+		print("Loading ground emission map data...")
+
 		map = gdal.Open(self.path + self.file, gdal.GA_ReadOnly)
 		nb_lon = map.RasterXSize
 		nb_lat = map.RasterYSize
@@ -457,42 +455,47 @@ class GroundMap:
 
 		# print("GROUND MAP", nb_lon, nb_lat)
 
-		self.longitudes, self.dlon = np.linspace(lon_min, lon_max, nb_lon, retstep=True) # list of pixel longitudes
-		self.latitudes, self.dlat = np.linspace(lat_max, lat_min, nb_lat, retstep=True) # list of pixel latitudes
+		longitudes, dlon = np.linspace(lon_min, lon_max, nb_lon, retstep=True) # list of pixel longitudes
+		latitudes, dlat = np.linspace(lat_max, lat_min, nb_lat, retstep=True) # list of pixel latitudes
 
 		map_band = map.GetRasterBand(1)
-		self.I_map = map_band.ReadAsArray(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat) # Emission map we will use in #[nW / m2/ sr]
-		self.I_map *= 1e4
+		I_map = map_band.ReadAsArray(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat) # Emission map we will use in #[nW / cm2/ sr]
+		I_map *= 1e4
 
-		if nb_lon * nb_lat > self.N_bins_max and self.N_bins_max > 0:
-			# print("GROUND MAP TOO BIG", nb_lon * nb_lat, self.N_bins_max)
-			new_nb_lon, new_nb_lat = int(np.sqrt(self.N_bins_max)), int(np.sqrt(self.N_bins_max))
-			# print("GROUND MAP", new_nb_lon, new_nb_lat)
+		self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
 
-			self.longitudes, self.dlon = np.linspace(lon_min, lon_max, new_nb_lon, retstep=True) # list of pixel longitudes
-			self.latitudes, self.dlat = np.linspace(lat_max, lat_min, new_nb_lat, retstep=True) # list of pixel latitudes
-
-			self.I_map = cv2.resize(self.I_map, dsize=(new_nb_lon, new_nb_lat), interpolation = cv2.INTER_CUBIC)
-
-
-		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, len(self.latitudes), len(self.longitudes))
-		# print("GROUND MAP SHAPE",self.maps_shape )
+		# self.I_map = np.zeros((self.Ndist, self.Naz))
+		# divisor_map = np.zeros((self.Ndist, self.Naz))
 		#
-		# self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
-		# self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
-		# self.total_scattering_map 	= np.zeros(self.maps_shape) # DoLP of scattered light from (e,a)
-		# self.AoRD_map 				= np.zeros(self.maps_shape) # Angle of polaisation of light from (e,a)
-		# self.V_map 					= np.zeros(self.maps_shape)
-		# self.Vcos_map 				= np.zeros(self.maps_shape)
-		# self.Vsin_map 				= np.zeros(self.maps_shape)
+		# for ilon, lon in enumerate(longitudes):
+		# 	for ilat, lat in enumerate(latitudes):
+		# 		az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+		# 		# print("GROUND MAP", new_nb_lon, new_nb_lat)
+		# 		iaz, idist = self.GetPixFromAzDist(az, dist)
+		# 		# print(idist, iaz, self.Ndist, self.Naz)
+		# 		if idist is not None:
+		# 			self.I_map[idist, iaz] += I_map[ilat, ilon]
+		# 			divisor_map[idist, iaz] += 1
 		#
-		# self.V_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		# self.Vcos_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		# self.Vsin_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		#
-		# self.I0_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		# self.DoLP_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		# self.AoLP_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+		# self.I_map = np.divide(self.I_map, divisor_map, out = np.zeros_like(self.I_map), where = divisor_map != 0)
+
+	def CarthToPolar(self, carth_map, longitudes, latitudes):
+		polar_map = np.zeros((self.Ndist, self.Naz))
+		divisor_map = np.zeros((self.Ndist, self.Naz))
+
+		for ilon, lon in enumerate(longitudes):
+			for ilat, lat in enumerate(latitudes):
+				az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+				# print("GROUND MAP", new_nb_lon, new_nb_lat)
+				iaz, idist = self.GetPixFromAzDist(az, dist)
+				# print(idist, iaz, self.Ndist, self.Naz)
+				if idist is not None:
+					polar_map[idist, iaz] += carth_map[ilat, ilon]
+					divisor_map[idist, iaz] += 1
+
+		polar_map = np.divide(polar_map, divisor_map, out = np.zeros_like(polar_map), where = divisor_map != 0)
+
+		return polar_map
 
 	def LoadPointSourceMap(self, src_I0, src_az, src_dist, Nb_a_pc, Nb_e_pc):
 
@@ -500,34 +503,36 @@ class GroundMap:
 
 		src_lon, src_lat = AzDistToLonLat(src_az, src_dist, self.A_lon, self.A_lat)
 
-		self.longitudes, self.dlon = np.linspace(src_lon - 0.5/RT, src_lon + 0.5/RT, 2, retstep=True) # list of pixel longitudes
-		self.latitudes, self.dlat = np.linspace(src_lat - 0.5/RT, src_lat + 0.5/RT, 2, retstep=True) # list of pixel latitudes
+		self.distances, self.ddist = np.linspace(src_dist - 0.5/RT, src_dist + 0.5/RT, 2, retstep=True) # list of pixel longitudes
+		self.azimuts, self.daz 	   = np.linspace(src_az - 0.5/RT, src_az + 0.5/RT, 2, retstep=True) # list of pixel latitudes
 
-		print(self.longitudes)
+		# print(self.longitudes)
 		self.I_map = np.ones((1, 1)) * src_I0 #[nW / m2 / sr]
 
+		self.Naz = self.Ndist = 1
+
 		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, 1, 1)
+		self.is_point_source = True
 
-		# self.scattering_map 		= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
-		# self.DoLP_map				= np.zeros(self.maps_shape) # DoLP of scattered light from (e,a)
-		# self.total_scattering_map 	= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
-		# self.AoRD_map 				= np.zeros(self.maps_shape) # Angle of polaisation of light from (e,a)
-		# self.V_map 					= np.zeros(self.maps_shape)
-		# self.Vcos_map 				= np.zeros(self.maps_shape)
-		# self.Vsin_map 				= np.zeros(self.maps_shape)
-		#
-		# self.V_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		# self.Vcos_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		# self.Vsin_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		#
-		# self.I0_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		# self.DoLP_total	= np.zeros((Nb_e_pc, Nb_a_pc))
-		# self.AoLP_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+	def GetPixFromAz(self, az):
+		return int((az % (2*np.pi)) / self.daz) % self.Naz
 
-	def GetArea(self, ilat):
+	def GetPixFromDist(self, dist):
+		# print(self.Ndist, self.ddist * RT, dist * RT, int(dist / self.ddist))
+		idist = int(dist / self.ddist)
+		if idist < self.Ndist:
+			return idist
+		else:
+			return None
+
+	def GetPixFromAzDist(self, az, dist):
+		return self.GetPixFromAz(az), self.GetPixFromDist(dist)
+
+	def GetArea(self, idist):
 		"""Return the area of a pixel on the map in m**2. If we use a point source, the area is set to one."""
 		if not self.is_point_source:
-			return (RT ** 2) * abs(self.dlat) * abs(self.dlon) * np.cos(self.mid_latitudes[ilat])**1 * 1e6
+			area = 0.5 * abs(self.daz) * (self.distances[idist+1]**2 - self.distances[idist]**2) * RT**2 * 1e6
+			return area
 		else:
 			return 1
 
@@ -554,10 +559,10 @@ class GroundMap:
 
 	def ProlongateTime(self, new_Nt):
 		self.Nt = new_Nt
-		self.cube = np.zeros((self.Nt, self.Nlat, self.Nlon))
+		self.cube = np.zeros((self.Nt, self.Ndist, self.Naz))
 
 		Nb_e_pc, Nb_a_pc = self.scattering_map.shape[1], self.V_total.shape[2]
-		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, self.Nlat, self.Nlon)
+		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, self.Ndist, self.Naz)
 
 		self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
 		self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
@@ -576,7 +581,334 @@ class GroundMap:
 		self.AoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 
 
+	def MakePlots(self, ie_pc, ia_pc, e_pc=None, a_pc=None, atmosphere_max = None, save = False):
+		f, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex = True, sharey = True, figsize=(16, 8))
+		ax1 = plt.subplot(221, projection='polar')
+		ax2 = plt.subplot(222, projection='polar')
+		ax3 = plt.subplot(223, projection='polar')
+		ax4 = plt.subplot(224, projection='polar')
 
+		i1 = ax1.pcolormesh(self.azimuts, self.distances * RT, (self.cube[0]))
+		i2 = ax2.pcolormesh(self.azimuts, self.distances * RT, (self.total_scattering_map[0, ie_pc, ia_pc, :, :]))		# Intensity from (e, a) reaching us
+		i3 = ax3.pcolormesh(self.azimuts, self.distances * RT, (self.scattering_map[0, ie_pc, ia_pc, :, :]))				# Polarized intensity from (e, a) reaching us
+		i4 = ax4.pcolormesh(self.azimuts, self.distances * RT, self.DoLP_map[0, ie_pc, ia_pc, :, :])	# DoLP of scattered light from (e,a)
+		# i4 = ax4.pcolormesh((azimuts-A_lon) * RT, (distances-A_lat) * RT, AoRD_map * RtoD, cmap=cm.twilight)			# AoLP of scattered light from (e,a)
+
+
+	# Angle of polaisation of light from (e,a)
+		cbar1 = f.colorbar(i1, extend='both', spacing='proportional', shrink=0.9, ax=ax1)
+		cbar1.set_label('log10: Initial emission map')
+		cbar2 = f.colorbar(i2, extend='both', spacing='proportional', shrink=0.9, ax=ax2)
+		cbar2.set_label('log10: Total intensity map')
+		cbar3 = f.colorbar(i3, extend='both', spacing='proportional', shrink=0.9, ax=ax3)
+		cbar3.set_label('log10: Polarised intensity map')
+		cbar4 = f.colorbar(i4, extend='both', spacing='proportional', shrink=0.9, ax=ax4)
+		cbar4.set_label('log10: DoLP')
+
+		# f2.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
+
+		for a in [ax1, ax2, ax3, ax4]:
+			a.set_theta_zero_location("N")
+			a.set_theta_direction(-1)
+
+			if e_pc is not None and a_pc is not None:
+				if atmosphere_max:
+					length = atmosphere_max / np.tan(e_pc)
+				else:
+					length = self.radius * RT
+
+				# a.add_artist(Arrow(0, 0, a_pc, length, color="red", width = 0.3))
+				a.plot([0, a_pc], [0, length], "r")
+
+		if save:
+			plt.savefig(self.path + self.save_name + '_groundmaps.png', bbox_inches='tight')
+
+
+# class OldGroundMap:
+# 	def __init__(self, in_dict, Nb_a_pc, Nb_e_pc):
+#
+# 		self.path = in_dict["ground_path"]
+# 		self.file = in_dict["ground_file"]
+#
+# 		self.location = in_dict["location"]
+# 		self.A_lon, self.A_lat 	= GetLonLatFromName(self.location)
+#
+# 		self.mode = in_dict["ground_mode"].lower()
+#
+# 		self.radius = float(in_dict["ground_emission_radius"]) / RT #in radians
+# 		self.N_bins_max = int(in_dict["ground_N_bins_max"])
+#
+# 		# self.exist = ((self.radius > 0 and self.file) or float(in_dict["point_src_I0"]) > 0)
+# 		# self.is_point_source = float(in_dict["point_src_I0"]) > 0
+#
+# 		self.exist = self.mode != "none"
+# 		self.is_point_source = "point" in self.mode
+#
+# 		self.src_I0, self.src_az, self.src_dist = None, None, None
+#
+# 		self.cube = None
+# 		self.Nt = 1
+#
+# 		if self.exist:
+# 			self.LoadMap(Nb_a_pc, Nb_e_pc)
+# 			# if self.is_point_source:
+# 			# 	I0 = float(in_dict["point_src_I0"])
+# 			# 	az = float(in_dict["point_src_az"]) * DtoR
+# 			# 	dist = float(in_dict["point_src_dist"])
+# 			# 	self.LoadPointSourceMap(I0, az, dist, Nb_a_pc, Nb_e_pc)
+# 			# elif self.is_uniform:
+# 			# 	self.LoadUniformMap(Nb_a_pc, Nb_e_pc)
+# 			# else:
+# 			# 	self.LoadGroundEmmisionsMap(Nb_a_pc, Nb_e_pc)
+#
+# 	def LoadMap(self, Nb_a_pc, Nb_e_pc):
+# 		if "image" in self.mode:
+# 			self.LoadGroundImageMap(Nb_a_pc, Nb_e_pc)
+# 		elif "point" in self.mode:
+# 			s = self.mode.split("_")
+# 			I0 = float(s[1][1:])
+# 			az = float(s[2][1:]) * DtoR
+# 			dist = float(s[3][1:])
+# 			self.LoadPointSourceMap(I0, az, dist, Nb_a_pc, Nb_e_pc)
+# 		elif "uniform" in self.mode:
+# 			I0 = float(self.mode.split("_")[1][1:])
+# 			self.LoadUniformMap(I0, Nb_a_pc, Nb_e_pc)
+# 		elif "gaussian" in self.mode:
+# 			s = self.mode.split("_")
+# 			I0 = float(s[1][1:])
+# 			width = float(s[2][1:])
+# 			az = float(s[3][1:]) * DtoR
+# 			dist = float(s[4][1:])
+# 			self.LoadGaussianMap(I0, width, az, dist, Nb_a_pc, Nb_e_pc)
+# 		elif "none" in self.mode:
+# 			self.longitudes = self.latitudes = []
+# 			self.dlon = self.dlat = 0
+# 			self.exist = False
+#
+# 		else:
+# 			print("WARNING: Ground map mode is not correct. Ground map not used.")
+# 			self.exist = False
+#
+#
+# 		if self.exist:
+# 			self.mid_longitudes			= self.longitudes[:-1] + self.dlon/2.
+# 			self.mid_latitudes			= self.latitudes[:-1] + self.dlat/2.
+#
+# 			self.Nlat 					= len(self.mid_latitudes)
+# 			self.Nlon 					= len(self.mid_longitudes)
+#
+# 			self.cube 					= np.zeros((self.Nt, self.Nlat, self.Nlon))
+# 			self.cube[0] 				+= self.I_map
+#
+# 			self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
+# 			self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
+# 			self.total_scattering_map 	= np.zeros(self.maps_shape) # DoLP of scattered light from (e,a)
+# 			self.AoRD_map 				= np.zeros(self.maps_shape) # Angle of polaisation of light from (e,a)
+# 			self.V_map 					= np.zeros(self.maps_shape)
+# 			self.Vcos_map 				= np.zeros(self.maps_shape)
+# 			self.Vsin_map 				= np.zeros(self.maps_shape)
+#
+# 			self.V_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+# 			self.Vcos_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+# 			self.Vsin_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+#
+# 			self.I0_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+# 			self.DoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+# 			self.AoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+#
+#
+# 	def LoadGaussianMap(self, I0, width, a, d, Nb_a_pc, Nb_e_pc):
+# 		nb_lon, nb_lat = int(np.sqrt(self.N_bins_max)/2+1)*2, int(np.sqrt(self.N_bins_max)/2+1)*2
+#
+# 		lon_min, lon_max = self.A_lon - self.radius / np.cos(self.A_lat), self.A_lon + self.radius / np.cos(self.A_lat)
+#
+# 		lat_min, lat_max = self.A_lat - self.radius, self.A_lat + self.radius
+#
+# 		self.longitudes, self.dlon = np.linspace(lon_min, lon_max, nb_lon + 1, retstep=True) # list of pixel longitudes
+# 		self.latitudes, self.dlat = np.linspace(lat_max, lat_min, nb_lat + 1, retstep=True) # list of pixel latitudes
+#
+# 		self.mid_longitudes	= self.longitudes[:-1] + self.dlon/2.
+# 		self.mid_latitudes	= self.latitudes[:-1] + self.dlat/2.
+#
+# 		x, y = np.meshgrid(self.mid_longitudes, self.mid_latitudes)
+#
+# 		x0 = self.A_lon + d / RT * np.sin(a)
+# 		y0 = self.A_lat + d / RT * np.cos(a)
+#
+# 		d = np.sqrt((x-x0)**2 + (y-y0)**2)
+#
+# 		self.I_map = I0 * np.exp(-0.5 * (d / width) ** 2) #[nW / m2/ sr]
+#
+# 		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, nb_lat, nb_lon)
+#
+#
+# 	def LoadUniformMap(self, I0, Nb_a_pc, Nb_e_pc):
+# 		nb_lon, nb_lat = int(np.sqrt(self.N_bins_max)/2+1)*2, int(np.sqrt(self.N_bins_max)/2+1)*2
+#
+# 		lon_min, lon_max = self.A_lon - self.radius / np.cos(self.A_lat), self.A_lon + self.radius / np.cos(self.A_lat)
+# 		lat_min, lat_max = self.A_lat - self.radius, self.A_lat + self.radius
+#
+# 		self.longitudes, self.dlon = np.linspace(lon_min, lon_max, nb_lon + 1, retstep=True) # list of pixel longitudes
+# 		self.latitudes, self.dlat = np.linspace(lat_max, lat_min, nb_lat + 1, retstep=True) # list of pixel latitudes
+#
+# 		# print(self.longitudes * RT, self.latitudes * RT)
+#
+# 		self.I_map = I0 * np.ones((nb_lat, nb_lon)) # [nW / m2/ sr]
+#
+# 		# print(self.I_map)
+#
+# 		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, nb_lat, nb_lon)
+# 		# print(self.maps_shape)
+#
+#
+# 	def LoadGroundImageMap(self, Nb_a_pc, Nb_e_pc):
+# 		"""In the case where h==0, load the emission map from the geotiff files"""
+# 		map = gdal.Open(self.path + self.file, gdal.GA_ReadOnly)
+# 		nb_lon = map.RasterXSize
+# 		nb_lat = map.RasterYSize
+#
+# 		nb_bands = map.RasterCount
+#
+# 		map_info = map.GetGeoTransform()
+# 		origin_lon = map_info[0]	 * DtoR
+# 		origin_lat = map_info[3]	 * DtoR
+# 		pixel_width = map_info[1]	 * DtoR
+# 		pixel_height = map_info[5]	 * DtoR
+#
+# 		LonToCol = lambda lon: int((lon - origin_lon) / pixel_width)
+# 		LatToRow = lambda lat: int((lat - origin_lat) / pixel_height)
+#
+# 		lon_min = max(self.A_lon - self.radius / np.cos(self.A_lat), origin_lon)
+# 		lon_max = min(self.A_lon + self.radius / np.cos(self.A_lat), origin_lon + pixel_width * nb_lon)
+#
+# 		lat_min = max(self.A_lat - self.radius, origin_lat + pixel_height * nb_lat)
+# 		lat_max = min(self.A_lat + self.radius, origin_lat)
+#
+# 		nb_lon  = int( 2 * self.radius / pixel_width)
+# 		nb_lat  = int(-2 * self.radius / pixel_height)
+#
+# 		# print("GROUND MAP", nb_lon, nb_lat)
+#
+# 		self.longitudes, self.dlon = np.linspace(lon_min, lon_max, nb_lon, retstep=True) # list of pixel longitudes
+# 		self.latitudes, self.dlat = np.linspace(lat_max, lat_min, nb_lat, retstep=True) # list of pixel latitudes
+#
+# 		map_band = map.GetRasterBand(1)
+# 		self.I_map = map_band.ReadAsArray(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat) # Emission map we will use in #[nW / m2/ sr]
+# 		self.I_map *= 1e4
+#
+# 		if nb_lon * nb_lat > self.N_bins_max and self.N_bins_max > 0:
+# 			# print("GROUND MAP TOO BIG", nb_lon * nb_lat, self.N_bins_max)
+# 			new_nb_lon, new_nb_lat = int(np.sqrt(self.N_bins_max)), int(np.sqrt(self.N_bins_max))
+# 			# print("GROUND MAP", new_nb_lon, new_nb_lat)
+#
+# 			self.longitudes, self.dlon = np.linspace(lon_min, lon_max, new_nb_lon, retstep=True) # list of pixel longitudes
+# 			self.latitudes, self.dlat = np.linspace(lat_max, lat_min, new_nb_lat, retstep=True) # list of pixel latitudes
+#
+# 			self.I_map = cv2.resize(self.I_map, dsize=(new_nb_lon, new_nb_lat), interpolation = cv2.INTER_CUBIC)
+#
+#
+# 		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, len(self.latitudes), len(self.longitudes))
+# 		# print("GROUND MAP SHAPE",self.maps_shape )
+# 		#
+# 		# self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
+# 		# self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
+# 		# self.total_scattering_map 	= np.zeros(self.maps_shape) # DoLP of scattered light from (e,a)
+# 		# self.AoRD_map 				= np.zeros(self.maps_shape) # Angle of polaisation of light from (e,a)
+# 		# self.V_map 					= np.zeros(self.maps_shape)
+# 		# self.Vcos_map 				= np.zeros(self.maps_shape)
+# 		# self.Vsin_map 				= np.zeros(self.maps_shape)
+# 		#
+# 		# self.V_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		# self.Vcos_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		# self.Vsin_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		#
+# 		# self.I0_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		# self.DoLP_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		# self.AoLP_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+#
+# 	def LoadPointSourceMap(self, src_I0, src_az, src_dist, Nb_a_pc, Nb_e_pc):
+#
+# 		self.src_I0, self.src_az, self.src_dist = src_I0, src_az, src_dist
+#
+# 		src_lon, src_lat = AzDistToLonLat(src_az, src_dist, self.A_lon, self.A_lat)
+#
+# 		self.longitudes, self.dlon = np.linspace(src_lon - 0.5/RT, src_lon + 0.5/RT, 2, retstep=True) # list of pixel longitudes
+# 		self.latitudes, self.dlat = np.linspace(src_lat - 0.5/RT, src_lat + 0.5/RT, 2, retstep=True) # list of pixel latitudes
+#
+# 		print(self.longitudes)
+# 		self.I_map = np.ones((1, 1)) * src_I0 #[nW / m2 / sr]
+#
+# 		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, 1, 1)
+#
+# 		# self.scattering_map 		= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
+# 		# self.DoLP_map				= np.zeros(self.maps_shape) # DoLP of scattered light from (e,a)
+# 		# self.total_scattering_map 	= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
+# 		# self.AoRD_map 				= np.zeros(self.maps_shape) # Angle of polaisation of light from (e,a)
+# 		# self.V_map 					= np.zeros(self.maps_shape)
+# 		# self.Vcos_map 				= np.zeros(self.maps_shape)
+# 		# self.Vsin_map 				= np.zeros(self.maps_shape)
+# 		#
+# 		# self.V_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		# self.Vcos_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		# self.Vsin_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		#
+# 		# self.I0_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		# self.DoLP_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+# 		# self.AoLP_total	= np.zeros((Nb_e_pc, Nb_a_pc))
+#
+# 	def GetArea(self, ilat):
+# 		"""Return the area of a pixel on the map in m**2. If we use a point source, the area is set to one."""
+# 		if not self.is_point_source:
+# 			return (RT ** 2) * abs(self.dlat) * abs(self.dlon) * np.cos(self.mid_latitudes[ilat])**1 * 1e6
+# 		else:
+# 			return 1
+#
+# 	def SetLightParameters(self):
+# 		self.total_scattering_map 	= 2 * self.V_map
+#
+# 		self.DoLP_map				= 2 * np.sqrt(self.Vcos_map**2 + self.Vsin_map**2) / 100 # DoLP of scattered light from (e,a)
+# 		self.DoLP_map				= np.divide(self.DoLP_map, self.V_map, out = np.zeros_like(self.DoLP_map), where = self.V_map != 0)
+#
+# 		self.AoRD_map 				= np.arctan2(self.Vsin_map, self.Vcos_map) / 2. # Angle of polaisation of light from (e,a)
+# 		self.scattering_map 		= self.total_scattering_map * self.DoLP_map / 100. # Polarized intensity from (e, a) reaching us
+#
+# 		for it, t in enumerate(range(self.Nt)):
+# 			for ie, e in enumerate(self.V_map[0]):
+# 				for ia, a in enumerate(e):
+# 					self.V_total[it, ie, ia] = np.sum(self.V_map[it, ie, ia, :, :])
+# 					self.Vcos_total[it, ie, ia] = np.sum(self.Vcos_map[it, ie, ia, :, :])
+# 					self.Vsin_total[it, ie, ia] = np.sum(self.Vsin_map[it, ie, ia, :, :])
+#
+# 					self.I0_total[it, ie, ia] = 2 * self.V_total[it, ie, ia]
+# 					self.DoLP_total[it, ie, ia] = 100 * 2 * np.sqrt(self.Vcos_total[it, ie, ia] ** 2 + self.Vsin_total[it, ie, ia] ** 2) / self.V_total[it, ie, ia] #in %
+# 					self.AoLP_total[it, ie, ia] = np.arctan2(self.Vsin_total[it, ie, ia], self.Vcos_total[it, ie, ia]) / 2
+#
+#
+# 	def ProlongateTime(self, new_Nt):
+# 		self.Nt = new_Nt
+# 		self.cube = np.zeros((self.Nt, self.Nlat, self.Nlon))
+#
+# 		Nb_e_pc, Nb_a_pc = self.scattering_map.shape[1], self.V_total.shape[2]
+# 		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, self.Nlat, self.Nlon)
+#
+# 		self.scattering_map 		= np.zeros(self.maps_shape) # Intensity from (e, a) reaching us
+# 		self.DoLP_map				= np.zeros(self.maps_shape) # Polarized intensity from (e, a) reaching us
+# 		self.total_scattering_map 	= np.zeros(self.maps_shape) # DoLP of scattered light from (e,a)
+# 		self.AoRD_map 				= np.zeros(self.maps_shape) # Angle of polaisation of light from (e,a)
+# 		self.V_map 					= np.zeros(self.maps_shape)
+# 		self.Vcos_map 				= np.zeros(self.maps_shape)
+# 		self.Vsin_map 				= np.zeros(self.maps_shape)
+#
+# 		self.V_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+# 		self.Vcos_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+# 		self.Vsin_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+#
+# 		self.I0_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+# 		self.DoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+# 		self.AoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
+#
+#
+#
 
 
 if __name__ == "__main__":

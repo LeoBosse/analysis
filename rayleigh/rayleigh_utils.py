@@ -24,12 +24,13 @@ GenPythagore	= lambda a, b, theta: np.sqrt(a**2 + b**2 - 2*a*b*np.cos(theta)) # 
 RadToKm			= lambda rad: rad * RT
 
 def AzDistToLonLat(a, d, origin_lon = 0, origin_lat = 0):
+	"""AZimut a in radians, distance d in radians"""
 	dist_east, dist_north = d * np.sin(a), d * np.cos(a)
 
-	delta_lon = dist_east / RT * np.sin(origin_lat)
-	delta_lat = dist_north / RT
+	delta_lon = dist_east / np.cos(origin_lat)
+	delta_lat = dist_north
 
-	print("AzDistToLonLat", dist_east, dist_north, delta_lon, delta_lat, delta_lon*RT, delta_lat*RT)
+	# print("AzDistToLonLat", dist_east, dist_north, delta_lon, delta_lat, delta_lon*RT, delta_lat*RT)
 
 	return origin_lon + delta_lon, origin_lat + delta_lat
 

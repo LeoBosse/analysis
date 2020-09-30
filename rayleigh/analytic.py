@@ -13,7 +13,7 @@ RtoD = 1. / DtoR
 
 wl = 0.3914 #micro m
 
-# ai = 90	* DtoR
+# ai = 0	* DtoR
 ai_list = np.linspace(0, 360, 37, endpoint=True)	* DtoR
 # ai_list = np.array([0])	* DtoR
 
@@ -110,6 +110,13 @@ for ai, RAE in zip(ai_list, RAE_list):
 		FNpola_list[-1].append(FNpola[0])
 
 		D_list[-1].append(Fpola[0] / F[0] * 100)
+
+
+print("F", F_list)
+print("Fpola", Fpola_list)
+print("Funpola", FNpola_list)
+print("DoLP", D_list)
+
 
 font = {'weight' : 'bold',
 'size'   : 24}

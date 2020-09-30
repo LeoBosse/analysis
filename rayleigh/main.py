@@ -31,7 +31,7 @@ from atmosphere import *
 from world import *
 from input import *
 
-def RunSimulation(file_name = "", show = True, output_result_file=None):
+def RunSimulation(file_name = "", show = True, output_result_file=None, header = True):
 
 	datetime_start = dt.datetime.now()
 
@@ -57,10 +57,11 @@ def RunSimulation(file_name = "", show = True, output_result_file=None):
 
 		old = sys.stdout
 		if output_result_file:
+			print(f"Print results in {output_result_file}")
 			f = open(output_result_file, "a")
 			sys.stdout = f
 
-		simu.PrintSystematicResults()
+		simu.PrintSystematicResults(header = header)
 		sys.stdout = old
 
 		print("Simulation ran in:", dt.datetime.now() - datetime_start)
