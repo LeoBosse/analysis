@@ -6,11 +6,18 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from matplotlib.patches import Ellipse
 
+from time import perf_counter #For the timer decorator
+
 # import osgeo.gdal as gdal
 # gdal.UseExceptions()  # not required, but a good idea
 
 import sys as sys
 from observation import *
+
+import astropy as apy
+from astropy.coordinates import EarthLocation, SkyCoord
+from astropy.time import Time
+from astropy import units as u
 
 DtoR = np.pi / 180.
 RtoD = 1. / DtoR
@@ -19,16 +26,56 @@ RT = 6371. # km
 # Initialisation of a few usefull geometrical functions
 Getuen 			= lambda a, e: (np.sin(e), np.cos(e) * np.sin(a), np.cos(e) * np.cos(a)) # From azimut, elevation, return a vector in the Up-East-North coordinate system
 GetAngle 		= lambda v1, v2: np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) # Return angle in radian between two vectors
-GenPythagore	= lambda a, b, theta: np.sqrt(a**2 + b**2 - 2*a*b*np.cos(theta)) # Generalised Pythagorean theorem. From 2 sides and the angle between them, return the lengthof third side.
+GenPythagore	= lambda a, b, theta: np.sqrt(a**2 + b**2 - 2*a*b*np.cos(theta)) # Generalised Pythagorean theorem. From 2 sides and the angle between them, return the length of third side.
 
 RadToKm			= lambda rad: rad * RT
+# Timer decorator
+
+def timer(fn):
+
+    def inner(*args, **kwargs):
+        start_time = perf_counter()
+        to_execute = fn(*args, **kwargs)
+        end_time = perf_counter()
+        execution_time = end_time - start_time
+        print('{0} took \t \t {1:.8f}s to execute'.format(fn.__name__, execution_time))
+        return to_execute
+
+    return inner
+
+def GetGalacticCoord(lon, lat, height, az, el, time):
+
+	location = EarthLocation(lon=lon, lat=lat, height=height*u.m)
+	ptcu = SkyCoord(obstime = time, location=location, alt=el*u.rad, az=az*u.rad, frame='altaz')
+	Glon, Glat = ptcu.galactic.l.value, ptcu.galactic.b.value
+
+	# print("GLon, Glat", Glon, Glat)
+
+	return Glon, Glat #in degrees
+
+def GetStarlight(lon, lat, height, time, el, az):
+
+	Glon, Glat = GetGalacticCoord(lon, lat, height, az, el, time)
+
+	b = np.array([0, 5, 10, 15, 20, 30, 40, 50, 60, 70, 80])
+	Jv = np.array([371.5, 246.5, 175.3, 136.5, 102.9, 68.7, 51.5, 41.3, 35.5, 32.5, 31.1]) #in S_10 units
+	# Jv = self.S10TonanoWatt(Jv)
+
+	return np.interp(abs(Glat), b, Jv)
+
+def DistToAngle(dist, lat = 0, az = 0, R = RT):
+	return (dist  / R) * np.sqrt(np.cos(az)**2 + np.sin(az)**2 / np.cos(lat)**2)
+
+def AngleToDist(angle, lat = 0, az = 0, R = RT):
+	return (angle * R) / np.sqrt(np.cos(az)**2 + np.sin(az)**2 / np.cos(lat)**2)
+
 
 def AzDistToLonLat(a, d, origin_lon = 0, origin_lat = 0):
-	"""AZimut a in radians, distance d in radians"""
+	"""AZimut a in radians, distance d in km"""
 	dist_east, dist_north = d * np.sin(a), d * np.cos(a)
 
-	delta_lon = dist_east / np.cos(origin_lat)
-	delta_lat = dist_north
+	delta_lon = dist_east / np.cos(origin_lat) / RT
+	delta_lat = dist_north / RT
 
 	# print("AzDistToLonLat", dist_east, dist_north, delta_lon, delta_lat, delta_lon*RT, delta_lat*RT)
 
@@ -45,7 +92,7 @@ def GetRotMatrixAO(lonA, latA):
 
 
 def AzEltoLonLat(a, e, h, A_lon, A_lat):
-	obs = ObservationPoint(A_lon, A_lat, h, a, e)
+	obs = ObservationPoint(A_lon, A_lat, h, a, e, init_full=False)
 	return obs.P_lon, obs.P_lat
 
 def LonLatToAzEl(E_lon, E_lat, h, A_lon, A_lat):
@@ -90,6 +137,8 @@ def LonLatToAzDist(E_lon, E_lat, A_lon, A_lat):
 	azimut = np.arctan2(AE_uen[1], AE_uen[2])
 	# print(azimut*RtoD, "\t", AE_norm)
 	# azimut = GetAngle(np.array([1, 0, 0]), AE_uen.reshape(1,3))
+
+	# dist_in_rad = AE_uen[1], AE_uen[2]
 
 	dist_in_rad = GetAngle(OE.T[0], OA.T[0])
 
@@ -224,8 +273,8 @@ def GetLonLatFromName(name, unit="radians"):
 		A_lon = 5.76
 		A_lat = 44.83
 	elif name == "skibotn":
-		A_lon = 20.363109
-		A_lat = 69.348027
+		A_lon = 20.363641
+		A_lat = 69.348151
 	elif name == "nyalesund":
 		A_lon = 11.92288
 		A_lat = 78.92320

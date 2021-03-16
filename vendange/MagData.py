@@ -187,7 +187,7 @@ class EqCurrent:
 
 		app_angle, J_los_angle = zip(*app_angle)
 		app_angle = np.array(app_angle)
-		print(J_los_angle)
+		# print(J_los_angle)
 		if not shift:
 			self.data["AoJapp"] = app_angle
 			self.data["AoJapp"] = SetAngleBounds(np.array(app_angle), -np.pi/2, np.pi/2)
@@ -299,9 +299,9 @@ class MagData:
 		self.data = np.genfromtxt(self.file, dtype=self.array_type, delimiter = [12, 8, 11, 10, 10, 10, 10], skip_header=7, skip_footer=1, names=None)
 
 		for f in self.additional_files:
-			print(f, len(self.data))
+			# print(f, len(self.data))
 			self.data = np.concatenate((self.data, np.genfromtxt(f, dtype=self.array_type, delimiter = [12, 8, 11, 10, 10, 10, 10], skip_header=7, skip_footer=1, names=None)))
-			print(f, len(self.data))
+			# print(f, len(self.data))
 
 		self.datetime = ([time.datetime.strptime(d + " " + t, "%d/%m/%Y %H:%M:%S") for d, t in zip(self.data["date"], self.data["time"])])
 
@@ -342,7 +342,7 @@ class MagData:
 			else:
 				deriv.append(0)
 
-		print([(data[i+1], data[i], self.times_sec[i+1], self.times_sec[i]) for i in range(len(data)-1) if deriv[i] > 100])
+		# print([(data[i+1], data[i], self.times_sec[i+1], self.times_sec[i]) for i in range(len(data)-1) if deriv[i] > 100])
 
 		times = self.GetNormTimes(divisor)
 		del times[-1]
@@ -352,9 +352,9 @@ class MagData:
 	def StripTime(self, start, end):
 		# start = usefull_times[0]
 		# end = usefull_times[-1]
-		print("DEBUG MAGDATA TIME", start, end)
-		print("DEBUG MAGDATA TIME", self.datetime[0], self.datetime[-1])
-		print(len(self.data))
+		# print("DEBUG MAGDATA TIME", start, end)
+		# print("DEBUG MAGDATA TIME", self.datetime[0], self.datetime[-1])
+		# print(len(self.data))
 
 		self.data = np.array([d for i, d in enumerate(self.data) if start <= self.datetime[i] <= end], dtype = self.array_type)
 
@@ -363,7 +363,7 @@ class MagData:
 		self.times = ([time.timedelta(seconds = t.timestamp()) for t in self.datetime])
 		self.times_sec = [t.total_seconds() for t in self.times]
 
-		print(len(self.data))
+		# print(len(self.data))
 
 
 	def GetNormTimes(self, divisor = 1):

@@ -18,7 +18,7 @@ class Input:
 
 		# print(self.path, self.file_name)
 
-		self.dictionnary, self.comments = self.ReadInputFile(self.path + input_file)
+		self.dictionnary, self.comments = self.ReadInputFile(self.path + self.file_name)
 
 	def Update(self, dict):
 		for key, value in dict.items():
@@ -42,8 +42,10 @@ class Input:
 
 		if kwargs:
 			file_name = file_name.split(".")[0]
+			# print("file_name", file_name)
 			for k, v in kwargs.items():
 				file_name += "_" + k + str(v)
+			# print("file_name", file_name)
 			# file_name += ".in"
 
 		with open(folder + file_name + ".in", "w") as f_in:

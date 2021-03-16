@@ -133,7 +133,7 @@ class AllSkyData:
 
 		for i, lign in enumerate(image):
 			for j, col in enumerate(lign):
-				pix_azimut    = calibration["gazms"][i][j] #IN DEGREES
+				pix_azimut    = calibration["mazms"][i][j] #IN DEGREES
 				pix_elevation = calibration["elevs"][i][j] #IN DEGREES
 				if not np.isnan(pix_azimut) and not np.isnan(pix_elevation):
 					# print(pix_azimut, pix_elevation)

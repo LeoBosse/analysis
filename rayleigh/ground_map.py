@@ -10,6 +10,7 @@ import sys as sys
 import numpy as np
 import cv2
 import time as tm
+import scipy as sci
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.patches import Circle
@@ -41,14 +42,16 @@ class ElevationMap():
 		# print(self.location, self.A_lon, self.A_lat)
 
 		self.nb_pix_max = int(in_dict["alt_map_N_bins_max"])
-		self.resolution = float(in_dict["alt_map_resolution"]) / RT #in radian
+		self.resolution = float(in_dict["alt_map_resolution"]) #in km
 		if self.resolution == 0:
-			self.resolution = (1/3600)*DtoR # 1 arcsec
+			self.resolution = 0.031 # 1 arcsec = 31m
+		self.lon_resolution = DistToAngle(self.resolution, lat = self.A_lat, az = 90*DtoR)
+		self.lat_resolution = DistToAngle(self.resolution, lat = self.A_lat, az =  0*DtoR)
 
-		self.radius = float(in_dict["alt_map_radius"]) / RT
+		self.radius = float(in_dict["alt_map_radius"])
 		self.N_bins_max = int(in_dict["ground_N_bins_max"])
-		self.lon_min, self.lon_max = self.A_lon - self.radius, self.A_lon + self.radius
-		self.lat_min, self.lat_max = self.A_lat - self.radius, self.A_lat + self.radius
+		self.lon_min, self.lon_max = self.A_lon - DistToAngle(self.radius, lat = self.A_lat, az = 90*DtoR), self.A_lon + DistToAngle(self.radius, lat = self.A_lat, az = 90*DtoR)
+		self.lat_min, self.lat_max = self.A_lat - DistToAngle(self.radius), self.A_lat + DistToAngle(self.radius)
 
 		# print("ALT MAP BOUNDS", self.lon_min*RtoD, self.lon_max*RtoD, self.lat_min*RtoD, self.lat_max*RtoD)
 
@@ -62,33 +65,47 @@ class ElevationMap():
 
 		self.A_alt = self.GetAltitudeFromLonLat(self.A_lon, self.A_lat)
 
+		self.min_alt = np.min(self.map)
+		self.max_alt = np.max(self.map)
+
 		self.exist = (self.radius > 0)
 
 	def SetMapProperties(self):
 
-		self.nb_pix_lon = int((self.lon_max - self.lon_min) / self.resolution) + 1
-		self.nb_pix_lat = int((self.lat_max - self.lat_min) / self.resolution) + 1
+		### COmpute numbers of lines, col and pixels.
+		self.nb_pix_lon = int((self.lon_max - self.lon_min) / self.lon_resolution) + 1
+		self.nb_pix_lat = int((self.lat_max - self.lat_min) / self.lat_resolution) + 1
 		self.nb_pix 	= self.nb_pix_lon * self.nb_pix_lat
+		# print("ALT MAP RESOLUTION lon, lat", self.lon_resolution, self.lat_resolution)
 
+		### If a pix number maximum is specified (> 0), limit the map to that number
 		if self.nb_pix > self.nb_pix_max and self.nb_pix_max > 0:
 			self.nb_pix_lon = int(np.sqrt(self.nb_pix_max))
 			self.nb_pix_lat = int(np.sqrt(self.nb_pix_max))
 			self.nb_pix 	= self.nb_pix_lon * self.nb_pix_lat
-			self.resolution = (self.lon_max - self.lon_min) / self.nb_pix_lon
+			self.lon_resolution = (self.lon_max - self.lon_min) / self.nb_pix_lon
+			self.lat_resolution = (self.lat_max - self.lat_min) / self.nb_pix_lat
+			self.resolution = min(AngleToDist(self.lon_resolution), AngleToDist(self.lat_resolution))
 
-		self.lon_min -= self.lon_min % self.resolution
-		self.lon_max -= self.lon_max % self.resolution
-		# self.lon_max += self.resolution - self.lon_max % self.resolution
+		if mpi_rank == 0:
+			print("ALT MAP RESOLUTION lon, lat", self.resolution, AngleToDist(self.lon_resolution), AngleToDist(self.lat_resolution))
 
-		self.lat_min -= self.lat_min % self.resolution
-		self.lat_max -= self.lat_max % self.resolution
-		# self.lat_max += self.resolution - self.lat_max % self.resolution
+		self.lon_min -= (self.lon_min % self.lon_resolution)
+		self.lon_max -= (self.lon_max % self.lon_resolution)
+		# self.lon_max += self.lon_resolution - self.lon_max % self.lon_resolution
+
+		self.lat_min -= (self.lat_min % self.lat_resolution)
+		self.lat_max -= (self.lat_max % self.lat_resolution)
+		# self.lat_max += self.lat_resolution - self.lat_max % self.lat_resolution
 
 
 		self.map = np.zeros((self.nb_pix_lat, self.nb_pix_lon))
 
-		self.longitudes = np.linspace(self.lon_min, self.lon_max, self.nb_pix_lon)
-		self.latitudes  = np.linspace(self.lat_max, self.lat_min, self.nb_pix_lon)
+		self.longitudes = np.linspace(self.lon_min, self.lon_max, self.nb_pix_lon + 1)
+		self.latitudes  = np.linspace(self.lat_max, self.lat_min, self.nb_pix_lat + 1)
+
+		self.mid_longitudes = np.array([(self.longitudes[i] + self.longitudes[i+1]) / 2 for i in range(self.nb_pix_lon)])
+		self.mid_latitudes = np.array([(self.latitudes[i] + self.latitudes[i+1]) / 2 for i in range(self.nb_pix_lat)])
 
 		self.lon_name_list = range(int(self.lon_min * RtoD), int(self.lon_max * RtoD) + 1,  1)
 		self.lat_name_list = range(int(self.lat_max * RtoD), int(self.lat_min * RtoD) - 1, -1)
@@ -106,7 +123,6 @@ class ElevationMap():
 
 	def IsInMap(self, lon, lat):
 		# print(self.lon_min ,lon ,self.lon_max ,self.lat_min ,lat ,self.lat_max)
-
 		if self.lon_min < lon < self.lon_max and self.lat_min < lat < self.lat_max:
 			return True
 		else:
@@ -117,9 +133,11 @@ class ElevationMap():
 		"""Altitude of given coord above sea level.
 		return result(in meter)/unit. (unit=1000:result in km)"""
 		if self.IsInMap(lon, lat):
+			# print("IS in map")
 			l, c = self.GetIndexFromLonLat(lon, lat)
 			return self.map[l, c] / unit
 		else:
+			# print("NOT in map")
 			return 0
 
 	def GetRelativeAltitude(self, lon, lat, unit=1000): #Elevation map is in meters
@@ -136,13 +154,13 @@ class ElevationMap():
 		# print("IsAboveGround", self.GetAltitudeAboveGround(lon, lat, alt, unit))
 		return self.GetAltitudeAboveGround(lon, lat, alt, unit) >= 0
 
-
-	def IsVisible(self, lon1, lat1, alt1=None, lon2=None, lat2=None, alt2=None, dlos=0.05, ret_coll=False):
-		"""Return True if two points are visible. (if a straight line between them is always above ground.).Else returns False.
+	def IsVisible(self, lon1, lat1, alt1=None, lon2=None, lat2=None, alt2=None, dlos=None, ret_coll=False):
+		"""Return True if two points are visible  (ie if point 1 is visible from point 2, ie if a straight line between them is always above ground.).Else returns False.
 		dlos is the distance between each points along the line. (too big and it is long, too low and you will miss collisions.)
-		If alt1==None, point 1 on ground.
+		If alt1 is None, point 1 on ground.
 		If point 2 not given, use instrument coord and alt.
-		If point 2 coord are given but alt2==None, use point 2 on ground."""
+		If point 2 coord are given but alt2 is None, use point 2 on ground."""
+
 		if not lon2:
 			lon2 = self.A_lon
 			lat2 = self.A_lat
@@ -151,6 +169,9 @@ class ElevationMap():
 			alt2 = self.GetAltitudeFromLonLat(lon2, lat2)
 		if not alt1:
 			alt1 = self.GetAltitudeFromLonLat(lon1, lat1)
+
+		if dlos is None:
+			dlos = self.resolution
 
 		is_visible = True
 
@@ -168,12 +189,18 @@ class ElevationMap():
 			else:
 				return False
 
-		obs = ObservationToPoint(lon2, lat2, lon1, lat1, alt1, A_alt = alt2)
+		if alt1 < alt2:
+			obs = ObservationToPoint(lon1, lat1, lon2, lat2, alt2, A_alt = alt1, init_full = False)
+		else:
+			obs = ObservationToPoint(lon2, lat2, lon1, lat1, alt1, A_alt = alt2, init_full = False)
 
 		### Check every dlos km along path if pass below ground
+		# old_alt = 0
 		for r in np.arange(dlos/2, obs.AH_norm, dlos): #for every range
 			lon, lat, alt = obs.GetPCoordinatesFromRange(r)
 			# print(lon, lat, alt, self.GetAltitudeFromLonLat(lon, lat), alt - self.GetAltitudeFromLonLat(lon, lat))
+			if alt > self.max_alt:
+				break
 			if alt < self.GetAltitudeFromLonLat(lon, lat):
 				is_visible = False
 				break
@@ -189,8 +216,8 @@ class ElevationMap():
 
 
 	def GetIndexFromLonLat(self, lon, lat):
-		line = int((self.lat_max - lat) / self.resolution)
-		col  = int((lon - self.lon_min) / self.resolution)
+		line = int((self.lat_max - lat) / self.lat_resolution)
+		col  = int((lon - self.lon_min) / self.lon_resolution)
 		return line, col
 
 
@@ -225,27 +252,26 @@ class ElevationMap():
 		LonToCol = lambda l: int((l - origin_lon) / pixel_width)
 		LatToRow = lambda l: int((l - origin_lat) / pixel_height)
 
-		lon_min = max(self.A_lon - self.radius, origin_lon)
-		lon_max = min(self.A_lon + self.radius, origin_lon + pixel_width * nb_lon)
+		lon_min = max(self.A_lon - DistToAngle(self.radius, lat=self.A_lat, az = 90*DtoR), origin_lon)
+		lon_max = min(self.A_lon + DistToAngle(self.radius, lat=self.A_lat, az = 90*DtoR), origin_lon + pixel_width * nb_lon)
 
-		lat_min = max(self.A_lat - self.radius, origin_lat + pixel_height * nb_lat)
-		lat_max = min(self.A_lat + self.radius, origin_lat)
+		lat_min = max(self.A_lat - DistToAngle(self.radius), origin_lat + pixel_height * nb_lat)
+		lat_max = min(self.A_lat + DistToAngle(self.radius), origin_lat)
 
 		nb_lon  = int((lon_max - lon_min) / pixel_width)
 		nb_lat  = int((lat_min - lat_max) / pixel_height)
 
 		tile = tile.GetRasterBand(1).ReadAsArray(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat)
 
-		if pixel_width != self.resolution:
-			nb_lon  = int((lon_max - lon_min) / self.resolution)
-			nb_lat  = int((lat_max - lat_min) / self.resolution)
+		if pixel_width != self.lon_resolution:
+			nb_lon  = int((lon_max - lon_min) / self.lon_resolution)
+			nb_lat  = int((lat_max - lat_min) / self.lat_resolution)
 
 			tile = cv2.resize(tile, dsize=(nb_lon, nb_lat), interpolation = cv2.INTER_CUBIC)
 
 		return tile, lon_min, lat_max
 
 	def LoadMultipleTiles(self):
-
 		for tile_lon, tile_lat in self.tiles_coord:
 			tile, lon_min, lat_max = self.LoadSingleTile(tile_lon, tile_lat)
 
@@ -254,16 +280,20 @@ class ElevationMap():
 
 			# print("tile.shape", tile.shape)
 			# print("map chunk shape", self.map[tile_line : tile_line + nb_lat, tile_col : tile_col + nb_lon].shape)
-
+			#
 			# print(self.map.shape, tile_line, tile_line + nb_lat, tile_col, tile_col + nb_lon)
 
 			self.map[tile_line : tile_line + nb_lat, tile_col : tile_col + nb_lon] = tile
 
 
-	def PlotMap(self, show=False):
+	def PlotMap(self, show=False, iso = None):
 		f = plt.figure()
 		plt.pcolormesh((self.longitudes - self.A_lon) * RT, (self.latitudes - self.A_lat) * RT, self.map)
 		plt.colorbar()
+
+		if iso is not None:
+			plt.contour((self.mid_longitudes - self.A_lon) * RT, (self.mid_latitudes - self.A_lat) * RT, self.map, iso)
+
 		# plt.pcolormesh(np.flip(self.map, axis=0))
 		# plt.pcolormesh(np.flip(np.rot90(self.map, k=-1)))
 		if show:
@@ -308,7 +338,7 @@ class GroundMap:
 		self.mode = in_dict["ground_mode"].lower()
 		self.shader = in_dict["shader_mode"].lower()
 
-		self.radius = float(in_dict["ground_emission_radius"]) / RT #in radians
+		self.radius = float(in_dict["ground_emission_radius"]) #in km
 		self.N_bins_max = int(in_dict["ground_N_bins_max"])
 
 		# self.exist = ((self.radius > 0 and self.file) or float(in_dict["point_src_I0"]) > 0)
@@ -324,20 +354,32 @@ class GroundMap:
 
 		if self.exist:
 			self.LoadMap(Nb_a_pc, Nb_e_pc)
+
 			# if mpi_rank == 0:
-			# 	self.MakePlots(0, 0)
+			# 	self.MakeInitialMapPlot()
+			# 	# self.MakePlots(0, 0)
 			# 	plt.show()
 
-
+	# def DistToAngle(self, dist, lat = 0, az = 0, R = RT):
+	# 	return (dist  / R) * np.sqrt(np.cos(az)**2 + np.sin(az)**2 / np.cos(lat)**2)
+	#
+	# def AngleToDist(self, angle, lat = 0, az = 0, R = RT):
+	# 	return (angle * R) / np.sqrt(np.cos(az)**2 + np.sin(az)**2 / np.cos(lat)**2)
 
 	def LoadMap(self, Nb_a_pc, Nb_e_pc):
 
-		self.Naz, self.Ndist = int(np.sqrt(self.N_bins_max)/2+1) * 2, int(np.sqrt(self.N_bins_max)/2+1) * 2
+		self.Naz, self.Ndist = int(np.sqrt(self.N_bins_max)), int(np.sqrt(self.N_bins_max))
 
 		self.azimuts,   self.daz   = np.linspace(0, 2 * np.pi, self.Naz + 1, retstep=True)
-		self.distances, self.ddist = np.linspace(0, self.radius, self.Ndist + 1, retstep=True)
-		self.mid_distances			= self.distances[:-1] + self.ddist / 2.
-		self.mid_azimuts			= self.azimuts[:-1] + self.daz / 2.
+		### ADAPTATIVE DISTANCES (square)
+		self.distances = np.array([x**2 for x in np.linspace(0, np.sqrt(self.radius), self.Ndist + 1)]) #in km
+		### CONSTANT DISTANCES (linear)
+		# self.distances, self.ddist = np.linspace(0, self.radius, self.Ndist + 1, retstep=True)  #in km
+
+		self.mid_distances	= np.array([(self.distances[i+1] + self.distances[i]) / 2. for i in range(0, self.Ndist)]) #in km
+		self.mid_azimuts	= self.azimuts[:-1] + self.daz / 2.
+
+		# print(self.mid_distances*RT)
 
 		self.maps_shape = (self.Nt, Nb_e_pc, Nb_a_pc, self.Ndist, self.Naz)
 
@@ -347,8 +389,10 @@ class GroundMap:
 			s = self.mode.split("_")
 			I0 = float(s[1][1:])
 			az = float(s[2][1:]) * DtoR
-			dist = float(s[3][1:]) / RT
+			dist = float(s[3][1:])
+			# print(f"{I0}, {az}, {dist}")
 			self.LoadPointSourceMap(I0, az, dist, Nb_a_pc, Nb_e_pc)
+			self.is_point_source = True
 		elif "uniform" in self.mode:
 			I0 = float(self.mode.split("_")[1][1:])
 			self.LoadUniformMap(I0)
@@ -368,38 +412,17 @@ class GroundMap:
 			print("WARNING: Ground map mode is not correct. Ground map not used.")
 			self.exist = False
 
-		if self.shader != "none":
-			if "half" in self.shader:
-				mid_a = (float(self.shader.split("_")[1][1:]) * DtoR)%(2*np.pi)
-				a1, a2 = (mid_a - np.pi/2)%(np.pi*2), (mid_a + np.pi/2)%(np.pi*2)
-				print("DEBUG condition", mid_a*RtoD, a1*RtoD, a2*RtoD, a1 >= a2)
-				condition = lambda d, a: a > a1 or a < a2 if a1 > a2 else a1 < a < a2
-				# condition = lambda d, a: min(a1, a2) <= a < max(a1, a2)
 
-			elif "random" in self.shader:
-				percentage = float(self.shader.split("_")[1][:]) / 100.
-				condition = lambda d, a: np.random.random() < percentage
-			elif "in_dist" in self.shader:
-				min_dist = float(self.shader.split("_")[2][1:]) / RT
-				max_dist = float(self.shader.split("_")[3][1:]) / RT
-				condition = lambda d, a: min_dist < d < max_dist
-			elif "out_dist" in self.shader:
-				min_dist = float(self.shader.split("_")[2][1:]) / RT
-				max_dist = float(self.shader.split("_")[3][1:]) / RT
-				condition = lambda d, a: d < min_dist  or d > max_dist
-
-			for id, d in enumerate(self.mid_distances):
-				for ia, a in enumerate(self.mid_azimuts):
-					if condition(d, a):
-						self.I_map[id, ia] = 0
-
+		# self.I_map[self.GetPixFromAzDist(0*DtoR, 0.1)] +=
 
 		if self.exist:
-			self.mid_distances			= self.distances[:-1] + self.ddist / 2.
+			self.Ndist 					= len(self.distances) - 1
+			self.Naz 					= len(self.azimuts) - 1
+
+			self.mid_distances			= np.array([(self.distances[i+1] + self.distances[i]) / 2. for i in range(0, self.Ndist)])
 			self.mid_azimuts			= self.azimuts[:-1] + self.daz / 2.
 
-			self.Ndist 					= len(self.mid_distances)
-			self.Naz 					= len(self.mid_azimuts)
+			self.ShadeMap()
 
 			self.cube 					= np.zeros((self.Nt, self.Ndist, self.Naz))
 			self.cube[0] 				+= self.I_map
@@ -412,6 +435,8 @@ class GroundMap:
 			self.Vcos_map 				= np.zeros(self.maps_shape)
 			self.Vsin_map 				= np.zeros(self.maps_shape)
 
+			self.mountain_shadow_heights = np.zeros(self.maps_shape)
+
 			self.V_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 			self.Vcos_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 			self.Vsin_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
@@ -420,6 +445,77 @@ class GroundMap:
 			self.DoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 			self.AoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 
+
+	def ShadeMap(self, **kwargs):
+		if "half" in self.shader:
+			mid_a = (float(self.shader.split("_")[1][1:]) * DtoR)%(2*np.pi)
+			a1, a2 = (mid_a - np.pi/2)%(np.pi*2), (mid_a + np.pi/2)%(np.pi*2)
+			# print("DEBUG condition", mid_a*RtoD, a1*RtoD, a2*RtoD, a1 >= a2)
+			def condition(d, a, **kwargs):
+				ret = 1
+				if a > a1 or a < a2 if a1 > a2 else a1 < a < a2:
+					ret = 0
+				return ret
+
+			# condition = lambda d, a: min(a1, a2) <= a < max(a1, a2)
+
+		elif "random" in self.shader:
+			percentage = float(self.shader.split("_")[1][:]) / 100.
+			# condition = lambda d, a, id=0: np.random.random() < percentage
+			def condition(d, a, **kwargs):
+				ret = 1
+				if np.random.random() < percentage:
+					ret = 0
+				return ret
+
+		elif "in_dist" in self.shader:
+			min_dist = float(self.shader.split("_")[2][1:])
+			max_dist = float(self.shader.split("_")[3][1:])
+			def condition(d, a, **kwargs):
+				ret = 1
+				if min_dist < d < max_dist:
+					ret = 0
+				return ret
+
+		elif "out_dist" in self.shader:
+			min_dist = float(self.shader.split("_")[2][1:])
+			max_dist = float(self.shader.split("_")[3][1:])
+			def condition(d, a, **kwargs):
+				ret = 1
+				if d < min_dist  or d > max_dist:
+					ret = 0
+				return ret
+
+		elif "ring" in self.shader:
+			index = int(self.shader.split("_")[1])
+			def condition(d, a, **kwargs):
+				ret = 1
+				if id != index:
+					ret = 0
+				return ret
+		# elif "altitude" in self.shader and "alt_map" in kwargs:
+		# 	alt_map = kwargs["alt_map"]
+		# 	def condition(d, a, **kwargs):
+		# 		ret = 1
+		# 		lon, lat = AzDistToLonLat(a, d, origin_lon = self.A_lon, origin_lat = self.A_lat)
+		# 		print("COORD", a*RtoD, d, lon*RtoD, lat*RtoD)
+		# 		alt = alt_map.GetAltitudeFromLonLat(lon, lat)
+		# 		print(alt)
+		# 		if alt < 1:
+		# 			ret = 0
+		# 		else:
+		# 			ret = 1
+		# 		return ret
+		else:
+			def condition(d, a, **kwargs):
+				return 1
+
+		for id, d in enumerate(self.mid_distances):
+			for ia, a in enumerate(self.mid_azimuts):
+				self.I_map[id, ia] *= condition(d, a, id = id, ia = ia)
+
+
+
 	def LoadUniformMap(self, I0):
 		self.I_map = I0 * np.ones((self.Ndist, self.Naz)) # [nW / m2/ sr]
 
@@ -427,7 +523,8 @@ class GroundMap:
 	def LoadGroundImageMap(self):
 		"""In the case where h==0, load the emission map from the geotiff files"""
 
-		print("Loading ground emission map data...")
+		if mpi_rank == 0:
+			print("Loading ground emission map data...")
 
 		map = gdal.Open(self.path + self.file, gdal.GA_ReadOnly)
 		nb_lon = map.RasterXSize
@@ -444,40 +541,47 @@ class GroundMap:
 		LonToCol = lambda lon: int((lon - origin_lon) / pixel_width)
 		LatToRow = lambda lat: int((lat - origin_lat) / pixel_height)
 
-		lon_min = max(self.A_lon - self.radius / np.cos(self.A_lat), origin_lon)
-		lon_max = min(self.A_lon + self.radius / np.cos(self.A_lat), origin_lon + pixel_width * nb_lon)
+		# print(self.radius, self.A_lat,  np.pi/2)
+		lat_radius = DistToAngle(self.radius, lat = self.A_lat, az = 0)
+		lon_radius = DistToAngle(self.radius, lat = self.A_lat, az = np.pi/2)
 
-		lat_min = max(self.A_lat - self.radius, origin_lat + pixel_height * nb_lat)
-		lat_max = min(self.A_lat + self.radius, origin_lat)
+		# print("DEBUG RADIUS SKI", AngleToDist(lat_radius, lat = self.A_lat, az = 0), AngleToDist(lon_radius, lat = self.A_lat, az = 90*DtoR))
 
-		nb_lon  = int( 2 * self.radius / pixel_width)
-		nb_lat  = int(-2 * self.radius / pixel_height)
+		lon_min = max(self.A_lon - lon_radius, origin_lon)
+		lon_max = min(self.A_lon + lon_radius, origin_lon + pixel_width * nb_lon)
+
+		# print("DEBUG lon min", self.A_lon - lon_radius, origin_lon)
+
+		lat_min = max(self.A_lat - lat_radius, origin_lat + pixel_height * nb_lat)
+		lat_max = min(self.A_lat + lat_radius, origin_lat)
+
+		nb_lon  = int( 2 * lon_radius / pixel_width)
+		nb_lat  = int(-2 * lat_radius / pixel_height)
 
 		# print("GROUND MAP", nb_lon, nb_lat)
 
 		longitudes, dlon = np.linspace(lon_min, lon_max, nb_lon, retstep=True) # list of pixel longitudes
-		latitudes, dlat = np.linspace(lat_max, lat_min, nb_lat, retstep=True) # list of pixel latitudes
+		latitudes,  dlat = np.linspace(lat_max, lat_min, nb_lat, retstep=True) # list of pixel latitudes
 
 		map_band = map.GetRasterBand(1)
 		I_map = map_band.ReadAsArray(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat) # Emission map we will use in #[nW / cm2/ sr]
-		I_map *= 1e4
+		I_map *= 1e4 #in [nW / m2 / sr]
+
+		# plt.pcolormesh(AngleToDist(longitudes-self.A_lon, lat = self.A_lat, az = np.pi/2), AngleToDist(latitudes-self.A_lat, lat = self.A_lat, az = 0), I_map)
+		# plt.show()
 
 		self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
 
-		# self.I_map = np.zeros((self.Ndist, self.Naz))
-		# divisor_map = np.zeros((self.Ndist, self.Naz))
-		#
-		# for ilon, lon in enumerate(longitudes):
-		# 	for ilat, lat in enumerate(latitudes):
-		# 		az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
-		# 		# print("GROUND MAP", new_nb_lon, new_nb_lat)
-		# 		iaz, idist = self.GetPixFromAzDist(az, dist)
-		# 		# print(idist, iaz, self.Ndist, self.Naz)
-		# 		if idist is not None:
-		# 			self.I_map[idist, iaz] += I_map[ilat, ilon]
-		# 			divisor_map[idist, iaz] += 1
-		#
-		# self.I_map = np.divide(self.I_map, divisor_map, out = np.zeros_like(self.I_map), where = divisor_map != 0)
+
+		### The following is to use when the polar map has better resolution than the carthsian one. Some pixel may then be equal to zero because no carthesian pixel center fall in them.
+		### It does not work for now !!!!
+		# for id, d in enumerate(self.mid_distances):
+		# 	for ia, a in enumerate(self.mid_azimuts):
+		# 		if self.I_map[id, ia] == 0:
+		# 			pol_lon, pol_lat = AzDistToLonLat(a, d, origin_lon = self.A_lon, origin_lat = self.A_lat)
+		# 			pol_lon_index = (pol_lon - lon_min) / pixel_width
+		# 			pol_lat_index = (pol_lat - lat_max) / pixel_height
+		# 			self.I_map[id, ia] = sci.ndimage.map_coordinates(I_map, [[pol_lon_index], [pol_lat_index]])
 
 	def CarthToPolar(self, carth_map, longitudes, latitudes):
 		polar_map = np.zeros((self.Ndist, self.Naz))
@@ -486,14 +590,27 @@ class GroundMap:
 		for ilon, lon in enumerate(longitudes):
 			for ilat, lat in enumerate(latitudes):
 				az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
-				# print("GROUND MAP", new_nb_lon, new_nb_lat)
+				dist *= RT
 				iaz, idist = self.GetPixFromAzDist(az, dist)
-				# print(idist, iaz, self.Ndist, self.Naz)
 				if idist is not None:
 					polar_map[idist, iaz] += carth_map[ilat, ilon]
 					divisor_map[idist, iaz] += 1
 
 		polar_map = np.divide(polar_map, divisor_map, out = np.zeros_like(polar_map), where = divisor_map != 0)
+		for idist in range(self.Ndist):
+			for iaz in range(self.Naz):
+				if divisor_map[idist, iaz] == 0:
+					lon, lat = AzDistToLonLat(self.mid_azimuts[iaz], self.mid_distances[idist], origin_lon = self.A_lon, origin_lat = self.A_lat)
+					ilon, ilat = min(np.searchsorted(longitudes, lon), len(longitudes)-1), min(np.searchsorted(latitudes[-1::-1], lat), len(latitudes)-1)
+
+					# print(idist, iaz, self.mid_azimuts[iaz], self.mid_distances[idist], ilon, ilat, len(longitudes), len(latitudes), carth_map[ilat, ilon])
+
+					polar_map[idist, iaz] = carth_map[ilat, ilon]
+					# pp = polar_map[min(self.Ndist, 	idist + 1), (iaz + 1) % self.Naz]
+					# pm = polar_map[min(self.Ndist, 	idist + 1), (iaz - 1) % self.Naz]
+					# mp = polar_map[max(0, 			idist - 1), (iaz + 1) % self.Naz]
+					# mm = polar_map[max(0, 			idist - 1), (iaz - 1) % self.Naz]
+					# polar_map[idist, iaz] = (pp + pm + mp + mm) / 4.
 
 		return polar_map
 
@@ -503,8 +620,8 @@ class GroundMap:
 
 		src_lon, src_lat = AzDistToLonLat(src_az, src_dist, self.A_lon, self.A_lat)
 
-		self.distances, self.ddist = np.linspace(src_dist - 0.5/RT, src_dist + 0.5/RT, 2, retstep=True) # list of pixel longitudes
-		self.azimuts, self.daz 	   = np.linspace(src_az - 0.5/RT, src_az + 0.5/RT, 2, retstep=True) # list of pixel latitudes
+		self.distances, self.ddist = np.linspace(src_dist - 0.5, src_dist + 0.5, 2, retstep=True) # list of pixel longitudes
+		self.azimuts, self.daz 	   = np.linspace(src_az - 0.5, src_az + 0.5, 2, retstep=True) # list of pixel latitudes
 
 		# print(self.longitudes)
 		self.I_map = np.ones((1, 1)) * src_I0 #[nW / m2 / sr]
@@ -519,19 +636,23 @@ class GroundMap:
 
 	def GetPixFromDist(self, dist):
 		# print(self.Ndist, self.ddist * RT, dist * RT, int(dist / self.ddist))
-		idist = int(dist / self.ddist)
+		# idist = np.around(dist / self.ddist) #ONLY IF DISTANCE BINS ARE CONSTANT!!!
+
+		idist = np.searchsorted(self.distances, dist, side="right")
+
 		if idist < self.Ndist:
-			return idist
+			return int(idist)
 		else:
 			return None
 
 	def GetPixFromAzDist(self, az, dist):
 		return self.GetPixFromAz(az), self.GetPixFromDist(dist)
 
+	#@timer
 	def GetArea(self, idist):
 		"""Return the area of a pixel on the map in m**2. If we use a point source, the area is set to one."""
 		if not self.is_point_source:
-			area = 0.5 * abs(self.daz) * (self.distances[idist+1]**2 - self.distances[idist]**2) * RT**2 * 1e6
+			area = 0.5 * abs(self.daz) * (self.distances[idist+1]**2 - self.distances[idist]**2) * 1e6
 			return area
 		else:
 			return 1
@@ -572,6 +693,8 @@ class GroundMap:
 		self.Vcos_map 				= np.zeros(self.maps_shape)
 		self.Vsin_map 				= np.zeros(self.maps_shape)
 
+		self.mountain_shadow_heights = np.zeros(self.maps_shape)
+
 		self.V_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 		self.Vcos_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 		self.Vsin_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
@@ -581,29 +704,54 @@ class GroundMap:
 		self.AoLP_total	= np.zeros((self.Nt, Nb_e_pc, Nb_a_pc))
 
 
-	def MakePlots(self, ie_pc, ia_pc, e_pc=None, a_pc=None, atmosphere_max = None, save = False):
+	def MakeInitialMapPlot(self, e_pc=None, a_pc=None, atmosphere_max = None, save = False, metadata=None):
+		f = plt.figure(figsize=(16, 8))
+		ax = plt.subplot(111, projection='polar')
+
+		i1 = ax.pcolormesh(self.azimuts, self.distances, (self.cube[0]))
+
+		cbar1 = f.colorbar(i1, extend='both', spacing='proportional', shrink=0.9, ax=ax)
+		cbar1.set_label('Initial emission map')
+
+		ax.set_theta_zero_location("N")
+		ax.set_theta_direction(-1)
+
+		if e_pc is not None and a_pc is not None:
+			if atmosphere_max:
+				length = min(atmosphere_max / np.tan(e_pc), self.radius * RT)
+			else:
+				length = self.radius * RT
+
+			# a.add_artist(Arrow(0, 0, a_pc, length, color="red", width = 0.3))
+			a.plot([0, a_pc], [0, length], "r")
+
+		if save:
+			plt.savefig(save + '_ground_emission.png', bbox_inches='tight', metadata=metadata)
+
+	def MakePlots(self, ie_pc, ia_pc, e_pc=None, a_pc=None, atmosphere_max = None, save = False, metadata=None):
 		f, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex = True, sharey = True, figsize=(16, 8))
 		ax1 = plt.subplot(221, projection='polar')
 		ax2 = plt.subplot(222, projection='polar')
 		ax3 = plt.subplot(223, projection='polar')
 		ax4 = plt.subplot(224, projection='polar')
 
-		i1 = ax1.pcolormesh(self.azimuts, self.distances * RT, (self.cube[0]))
-		i2 = ax2.pcolormesh(self.azimuts, self.distances * RT, (self.total_scattering_map[0, ie_pc, ia_pc, :, :]))		# Intensity from (e, a) reaching us
-		i3 = ax3.pcolormesh(self.azimuts, self.distances * RT, (self.scattering_map[0, ie_pc, ia_pc, :, :]))				# Polarized intensity from (e, a) reaching us
-		i4 = ax4.pcolormesh(self.azimuts, self.distances * RT, self.DoLP_map[0, ie_pc, ia_pc, :, :])	# DoLP of scattered light from (e,a)
+		i1 = ax1.pcolormesh(self.azimuts, self.distances, (self.cube[0]))
+		i2 = ax2.pcolormesh(self.azimuts, self.distances, (self.total_scattering_map[0, ie_pc, ia_pc, :, :]))		# Intensity from (e, a) reaching us
+		i3 = ax3.pcolormesh(self.azimuts, self.distances, (self.scattering_map[0, ie_pc, ia_pc, :, :]))				# Polarized intensity from (e, a) reaching us
+		i4 = ax4.pcolormesh(self.azimuts, self.distances, self.mountain_shadow_heights[0, ie_pc, ia_pc, :, :])	# DoLP of scattered light from (e,a)
+		# i4 = ax4.pcolormesh(self.azimuts, self.distances, self.DoLP_map[0, ie_pc, ia_pc, :, :])	# DoLP of scattered light from (e,a)
 		# i4 = ax4.pcolormesh((azimuts-A_lon) * RT, (distances-A_lat) * RT, AoRD_map * RtoD, cmap=cm.twilight)			# AoLP of scattered light from (e,a)
 
 
 	# Angle of polaisation of light from (e,a)
 		cbar1 = f.colorbar(i1, extend='both', spacing='proportional', shrink=0.9, ax=ax1)
-		cbar1.set_label('log10: Initial emission map')
+		cbar1.set_label('Initial emission map')
 		cbar2 = f.colorbar(i2, extend='both', spacing='proportional', shrink=0.9, ax=ax2)
-		cbar2.set_label('log10: Total intensity map')
+		cbar2.set_label('Total intensity map')
 		cbar3 = f.colorbar(i3, extend='both', spacing='proportional', shrink=0.9, ax=ax3)
-		cbar3.set_label('log10: Polarised intensity map')
+		cbar3.set_label('Polarised intensity map')
 		cbar4 = f.colorbar(i4, extend='both', spacing='proportional', shrink=0.9, ax=ax4)
-		cbar4.set_label('log10: DoLP')
+		cbar4.set_label('1st alt on LoS (km)')
 
 		# f2.suptitle("Relevant angles map at skibotn, with light pollution source at -45deg in azimut")
 
@@ -611,17 +759,17 @@ class GroundMap:
 			a.set_theta_zero_location("N")
 			a.set_theta_direction(-1)
 
-			if e_pc is not None and a_pc is not None:
-				if atmosphere_max:
-					length = atmosphere_max / np.tan(e_pc)
-				else:
-					length = self.radius * RT
-
-				# a.add_artist(Arrow(0, 0, a_pc, length, color="red", width = 0.3))
-				a.plot([0, a_pc], [0, length], "r")
+			# if e_pc is not None and a_pc is not None:
+			# 	if atmosphere_max:
+			# 		length = min(atmosphere_max / np.tan(e_pc), self.radius * RT)
+			# 	else:
+			# 		length = self.radius * RT
+			#
+			# 	# a.add_artist(Arrow(0, 0, a_pc, length, color="red", width = 0.3))
+			# 	a.plot([0, a_pc], [0, length], "r")
 
 		if save:
-			plt.savefig(self.path + self.save_name + '_groundmaps.png', bbox_inches='tight')
+			plt.savefig(save + '_groundmaps.png', bbox_inches='tight', metadata=metadata)
 
 
 # class OldGroundMap:

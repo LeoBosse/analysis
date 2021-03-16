@@ -16,7 +16,7 @@ RS_max_altitude 100	# Maximum altitude of the scattering layer (maximum 120km, b
 resolution_along_los 1	# Distance between every RS points along the line of sight (in km)
 max_angle_discretization 0	# In degrees. If scattering volume solid angle seen from E is larger than that, cut the volume in pieces.
 Atmospheric_profile atm_profiles/win.atm	#name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure).
-sky_mode none	image movie 1_band_e45 uniform_219 spot_I100_a90_e90 1_moving_EW_band image uniform_219
+sky_mode image	movie 1_band_e45 uniform_219 spot_I100_a90_e90 1_moving_EW_band image uniform_219
 emission_altitude 110	384402 # Altitude of the emission in km. Put 0 if emission on ground
 Nb_emission_points 500	# Number of bins to compute
 Nb_emission_maps 1	# Number of emission maps to compute. Use it for time changing emissions (auroras). Should be put to 1 when not varying !
@@ -28,17 +28,17 @@ I_zone_e_max 90	18.4 45.5 #Do not touch: obsolete
 #If loading	the sky from a picture
 sky_path /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
 #sky_file nya6/6300/2020/20200217/all_night/
-sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_203953_5577_cal.png
+sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_203838_5577_cal.png
 sky_wavelength 557.7	# To be able to pass from Rayleigh to nW
 use_alt_map 0
 alt_map_path /home/bossel/These/Analysis/data/elevation/
 alt_map_radius 50	#in km
 alt_map_N_bins_max 10000
 alt_map_resolution 0.2	# en km. Minimum 1arcsec (31m)
-ground_mode uniform_I100	point_I100_a180_d5 point_I100_a180_d5 uniform_I100 gaussian_I100_w1_a45_d10
+ground_mode none	uniform_I0 point_I100_a180_d5 point_I100_a180_d5 uniform_I100 gaussian_I100_w1_a45_d10
 shader_mode none	half_a0 out_dist_m90_M100 half_a0 none random_01 half_a0
-ground_emission_radius 40	# in km.
-ground_N_bins_max 100
+ground_emission_radius 50	# in km.
+ground_N_bins_max 5000
 ground_albedo 1	#in [0, 1]. Albedo of the ground. The reflection of the sky emission will be added to the ground map. DO not work with sky movies!
 ground_path /home/bossel/These/Analysis/data/Night_pollution/
 ground_file nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm_v10_c201807311200.avg_rade9.tif

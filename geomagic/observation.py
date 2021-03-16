@@ -8,6 +8,22 @@ import math as m
 import matplotlib.pyplot as plt
 import sys as sys
 
+from time import perf_counter #For the timer decorator
+
+import chaosmagpy as chaos
+
+def timer(fn):
+
+    def inner(*args, **kwargs):
+        start_time = perf_counter()
+        to_execute = fn(*args, **kwargs)
+        end_time = perf_counter()
+        execution_time = end_time - start_time
+        print('{0} took \t \t {1:.8f}s to execute'.format(fn.__name__, execution_time))
+        return to_execute
+
+    return inner
+
 
 path = "/home/bossel/These/Analysis/src/geomagic"
 DtoR = np.pi/ 180.
@@ -18,6 +34,7 @@ RT = 6371 # #km
 class ObservationPoint:
 	"""This is the class of ONE observation point, about which we know the position of the observer (A_lon, A_lat), the direction of observation (elevation, azimuth), and the height of the observed point. It can then give us the position of the observed point H, the magnetic field at this position (from CHAOS-6) and the apparent angle of this magnetic field on our captor. """
 
+	#@timer
 	def __init__(self, A_lon, A_lat, observed_altitude, azimuth, elevation, RD_src_azimut=None, RD_src_elevation=None, init_full = True, A_alt=0):
 		"""Initiating the class. The position of the observed point H is calculated automatically. Give everything in radians !"""
 		self.lon, self.lat = A_lon, A_lat
@@ -36,10 +53,14 @@ class ObservationPoint:
 
 		self.B_igrf=[0,0,0,0,0]
 		self.B_chaos=[0,0,0,0,0]
+		self.B_model = None
 
-	def SinglePointGeometry(self, GetBatP=True): #, A_lon, A_lat, h, a, e):
+		if init_full:
+			self.B_model = chaos.load_CHAOS_matfile('/home/bossel/These/Analysis/data/magn_field/CHAOS-7.4.mat')
+
+	def SinglePointGeometry(self, GetBatP=True, B_model = None): #, A_lon, A_lat, h, a, e):
 		if GetBatP:
-			self.GetBatP()
+			self.GetBatP(B_model = B_model)
 		self.GetEta()
 		if self.RD_src_azimut is not None and self.RD_src_elevation is not None:
 			self.GetRayleighAngle(self.RD_src_azimut, self.RD_src_elevation)
@@ -103,6 +124,7 @@ class ObservationPoint:
 
 		return self.AoRD
 
+	#@timer
 	def GetOA(self, **kwargs):
 		"""Return the vector OA in the reference frame of O. O:Centre of the Earth to A:observer"""
 		if not kwargs:
@@ -120,6 +142,7 @@ class ObservationPoint:
 		RT = 6371 #km
 		return - (RT + A_alt) * m.sin(elevation) + m.sqrt(abs(- m.cos(elevation)**2 * (RT + A_alt)**2 + (RT + altitude) ** 2))
 
+	#@timer
 	def GetAH(self, **kwargs):
 		"""Return the vector AH and its norm in the reference frame of O. From A:observer to H: the observed aurora"""
 
@@ -151,6 +174,17 @@ class ObservationPoint:
 
 		return AH, AH_norm
 
+	def SpericalToCarth(r, lat, lon, colat=False):
+		if colat:
+			lat = np.pi/2 - lat
+
+		x = np.cos(lon) * np.cos(lat)
+		y = np.sin(lon) * np.cos(lat)
+		z = np.sin(lat)
+
+		return x, y, z
+
+
 	def GetRotMatrixAO(self, lonA, latA, transpose=False):
 		"""Return a matrix 3x3. It is the rotation matrix to pass a vector expressed in the reference frame of a point A on the Earth (up-east-north) to the reference frame of the Earth's center O. lonA latA are the longitude and latitude of the point A."""
 		Clon, Slon = m.cos(lonA), m.sin(lonA)
@@ -165,6 +199,7 @@ class ObservationPoint:
 
 		return R_ao
 
+	#@timer
 	def GetPCoordinates(self, AH=None):
 		"""Return the coordinates of the observed point H (or P). The position of the observer and the vector OA and AH should be calculated before."""
 
@@ -208,33 +243,50 @@ class ObservationPoint:
 
 		return plane
 
-	def GetBatP(self):
+	def GetBatP(self, time=None, B_model = None):
 		"""Return the mag field of igrf and chaos at the observation point"""
-		#Writing the input file for igrf and chaos code
-		np.savetxt(path + "/B_model/theta_phi_H.dat", [[self.P_colat, self.P_lon]], fmt="%1.8e")
+# 		#Writing the input file for igrf and chaos code
+# 		np.savetxt(path + "/B_model/theta_phi_H.dat", [[self.P_colat, self.P_lon]], fmt="%1.8e")
+#
+# 		#defining the stdout files for igrf and chaos (avoid all the text writen in the terminal)
+# 		# f1 = open(path+"/src/igrf_auto.out", "w")
+# 		f2 = open(path + "/B_model/chaos_auto.out", "w")
+#
+# 		#Calling igrf and chaos
+# #		call(["./igrf_auto"], stdout = f1)
+# 		call([path + "/B_model/chaos_auto"], stdout = f2)
+# #		f1.close()
+# 		f2.close()
+#
+# 		#Loading the results of the codes
+# #		B_igrf = np.loadtxt("Bxyz_H_igrf.dat")
+# 		B_chaos = np.loadtxt(path + "/B_model/Bxyz_H_chaos6.dat")
+#
+# 		#Rearanging the vectors. The unit vector used in igrf and chaos are not the same here.
+# 		#north-east-down to up-east-north
+# 		#The first two values are the longitude and latitude of the observed point
+# 		# self.B_igrf = [B_igrf[0], B_igrf[1], -B_igrf[4], B_igrf[3], B_igrf[2]]
+# 		# self.B_igrf=[0,0,0,0,0]
+# 		self.B_chaos = [B_chaos[0], B_chaos[1], -B_chaos[4], B_chaos[3], B_chaos[2]]
+# 		# self.B_igrf = [B_igrf[0], B_igrf[1], 0, 0, 1]
+# 		# self.B_chaos = [B_chaos[0], B_chaos[1], 0, 0, 1]
 
-		#defining the stdout files for igrf and chaos (avoid all the text writen in the terminal)
-		# f1 = open(path+"/src/igrf_auto.out", "w")
-		f2 = open(path + "/B_model/chaos_auto.out", "w")
+		if B_model is None:
+			if self.B_model is None:
+				B_model = chaos.load_CHAOS_matfile('/home/bossel/These/Analysis/data/magn_field/CHAOS-7.4.mat')
+			else:
+				B_model = self.B_model
+		else:
+			self.B_model = B_model
 
-		#Calling igrf and chaos
-#		call(["./igrf_auto"], stdout = f1)
-		call([path + "/B_model/chaos_auto"], stdout = f2)
-#		f1.close()
-		f2.close()
+		if time is None:
+			time = chaos.data_utils.mjd2000(2019, 1, 1)
 
-		#Loading the results of the codes
-#		B_igrf = np.loadtxt("Bxyz_H_igrf.dat")
-		B_chaos = np.loadtxt(path + "/B_model/Bxyz_H_chaos6.dat")
+		B_radius, B_theta, B_phi = B_model.synth_values_tdep(time, RT + self.h, self.P_colat*RtoD, self.P_lon*RtoD) #given in up, south, east
 
-		#Rearanging the vectors. The unit vector used in igrf and chaos are not the same here.
-		#north-east-down to up-east-north
-		#The first two values are the longitude and latitude of the observed point
-		# self.B_igrf = [B_igrf[0], B_igrf[1], -B_igrf[4], B_igrf[3], B_igrf[2]]
-		# self.B_igrf=[0,0,0,0,0]
-		self.B_chaos = [B_chaos[0], B_chaos[1], -B_chaos[4], B_chaos[3], B_chaos[2]]
-		# self.B_igrf = [B_igrf[0], B_igrf[1], 0, 0, 1]
-		# self.B_chaos = [B_chaos[0], B_chaos[1], 0, 0, 1]
+		# print((-B_chaos[4]-B_radius)/B_radius,( B_chaos[3]-B_phi)/B_phi,( B_chaos[2]+B_theta)/B_theta)
+
+		self.B_chaos = [self.P_colat*RtoD, self.P_lon*RtoD, B_radius, B_phi, -B_theta] #transformed in colat, lon, up, east, north
 
 		return self.B_igrf, self.B_chaos
 
@@ -319,7 +371,7 @@ class ObservationPoint:
 				("Hlat",self.P_lat*RtoD),
 				("Norme AH", self.AH_norm),
 				("B chaos (up, east, north)", self.B_chaos[2:]),
-				("B chaos norme",np.linalg.norm(self.B_chaos)),
+				("B chaos norme",np.linalg.norm(self.B_chaos[2:])),
 				("Eta (angle apparent)", self.eta_chaos*RtoD),
 				("Blos (angle B-lign of sight)", self.Blos*RtoD),
 				# ("Pollution source (a, e)", (self.RD_src_azimut * RtoD, self.RD_src_elevation * RtoD)),

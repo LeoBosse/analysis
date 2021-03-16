@@ -466,9 +466,9 @@ class Geometry:
 			self.RD_src_elevation = float(entries[5]) * DtoR
 
 
-	def FixedObservation(self):
-		obs = ObservationPoint(self.A_lon, self.A_lat, self.h, self.azimuth, self.elevation, self.RD_src_azimut, self.RD_src_elevation)
-		obs.SinglePointGeometry()
+	def FixedObservation(self, B_model = None):
+		obs = ObservationPoint(self.A_lon, self.A_lat, self.h, self.azimuth, self.elevation, self.RD_src_azimut, self.RD_src_elevation, init_full=False)
+		obs.SinglePointGeometry(B_model = B_model)
 		obs.PrintAllParameters()
 
 
@@ -504,7 +504,7 @@ class Geometry:
 	# #	np.savetxt(outfile_name + "Bchaos.dat", [o.B_chaos[2:] for o in obs], header="Bup Beast Bnorth")
 
 
-	def FixedElevation(self, direction="NESW"):
+	def FixedElevation(self, direction="NESW", B_model = None):
 		#We fix the elevation, and look all around, from azimuth 0 to 360 North-East-South-West-North
 		self.obs=[]
 
@@ -513,19 +513,24 @@ class Geometry:
 		self.chaos_input_list=[]
 		#Looping over all positions, each get its own observation point object and the output values are plotted
 		for i, a in enumerate(self.azimuth):
-			self.obs.append(ObservationPoint(self.A_lon, self.A_lat, self.h, a, self.elevation, self.RD_src_azimut, self.RD_src_elevation))
-			self.chaos_input_list.append([self.obs[-1].P_colat, self.obs[-1].P_lon])
-		print("choas input list:", len(self.chaos_input_list))
-		np.savetxt(path + "/B_model/theta_phi_H.dat", self. chaos_input_list, fmt="%1.8e")
-		f2 = open(path + "/B_model/chaos_auto.out", "w")
-		call([path + "/B_model/chaos_auto" + str(self.N)], stdout = f2)
-		f2.close()
-		print("/B_model/chaos_auto" + str(self.N))
-		self.B_chaos = np.loadtxt(path + "/B_model/Bxyz_H_chaos6.dat")
-		print("B_chaos:", len(self.obs), len(self.B_chaos))
-		for i in range(len(self.obs)):
-			self.obs[i].B_chaos = [self.B_chaos[i][0], self.B_chaos[i][1], -self.B_chaos[i][4], self.B_chaos[i][3], self.B_chaos[i][2]]
-			self.obs[i].SinglePointGeometry(GetBatP=False)
+			self.obs.append(ObservationPoint(self.A_lon, self.A_lat, self.h, a, self.elevation, self.RD_src_azimut, self.RD_src_elevation, init_full=False))
+			self.obs[-1].SinglePointGeometry(B_model = B_model)
+			# self.chaos_input_list.append([self.obs[-1].P_colat, self.obs[-1].P_lon])
+		# print("choas input list:", len(self.chaos_input_list))
+		# np.savetxt(path + "/B_model/theta_phi_H.dat", self.chaos_input_list, fmt="%1.8e")
+		# f2 = open(path + "/B_model/chaos_auto.out", "w")
+		# call([path + "/B_model/chaos_auto" + str(self.N)], stdout = f2)
+		# f2.close()
+		# print("/B_model/chaos_auto" + str(self.N))
+		# self.B_chaos = np.loadtxt(path + "/B_model/Bxyz_H_chaos6.dat")
+		# print("B_chaos:", len(self.obs), len(self.B_chaos))
+
+		# time = chaos.data_utils.mjd2000(2019, 1, 1)
+		# self.B_chaos = B_model.synth_values_tdep(time, RT + self.h, self.P_colat*RtoD, self.P_lon*RtoD) #given in up, south, east
+
+		# for i in range(len(self.obs)):
+		# 	self.obs[i].B_chaos = [self.B_chaos[i][0], self.B_chaos[i][1], -self.B_chaos[i][4], self.B_chaos[i][3], self.B_chaos[i][2]]
+			# self.obs[i].SinglePointGeometry(GetBatP=False)
 
 
 		self.x_axis = self.azimuth*RtoD

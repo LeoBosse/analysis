@@ -13,6 +13,7 @@ from subprocess import call
 import observation
 import geometry
 import datetime as dt
+import chaosmagpy as chaos
 
 ### Bottle classes.
 
@@ -168,19 +169,23 @@ class Bottle:
 
 	def SetConfig(self):
 		try:
-			self.Imin = float(self.input_parameters["Imin"])
+			self.Imin = self.input_parameters["Imin"].split(";")
+			self.Imin = float(self.Imin[self.line - 1])
 		except:
 			self.Imin = 0.1
 		try:
-			self.Imax = float(self.input_parameters["Imax"])
+			self.Imax = self.input_parameters["Imax"].split(";")
+			self.Imax = float(self.Imax[self.line - 1])
 		except:
 			self.Imax = 10000
 		try:
-			self.DoLPmax = float(self.input_parameters["DoLPmax"])
+			self.DoLPmax = self.input_parameters["DoLPmax"].split(";")
+			self.DoLPmax = float(self.DoLPmax[self.line - 1])
 		except:
 			self.DoLPmax = 100
 		try:
-			self.DoLPmin = float(self.input_parameters["DoLPmin"])
+			self.DoLPmin = self.input_parameters["DoLPmin"].split(";")
+			self.DoLPmin = float(self.DoLPmin[self.line - 1])
 		except:
 			self.DoLPmin = 0
 
@@ -211,13 +216,15 @@ class Bottle:
 		# self.AoLP_correction = float(self.input_parameters["AoLP_correction"])*DtoR
 
 		if not self.from_txt and self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
-			self.AoLP_correction = ( - self.config['IS_PolarizerOffset' + str(self.line)] - 45) * DtoR
+			self.AoLP_correction = 0
+			# self.AoLP_correction = -(self.config['IS_PolarizerOffset' + str(self.line)]) * DtoR
+
 			# self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 45) * DtoR
 		elif not self.from_txt and self.instrument_name == "spp":
 			self.AoLP_correction = float(self.input_parameters["AoLP_correction"]) * DtoR
 		else:
 			self.AoLP_correction = 0
-		print("AoLP correction:", self.AoLP_correction * RtoD)
+		print("AoLP correction:", self.line, self.AoLP_correction * RtoD)
 
 
 		self.all_V 	  = np.array([r.V    for r in self.rotations])
@@ -351,9 +358,9 @@ class Bottle:
 		self.std_I0 = 		 np.sqrt(4 * self.all_V 	/ self.avg_dt)
 		self.std_smooth_I0 = np.sqrt(4 * self.smooth_V  / smoothing_factor)
 
-		print(self.all_V)
-		print(self.std_I0)
-		print(self.std_smooth_I0)
+		# print(self.all_V)
+		# print(self.std_I0)
+		# print(self.std_smooth_I0)
 
 		self.std_DoLP = 		np.sqrt(4 * (1 + ((self.all_DoLP/100) 	 ** 2 / 2)) / (self.all_I0 	  * self.avg_dt)) * 100
 		self.std_smooth_DoLP = 	np.sqrt(4 * (1 + ((self.smooth_DoLP/100) ** 2 / 2)) / (self.smooth_I0 * smoothing_factor)) * 100
@@ -371,6 +378,7 @@ class Bottle:
 
 
 		self.SetUnifyAngles()
+		# self.graph_angle_shift = 0
 
 		print("Get Smooth Lists: DONE")
 
@@ -413,10 +421,10 @@ class Bottle:
 
 
 
-	def GetGeometryAngles(self, obs):
+	def GetGeometryAngles(self, obs, B_model = None):
 		# print("DEBUG obs", obs)
 
-		obs.SinglePointGeometry()
+		obs.SinglePointGeometry(B_model = B_model)
 		AoBapp = obs.eta_chaos
 		AoBapp_ortho = AoBapp + np.pi / 2
 		AoBlos = obs.Blos
@@ -465,11 +473,13 @@ class Bottle:
 		except:
 			self.source_azimut = self.source_elevation = 0
 
+		B_model = chaos.load_CHAOS_matfile('/home/bossel/These/Analysis/data/magn_field/CHAOS-7.4.mat')
+
 		if self.observation_type == "fixed" and self.azimut is not None and self.elevation is not None:
 			# print("DEBUG SOURCE:", self.source_azimut*RtoD, self.source_elevation*RtoD)
 			try:
-				print("DEBUG: AZ/EL", self.azimut*RtoD, self.elevation*RtoD)
-				self.observation, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = self.GetGeometryAngles(observation.ObservationPoint(A_lon, A_lat, h, self.azimut, self.elevation, self.source_azimut, self.source_elevation))
+				# print("DEBUG: AZ/EL", self.azimut*RtoD, self.elevation*RtoD)
+				self.observation, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = self.GetGeometryAngles(observation.ObservationPoint(A_lon, A_lat, h, self.azimut, self.elevation, self.source_azimut, self.source_elevation, init_full = False), B_model = B_model)
 			except:
 				print("WARNING: No geometric angles where retrieved.")
 
@@ -481,10 +491,12 @@ class Bottle:
 
 			ang_list = []
 			for a in self.discrete_rotation_azimuts:
-				ang_list.append(self.GetGeometryAngles(observation.ObservationPoint(A_lon, A_lat, h, a, self.discrete_rotation_elevation, self.source_azimut, self.source_elevation)))
+				ang_list.append(self.GetGeometryAngles(observation.ObservationPoint(A_lon, A_lat, h, a, self.discrete_rotation_elevation, self.source_azimut, self.source_elevation, init_full = False), B_model = B_model))
 
 			self.observation, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = zip(*ang_list)
 			self.observation, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = np.array(self.observation), np.array(self.AoBapp), np.array(self.AoBlos), np.array(self.AoRD), np.array(self.AoBapp_ortho), np.array(self.AoRD_ortho)
+
+			self.x_axis = self.all_times
 
 		elif self.observation_type == "fixed_azimut_discrete_rotation":
 			if to_initiate:
@@ -495,10 +507,11 @@ class Bottle:
 
 			ang_list = []
 			for e in self.discrete_rotation_elevations:
-				ang_list.append(self.GetGeometryAngles(observation.ObservationPoint(A_lon, A_lat, h, self.discrete_rotation_azimut, e, self.source_azimut, self.source_elevation)))
+				ang_list.append(self.GetGeometryAngles(observation.ObservationPoint(A_lon, A_lat, h, self.discrete_rotation_azimut, e, self.source_azimut, self.source_elevation, init_full = False), B_model = B_model))
 
 			self.observation, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = zip(*ang_list)
 			self.observation, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = np.array(self.observation), np.array(self.AoBapp), np.array(self.AoBlos), np.array(self.AoRD), np.array(self.AoBapp_ortho), np.array(self.AoRD_ortho)
+
 
 		elif self.observation_type == "fixed_elevation_continue_rotation":
 			if to_initiate:
@@ -513,12 +526,12 @@ class Bottle:
 
 			geo = geometry.Geometry("dummy", str(self.location), str(h), "e", str(self.continue_rotation_elevation*RtoD), str(self.source_azimut*RtoD), str(self.source_elevation*RtoD))
 			try:
-				self.azimut, self.obs = geo.FixedElevation(direction = self.input_parameters["rotation_direction"])
+				self.azimut, self.obs = geo.FixedElevation(direction = self.input_parameters["rotation_direction"], B_model = B_model)
 			except:
-				self.azimut, self.obs = geo.FixedElevation()
+				self.azimut, self.obs = geo.FixedElevation(B_model = B_model)
 
 
-			ang_list = [self.GetGeometryAngles(o) for o in self.obs]
+			ang_list = [self.GetGeometryAngles(o, B_model = B_model) for o in self.obs]
 			self.obs, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = zip(*ang_list)
 			self.obs, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = np.array(self.obs), np.array(self.AoBapp), np.array(self.AoBlos), np.array(self.AoRD), np.array(self.AoBapp_ortho), np.array(self.AoRD_ortho)
 
@@ -629,6 +642,7 @@ class Bottle:
 		return np.average(all_freq)
 
 	def RenormTimes(self, shift):
+		"""Shift all times by a certain amount"""
 		self.all_times = np.array([t + shift for t in self.all_times])
 
 
@@ -761,12 +775,13 @@ class PTCUBottle(Bottle):
 		#0: no filters_list
 		#o: orange 620
 		#X, Y: 620nm et 413nm
-		filters_list = ["r", "v", "b", "m", "0", "o", "X", "Y"]
+		filters_list = ["r", "v", "b", "m", "0", "o", "X", "Y", "t"]
 		nb_filters = 2
 		if self.instrument_name == "gdcu":
 			nb_filters = 4
 
 		for r in rest:
+			print("R", r)
 			if len(r) == nb_filters and np.all([a in filters_list for a in r]):
 				if self.instrument_name == "carmen" or self.instrument_name == "fake_ptcu":
 					self.filters = r
@@ -774,7 +789,7 @@ class PTCUBottle(Bottle):
 						self.NoVref = True
 				elif self.instrument_name in ["corbel", "gdcu"]:
 					self.filters = r[self.line - 1]
-				print("FILTERS:", r, self.filters)
+				# print("FILTERS:", r, self.filters)
 
 			elif r[0] == "a":
 				self.azimut = float(r[1:]) * DtoR
@@ -894,6 +909,16 @@ class PTCUBottle(Bottle):
 		for i in range(len(self.rotations)):
 			self.rotations[i].time -= norm
 
+		# time = np.array([r.time.total_seconds()    for r in self.rotations])
+		# all_V 	  = np.array([r.V    for r in self.rotations])
+		# dV_dt = np.gradient(all_V, time )
+		# avg_V = np.average(all_V)
+		# print(avg_V)
+		# self.rotations = [r for ir, r in enumerate(self.rotations) if abs(dV_dt[ir]) < 0.01 * avg_V]
+		#
+		# plt.plot(time, dV_dt)
+		# plt.show()
+
 		self.rotations = [r for r in self.rotations if r.IsGood(Imin=self.Imin, Imax=self.Imax, DoLPmin=self.DoLPmin, DoLPmax=self.DoLPmax)]
 		print(len(self.rotations), "good rotations in", self.nb_rot, ";", self.nb_rot - len(self.rotations), "deleted because of invalid data.")
 		self.nb_rot = len(self.rotations)
@@ -951,6 +976,7 @@ class PTCUBottle(Bottle):
 		# 20:		IS_QuantumEfficiency,
 		# 21:		IS_IpAddress
 
+		###For old (< V3) csv files
 		file_names = self.data_file_name
 		line = self.line
 
@@ -974,12 +1000,113 @@ class PTCUBottle(Bottle):
 		raw_data = np.genfromtxt(data_file, delimiter = d, skip_header=1)
 
 
-		array_type = [('IDConfiguration',float),('Timestamp','S100'),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),('IS_ConverterOffset4',float),('IS_ConverterOffset3',float),('IS_ConverterOffset2',float),('IS_ConverterOffset1',float),('IS_EngineTicksPerTour',float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float),('IS_IpAddress',float)]
+		if self.instrument_name in ["corbel", "ptcu_v2"]:
+			array_type = [('IDConfiguration',float),('Timestamp','S100'), ('CM_ID', float),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),('IS_ConverterGain1',float),('IS_ConverterGain2',float),('IS_ConverterGain3',float),('IS_ConverterGain4',float),("IS_ConverterOffset1", float),("IS_ConverterOffset2", float),("IS_ConverterOffset3", float),("IS_ConverterOffset4", float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float), ('IS_IpAddress',float)]
+		else:
+			array_type = [('IDConfiguration',float),('Timestamp','S100'),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),("IS_ConverterOffset4", float),("IS_ConverterOffset3", float),("IS_ConverterOffset2", float),("IS_ConverterOffset1", float),('IS_EngineTicksPerTour',float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float), ('IS_IpAddress',float)]
+
+		print("DEBUG", config_file, len(array_type))
 		configuration = np.genfromtxt(config_file, dtype=array_type, delimiter=",", skip_header=1)
 
+
+		### For new hdf5 files
+		# file_names = self.data_file_name
+		# line = self.line
+		# print("LOADING PTCU data: line", line)
+		# data_path = file_names
+		#
+		# data_file = data_path
+		# config_file = data_path
+		#
+		# file = h5py.File(data_file, "r")
+		# data = file[f"Data/Channel_{line-1}"]
+		# raw_data = np.array([data["Time"], data["PMAvg"], data["PMCosAvg"], data["PMSinAvg"]])
+		# configuration  = {'Timestamp': file.attrs["Timestamp"],
+		# 'CM_Latitude': file.attrs["CM_Latitude"],
+		# 'CM_Longitude': file.attrs["CM_Longitude"],
+		# 'CM_Elevation': data.attrs["CM_Elevation"],
+		# 'CM_Azimuth': data.attrs["CM_Azimuth"],
+		# 'CM_PolarizerSpeed': data.attrs["CH_PolarizerSpeed"],
+		# 'FL_Wavelength': data.attrs["FL_Wavelength"],
+		# 'FL_Width': data.attrs["FL_Width"],
+		# # 'CM_Tilt': ,
+		# 'CM_Usage': file.attrs["CM_Usage"],
+		# 'CM_Comments': file.attrs["CM_Comments"],
+		# f'IS_ConverterGain{line}': data.attrs["CH_ConverterGain"],
+		# f'IS_PolarizerOffset{line}': data.attrs["CH_PolarizationOffset"],
+		# f"IS_ConverterOffset{line}": data.attrs["CH_ConverterOffset"],
+		# # 'IS_EngineTicksPerTour':,
+		# # 'IS_MotorGearedRatio':,
+		# 'IS_QuantumEfficiency': data.attrs["PM_QuantumEfficiency"],
+		# # 'IS_IpAddress':,
+		# }
+
 		print("PTCU DATA loaded")
+
 		return raw_data, configuration
 
+	def LoadFromHDF5(self):
+		file_names = self.data_file_name
+		line = self.line
+		print("LOADING PTCU data: line", line)
+		data_path = file_names
+
+		data_file = data_path
+		config_file = data_path
+
+		file = h5py.File(data_file, "r")
+		data = file[f"Data/Channel_{line-1}"]
+
+		self.all_times = np.array([dt.timedelta(milliseconds=t) for t in data["Time"]])
+		self.nb_rot = len(self.all_times)
+
+		self.SetJumps()
+
+		self.smooth_V    = np.array([d for d, t in zip(data["smooth_V"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.smooth_Vcos = np.array([d for d, t in zip(data["smooth_Vcos"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.smooth_Vsin = np.array([d for d, t in zip(data["smooth_Vsin"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		self.nb_smooth_rot = len(self.smooth_V)
+
+		### Calculate the smooth I0, DoLP and AoLP
+		self.smooth_I0 = np.array([d for d, t in zip(data["Smooth_I0"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.smooth_DoLP = np.array([d for d, t in zip(data["Smooth_DoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.smooth_AoLP = np.array([d for d, t in zip(data["Smooth_AoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		self.all_V =  np.array([d for d, t in zip(data["PMAvg"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_Vcos =  np.array([d for d, t in zip(data["PMCosAvg"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_Vsin =  np.array([d for d, t in zip(data["PMSinAvg"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_I0 =  np.array([d for d, t in zip(data["I0"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_DoLP =  np.array([d for d, t in zip(data["DoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.all_AoLP =  np.array([d for d, t in zip(data["AoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		self.std_I0 			= np.array([d for d, t in zip(data["errI0"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.std_smooth_I0 		= np.array([d for d, t in zip(data["errSI0"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		self.std_DoLP 			= np.array([d for d, t in zip(data["errDoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.std_smooth_DoLP 	= np.array([d for d, t in zip(data["errSDoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		self.std_AoLP 			= np.array([d for d, t in zip(data["errAoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.std_smooth_AoLP 	= np.array([d for d, t in zip(data["errSAoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		norm = self.head_jump
+		self.all_times = np.array([t - norm for t in self.all_times if self.head_jump <= t < self.tail_jump])
+
+		self.valid = True
+		_, self.config = self.LoadPTCUData()
+
+		self.SetTimes()
+		self.SetSmoothLists()
+
+		self.SetTimeFromDateTime(self.DateTime(moment="start"))
+
+		self.graph_angle_shift = 0
+		for a in self.smooth_AoLP:
+			if a > np.pi/2.:
+				self.graph_angle_shift = 1
+				break
+			if a < 0:
+				break
 
 	def LoadFromTxt(self):
 		file_name = self.data_file_name + "/" + self.saving_name + '_results.txt'

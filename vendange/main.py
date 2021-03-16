@@ -24,6 +24,9 @@ import subprocess as subp
 import observation as observation
 # import Geometry.Leo.src.rayleigh as rayleigh
 
+### Full path to where the data are stored (everything that comes before what is written in the argument)
+data_path = "/home/bossel/These/Analysis/data/"
+
 ### Manage the arguments. Should use only one argument: the name of the input file, without the path nor the extensions. e.g. 'ptcu20181115' will use the input file 'src/input_files/ptcu20181115.in'. Can add the data files to use as well, but I'm not sure this is working properly.
 arguments = sys.argv
 nb_args = len(arguments)
@@ -54,11 +57,11 @@ def GetNbLines(bottle_name):
 	print(instrument_name, bottle_name)
 	if instrument_name != "spp":
 		try:
-			print("TRY", os.listdir("/home/bossel/These/Analysis/data/" + bottle_name))
-			ls = [f for f in os.listdir("/home/bossel/These/Analysis/data/" + bottle_name) if "data" in f and ".csv" in f and len(f) in [9, 10]]
+			print("TRY", os.listdir(data_path + bottle_name))
+			ls = [f for f in os.listdir(data_path + bottle_name) if "data" in f and ".csv" in f and len(f) in [9, 10]]
 		except:
-			print("EXCEPT", os.listdir("/home/bossel/These/Analysis/data/" + "/".join(bottle_name.split("/")[:-1])))
-			ls = [f for f in os.listdir("/home/bossel/These/Analysis/data/" + "/".join(bottle_name.split("/")[:-1])) if "data" in f]
+			print("EXCEPT", os.listdir(data_path + "/".join(bottle_name.split("/")[:-1])))
+			ls = [f for f in os.listdir(data_path + "/".join(bottle_name.split("/")[:-1])) if "data" in f]
 		print("ls", ls)
 		nb_lines = len(ls)
 	else:

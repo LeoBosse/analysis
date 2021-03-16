@@ -13,6 +13,26 @@ pwd_data = pwd + "data/"
 pwd_src = pwd + "src/"
 
 
+
+def VtoFDA(V, Vcos, Vsin):
+	"""Return the flux F, the DoLP D [0-1] and AoLP A in radians from V, Vcos, Vsin"""
+	F = 2*V
+	DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V
+	AoLP = np.arctan2(Vsin, Vcos) / 2 * RtoD
+
+	return F, DoLP, AoLP
+
+def FDAtoV(F, D, A):
+	"""Return V, Vcos, Vsin from the flux F, the DoLP D [0-1] and AoLP A in radians"""
+
+	V = F / 2.
+	Vcos = F * D * np.cos(2 * A) / 4.
+	Vsin = F * D * np.sin(2 * A) / 4.
+
+	return V, Vcos, Vsin
+
+
+
 def ReadInputFile(filename):
 	"""Read a given input file and return a dictionnary. First word = key, second = value. Remove empty lines, as many arguments as you want, in any order that you want."""
 	with open(filename, "r") as f:
@@ -349,13 +369,16 @@ def UnifyAngles(angles, manual_shift = -1):
 
 def SetAngleBounds(angles, min, max, mod = np.pi, unit="radians"):
 	bounds_size = max - min
-	if type(angles) == type(np.ndarray((0))):
+	try:
+		angles = angles.tolist()
 		for i, a in enumerate(angles):
 			while angles[i] <= min:
 				angles[i] += mod
 			while angles[i] > max:
 				angles[i] -= mod
-	else:
+
+		angles = np.array(angles)
+	except:
 		while angles <= min:
 			angles += mod
 		while angles > max:

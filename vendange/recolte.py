@@ -27,7 +27,7 @@ if instrument == "carmen":
 	db = mysql.connect(
 	  host = "152.77.134.83",
 	  user = "root",
-	  passwd = "Skib0tn"
+	  passwd = "Skib0tn2019"
 	)
 	db_name = "petitcru"
 	folder = "ptcu"
@@ -37,7 +37,7 @@ elif instrument == "corbel":
 	db = mysql.connect(
 	  host = "152.77.134.82",
 	  user = "root",
-	  passwd = "root"
+	  passwd = "Skib0tn2019"
 	)
 	db_name = "K2PI"
 	nb_voies = 2
@@ -46,7 +46,7 @@ elif instrument == "gdcu":
 	db = mysql.connect(
 	  host = "152.77.134.81",
 	  user = "root",
-	  passwd = "root"
+	  passwd = "Skib0tn2019"
 	)
 	db_name = "K2PI"
 	nb_voies = 4
@@ -82,15 +82,19 @@ for id in IDConfiguration:
 
 		cursor.execute(requete)
 		data_columns = [i[0] for i in cursor.description]
+		# print(data_columns)
+		comment_index = data_columns.index("Comment")
+		# print(comment_index)
 
 		all_data.append(cursor.fetchall())
 
 
 		#Replace all "," in comments to avoid messing up the .csv file.
 		for l in range(len(all_data[-1])):
-			comment = all_data[-1][l][5]
+			comment = all_data[-1][l][comment_index]
 			if comment:
-				all_data[-1][l][5] = str(comment).replace(",", ";")
+				print(all_data[-1][l][comment_index])
+				all_data[-1][l][comment_index] = str(comment).replace(",", ";")
 
 		###Check if the data is empty
 		if len(all_data[-1]) > 0:
@@ -126,6 +130,9 @@ for id in IDConfiguration:
 				com = title[5+i:]
 		except:
 			if len(title) > 2+i:
+				observation_type = "fixed"
+				el = 45
+				com = ""
 				print("IDConfiguration {0}: Wrong Title. But I know where to save it!".format(id))
 				print("Wrong title is:" + config[columns.index("CM_Comments")])
 			else:
@@ -149,7 +156,7 @@ for id in IDConfiguration:
 
 
 	###Make input file:
-	input_file = input.Input()
+	input_file = input.VendangeInput()
 	input_file.SetPollutionSource(lieu = lieu)
 	input_file.SetObservationType(observation_type, el = el)
 	input_file.Update({	"instrument_name": instrument,
@@ -159,7 +166,7 @@ for id in IDConfiguration:
 					"rotation_per_sec": speed
 				})
 
-	input_file.WriteInputFile(path + folder + subfolder)
+	input_file.WriteInputFile(folder = path + folder + subfolder + "/")
 
 
 	###Write config.csv

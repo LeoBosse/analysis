@@ -36,6 +36,9 @@ class SkyMap:
 		self.path = in_dict["sky_path"]
 		self.file = in_dict["sky_file"]
 
+		self.location = in_dict["location"]
+		self.A_lon, self.A_lat = GetLonLatFromName(self.location)
+
 		self.h = float(in_dict["emission_altitude"])
 
 		self.exist = True
@@ -125,11 +128,17 @@ class SkyMap:
 		elif "band_e" in self.mode:
 			self.cube[0, :, :] = self.GetBandSkyMap(a_band = 0, e_band = self.band_elevation, length = 1000, thickness = 10, height = 50, band_I = 100, nb_sub_bands = nb_sub_bands)
 
+
+
 		elif "uniform" in self.mode:
 			self.cube[:, :, :] += float(self.mode.split("_")[1])
 
-		elif "spot" in self.mode:
+		elif "starlight" in self.mode:
+			print("Computing starlight sky map")
+			time = dt.datetime.strptime(self.mode.split("_")[1], "%Y%m%d-%H%M%S")
+			self.cube[0, :, :] = self.GetStarLightMap(time)
 
+		elif "spot" in self.mode:
 			m = self.mode.split("_")
 			I = float(m[1][1:])
 			a = float(m[2][1:]) * DtoR
@@ -146,7 +155,7 @@ class SkyMap:
 
 			# self.cube[0, :, :] = self.GetBandSkyMap(a_band = a, e_band = e, length = 50, thickness = 50, height = 50, band_I = 100, nb_sub_bands = 1)
 			self.cube[0, 0, 0] = I
-			print("self.cube", self.cube)
+			# print("self.cube", self.cube)
 
 			self.is_point_src = True
 
@@ -178,13 +187,35 @@ class SkyMap:
 
 		if mpi_rank == 0: print("Sky cube loaded!")
 
+	def  GetStarLightMap(self, time):
+		map = np.zeros(self.maps_shape)
+
+		for ia, a in enumerate(self.mid_azimuts):
+			for ie, e in enumerate(self.mid_elevations):
+				map[ie, ia] = GetStarlight(self.A_lon, self.A_lat, 0, time, e, a)
+
+		return map
+
+
 	def LoadAllSkyMovie(self):
 		if mpi_rank==0: print("Importing all sky movie data...")
 
 		ls = sorted([f for f in os.listdir(self.image_file) if ".png" in f and len(f) == 33])
 
-		ls = ls[134:178]
+
+		start, end, step = self.in_dict["movie_file_numbers"].split(":")
+		if not start: start = 0
+		if not end: end = len(ls)
+		if not step: step = 1
+		ls = ls[int(start):int(end):int(step)]
+		# ls = ls[35:-27:2] #all of 20190307_br_a164_e45
+		# ls = ls[57::2] #all of 20190307_mr_a164_e45
+		# ls = ls[134:] #all of 20190307_vr_a164_e45
+		# ls = ls[134:178:1] + ls[-54::1] #start and end  of 20190307_vr_a164_e45
+		# ls = ls[-54:] #end of 20190307_vr_a164_e45
 		# ls = ls[133::2]
+
+
 		self.times = ["_".join(n.split("_")[1:3]) for n in ls]
 		self.times = [dt.datetime.strptime(n, "%Y%m%d_%H%M%S") for n in self.times]
 		# print(ls)
@@ -221,6 +252,8 @@ class SkyMap:
 		calib_file = "/".join(filename.split("/")[:-2]) + "/" + file[:14] + file[21:-3] + "dat"
 		calib = io.readsav(calib_file)
 
+		# print("calib", calib)
+
 		# print("self.maps_shape", self.maps_shape)
 		# print(self.azimuts * RtoD)
 		# print(self.elevations * RtoD)
@@ -232,7 +265,7 @@ class SkyMap:
 			for j, pix in enumerate(line):
 				if pix > 0:
 					# print("PIX", pix)
-					pix_azimut    = -(float(calib["gazms"][i][j]) * DtoR + np.pi) % (2*np.pi) # GIVEN IN DEGREES
+					pix_azimut    = -(float(calib["mazms"][i][j]) * DtoR + np.pi) % (2*np.pi) # GIVEN IN DEGREES
 					pix_elevation = float(calib["elevs"][i][j]) * DtoR # GIVEN IN DEGREES
 
 					if pix_azimut and pix_elevation:
@@ -251,7 +284,7 @@ class SkyMap:
 		return np.divide(map, div, out = np.zeros_like(map), where = div != 0) #[nW / m2/ sr]
 
 
-	def MakeSkyCubePlot(self, a_pc_list, e_pc_list, ouv_pc):
+	def MakeSkyCubePlot(self, a_pc_list, e_pc_list, ouv_pc, save = "", metadata=None):
 		# Plot the sky_cube as fct of time
 		nb_rows, nb_cols = int(np.ceil(np.sqrt(self.Nt))), int(np.sqrt(self.Nt))
 		f, axs = plt.subplots(nb_rows, nb_cols)
@@ -295,6 +328,9 @@ class SkyMap:
 		else:
 			MakeSubplot(axs, c, 1, 1, ouv_pc)
 
+		if save:
+			plt.savefig(save + "_skycube.png", bbox_inches='tight', metadata=metadata)
+
 
 	def GetBandSkyMap(self, a_band = 0, e_band = np.pi/2, length = 1000, thickness = 10, height = 50, band_I = 100, nb_sub_bands = 1):
 		map = np.zeros(self.maps_shape)
@@ -303,13 +339,13 @@ class SkyMap:
 			sub_band_thickness = thickness / (nb_sub_bands * RT) #Thickness of the band in radians, put number in km
 			band_length = length / RT #Length of the band in radians, put number in km
 
-			o = ObservationPoint(0, 0, self.h, a_band, e_band)
+			o = ObservationPoint(0, 0, self.h, a_band, e_band, init_full=False)
 			lon_band_center, lat_band_center = o.P_lon, o.P_lat - band_thickness / 2 + (nsb + 1) * band_thickness / (nb_sub_bands + 1)
 
 			def InBand(az, el):
 				in_band = 0
 				for alt in range(height):
-					o = ObservationPoint(0, 0, self.h + alt, az, el)
+					o = ObservationPoint(0, 0, self.h + alt, az, el, init_full=False)
 					observed_lon, observed_lat = o.P_lon, o.P_lat
 					if lon_band_center - band_length / 2 < observed_lon < lon_band_center + band_length / 2 and lat_band_center - sub_band_thickness / 2 < observed_lat < lat_band_center + sub_band_thickness / 2:
 						in_band = o.AH_norm
@@ -320,7 +356,9 @@ class SkyMap:
 				for iaz, az in enumerate(el):
 					AH = InBand(self.mid_azimuts[iaz], self.mid_elevations[iel])
 					if AH:
-						map[iel][iaz] += band_I # / AH ** 2
+						map[iel][iaz] = band_I # / AH ** 2
+					else:
+						map[iel][iaz] = band_I/10 # / AH ** 2
 		return map
 
 	def GetPixFromEl(self, pix_e):
@@ -365,7 +403,7 @@ class SkyMap:
 	@staticmethod
 	def GetArea(em, eM, h, Na):
 		"""Returns the area in m**2"""
-		om, oM = ObservationPoint(0, 0, h, 0, em), ObservationPoint(0, 0, h, 0, eM)
+		om, oM = ObservationPoint(0, 0, h, 0, em, init_full=False), ObservationPoint(0, 0, h, 0, eM, init_full=False)
 		true_el = lambda e, o: np.arcsin(o.AH_norm * np.cos(e) / (RT + h))
 		tem, teM = true_el(em, om), true_el(eM, oM)
 
@@ -410,7 +448,7 @@ class SkyMap:
 		area is the area of the detector. Set to 1 by default."""
 
 		if "uniform" in self.mode: #If uniform sky, juste return the brigthness in nW/sr/m2
-			print("DEBUG DIRECT", float(self.mode.split("_")[1]))
+			# print("DEBUG DIRECT", float(self.mode.split("_")[1]))
 			return float(self.mode.split("_")[1])
 
 

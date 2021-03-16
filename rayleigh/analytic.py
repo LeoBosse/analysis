@@ -55,7 +55,7 @@ for ai, RAE in zip(ai_list, RAE_list):
 
 	theta = lambda r: np.arcsin(AE * np.sin(RAE) / ER(r))
 
-	V = lambda r, alpha: 2 * np.pi * (1 - np.cos(alpha)) * r ** 2
+	V = lambda r, alpha: (2./3.) * np.pi * (1 - np.cos(alpha)) * r ** 2
 
 	A = 7.68246 * 10 ** (-4) #for km-1
 	B = 3.55212

@@ -2,7 +2,7 @@
 # -*-coding:utf-8 -*
 
 from mpi4py import MPI
-from mpi4py.futures import MPIPoolExecutor
+# from mpi4py.futures import MPIPoolExecutor
 mpi_comm = MPI.COMM_WORLD
 mpi_rank = mpi_comm.Get_rank()
 mpi_size = mpi_comm.Get_size()
@@ -14,6 +14,7 @@ import pandas as pd
 import matplotlib as mpl
 
 mpl.rc('text', usetex=False)
+mpl.rcParams.update({'font.size': 24})
 
 import sys
 
@@ -68,9 +69,9 @@ def PlotData(data, x_axis_name, y_axis_name, zaxis=None, **kwargs):
 	# font = {'size'   : 24}
 	# matplotlib.rc('font', **font)
 
-	print(data[x_axis_name], data["wavelength"])
+	# print(data[x_axis_name], data["wavelength"])
 
-	free_list = []
+	free_list = [] # list of parrameter names (column name) of free parameters
 	for c in data.columns:
 		if ((c in kwargs.keys() and kwargs[c] == "*") and c not in [x_axis_name, y_axis_name, zaxis, "I0", "DoLP", "AoRD", "Ipola", "Inonpola", "mag", "Idir"]) :
 			free_list.append(c)
@@ -80,16 +81,19 @@ def PlotData(data, x_axis_name, y_axis_name, zaxis=None, **kwargs):
 		for k, v in kwargs.items():
 			if v == "*":
 				continue
-			try:
+			if type(v) != type(str()) and type(v) != type(bool()):
 				data = data[abs(data[k] - v) < 0.000001]
-			except:
-				pass
+			else:
+				# print(f"V is :{v}: string for key :{k}:")
+				# print(data[k])
+				data = data[data[k] == v]
 				# print(data[k], v)
 			# data = data[data["I0"] < 100]
 		data = data.reset_index()
 		if data.empty:
 			raise ValueError('No simulation correspond to the following given parameters: {}'.format(kwargs))
 		# print(data)
+
 
 	if free_list:
 		axs = PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs)
@@ -98,8 +102,29 @@ def PlotData(data, x_axis_name, y_axis_name, zaxis=None, **kwargs):
 	else:
 		axs = ParameterMap(data, x_axis_name, y_axis_name, zaxis, **kwargs)
 
-	axs[-1].set_xlabel(x_axis_name.replace("_", "-"))
-	# axs[0].set_title(" ".join([k + "=" + str(v) for k, v in kwargs.items()]).replace("_", "-"))
+	### Plot Rayleigh scattering DoLP function for an infinitely far away point source
+	# N=100
+	# a = np.linspace(0, 360*DtoR, N)
+	# # los = np.array([np.sin(45*DtoR),
+	# # 				np.cos(45*DtoR) * np.sin(a),
+	# # 				np.cos(45*DtoR) * np.cos(a)
+	# # ])
+	# # EA = np.array([0, 0, 1])
+	# theta = np.arccos(np.cos(45*DtoR) * np.cos(a))
+	# y = np.sin(theta)**2 / (1 + np.cos(theta)**2)
+	#
+	# axs[1].plot(a*RtoD, y*100, "k--")
+	# # axs[2].plot(a*RtoD, theta*RtoD, "k--")
+
+	# axs[0].xaxis.set_minor_locator(mpl.ticker.AutoMinorLocator())
+
+
+	if "azimut" in x_axis_name.lower():
+		x_axis_name = "azimuth"
+	axs[-1].set_xlabel(x_axis_name.capitalize().replace("_", "-") + " (°)")
+
+	axs[0].set_title(" ".join([k + "=" + str(v) for k, v in kwargs.items() if v != "*"]).replace("_", "-"))
+
 
 
 def ParameterMap(data, x_axis_name, y_axis_name, z_axis_name, **kwargs):
@@ -161,9 +186,9 @@ def SimplePlot(data, x_axis_name, y_axis_name, **kwargs):
 	# 	return c
 
 	if y_axis_name == "all":
-		fig, axs = plt.subplots(2, sharex=True, figsize=(16, 8))
+		axs_names = ["I0;Ipola;Inonpola", "DoLP", "AoRD"]
+		fig, axs = plt.subplots(len(axs_names), sharex=True, figsize=(16, 8))
 		fig.subplots_adjust(hspace=0)
-		axs_names = ["I0;Ipola;Inonpola", "DoLP"]
 		# fig, axs = plt.subplots(3, sharex=True, figsize=(16, 8))
 		# fig.subplots_adjust(hspace=0)
 		# axs_names = ["I0", "DoLP", "Ipola"]
@@ -181,7 +206,8 @@ def SimplePlot(data, x_axis_name, y_axis_name, **kwargs):
 				x_axis.append(data[x_axis_name][i])
 				y_axis.append(data[y_axis_name][i])
 
-			x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key=lambda x: x[0]))
+			# x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key=lambda x: x[0]))
+			x_axis, y_axis = SortAxis(x_axis, y_axis, x_axis_name, y_axis_name)
 			ax.plot(x_axis, y_axis, "-*", label=y_axis_name)
 
 			### Experimentation to test effect of dlos parameter on flux
@@ -196,9 +222,6 @@ def SimplePlot(data, x_axis_name, y_axis_name, **kwargs):
 		if len(axs_names[iax].split(";")) > 1:
 			ax.legend()
 		ax.set_ylabel(axs_names[iax].replace("_", "-"))
-
-
-
 
 	return axs
 
@@ -217,72 +240,137 @@ def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
 
 	GetFreeValues = lambda i, free: [data[m][i] for m in free_list]
 
-
+	#Initialize axis and figure
 	if y_axis_name == "all":
-		fig, axs = plt.subplots(2, sharex=True, figsize=(16, 8))
+		axs_names = ["I0", "DoLP", "AoRD"]
+		axs_y_names = ["Flux (nW)", "DoLP (%)", "AoLP (°)"]
+		fig, axs = plt.subplots(len(axs_names), sharex=True, figsize=(16, 8))
 		fig.subplots_adjust(hspace=0)
-		axs_names = ["I0", "DoLP"]#, "Ipola"]
 	else:
-		fig, axs = plt.subplots(1, sharex=True, figsize=(16, 8))
-		axs = [axs]
-		axs_names = [y_axis_name]
+		axs_names = y_axis_name.split(";")
+		axs_y_names = axs_names
+		fig, axs = plt.subplots(len(axs_names), sharex=True, figsize=(16, 8))
+		if len(axs_names) == 1: axs = [axs]
 
+	# legend_title = "Distance (km)"
 	legend_title = "; ".join(free_list).replace("_", "-")
-	nb_plots = len(set(data[free_list[0]]))
 
-	free_value_list = sorted(list(set(data[free_list[0]])))
+	#SIngle free parameter case
+	# free_value_list = list(set(data[free_list[0]]))
+	#Multiple free parameter case
+	free_value_list = [list(set(data[f])) for f in free_list] #list of list of values for each free parameter in free_list
 
+	if type(free_value_list[0]) == type(str()):
+		if "point" in free_value_list[0]:
+			free_value_list = sorted(free_value_list, key = lambda x: int(x.split("_")[3][1:]))
+	else:
+		free_value_list = [sorted(fvl) for fvl in free_value_list]
+
+	# Number of possible combinaison between all free parameters (number of lines to plots)
+	nb_free_param = [len(fvl) for fvl in free_value_list]
+	nb_plots = np.product(nb_free_param)
+
+	#Creates a list of all possible free parameters dictionnaries with all different permutations possible.
+	permutations_dicts = [dict(zip(free_list, v)) for v in itertools.product(*free_value_list)]
+	# print(permutations_dicts)
+
+	# Loop over the subplots if we want I0, DoLP and AoLP for example.
 	for iax, ax in enumerate(axs):
-		#### Code from here to next "####" comment works best for only 1 free_list argument
-		# Set the default color cycle
-		colors = [(i, 0, 1 - i) for i in np.linspace(0, 1, nb_plots)]
-		ax.set_prop_cycle("c", colors)
+		#### Code from here to next "####" comment works best for only 1 or 2 free_list argument
+
+		# Set the default color cycle for the free paramter with the highest number of values
+		if len(free_list) == 2:
+			colors = ["black", "red", "blue", "yellow", "pink", "purple", "orange", "turquoise"]
+		elif len(free_list) == 1:
+			colors = [(i, 0, 1 - i) for i in np.linspace(0, 1, max(nb_free_param))]
+		# Set the default style cycle for the free paramter with the lowest number of values
+		styles = ["-", "--", "-.", "+"]
+		# ax.set_prop_cycle("c", colors)
+		# ax.set_prop_cycle("linestyle", styles)
 
 		x_axis, y_axis = [], []
 		y_axis_name = axs_names[iax]
 
-		for m in free_value_list:
-			tmp = data[data[free_list[0]] == m]
+		# for ip, p in enumerate(free_list):
+		# 	line_style = styles[ip]
+		# 	for im, m in enumerate(free_value_list[ip]):
+		for perm in permutations_dicts:
+			keys, values = zip(*perm.items())
+			indexes = [free_value_list[i].index(value) for i, value in enumerate(values)]
+
+			tmp = data.copy()
+			for k, v in perm.items():
+				tmp = tmp[tmp[k] == v]
+
+			print(perm)
+
 			x_axis = GetXAxis(tmp[x_axis_name], x_axis_shift, x_axis_mod)
 			y_axis = tmp[y_axis_name]
+			x_axis = x_axis.reset_index(drop = True)
 
-			x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
 
-			ax.plot(x_axis, y_axis, "-*", label = str(m))
+			x_axis, y_axis = SortAxis(x_axis, y_axis, x_axis_name, y_axis_name)
+			print(x_axis, y_axis)
+			# if x_axis_name == "shader_mode":
+			# 	if "dist" in x_axis[0]:
+			# 		x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: float(x[0].split("_")[2][1:])))
+			# 	elif "ring" in x_axis[0]:
+			# 		x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: int(x[0].split("_")[1])))
+			# else:
+			# 	x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
 
-		#### Following code should work if several arguments are free_list
-		# old_free_list_values = GetMissingValues(0, free_list)
-		# x_axis, y_axis = [], []
-		# y_axis_name = axs_names[iax]
-		# for i in data.index: #Every line of the table once
-		# 	free_list_values = GetMissingValues(i, free_list) #Get value for changing paramter. free_list should be of length 1
-		# 	if old_free_list_values == free_list_values: #If value for changing parameter do not change, append the plot
-		# 		x_axis.append(GetXAxis(data[x_axis_name][i], x_axis_shift, x_axis_mod))
-		# 		y_axis.append(data[y_axis_name][i])
-		# 	else:
-		#
-		# 		x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
-		# 		ax.plot(x_axis, y_axis, "-*", label = "; ".join(str(v) for v in old_free_list_values))
-		# 		x_axis, y_axis = [GetXAxis(data[x_axis_name][i], x_axis_shift, x_axis_mod)], [data[y_axis_name][i]]
-		#
-		# 	if i == data.index.stop - 1:
-		# 		x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
-		# 		ax.plot(x_axis, y_axis, "-*", label = "; ".join(str(v) for v in old_free_list_values))
-		#
-		# 	old_free_list_values = free_list_values
+			# print(x_axis, y_axis)
+			if len(free_list) == 2:
+				linestyle = styles[indexes[0]]
+				color = colors[indexes[1]]
+			elif len(free_list) == 1:
+				linestyle = styles[0]
+				color = colors[indexes[0]]
+			print(linestyle, color)
 
-		ax.set_ylabel(y_axis_name.replace("_", "-"))
+			ax.plot(x_axis, y_axis, linestyle = linestyle, color = color, label = ";".join([f"{v}" for v in values]))
+
+		ax.set_ylabel(axs_y_names[iax].replace("_", "-"))
 		handles, labels = ax.get_legend_handles_labels()
 		# sort both labels and handles by labels
 		try:
-			labels, handles = zip(*sorted(zip(labels, handles), key = lambda x: float(x[0])))
+			labels, handles = SortAxis(labels, handles, free_list[0], y_axis_name, label=True)
+			# labels, handles = zip(*sorted(zip(labels, handles), key = lambda x: float(x[0])))
 		except:
-			labels, handles = zip(*sorted(zip(labels, handles), key = lambda x: x[0]))
+			labels, handles = SortAxis(labels, handles, free_list[0], y_axis_name, label=True)
+			# labels, handles = zip(*sorted(zip(labels, handles), key = lambda x: x[0]))
 
-	axs[0].legend(handles, labels, title=legend_title)#, loc='upper left', bbox_to_anchor=(0.98, 1))
-
+	axs[0].legend(handles, labels, title=legend_title, loc='upper left', bbox_to_anchor=(1, 1), fontsize="small", title_fontsize="xx-small")
+	axs[0].set_yscale("log")
+	axs[0].tick_params(axis="y", which='minor')
+	axs[0].grid(axis="y", b=True, which='both', color='0.65', linestyle='-')
+	if len(axs) > 1:
+		axs[1].tick_params(axis="y", which='minor')
+		axs[1].minorticks_on()
+		axs[1].grid(axis="y", b=True, which='both', color='0.65', linestyle='-')
 	return axs
 
+def SortAxis(x_axis, y_axis, xname, yname, label=False):
+	if xname == "shader_mode":
+		mode = x_axis[0]
+		if "dist" in mode:
+			x_axis = np.array([float(x.split("_")[2][1:]) for x in x_axis])
+			# x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: float(x[0].split("_")[2][1:])))
+		elif "ring" in mode:
+			x_axis = np.array([int(x.split("_")[1]) for x in x_axis])
+	elif xname == "ground_mode":
+		if "point" in x_axis[0]:
+			x_axis = np.array([int(x.split("_")[3][1:]) for x in x_axis])
+			x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
+	else:
+		# print(x_axis, y_axis)
+		if label:
+			x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
+		else:
+			x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: float(x[0])))
+
+
+	return x_axis, y_axis
 
 def RunSystematicSimulation():
 	"""Automatically runs simulations for the given paramter space.
@@ -292,20 +380,36 @@ def RunSystematicSimulation():
 	4: To plot parameter comparisons run ./systematic.py with the right keyword arguments.
 	"""
 
-	### Define paramter space. All combinations of these parameters will be simulated.
+	### Define parameter space. All combinations of these parameters will be simulated.
 
-	in_dict = {	"azimuts": [0],
-				"elevations": [45],
-				"resolution_along_los": [1],
-				# "RS_min_altitude": [0], #, 1, 5, 10, 25, 50, 100]
-				# "RS_max_altitude": [100], #np.arange(5, 100, 5) #[91, 92, 93, 94],
-				"wavelength": [391.4],
+	in_dict = {	"azimuts": ["all"],
+				"elevations": [46, 47, 48, 49, 51, 52, 53, 54],
+				# "use_ozone": [0, 1],
+				# "use_aerosol": [1],
+				# "aer_complexity": [1],
+				# "aer_model": ["rural", "urban", "maritime"],#, "test1", "test2", "test3", "test4", "test5"],
+				# "aer_single_scatter_albedo": [0.9],
+				# "aer_phase_fct_asym_g": [0.7] #[-1; 1], g>0 -> front scatter dominant. g<0 -> back scatter dominant
+
+				# "aer_Qext": [2],
+				# "aer_Qabs": [0.8],
+				# "aer_radius": [0, 100, 200, 300, 500],
+				# "aer_Hn": 	[1],
+				# "aer_n0": 	[20000],
+				# "aer_nBK": [300],
+				# "Nb_points_along_los": [100],
+				# "RS_min_altitude": [0],# np.arange(0, 100, 1), #, 1, 5, 10, 25, 50, 100]
+				# "RS_max_altitude": [100],# np.arange(0, 100, 1), #np.arange(5, 100, 5) #[91, 92, 93, 94],
+				# "use_analytic": ["true", "false"],
+				# "Atmospheric_profile": [f"atm_profiles/{p}.atm" for p in ["day", "equ", "ngt", "sum", "win"]],
+				# "wavelength": [557.7],
 				# "emission_altitude": [110],
-				# "Nb_emission_points": [100, 500, 1000, 5000, 10000],
-				"max_angle_discretization": [0], 	#[1, 2, 5, 10, 15, 20, 40, 50, 90, 180, 360],
-				# "ground_mode": ["uniform_I100"],
-				# "shader_mode": ["none"], #[f"out_dist_m{i}_M{i+10}" for i in range(0, 100, 10)],
-				# "ground_emission_radius": [100],  # in km.,
+				# "Nb_emission_points": [100, 500, 1000, 2000, 5000],
+				# "max_angle_discretization": [0], 	#[1, 2, 5, 10, 15, 20, 40, 50, 90, 180, 360],
+				# "ground_mode": [f"point_I100_a180_d1", f"point_I100_a180_d10", f"point_I100_a180_d100"],
+				# "ground_mode": [f"point_I100_a180_d{i}" for i in np.arange(1, 100)],
+				# "shader_mode": [f"ring_{i}" for i in np.arange(0, 100)],
+				# "ground_emission_radius": [50],  # in km.,
 				# "ground_N_bins_max": [1000]
 
 			}
@@ -317,6 +421,13 @@ def RunSystematicSimulation():
 	count = 0
 	for perm in permutations_dicts:
 
+		# if perm["RS_max_altitude"] != perm["RS_min_altitude"] + 1:
+		# 	continue
+		# if perm["aer_Qabs"] > perm["aer_Qext"]:
+		# 	continue
+		# if perm["use_aerosol"] == 1 and perm["aer_complexity"] == 1:
+		# 	perm["aer_name"] = perm["aer_model"] + "_test"
+
 		#Initialize the input file used for this simulation
 		r_input = RayleighInput()
 
@@ -325,8 +436,9 @@ def RunSystematicSimulation():
 
 		#Write the input file and get its unique name (unique for this set of permutations, might be the same than older runs.)
 		file_name = r_input.WriteInputFile(file_name = "systemic/systemic", **perm)
+		# print("file_name", file_name)
 
-		print(file_name)
+		if mpi_rank == 0: print(file_name)
 
 		#Create the log file for this run from the input file name
 		log_file_name = "./log/" + file_name + ".out"
@@ -338,9 +450,9 @@ def RunSystematicSimulation():
 		sys.stderr = log_file
 
 		#Run simulation and print the results in log/systematic_results.csv
-		with MPIPoolExecutor() as executor:
-			executor.map(RunSimulation, file_name, show = False, output_result_file = "log/systematic_results.csv", header = not bool(count))
-		# RunSimulation(file_name, show = False, output_result_file = "log/systematic_results.csv", header = not bool(count))
+		# with MPIPoolExecutor() as executor:
+		# 	executor.map(RunSimulation, file_name, show = False, output_result_file = "log/systematic_results.csv", header = not bool(count))
+		RunSimulation(file_name, show = False, output_result_file = "log/20190307_v_rot_elevation_test.csv", header = not bool(count))
 
 		#Shift output back to the terminal
 		sys.stdout = terminal
@@ -365,7 +477,7 @@ if __name__ == "__main__":
 			data = GetData(file=arguments[2])
 		else:
 			data = GetData()
-		# PlotData(data, "src_dist", "max_alt", zaxis="I0", e_pc = 90, a_pc=0, src_dist="*", wl=391.4, min_alt=0, max_alt="*", dlos=0.1, mad=1)
-		PlotData(data, "resolution_along_los", "all", elevations = "*")
-		# PlotData(data, "max_alt", "all", e_pc = 90, a_pc=0, src_dist=5, wl=391.4, min_alt=0, max_alt="*", dlos=0.1, mad=1)
+
+		# PlotData(data, "azimuts", "all",  aer_model="*", use_aerosol = "*")
+		PlotData(data, "azimuts", "I0", elevations="*")
 		plt.show()
