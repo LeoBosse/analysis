@@ -48,7 +48,14 @@ class World:
 		self.wavelength = float(in_dict["wavelength"])
 		self.src_path = in_dict["src_path"]
 
-
+		try:
+			self.show_ground_albedo = int(in_dict["show_ground_albedo"])
+		except:
+			self.show_ground_albedo = 0
+		try:
+			self.show_sky_cube = int(in_dict["show_sky_cube"])
+		except:
+			self.show_sky_cube = 0
 
 		# Angle de demi-ouverture de l'instrument (1 deg pour les crus)
 		self.ouv_pc		= float(in_dict["instrument_opening_angle"]) * DtoR
@@ -106,23 +113,29 @@ class World:
 		else:
 			self.flux_unit = "nW"
 
+
+
 		### Get all the azimuts and elevations of the instruments.
 		self.a_pc_list		= np.array(in_dict["azimuts"].split(";"))  # List of azimuts for the observations
 		if self.a_pc_list[0] == "all":
 			# self.a_pc_list = np.arange(179.5, 180.5, 0.005) * DtoR
 			self.a_pc_list = np.arange(0, 360, 10) * DtoR
+			# self.a_pc_list = np.arange(-10, 10, 1) * DtoR
 		else:
 			self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
 
 		self.e_pc_list		= np.array(in_dict["elevations"].split(";"))  # List of elevation for the observations
 		if self.e_pc_list[0] == "all":
-			self.e_pc_list = np.linspace(10, 90, 9, endpoint=True) * DtoR
+			self.e_pc_list = np.linspace(1, 90, 20, endpoint=True) * DtoR
+			# self.e_pc_list = np.linspace(35, 55, 21, endpoint=True) * DtoR
 		else:
 			self.e_pc_list = np.array([float(e) for e in self.e_pc_list]) * DtoR
 
 		self.a_pc, self.e_pc = self.a_pc_list[0], self.e_pc_list[0]
 
 		self.Nb_a_pc, self.Nb_e_pc = len(self.a_pc_list), len(self.e_pc_list)
+
+
 
 		### Init the atmosphere object
 		self.atmosphere = Atmosphere(in_dict)
@@ -170,9 +183,9 @@ class World:
 
 		#Show the skymaps if they change in time or we move the instrument
 		# if self.has_sky_emission and (self.is_time_dependant or not self.is_single_observation):
-		# self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
-		# plt.show()
-		# plt.close("all")
+		if self.has_sky_emission and self.show_sky_cube and mpi_rank==0:
+			self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
+
 
 		if mpi_rank==0: print("Has_sky_emission:", self.has_sky_emission)
 
@@ -185,10 +198,7 @@ class World:
 		### Initialize the atlitude maps
 		self.alt_map = ElevationMap(in_dict)
 		self.use_elevation_map = bool(int(in_dict["use_alt_map"]))
-		# if mpi_rank == 0:
-		# 	# self.alt_map.PlotMap()
-		# 	self.MakeGroundMapPlot(iso=[500, 1000, 2000])
-		# 	plt.show()
+
 		self.instrument_altitude = self.alt_map.GetAltitudeFromLonLat(self.ground_map.A_lon, self.ground_map.A_lat) / 1000. #In km
 
 		self.albedo_mode = in_dict["ground_albedo"].lower()
@@ -209,6 +219,9 @@ class World:
 
 						layer = int(np.searchsorted(layers, alt))
 						self.albedo_map[id, ia] = albedo[layer]
+
+				if mpi_rank == 0 and self.show_ground_albedo:
+					self.MakeGroundMapPlot(iso=layers)
 
 						# if alt < 0.5:
 						# 	self.albedo_map[id, ia] = 0.2
@@ -241,10 +254,11 @@ class World:
 
 		self.add_B_pola = bool(int(in_dict["add_B_pola"]))
 
+
 		# if mpi_rank == 0:
-			# self.ground_map.MakePlots(0, 0)
-			# self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
-			# plt.show()
+		# 	self.ground_map.MakePlots(0, 0)
+		# 	self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
+		# 	plt.show()
 
 
 	# def GetGalacticCoord(self, az, el, time):
@@ -266,14 +280,23 @@ class World:
 
 		### MANUAL B/current
 		B_up 	= 0
-		B_east 	= -1
-		B_north = 1
+		B_east 	= 1
+		B_north = 0
 		B_chaos = np.array([0, 0, B_up, B_east, B_north])
 
+		los = [self.obs.los_uen[0,0], self.obs.los_uen[1,0], self.obs.los_uen[2,0]]
+		B = B_chaos[2:]
+
+		# pola_direction = np.cross(self.obs.los_uen, [[B_up], [B_east], [B_north]])
+		pola_direction = np.cross(los, B)
+
 		AoBapp, AoBlos = self.obs.GetApparentAngle(B_chaos[2:], Blos=True)
+		pola_app_angle, pola_los_angle = self.obs.GetApparentAngle(pola_direction, Blos=True)
+
+		DoLP = np.sin(AoBlos)**2 / (1 + np.cos(AoBlos)**2)
 
 		# return DoLP_max / 100 , AoBapp
-		return DoLP_max * np.cos(AoBlos) / 100, AoBapp
+		return DoLP_max * DoLP / 100., pola_app_angle
 
 
 
@@ -528,7 +551,7 @@ class World:
 	def ComputeSingleRSGroundPointSourceAnal(self, time, iaz, idist, a_E, e_E, alt):
 		I0 = self.ground_map.cube[time, idist, iaz] #[nW/m2/sr]
 
-		AR, RE, RD_angle, RAE = self.GetGeometryFromAzDist(a_E, e_E, alt, ret_RAE=True)
+		AR, RE, RD_angle, RAE, alt_E = self.GetGeometryFromAzDist(a_E, e_E, alt, ret_RAE=True)
 		AE = AngleToDist(e_E, lat = self.ground_map.A_lat, az = a_E)
 
 		# print("AR, RE, AE", AR, RE, AE)
@@ -641,11 +664,12 @@ class World:
 			O3_abs = 0
 			aer_abs = 0
 			if alt != 0:
-				opt_depth = self.atmosphere.GetRSOpticalDepth(alt_E, alt) * RE / alt
+				delta_z = abs(alt_E - alt)
+				opt_depth = self.atmosphere.GetRSOpticalDepth(alt_E, alt) * RE / delta_z
 				if self.atmosphere.use_ozone:
-					O3_abs = self.atmosphere.GetO3Absorbtion(alt_E, alt) * RE / alt
+					O3_abs = self.atmosphere.GetO3Absorbtion(alt_E, alt) * RE / delta_z
 				if self.atmosphere.use_aerosol:
-					aer_abs = self.atmosphere.GetAerosolsAbsorbtion(alt_E, alt) * RE / alt
+					aer_abs = self.atmosphere.GetAerosolsAbsorbtion(alt_E, alt) * RE / delta_z
 				# print("DEBUG opt_depth: ER", opt_depth, 1-opt_depth, np.exp(-opt_depth))
 
 			# if mpi_rank == 0: print(O3_abs, np.exp(- O3_abs))
@@ -838,13 +862,20 @@ class World:
 			O3_abs = 0
 			aer_abs = 0
 			if alt != 0:
-				opt_depth = self.atmosphere.GetRSOpticalDepth(self.sky_map.h, alt) * RE / alt
+				ER_eff = RE
+				delta_z = abs(self.sky_map.h - alt)
+				if self.atmosphere.h_r_max < self.sky_map.h:
+					ER_eff = GetERForVeryBigE_alt(alt, self.sky_map.h, RE, self.atmosphere.h_r_max)
+					delta_z = abs(self.atmosphere.h_r_max - alt)
+				opt_depth = self.atmosphere.GetRSOpticalDepth(self.sky_map.h, alt)# * ER_eff / delta_z
 				if self.atmosphere.use_ozone:
-					O3_abs = self.atmosphere.GetO3Absorbtion(self.sky_map.h, alt) * RE / alt
+					O3_abs = self.atmosphere.GetO3Absorbtion(self.sky_map.h, alt)# * ER_eff / delta_z
 				if self.atmosphere.use_aerosol:
-					aer_abs = self.atmosphere.GetAerosolsAbsorbtion(self.sky_map.h, alt) * RE / alt
+					aer_abs = self.atmosphere.GetAerosolsAbsorbtion(self.sky_map.h, alt)# * ER_eff / delta_z
 
-			I0 *= np.exp(- opt_depth - O3_abs - aer_abs) # [nW / m2]
+				# if mpi_rank	==0 : print("alt, opt_depth", alt, np.exp(-opt_depth), np.exp(-O3_abs), np.exp(-aer_abs))
+
+			I0 *= np.exp(- (opt_depth - O3_abs - aer_abs) * ER_eff / delta_z) # [nW / m2]
 
 			# Vol = self.atmosphere.GetVolume(AR, da, dr=dr, unit="km") #in km3
 			vol_T += dvol
@@ -1144,15 +1175,20 @@ class World:
 		if obs is None:
 			obs = self.obs
 
-		e_E = max(e_E, 10**(-30)) # Avoid weird behaviour and division by 0
+		# if e_E == 0:
+		# 	e_E = 10**(-30) # Avoid weird behaviour and division by 0
 
 		v_rd_u = Getuen(a_E, e_E) # Vector from observer to emission point
 		_, AE = obs.GetAH(elevation = e_E, azimut = a_E, altitude = self.sky_map.h)  # Distance between observer and emisson point
+
+		# if mpi_rank==0: print("AE", AE)
 
 		if v_pc_u is None:
 			v_pc_u = self.v_pc_u
 
 		RAE = GetAngle(v_pc_u, v_rd_u) # Angle between line of sight and emission
+
+		# if mpi_rank==0: print("RAE", RAE*RtoD)
 
 		_, AR = obs.GetAH(altitude = alt) # Distance between observer and scattering point
 
@@ -1160,13 +1196,17 @@ class World:
 		ER_vect /= np.sqrt(sum([x**2 for x in ER_vect]))
 		AER = GetAngle(-np.array(v_rd_u), ER_vect) # Angle between line of sight and emission
 
+		# if mpi_rank==0: print('AER', AER*RtoD)
 
 		RE = GenPythagore(AR, AE, RAE) # Distance between emission and scaterring point
 		ARE = np.arcsin(AE * np.sin(RAE) / RE) # Scattering angle
 
+
 		if RAE + AER < np.pi/2: #Check that the sum of the angles is 180 degrees! Mandatory if phase function is not symmetrical for back- and front- scattering. ARE = 0 -> BACK scattering. ARE=pi -> FRONT-scattring
 			ARE = np.pi - ARE
 		ARE = np.pi - ARE
+
+		# if mpi_rank==0: print("RE, ARE", RE, ARE*RtoD)
 
 		if ret_RAE:
 			return AR, RE, ARE, RAE
@@ -1273,7 +1313,13 @@ class World:
 
 		print("DEBUG: CONVERT ALT MAP POLAR")
 		polar_alt_map = self.ground_map.CarthToPolar(self.alt_map.map, self.alt_map.mid_longitudes, self.alt_map.mid_latitudes)
-		ax.contour(self.ground_map.mid_azimuts, self.ground_map.mid_distances, polar_alt_map, iso, cmap='Reds') #iso is a list of the altitudes isobar to plot (in km)
+
+		adapt_map = np.append(polar_alt_map, np.vstack(polar_alt_map[:, 0]), axis=1)
+		adapt_dist = self.ground_map.mid_distances #np.append(self.ground_map.mid_distances, self.ground_map.mid_distances[0])
+		adapt_az = np.append(self.ground_map.mid_azimuts, self.ground_map.mid_azimuts[0]+2*np.pi)
+
+		# contourset = ax.contourf(self.ground_map.mid_azimuts, self.ground_map.mid_distances, polar_alt_map, iso, cmap='Wistia') #iso is a list of the altitudes isobar to plot (in km)
+		contourset = ax.contour(adapt_az, adapt_dist, adapt_map, iso, cmap='Wistia') #iso is a list of the altitudes isobar to plot (in km)
 
 		# ax.add_artist(Circle((0, 0), 3, color="red", zorder = 1000))
 		ax.plot([0, np.pi], [3, 3], "r")

@@ -23,6 +23,7 @@ from matplotlib.patches import Arrow
 # gdal.UseExceptions()  # not required, but a good idea
 
 import imageio
+import numba as nba
 
 from observation import *
 from rayleigh_utils import *
@@ -128,8 +129,6 @@ class SkyMap:
 		elif "band_e" in self.mode:
 			self.cube[0, :, :] = self.GetBandSkyMap(a_band = 0, e_band = self.band_elevation, length = 1000, thickness = 10, height = 50, band_I = 100, nb_sub_bands = nb_sub_bands)
 
-
-
 		elif "uniform" in self.mode:
 			self.cube[:, :, :] += float(self.mode.split("_")[1])
 
@@ -145,17 +144,18 @@ class SkyMap:
 			e = float(m[3][1:]) * DtoR
 
 			self.Na, self.Ne = 1, 1
-			self.da, self.de = DtoR, DtoR
+			self.da, self.de = 0.5291 * DtoR, 0.5291 * DtoR
 			self.mid_azimuts = np.array([a])
 			self.mid_elevations = np.array([e])
-			self.azimuts = np.append(self.mid_azimuts - self.da/2., self.mid_azimuts[-1] + self.da/2.) #Not sure this is used anymore
-			self.elevations = np.append(self.mid_elevations - self.de/2., self.mid_elevations[-1] + self.de/2.) #Not sure this is used anymore
+			self.azimuts = np.append(self.mid_azimuts - self.da/2., self.mid_azimuts[-1] + self.da/2.)
+			self.elevations = np.append(self.mid_elevations - self.de/2., self.mid_elevations[-1] + self.de/2.)
 			self.maps_shape = (self.Ne, self.Na)
 			self.cube = np.zeros((self.Nt, self.Ne, self.Na))
 
 			# self.cube[0, :, :] = self.GetBandSkyMap(a_band = a, e_band = e, length = 50, thickness = 50, height = 50, band_I = 100, nb_sub_bands = 1)
 			self.cube[0, 0, 0] = I
-			# print("self.cube", self.cube)
+			print(f"Sky cube loaded: Point source at azimuth {a*RtoD} and elevation {e*RtoD}")
+			print("self.cube", self.cube)
 
 			self.is_point_src = True
 
@@ -239,7 +239,6 @@ class SkyMap:
 
 		# if mpi_rank == 0: self.MakeSkyCubePlot([0*DtoR], [90*DtoR], 1*DtoR)
 
-
 	def LoadAllSkyImage(self, filename = "", verbose=True):
 
 		if not filename:
@@ -265,7 +264,7 @@ class SkyMap:
 			for j, pix in enumerate(line):
 				if pix > 0:
 					# print("PIX", pix)
-					pix_azimut    = -(float(calib["mazms"][i][j]) * DtoR + np.pi) % (2*np.pi) # GIVEN IN DEGREES
+					pix_azimut    = -(float(calib["gazms"][i][j] + 17.52) * DtoR + np.pi) % (2*np.pi) # GIVEN IN DEGREES
 					pix_elevation = float(calib["elevs"][i][j]) * DtoR # GIVEN IN DEGREES
 
 					if pix_azimut and pix_elevation:
@@ -551,26 +550,35 @@ class SkyMap:
 
 	def GetFlatMap(self, A_lon, A_lat, azimuts, distances, time = 0, Nmax = 1000, tau0 = 0):
 
+		#initialize a polar ground map with azimuths and distances given in input
 		Naz = len(azimuts)
 		Ndist = len(distances)
 
 		flat_map = np.zeros((Ndist, Naz))
 
+		# Loop over all ground map pixel.
 		for idist, dist in enumerate(distances):
 			for iaz, az in enumerate(azimuts):
+
+				#Compuuting the longitude, latitude of the pixel
 				ground_lon, ground_lat = AzDistToLonLat(az, dist, A_lon, A_lat)
 
+				#Loop over all sky pixel
 				for ie, e in enumerate(self.mid_elevations):
 					for ia, a in enumerate(self.mid_azimuts):
+						#Get sky pixel lon and lat coordinates
 						sky_lon, sky_lat = AzEltoLonLat(a, e, self.h, A_lon, A_lat)
-						sky_area = self.GetPixelArea(ie)
+						sky_area = self.GetPixelArea(ie) #Sky pixel area (bigger closer to horizon)
 
-						I0 = self.cube[time, ie, ia]
+						I0 = self.cube[time, ie, ia] #Pixel radiance
 
+						###Computing the geometry: L=horyzontal distance between sky and ground pixel
 						# L = np.sqrt((sky_lon - ground_lon)**2  + (sky_lat - ground_lat)**2) * RT
 						L = np.sqrt((sky_lon - ground_lon)**2 * np.cos(A_lat)**2 + (sky_lat - ground_lat)**2) * RT
 
+						#theta is the angle between the sky-ground pixel line and the vertical (co-elevation)
 						theta = np.arctan(L / self.h)
+						### Computing the flux reaching the ground pixel
 						I = I0 * sky_area * np.cos(theta)**3 * np.exp(- tau0 / np.cos(theta)) / (2 * np.pi * self.h**2 * 1e6) #nW/m2/sr
 
 						flat_map[idist, iaz] += I

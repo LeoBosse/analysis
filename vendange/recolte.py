@@ -105,7 +105,6 @@ for id in IDConfiguration:
 		print("IDConfiguration {0}: No valid data on any channels.".format(id))
 		continue
 
-
 	### Get saving folder names
 	try:
 		title = config[columns.index("CM_Comments")].split("_")

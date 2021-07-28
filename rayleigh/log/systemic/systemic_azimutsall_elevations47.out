@@ -1,0 +1,339 @@
+Correct input file in use: systemic/systemic_azimutsall_elevations47
+All input parameter from the input file:
+path: /home/bossel/These/Analysis/data/Night_pollution/
+src_path: /home/bossel/These/Analysis/src/rayleigh/
+saving_graphs: 0
+save_path: /home/bossel/These/Documentation/Mes_articles/auroral_pola/sky_only/
+save_name: 20190307_m_sky_only_aero_1low_albedo
+flux_unit: W
+use_analytic: false
+azimuts: all
+elevations: 47
+location: skibotn
+start_datetime: 20190116-02:44:00
+end_datetime: 20190116-04:00:00
+instrument_opening_angle: 1
+instrument_area: 20
+wavelength: 557.7
+cst_Flux: 0
+cst_DoLP: 0
+cst_AoLP: 0
+add_starlight: 0
+add_B_pola: 0
+RS_min_altitude: 0
+RS_max_altitude: 100
+Nb_points_along_los: 100
+resolution_along_los: 0.5
+max_angle_discretization: 0
+Atmospheric_profile: atm_profiles/win.atm
+use_ozone: 1
+use_aerosol: 1
+aer_complexity: 1
+aer_model: maritime
+aer_name: maritime_test
+aer_nr: 1.6
+aer_ni: -0.010
+aer_rn0: 1
+aer_rmg: 0.001
+aer_ln_sigma: 0.657
+aer_r_min: 0.001
+aer_r_max: 50
+aer_Hn: 0.440
+aer_n0: 300
+aer_nBK: 30
+aer_ext_profile_name: mar
+aer_single_scatter_albedo: 0.9
+aer_phase_fct_asym_g: 0.7
+sky_mode: image
+direct_mode: only
+emission_altitude: 110
+Nb_emission_points: 1000
+Nb_emission_maps: 1
+I_zone_a_min: 0
+I_zone_a_max: 360
+I_zone_e_min: 0
+I_zone_e_max: 90
+sky_path: /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
+sky_file: skn4/5577/2019/20190308/ut01/skn4_20190308_012908_5577_cal.png
+sky_wavelength: 557.7
+use_alt_map: 1
+alt_map_path: /home/bossel/These/Analysis/data/elevation/
+alt_map_radius: 100
+alt_map_N_bins_max: 0
+alt_map_resolution: 0.5
+ground_mode: none
+shader_mode: none
+ground_emission_radius: 100
+ground_N_bins_max: 1000
+ground_albedo: altitude_0.2_0.2_0.5_0.5_0.8
+ground_path: /home/bossel/These/Analysis/data/Night_pollution/
+ground_file: nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-ntl_v10_c201807311200.avg_rade9.tif
+Aerosol Model: maritime
+Running aerosol optical properties. May take 10sec...
+Loading the sky emission cube...
+Importing all sky image data from: /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190308/ut01/skn4_20190308_012908_5577_cal.png
+Sky cube loaded!
+Has_sky_emission: True
+Has_ground_emission: False
+ALT MAP RESOLUTION lon, lat 0.5 1.417681295118693 0.49999999999999994
+WARNING: Elevation tile not found: /home/bossel/These/Analysis/data/elevation/N070E015_N075E020/ALPSMLC30_N070E017_DSM.tif
+WARNING: Elevation tile not found: /home/bossel/These/Analysis/data/elevation/N070E015_N075E020/ALPSMLC30_N070E018_DSM.tif
+WARNING: Elevation tile not found: /home/bossel/These/Analysis/data/elevation/N070E015_N075E020/ALPSMLC30_N070E019_DSM.tif
+Initialization DONE
+*******************************************************************************************************************************
+Starting calculation for SKY map 1/36:
+Observation at point (20.363641, 69.348151), azimuth 0.0, elevation 47.0. Observed point at altitude 110.0, position (20.363641, 70.24842789413992)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000046
+*******************************************************************************************************************************
+Starting calculation for SKY map 2/36:
+Observation at point (20.363641, 69.348151), azimuth 10.0, elevation 47.0. Observed point at altitude 110.0, position (20.825904091958233, 70.23415939802534)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000025
+*******************************************************************************************************************************
+Starting calculation for SKY map 3/36:
+Observation at point (20.363641, 69.348151), azimuth 20.0, elevation 47.0. Observed point at altitude 110.0, position (21.272282696439543, 70.1918456099339)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 4/36:
+Observation at point (20.363641, 69.348151), azimuth 29.999999999999996, elevation 47.0. Observed point at altitude 110.0, position (21.687628979162255, 70.12293849245737)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000021
+*******************************************************************************************************************************
+Starting calculation for SKY map 5/36:
+Observation at point (20.363641, 69.348151), azimuth 40.0, elevation 47.0. Observed point at altitude 110.0, position (22.05820551768149, 70.02978291693906)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000018
+*******************************************************************************************************************************
+Starting calculation for SKY map 6/36:
+Observation at point (20.363641, 69.348151), azimuth 50.0, elevation 47.0. Observed point at altitude 110.0, position (22.372243374421796, 69.91551092381384)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000018
+*******************************************************************************************************************************
+Starting calculation for SKY map 7/36:
+Observation at point (20.363641, 69.348151), azimuth 59.99999999999999, elevation 47.0. Observed point at altitude 110.0, position (22.620349346108704, 69.78390623058195)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000020
+*******************************************************************************************************************************
+Starting calculation for SKY map 8/36:
+Observation at point (20.363641, 69.348151), azimuth 70.0, elevation 47.0. Observed point at altitude 110.0, position (22.795748260420606, 69.6392491019129)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000018
+*******************************************************************************************************************************
+Starting calculation for SKY map 9/36:
+Observation at point (20.363641, 69.348151), azimuth 80.0, elevation 47.0. Observed point at altitude 110.0, position (22.894366115265612, 69.4861518086676)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 10/36:
+Observation at point (20.363641, 69.348151), azimuth 90.0, elevation 47.0. Observed point at altitude 110.0, position (22.914775276001244, 69.32939387658006)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000020
+*******************************************************************************************************************************
+Starting calculation for SKY map 11/36:
+Observation at point (20.363641, 69.348151), azimuth 100.0, elevation 47.0. Observed point at altitude 110.0, position (22.858032147910478, 69.17376455607682)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 12/36:
+Observation at point (20.363641, 69.348151), azimuth 110.0, elevation 47.0. Observed point at altitude 110.0, position (22.727440720435585, 69.02391786378311)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 13/36:
+Observation at point (20.363641, 69.348151), azimuth 119.99999999999999, elevation 47.0. Observed point at altitude 110.0, position (22.528273347992144, 68.88424351969253)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 14/36:
+Observation at point (20.363641, 69.348151), azimuth 130.0, elevation 47.0. Observed point at altitude 110.0, position (22.267474852306222, 68.75875537865934)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000016
+*******************************************************************************************************************************
+Starting calculation for SKY map 15/36:
+Observation at point (20.363641, 69.348151), azimuth 140.0, elevation 47.0. Observed point at altitude 110.0, position (21.953369243081937, 68.65099765157719)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 16/36:
+Observation at point (20.363641, 69.348151), azimuth 150.0, elevation 47.0. Observed point at altitude 110.0, position (21.59538142547318, 68.5639683488227)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000028
+*******************************************************************************************************************************
+Starting calculation for SKY map 17/36:
+Observation at point (20.363641, 69.348151), azimuth 160.0, elevation 47.0. Observed point at altitude 110.0, position (21.203780070201102, 68.50005890873283)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000020
+*******************************************************************************************************************************
+Starting calculation for SKY map 18/36:
+Observation at point (20.363641, 69.348151), azimuth 170.0, elevation 47.0. Observed point at altitude 110.0, position (20.789442790833675, 68.46100881814723)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 19/36:
+Observation at point (20.363641, 69.348151), azimuth 180.0, elevation 47.0. Observed point at altitude 110.0, position (20.363641, 68.4478741058601)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 20/36:
+Observation at point (20.363641, 69.348151), azimuth 190.0, elevation 47.0. Observed point at altitude 110.0, position (19.937839209166327, 68.46100881814723)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 21/36:
+Observation at point (20.363641, 69.348151), azimuth 200.0, elevation 47.0. Observed point at altitude 110.0, position (19.523501929798897, 68.50005890873283)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000040
+*******************************************************************************************************************************
+Starting calculation for SKY map 22/36:
+Observation at point (20.363641, 69.348151), azimuth 210.00000000000003, elevation 47.0. Observed point at altitude 110.0, position (19.131900574526817, 68.5639683488227)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000027
+*******************************************************************************************************************************
+Starting calculation for SKY map 23/36:
+Observation at point (20.363641, 69.348151), azimuth 220.0, elevation 47.0. Observed point at altitude 110.0, position (18.77391275691806, 68.65099765157719)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000020
+*******************************************************************************************************************************
+Starting calculation for SKY map 24/36:
+Observation at point (20.363641, 69.348151), azimuth 230.0, elevation 47.0. Observed point at altitude 110.0, position (18.459807147693777, 68.75875537865934)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000033
+*******************************************************************************************************************************
+Starting calculation for SKY map 25/36:
+Observation at point (20.363641, 69.348151), azimuth 239.99999999999997, elevation 47.0. Observed point at altitude 110.0, position (18.19900865200786, 68.88424351969252)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000021
+*******************************************************************************************************************************
+Starting calculation for SKY map 26/36:
+Observation at point (20.363641, 69.348151), azimuth 250.00000000000003, elevation 47.0. Observed point at altitude 110.0, position (17.99984127956441, 69.02391786378311)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000029
+*******************************************************************************************************************************
+Starting calculation for SKY map 27/36:
+Observation at point (20.363641, 69.348151), azimuth 260.0, elevation 47.0. Observed point at altitude 110.0, position (17.869249852089517, 69.17376455607682)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 28/36:
+Observation at point (20.363641, 69.348151), azimuth 270.0, elevation 47.0. Observed point at altitude 110.0, position (17.812506723998755, 69.32939387658007)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000020
+*******************************************************************************************************************************
+Starting calculation for SKY map 29/36:
+Observation at point (20.363641, 69.348151), azimuth 280.0, elevation 47.0. Observed point at altitude 110.0, position (17.832915884734383, 69.4861518086676)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 30/36:
+Observation at point (20.363641, 69.348151), azimuth 290.0, elevation 47.0. Observed point at altitude 110.0, position (17.931533739579386, 69.6392491019129)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 31/36:
+Observation at point (20.363641, 69.348151), azimuth 300.0, elevation 47.0. Observed point at altitude 110.0, position (18.1069326538913, 69.78390623058195)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 32/36:
+Observation at point (20.363641, 69.348151), azimuth 310.0, elevation 47.0. Observed point at altitude 110.0, position (18.355038625578207, 69.91551092381384)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000019
+*******************************************************************************************************************************
+Starting calculation for SKY map 33/36:
+Observation at point (20.363641, 69.348151), azimuth 320.0, elevation 47.0. Observed point at altitude 110.0, position (18.669076482318506, 70.02978291693906)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000017
+*******************************************************************************************************************************
+Starting calculation for SKY map 34/36:
+Observation at point (20.363641, 69.348151), azimuth 330.0, elevation 47.0. Observed point at altitude 110.0, position (19.039653020837743, 70.12293849245737)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000019
+*******************************************************************************************************************************
+Starting calculation for SKY map 35/36:
+Observation at point (20.363641, 69.348151), azimuth 340.0, elevation 47.0. Observed point at altitude 110.0, position (19.454999303560456, 70.1918456099339)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000019
+*******************************************************************************************************************************
+Starting calculation for SKY map 36/36:
+Observation at point (20.363641, 69.348151), azimuth 350.0, elevation 47.0. Observed point at altitude 110.0, position (19.901377908041763, 70.23415939802534)
+Starting time:  11:38:19
+Computing DONE in:  0:00:00.000057
+Stacking processor results...
+opt_depth, direct:
+0.1777604141773997 3.991326669134907e-12
+/usr/lib/python3/dist-packages/numpy/lib/histograms.py:908: RuntimeWarning: invalid value encountered in true_divide
+  return n/db/n.sum(), bin_edges
+opt_depth, direct:
+0.1777604141773997 3.550207415174258e-12
+opt_depth, direct:
+0.1777604141773997 3.6355689496027625e-12
+opt_depth, direct:
+0.1777604141773997 3.480206110508209e-12
+opt_depth, direct:
+0.1777604141773997 3.962432288891394e-12
+opt_depth, direct:
+0.1777604141773997 3.948788029645176e-12
+opt_depth, direct:
+0.1777604141773997 4.317740273168996e-12
+opt_depth, direct:
+0.1777604141773997 4.845594704548189e-12
+opt_depth, direct:
+0.1777604141773997 4.401959091924348e-12
+opt_depth, direct:
+0.1777604141773997 3.618090937210414e-12
+opt_depth, direct:
+0.1777604141773997 2.6884530195354187e-12
+opt_depth, direct:
+0.1777604141773997 2.1298132751912226e-12
+opt_depth, direct:
+0.1777604141773997 1.6348775043252339e-12
+opt_depth, direct:
+0.1777604141773997 1.2206597790563045e-12
+opt_depth, direct:
+0.1777604141773997 9.50549722650616e-13
+opt_depth, direct:
+0.1777604141773997 7.437144087325077e-13
+opt_depth, direct:
+0.1777604141773997 8.127523453677733e-13
+opt_depth, direct:
+0.1777604141773997 9.41611942270284e-13
+opt_depth, direct:
+0.1777604141773997 7.996551725442702e-13
+opt_depth, direct:
+0.1777604141773997 6.667838914199406e-13
+opt_depth, direct:
+0.1777604141773997 5.963135520464688e-13
+opt_depth, direct:
+0.1777604141773997 5.596910636396371e-13
+opt_depth, direct:
+0.1777604141773997 6.109326065579331e-13
+opt_depth, direct:
+0.1777604141773997 6.476702717970521e-13
+opt_depth, direct:
+0.1777604141773997 6.8019066959156e-13
+opt_depth, direct:
+0.1777604141773997 7.423324339067031e-13
+opt_depth, direct:
+0.1777604141773997 8.464101629259774e-13
+opt_depth, direct:
+0.1777604141773997 1.0535411230351688e-12
+opt_depth, direct:
+0.1777604141773997 1.286772679187546e-12
+opt_depth, direct:
+0.1777604141773997 1.5974027116562115e-12
+opt_depth, direct:
+0.1777604141773997 2.278805050433503e-12
+opt_depth, direct:
+0.1777604141773997 3.259085099010796e-12
+opt_depth, direct:
+0.1777604141773997 4.024781055058449e-12
+opt_depth, direct:
+0.1777604141773997 4.626477097744168e-12
+opt_depth, direct:
+0.1777604141773997 4.381526750182789e-12
+opt_depth, direct:
+0.1777604141773997 4.0470801139086456e-12
+Print results in log/20190307_v_rot_elevation_test.csv
+Simulation ran in: 0:00:27.900249

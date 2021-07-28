@@ -36,7 +36,9 @@ def RunSimulation(file_name = "", show = True, output_result_file=None, header =
 	datetime_start = dt.datetime.now()
 
 	try:
-		in_dict = ReadInputFile("./input_files/" + file_name + ".in")
+		if file_name[-3:] != ".in":
+			file_name += ".in"
+		in_dict = ReadInputFile("./input_files/" + file_name)
 		if mpi_rank == 0: print("Correct input file in use:", file_name)
 	except:
 		in_dict = ReadInputFile("./input_files/RS_default.in")
@@ -53,7 +55,6 @@ def RunSimulation(file_name = "", show = True, output_result_file=None, header =
 	simu.ComputeAllMaps()
 
 	if mpi_rank == 0:
-		simu.MakeSummaryPlot()
 
 		old = sys.stdout
 		if output_result_file:
@@ -65,6 +66,8 @@ def RunSimulation(file_name = "", show = True, output_result_file=None, header =
 		sys.stdout = old
 
 		print("Simulation ran in:", dt.datetime.now() - datetime_start)
+
+		simu.MakeSummaryPlot()
 
 		if show:
 			plt.show()

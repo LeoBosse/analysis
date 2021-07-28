@@ -381,7 +381,7 @@ if __name__ == "__main__":
 class Geometry:
 	def __init__(self, *arguments):
 
-		self.N = 200
+		self.N = 50
 		self.RD_src_azimut = False
 		self.RD_src_elevation = 0
 

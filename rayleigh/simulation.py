@@ -38,8 +38,6 @@ class Simulation:
 
 		self.in_dict = in_dict
 
-		self.path = in_dict["path"]
-
 		self.save_individual_plots = bool(int(in_dict["saving_graphs"]))
 		self.save_path = in_dict["save_path"]
 		self.save_name = self.save_path + in_dict["save_name"]
@@ -211,7 +209,7 @@ class Simulation:
 
 			if self.add_B_pola:
 				# print("DEBUG DIRECT ONLY")
-				B_DoLP, B_AoLP = self.world.GetPolaFromB(DoLP_max = 10)
+				B_DoLP, B_AoLP = self.world.GetPolaFromB(DoLP_max = 20)
 				# print("Simu", B_DoLP, B_AoLP)
 				# print(self.add_B_DoLP.shape, self.add_B_AoLP.shape)
 				self.add_B_DoLP[self.time, self.ie_pc, self.ia_pc] = B_DoLP
@@ -394,12 +392,6 @@ class Simulation:
 		elif ground:
 			self.hst = ground_hst
 
-		# print(self.hst)
-		# self.V, self.Vcos, self.Vsin, self.I0, self.DoLP, self.AoRD = self.world.LockInAmplifier(self.hst, self.bins, self.InonPola)
-
-		# if self.world.is_single_observation:
-		# 	self.world.DrawAoLPHist(self.hst,self.bins, self.I0, self.DoLP, self.AoRD, double=True, save = self.save_individual_plots, save_name = self.path + self.save_name + '_hist.png', show=True)
-
 		return self.I0, self.DoLP, self.AoRD
 
 	def MakePlots(self):
@@ -580,7 +572,7 @@ class Simulation:
 			ax1.add_artist(Circle((self.a_pc * RtoD, self.e_pc * RtoD), radius=self.world.ouv_pc * RtoD, color="red"))
 
 		if self.save_individual_plots:
-			plt.savefig(self.path + self.save_name + '_AoRD_map.png', bbox_inches='tight', metadata = self.in_dict)
+			plt.savefig(self.save_name + '_AoRD_map.png', bbox_inches='tight', metadata = self.in_dict)
 
 		################################################################################
 		###	AoRD map as stream plot (continuous lines)
@@ -612,9 +604,15 @@ class Simulation:
 		# 		for ie, e in enumerate(self.e_pc_list):
 		# 			print(a*RtoD, e*RtoD, self.I_list[t][ie][ia], self.DoLP_list[t][ie][ia], self.AoRD_list[t][ie][ia]*RtoD)
 
-		font = {'weight' : 'bold',
-		'size'   : 24}
+		font = {'weight' : 'bold', 'size'   : 24}
 		matplotlib.rc('font', **font)
+
+
+		print("RECAP:")
+		# print(f"Minimum Flux: {np.min(self.I_list[:,:,:])} nW")
+		max_index = np.unravel_index(np.argmax(self.DoLP_list[:,:,:]), self.DoLP_list.shape)
+		max_DoLP = self.DoLP_list[max_index]
+		print(f"Maximum DoLP: {max_DoLP}% at time {max_index[0]} azimuth {self.world.a_pc_list[max_index[2]]*RtoD} and elevation {self.world.e_pc_list[max_index[1]]*RtoD}")
 
 		if not self.world.is_time_dependant:
 			if self.world.is_single_observation:
@@ -628,9 +626,12 @@ class Simulation:
 				axs[2] = plt.subplot(313)
 
 				if self.world.Nb_e_pc > 1 and self.world.Nb_a_pc > 1:
-					axs[0].imshow(self.I_list[0,:,:])
-					axs[1].imshow(self.DoLP_list[0,:,:])
-					axs[2].imshow(self.AoRD_list[0,:,:]*RtoD)
+					extent = RtoD * np.array([self.world.a_pc_list[0], self.world.a_pc_list[-1], self.world.e_pc_list[0], self.world.e_pc_list[-1]])
+					axs[0].imshow(self.I_list[0,:,:], origin="lower", extent=extent)
+					axs[0].get_xaxis().set_visible(False)
+					axs[1].imshow(self.DoLP_list[0,:,:], origin="lower", extent=extent)
+					axs[1].get_xaxis().set_visible(False)
+					axs[2].imshow(self.AoRD_list[0,:,:]*RtoD, origin="lower", extent=extent)
 				else:
 					if self.world.Nb_e_pc == 1:
 						xaxis = self.world.a_pc_list*RtoD
@@ -644,8 +645,6 @@ class Simulation:
 						Derr = self.DoLP_list_err[0, 0, :] / 2.
 						A = self.AoRD_list[0, 0, :] * RtoD
 						Aerr = self.AoRD_list_err[0, 0, :] / 2. * RtoD
-
-						# print(I - Ierr)
 
 					elif self.world.Nb_a_pc == 1:
 						xaxis = self.world.e_pc_list*RtoD

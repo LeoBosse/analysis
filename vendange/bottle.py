@@ -216,10 +216,14 @@ class Bottle:
 		# self.AoLP_correction = float(self.input_parameters["AoLP_correction"])*DtoR
 
 		if not self.from_txt and self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
-			self.AoLP_correction = 0
-			# self.AoLP_correction = -(self.config['IS_PolarizerOffset' + str(self.line)]) * DtoR
+			# if self.DateTime() < dt.datetime(year=2020, month=10, day=1):
+			self.AoLP_correction = 0 # USE only for data observed and downloaded BEFORE October 2020!!!! For everything observed after that or doawnloaded via KVA20, you have to apply the correction below
+			# else:
+				# self.AoLP_correction = -(self.config['IS_PolarizerOffset' + str(self.line)]) * DtoR #This is the nor now (after oct 2020)
 
-			# self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 45) * DtoR
+			# self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 45) * DtoR ## This was the formula apllied to convert all data from before oct 2020 in the database.
+
+
 		elif not self.from_txt and self.instrument_name == "spp":
 			self.AoLP_correction = float(self.input_parameters["AoLP_correction"]) * DtoR
 		else:
@@ -355,8 +359,8 @@ class Bottle:
 		# self.std_smooth_AoLP = 0#	np.sqrt(1 / ((self.smooth_DoLP/100) ** 2 * self.smooth_I0 * smoothing_factor))
 		# self.smooth_AoLP_upper = 0#self.smooth_AoLP + self.std_smooth_AoLP
 		# self.smooth_AoLP_lower = 0#self.smooth_AoLP - self.std_smooth_AoLP
-		self.std_I0 = 		 np.sqrt(4 * self.all_V 	/ self.avg_dt)
-		self.std_smooth_I0 = np.sqrt(4 * self.smooth_V  / smoothing_factor)
+		self.std_I0 = 		 np.sqrt(2 * self.all_I0 	/ self.avg_dt)
+		self.std_smooth_I0 = np.sqrt(2 * self.smooth_I0  / smoothing_factor)
 
 		# print(self.all_V)
 		# print(self.std_I0)
@@ -418,8 +422,6 @@ class Bottle:
 
 		# for i, up in enumerate(self.smooth_AoLP_upper):
 		# 	if up < self.smooth_AoLP[i]:
-
-
 
 	def GetGeometryAngles(self, obs, B_model = None):
 		# print("DEBUG obs", obs)
@@ -526,14 +528,14 @@ class Bottle:
 
 			geo = geometry.Geometry("dummy", str(self.location), str(h), "e", str(self.continue_rotation_elevation*RtoD), str(self.source_azimut*RtoD), str(self.source_elevation*RtoD))
 			try:
-				self.azimut, self.obs = geo.FixedElevation(direction = self.input_parameters["rotation_direction"], B_model = B_model)
+				self.azimut, self.observation = geo.FixedElevation(direction = self.input_parameters["rotation_direction"], B_model = B_model)
 			except:
-				self.azimut, self.obs = geo.FixedElevation(B_model = B_model)
+				self.azimut, self.observation = geo.FixedElevation(B_model = B_model)
 
 
-			ang_list = [self.GetGeometryAngles(o, B_model = B_model) for o in self.obs]
-			self.obs, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = zip(*ang_list)
-			self.obs, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = np.array(self.obs), np.array(self.AoBapp), np.array(self.AoBlos), np.array(self.AoRD), np.array(self.AoBapp_ortho), np.array(self.AoRD_ortho)
+			ang_list = [self.GetGeometryAngles(o, B_model = B_model) for o in self.observation]
+			self.observation, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = zip(*ang_list)
+			self.observation, self.AoBapp, self.AoBlos, self.AoRD, self.AoBapp_ortho, self.AoRD_ortho = np.array(self.observation), np.array(self.AoBapp), np.array(self.AoBlos), np.array(self.AoRD), np.array(self.AoBapp_ortho), np.array(self.AoRD_ortho)
 
 		os.chdir(wd)
 		# print("Geometry:", self.AoBapp, self.AoBlos, self.AoRD)

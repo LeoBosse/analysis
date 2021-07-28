@@ -19,6 +19,8 @@ from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.time import Time
 from astropy import units as u
 
+import numba as nba
+
 DtoR = np.pi / 180.
 RtoD = 1. / DtoR
 RT = 6371. # km
@@ -63,19 +65,88 @@ def GetStarlight(lon, lat, height, time, el, az):
 
 	return np.interp(abs(Glat), b, Jv)
 
+
+def GetERForVeryBigE_alt(R_alt, E_alt, RE, alt_max):
+	"""When the emission point in the sky is higher than the maximum altitude of the atmosphere, it creates troubles when transforming the vertical optical depth to the effective one. We compute the length of the segment of the line joining R and E, from R to the top of the atmosphere.
+	R_alt: altitude of R (the scattering point) in km
+	E_alt: altitude of E (the scattering point) in km
+	RE: distance between points E and R
+	alt_max: maximum altitude of the atmosphere in km. should be < E_alt
+	"""
+	if E_alt < alt_max:
+		return False
+
+	# radius = RT + alt_max
+	# xR, yR = 0, RT + R_alt
+	# R_elevation = GetArbitraryElevation(R_alt+RT, E_alt+RT, RE)
+	# tan_e = np.tan(R_elevation)
+
+	R_elevation = GetArbitraryElevation(RT + R_alt, RT + E_alt, RE)
+	ER_eff = GetArbitraryDistance(RT + alt_max, RT + alt_max, R_elevation)
+
+	# if tan_e > 0:
+	# 	# y = 0.5 * (yR/tan_e + np.sqrt(1./tan_e**2 + 4*(radius - yR/tan_e)) )
+	# 	x = (-tan_e * yR) + np.sqrt(radius**2 * (1 + tan_e**2) - yR**2)
+	# else:
+	# 	# y = 0.5 * (yR/tan_e - np.sqrt(1./tan_e**2 + 4*(radius - yR/tan_e)) )
+	# 	x = (-tan_e * yR) - np.sqrt(radius**2 * (1 + tan_e**2) - yR**2)
+	# x /= (1 + tan_e**2)
+	#
+	# # x = (y - yR) / tan_e
+	# y = tan_e * x + yR
+	#
+	# ER_eff = np.sqrt((x-xR)**2 + (y-yR)**2)
+
+	# print("ER_eff", R_alt, R_elevation*RtoD, x-xR, y-yR, ER_eff)
+	return ER_eff
+
+def GetArbitraryElevation(rA, rB, AB):
+	"""Two concentric circles of radius rA and rB, and two points A and B on each circle (A on rA and B on rB). Given rA, rB and the distance AB between the two points, returns the elevation angle at which we see the outer point from the inner point. The elevation is the angle of the segment AB with the tangent to the inner circle passing by the inner point. we use the law of cosine, or generalized pythagorean theorem: c**2 = a**2 + b**2 - 2ab*cos(C) with abc the side length of a triangle and C the angle between a and b."""
+	if rB < rA:
+		rA, rB = rB, rA
+	sin_e = (rB**2 - AB**2 - rA**2) / (2 * AB * rA)
+	e = np.arcsin(sin_e)
+	# print("Arb el", sin_e, e*RtoD)
+	return e
+
+
+def GetArbitraryDistance(rA, rB, elevation):
+	"""Two concentric circles of radius rA and rB, and two points A and B on each circle (A on rA and B on rB). Given rA, rB and the elevation angle at which we see the outer point from the inner point, returns the distance AB between the two points. The elevation is the angle of the segment AB with the tangent to the inner circle passing by the inner point. We use the law of cosine, or generalized pythagorean theorem: c**2 = a**2 + b**2 - 2ab*cos(C) with abc the side length of a triangle and C the angle between a and b."""
+	if rB < rA:
+		rA, rB = rB, rA
+	AB = - rA * np.sin(elevation) + np.sqrt(rB**2 - rA**2 * np.cos(elevation)**2)
+	return AB
+
+def GetArbitraryAltitude(rA, AB, e):
+	"""Two concentric circles of radius rA and rB, and two points A and B on each circle (A on rA and B on rB). Given rA, AB and the elevation angle at which we see the outer point from the inner point, returns the distance rB the radius of the outer circle. The elevation is the angle of the segment AB with the tangent to the inner circle passing by the inner point. We use the law of cosine, or generalized pythagorean theorem: c**2 = a**2 + b**2 - 2ab*cos(C) with abc the side length of a triangle and C the angle between a and b."""
+	rB = rA**2 + AB**2 + 2 * rA * AB * np.sin(e)
+	return np.sqrt(rB) - RT #Sutract the earth radius to obtain the altitude of point B
+
+
+
+# @timer
+# @nba.njit
 def DistToAngle(dist, lat = 0, az = 0, R = RT):
 	return (dist  / R) * np.sqrt(np.cos(az)**2 + np.sin(az)**2 / np.cos(lat)**2)
 
+# @timer
+# @nba.njit
 def AngleToDist(angle, lat = 0, az = 0, R = RT):
 	return (angle * R) / np.sqrt(np.cos(az)**2 + np.sin(az)**2 / np.cos(lat)**2)
 
 
+# @timer
+# @nba.njit
 def AzDistToLonLat(a, d, origin_lon = 0, origin_lat = 0):
-	"""AZimut a in radians, distance d in km"""
+	"""Azimut a in radians, distance d in km"""
 	dist_east, dist_north = d * np.sin(a), d * np.cos(a)
+	# dist_east, dist_north = DistToAngle(d, lat=origin_lat, az = a), d * np.cos(a)
 
 	delta_lon = dist_east / np.cos(origin_lat) / RT
 	delta_lat = dist_north / RT
+
+	delta_lon = DistToAngle(dist_east, lat=origin_lat, az = 90)
+	delta_lat = DistToAngle(dist_north, lat=origin_lat, az = 0)
 
 	# print("AzDistToLonLat", dist_east, dist_north, delta_lon, delta_lat, delta_lon*RT, delta_lat*RT)
 
@@ -275,6 +346,9 @@ def GetLonLatFromName(name, unit="radians"):
 	elif name == "skibotn":
 		A_lon = 20.363641
 		A_lat = 69.348151
+	elif name == "skibotnsud":
+		A_lon = 19.981116
+		A_lat = 69.234956
 	elif name == "nyalesund":
 		A_lon = 11.92288
 		A_lat = 78.92320

@@ -38,11 +38,12 @@ class EqCurrent:
 				one_day = time.timedelta(days=1)
 				start_date = bottle.DateTime("start", format="UT")
 				end_date = bottle.DateTime("end", format="UT")
+				start_date += one_day
 				while start_date.day <= end_date.day:
 					self.files.append(start_date.strftime("%Y%m%d") + "_")
 					start_date += one_day
 
-			print("self.files", self.files)
+			# print("self.files", self.files)
 
 			for i in range(len(self.files)):
 				if self.file_type is None:
@@ -73,15 +74,13 @@ class EqCurrent:
 				self.file = [""]
 
 
-			print("TIMES: ", self.start_time, self.end_time)
+			# print("TIMES: ", self.start_time, self.end_time)
 
 		elif self.file is not None:
 			self.file = file
 			self.files = [file]
 			self.start_time = None
 			self.end_time = None
-
-
 
 		# print(self.file)
 
@@ -99,7 +98,6 @@ class EqCurrent:
 					self.valid = False
 			else:
 				self.LoadFakeData()
-
 
 	def LoadFakeData(self):
 
@@ -128,10 +126,11 @@ class EqCurrent:
 			for f in self.files:
 				try:
 					data = data.append(pd.read_csv(self.path + f, delimiter=" ", names=["date", "time", "Jn", "Je"], skiprows=1))
+					print(f"Equivalent current file valid. {self.path + f}")
 				except:
-					print("Equivalent current file not valid.")
-					self.valid = False
-					return 0
+					print(f"Equivalent current file not valid. {self.path + f}")
+					# self.valid = False
+					# return 0
 			# 	print(data)
 			# print(data)
 			data = data.reset_index(drop=True)
@@ -153,7 +152,7 @@ class EqCurrent:
 			# print(data)
 
 		if self.start_time is None:
-			print(data.index, data.index.start, data.index.stop-1)
+			# print(data.index, data.index.start, data.index.stop-1)
 			self.start_time = data["datetime"][data.index.start]
 			self.end_time = data["datetime"][data.index.stop-1]
 
@@ -162,6 +161,8 @@ class EqCurrent:
 		# print(data)
 
 		data["J_norm"] = np.sqrt(data["Jn"] ** 2 + data["Je"] ** 2 + data["Ju"] ** 2)
+		data["Jaz"] = np.arctan2(data["Je"], data["Jn"])
+		data["Jel"] = np.arcsin(data["Ju"] / data["J_norm"])
 		# print(data)
 
 		self.data = data
@@ -180,25 +181,90 @@ class EqCurrent:
 
 		# self.MakePlot(show=True, app_angle=False, xaxis = True, div=3600)
 
-	def GetApparentAngle(self, obs, shift=0):
-		app_angle = []
-		for i in self.data.index:
-			app_angle.append(obs.GetApparentAngle([self.data["Ju"][i], self.data["Je"][i], self.data["Jn"][i]], Blos=True))
 
+	def Polarisation(self, obs, DoLP_max = 100, DoLP_mode="rayleigh", AoLP_mode="para"):
+		DoLPs, AoLPs = [], []
+		for ju, je, jn in zip(self.data["Ju"], self.data["Je"], self.data["Jn"]):
+			current = [ju, je, jn]
+			DoLP, AoLP = EqCurrent.GetPolarisation(current, obs, DoLP_max=DoLP_max, DoLP_mode=DoLP_mode, AoLP_mode=AoLP_mode)
+
+			DoLPs.append(DoLP)
+			AoLPs.append(AoLP)
+
+		self.data["DoLP"] = DoLPs
+		self.data["AoLP"] = AoLPs
+
+
+
+	@staticmethod
+	def GetPolarisation(current, obs, DoLP_max = 100, DoLP_mode="rayleigh", AoLP_mode="para"):
+		"""From a current (up-east-north array), and an observation object returns the DoLP (0-1) and AoLP (radians) of the polarization.
+		Polarization modes define DoLP and AoLP.
+		DoLP_mode: 	rayleigh: DoLP = sin**2 / (1+cos**2) of the "scattering angle", i.e. the angle between the current and the line of sight
+					sin, sin2, cos, cos2: use a simple trigo function (squared if 2) on the "scattering angle"
+		AoLP_mode: 	para= The direction of pola is parallel to the current
+					perp= The direction of pola is perpendicular to the current and the line of sight (approx. like rayleigh scattering)
+		DoLP_max: in % (1-100) The maximum DoLP of the induced polarisation. The DoLP_mode function is multiplied by a factor DoLP_max/100.
+		"""
+
+		AoLP_mode = AoLP_mode.lower()
+		DoLP_mode = DoLP_mode.lower()
+
+		AoLP = None
+		DoLP = None
+
+		if AoLP_mode in ["para", "parallel"]:
+			AoLP, AoBlos = obs.GetApparentAngle(current, Blos=True)
+		elif AoLP_mode in ["perp", "perpendicular", "rayleigh"]:
+			los = [obs.los_uen[0,0], obs.los_uen[1,0], obs.los_uen[2,0]]
+			pola_direction = np.cross(los, current)
+
+			AoLP, AoBlos = obs.GetApparentAngle(pola_direction, Blos=True)
+
+		if DoLP_mode in ["rayleigh"]:
+			DoLP = np.sin(AoBlos)**2 / (1 + np.cos(AoBlos)**2)
+		elif DoLP_mode in ["sin"]:
+			DoLP = np.sin(AoBlos)
+		elif DoLP_mode in ["sin2"]:
+			DoLP = np.sin(AoBlos)**2
+		elif DoLP_mode in ["cos"]:
+			DoLP = np.cos(AoBlos)
+		elif DoLP_mode in ["cos2"]:
+			DoLP = np.cos(AoBlos)**2
+
+		DoLP *= DoLP_max / 100.
+
+		return DoLP, AoLP #[0-1] and radians
+
+
+	def GetApparentAngle(self, obs, shift=0):
+		self.data["AoJapp"], self.data["AoJlos"] = EqCurrent.ApparentAngle(self.data["Ju"], self.data["Je"], self.data["Jn"],  obs, shift)
+
+
+	@staticmethod
+	def ApparentAngle(cu, ce, cn, obs, shift=0):
+		app_angle = []
+		for i in range(len(cu)):
+			app_angle.append(obs.GetApparentAngle([cu[i], ce[i], cn[i]], Blos=True))
+
+		# print(app_angle)
 		app_angle, J_los_angle = zip(*app_angle)
 		app_angle = np.array(app_angle)
 		# print(J_los_angle)
 		if not shift:
-			self.data["AoJapp"] = app_angle
-			self.data["AoJapp"] = SetAngleBounds(np.array(app_angle), -np.pi/2, np.pi/2)
+			# current.data["AoJapp"] = app_angle
+			app_angle = SetAngleBounds(np.array(app_angle), -np.pi/2, np.pi/2)
 		else:
-			self.data["AoJapp"] = app_angle
-			self.data["AoJapp"] = SetAngleBounds(np.array(app_angle), 0, np.pi)
+			# current.data["AoJapp"] = app_angle
+			app_angle = SetAngleBounds(np.array(app_angle), 0, np.pi)
 
-		# self.data["AoJapp"]	+= np.pi/2
-		self.data["AoJapp"] = SetAngleBounds(np.array(app_angle), -np.pi/2, np.pi/2)
+		# current.data["AoJapp"]	+= np.pi/2
+		app_angle = SetAngleBounds(np.array(app_angle), -np.pi/2, np.pi/2)
 
-		self.data["AoJlos"] = J_los_angle
+		# current.data["AoJlos"] = J_los_angle
+
+		return app_angle, J_los_angle
+
 
 	def FindJup(self, obs, AoLP_array):
 		Ce, Se, Ca, Sa = obs.GetTrigo()
@@ -211,23 +277,51 @@ class EqCurrent:
 		self.data["Ju"] = np.where(abs(Ju_list) < 12000, Ju_list, np.zeros_like(self.data["Je"]))
 		# self.data["Ju"] = Ju_list
 
+		self.data["J_norm"] = np.sqrt(self.data["Jn"] ** 2 + self.data["Je"] ** 2 + self.data["Ju"] ** 2)
+		self.data["Jel"] = np.arcsin(self.data["Ju"] / self.data["J_norm"])
+
 	def GetNormTimes(self, divisor = 1):
 		norm = self.data["seconds"][0]
 		self.x_axis = [(t - norm) / divisor for t in self.data["seconds"]]
 
 		return self.x_axis
 
+	def GetInterpolation(self, new_time, obs, divisor=1, shift=0):
+
+
+		new_data = pd.DataFrame()
+
+		new_data["seconds"] = new_time
+
+		old_time = self.GetNormTimes(divisor = divisor)
+		# print("new_time", new_time)
+		# print("old_time", old_time)
+		new_data["Ju"] = np.interp(new_time, old_time, self.data["Ju"])
+		new_data["Je"] = np.interp(new_time, old_time, self.data["Je"])
+		new_data["Jn"] = np.interp(new_time, old_time, self.data["Jn"])
+
+		new_data["J_norm"] = np.sqrt(new_data["Jn"] ** 2 + new_data["Je"] ** 2 + new_data["Ju"] ** 2)
+		new_data["Jaz"] = np.arctan2(new_data["Je"], new_data["Jn"])
+		new_data["Jel"] = np.arcsin(new_data["Ju"] / new_data["J_norm"])
+
+		new_data["AoJapp"], new_data["AoJlos"] = EqCurrent.ApparentAngle(new_data["Ju"], new_data["Je"], new_data["Jn"], obs, shift)
+
+		return new_data
+
 	def MakePlot(self, show=False, app_angle = True, xaxis=False, div=1):
-		f1, axs1 =  plt.subplots(4, sharex=True, figsize=(16, 8))
+		f1, axs1 =  plt.subplots(3, sharex=True, figsize=(16, 8))
 		f2, axs2 =  plt.subplots(1, sharex=True, figsize=(16, 8))
 
 		if not self.x_axis or xaxis:
 			self.x_axis = self.GetNormTimes(divisor=div)
 
-		axs1[0].plot(self.x_axis, self.data["Jn"])
-		axs1[1].plot(self.x_axis, self.data["Je"])
-		axs1[2].plot(self.x_axis, self.data["Ju"])
-		axs1[3].plot(self.x_axis, self.data["J_norm"])
+		# axs1[0].plot(self.x_axis, self.data["Jn"])
+		# axs1[1].plot(self.x_axis, self.data["Je"])
+		# axs1[2].plot(self.x_axis, self.data["Ju"])
+
+		axs1[0].plot(self.x_axis, self.data["Jaz"] * RtoD)
+		axs1[1].plot(self.x_axis, self.data["Jel"] * RtoD)
+		axs1[2].plot(self.x_axis, self.data["J_norm"])
 		if app_angle:
 			# comp = (self.data["Jn"] / self.data["Je"]) * RtoD
 			# axs2.plot(self.data["seconds"], comp, color = "blue", label = "AoJapp - AoJlos")
@@ -241,10 +335,12 @@ class EqCurrent:
 
 			f2.legend()
 
-		axs1[0].set_ylabel("Jn")
-		axs1[1].set_ylabel("Je")
-		axs1[2].set_ylabel("Ju")
-		axs1[3].set_ylabel("J norm")
+		# axs1[0].set_ylabel("Jn")
+		# axs1[1].set_ylabel("Je")
+		# axs1[2].set_ylabel("Ju")
+		axs1[0].set_ylabel("Jaz")
+		axs1[1].set_ylabel("Jel")
+		axs1[2].set_ylabel("J norm")
 
 		if show:
 			plt.show()

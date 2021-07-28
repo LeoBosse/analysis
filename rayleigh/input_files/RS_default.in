@@ -1,71 +1,83 @@
-### Default input file for the Rayleigh scattering code
-### 1 line = 1 input parameter
+### Default input file for POMEROL: the Rayleigh scattering code
+### If no input files, or a invalid one is given, the file named RS_default will be used.
+### Here is a short descritpion of the organisation of this file:
+### 1 line = 1 input parameter.
 ### <name of the parameter> SPACE <value of the parameter> SPACE <any comments at all. the "#" is not mandatory but helps to clarify>
-### put a "#" at the begining of the line to comment it
+### put a "#" at the begining of the line to comment it.
+### The parameters are organised in group for an easier access. (all parameters for the ground map are together, etc...)
 
-path /home/bossel/These/Analysis/data/Night_pollution/
-src_path /home/bossel/These/Analysis/src/rayleigh/
+### The input file handling (automatic reading and writing is done by the class RayleighInput(Input). The Input class is defined for vendange.)
+
+### To setup POMEROL on your computer, change the path names below:
+
+src_path /home/bossel/These/Analysis/src/rayleigh/ #Path to all the python source files
 
 saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
-#save_path /home/bossel/These/Analysis/results/rayleigh/lagorge/
-save_path /home/bossel/These/Documentation/Mes_articles/auroral_pola/sky_only/
-save_name 20190307_m_sky_only_aero_1low_albedo
+save_path /home/bossel/These/Documentation/Mes_articles/auroral_pola/sky_only/ # Path to the folder where you want to save your results (graphs, txt...)
+save_name 20190307_m_sky_only_aero_1low_albedo #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
 
+
+
+### Units for the result flux (used in the graphs, but maybe not in the computations.)
 # W = for nanoWatts (default input unit)
 # ph = photons counts (depends on wavelength)
 # mag = visual magnitude
 # lm for nanolumens = 683.002 * W * y where y is the luminosity efficiency function found here: http://www.cvrl.org/
 # cd = for nanocandelas (cd=lm/sr: I divide by the solid angle of the instrument
 # cd/m2 = ncd/m**2: I divide by the surface area of the instrument
-flux_unit W cd/m2
+flux_unit W
 
-use_analytic false
+use_analytic false # Should stay as "false". If "true", POMEROL will compute the integral along the line of sight using an automatic scipy integration function. It is only slightly faster, and do not allow for voume subdivisions.
 
 # ###############################################################################
+### All instrumental inuts
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
-azimuts 									  all 9;18;27;36;45;54;63;72;81;90;99;108;117;126;135;144;153;162;171;180;189;198;207;216;225;234;243;252;261;270;279;288;297;306;315;324;333;342;351;360 ;369;378;387;396;405 ;45;90;135;180;225;270;315 								# In degrees, 0 is north, east is 90
-elevations 									45 	# 90 may have some bugs...
+### Put "azimuts all" if you want to perform an almucantar (every 10°), or "elevations all" for a scan. See the world.__init__() for the code.
+azimuts 		 0
+elevations 	 45
 
-location 										skibotn     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
+location 										lagorge     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
 
 start_datetime 20190116-02:44:00
 end_datetime   20190116-04:00:00
 
-instrument_opening_angle 		1	  		# Angle de DEMI-ouverture de l'instrument en degrés
-instrument_area 20 									#Area of Petit Cru in cm^2 (gets converted in km**2 in the code)
+instrument_opening_angle 	1	  		# Half opening angle of the instrument (degrees)
+instrument_area 					20 			# Area of Petit Cru in cm^2 (gets converted in km**2 in the code)
 
-wavelength 557.7 391.4  413 620    427.8            630       #in nm
+wavelength 557.7  #in nm
 
 # ###############################################################################
 ### Add a constant light with given polarisation parameters
-cst_Flux 0 1.765e-3 	# in nW
+### This is not in use anymore.
+cst_Flux 0 	# in nW
 cst_DoLP 0 	# in %
 cst_AoLP 0 	# in degrees
 
-add_starlight 0 # Will add starlight as a function of the galactic latitude of the observation. Be sure to have the time and location right!
 
-add_B_pola 0
+add_starlight 0 #Check if this is still working before use... Will add starlight as a function of the galactic latitude of the observation. Be sure to have the time and location right!
+
+add_B_pola 0 #Check if this is still working before use... Add polarisation following the B field at the emission.
 
 # ###############################################################################
 ### Atmosphere parameters
 RS_min_altitude	 						0	 	    # Minimum altitude of the scattering layer
 RS_max_altitude	 						100 		# Maximum altitude of the scattering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
 Nb_points_along_los   			100		  # Number of bins along the line of sight between H_r_min and h_r_max
-resolution_along_los				0.5			# WARNING: Should not use! Distance between every RS points along the line of sight (in km)
 
 max_angle_discretization		0				# In degrees. If scattering volume solid angle seen from E is larger than that, cut the volume in pieces.
 
-Atmospheric_profile atm_profiles/mlw.atm   #name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure).
+Atmospheric_profile atm_profiles/mlw.atm   #name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure). Files stored in ./atm_profiles/
 
 ### Ozone absorption
-use_ozone 1 # 0 or 1
+use_ozone 1 # 0 or 1. Will compute absorption along the paths due to ozone.
 
 
 ### Aerosols
-use_aerosol 0			# 0 or 1
-aer_complexity 0		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
+use_aerosol 1			# 0 or 1. Main flag to decide wether to use aerosol scattering/absorption or not.
+aer_complexity 1		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
 
-aer_model maritime 		# manual: use the aerosols properties listed below. Or name of a pre configured model.
+### Complex aerosol profile parameters: use if aer_complexity == 1
+aer_model maritime 		# manual: use the aerosols properties listed below. Or name of a pre configured model.  (preconfigured model are hard-coded in atmosphere.py, in Aerosol.SetModel() function)
 
 # Aerosol optical properties to run the Mie code
 aer_name maritime_test 			# Name to use for file handling of this particular properties. May erase previous files if same name is used.
@@ -77,12 +89,14 @@ aer_ln_sigma 0.657 	# Parameter for aerosols size distribution (see mie/pmie.f f
 aer_r_min 0.001 		# Minimum aerosol size (micrometers)
 aer_r_max 50 				# Maximum aerosol size (micrometers)
 
-# Aerosol altitude profile
-aer_Hn 	0.440  # Scale height (km)
-aer_n0 	300 # Surface value (cm-3)
-aer_nBK 30  # Background value (cm-3)
+total_OD 0			# Total vertical optical depth of the aerosols (from ground to space). If used (!=0), the concentration and extinction will be scaled to match the specified value.
 
-# Simple model with only a c_ext(alt) profile from WMO 1980
+# Aerosol altitude profile. Concentration n at altitude z: n(z): n0 * (np.exp(-z / Hn) + (nBK/n0)**v)**v * (1e5)**3 ; v = Hn / abs(Hn)
+aer_Hn 	0.440   # Scale height (km)
+aer_n0 	300 		# Surface value (cm-3)
+aer_nBK 30      # Background value (cm-3)
+
+### Simple model with only a c_ext(alt) profile from WMO 1980. use if aer_complexity == 0
 aer_ext_profile_name mar #urban (urb), continental (con), maritime (mar) from WCP-12 (World Climate Programme 1980)
 aer_single_scatter_albedo 0.9
 aer_phase_fct_asym_g 0.7 #[-1; 1], g>0 -> front scatter dominant. g<0 -> back scatter dominant
@@ -96,30 +110,27 @@ aer_phase_fct_asym_g 0.7 #[-1; 1], g>0 -> front scatter dominant. g<0 -> back sc
 # "[1, 2, 3...]_moving_EW_band",    east-west auroral band passing from north to south in the sky. (can be doubled or tripled)
 # "[1, 2, 3...]_band_eEE",          east-west auroral band at elevation EE. (can be doubled or tripled)
 # "spot_aAAA_eEE" 										Single sky pixel source at elevation EE and azimut AAA. Change the "I_zone_*" parameters and the "Nb_emission_points" for faster computations. Else, just a small aurora.
-# "image"														use an all-sky camera picture defined by the sky_file parameter
-# "movie"
-# "starlight_YYYYMMDD-HHMMSS"
-sky_mode image uniform_100 movie image uniform_100 1_band_e45 none      starlight_20190116-030000 uniform_0 1_moving_EW_band movie  image  spot_I100_a90_e45   movie 1_band_e45  spot_I100_a90_e90  image uniform_219
+# "image"														use an all-sky camera picture defined by the sky_file parameters below
+# "movie"														use all-sky camera pictures defined by thesky_file and movie_file_numbers parameters below
+# "starlight_YYYYMMDD-HHMMSS"				verify if this is working...
+sky_mode none image uniform_100 movie image uniform_100 1_band_e45 none      starlight_20190116-030000 uniform_0 1_moving_EW_band movie  image  spot_I100_a90_e45   movie 1_band_e45  spot_I100_a90_e90  image uniform_219
 
+### If you want to dissociate the direct and scattered light:
 # only: Don't compute diffusion (-> very fast), but only direct lights.
 # none: do not take into account direct light (do not register it either in the save file)
 # add : should be the DEFAULT. Compute everything (direct and scattered) and add everything together.
-direct_mode only
+direct_mode add
 
-emission_altitude	110 384402			# Altitude of the emission in km. Put 0 if emission on ground
+emission_altitude	110			# Altitude of the emission in km.
 
-Nb_emission_points 1000				 # Number of bins to compute
-Nb_emission_maps 1						 # Number of emission maps to compute. Use it for time changing emissions (auroras). Should be put to 1 when not varying !
+Nb_emission_points 1000				 # Number of bins to compute. Will downgrade the initial picture to match this pixel count.
+Nb_emission_maps 1						 # Number of emission maps to compute. Use it for time changing synthetic emissions (sky_mode == X_moving_EW_band, but not for a movie). Should be put to 1 when not varying !
 
-#Zone of emission
-I_zone_a_min 0 77.8 179 		#Do not touch: obsolete
-I_zone_a_max 360 77.8 180 	#Do not touch: obsolete
-I_zone_e_min 0 18.4 44.5 		#Do not touch: obsolete
-I_zone_e_max 90 18.4 45.5 	#Do not touch: obsolete
+#If loading the sky from a picture: sky_mode == image or movie
+sky_path /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/ # constant path to the images
 
-#If loading the sky from a picture
-sky_path /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
 
+### Some exemple files for the Skibotn cameras
 #sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_203908_5577_cal.png
 #sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_204523_5577_cal.png
 #sky_file skn4/5577/2019/20190307/ut20/skn4_20190307_204908_5577_cal.png
@@ -130,53 +141,69 @@ sky_path /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora
 sky_file skn4/5577/2019/20190308/ut01/skn4_20190308_012908_5577_cal.png  #clean green rotation 20190307
 #sky_file skn4/5577/2020/20200227/ut22/skn4_20200227_224508_5577_cal.png  #20200227_otvm_rot_e52
 
-#sky_file skn4/5577/2019/20190307/ut21/
+### If sky_mode == movie:
+#sky_file skn4/5577/2019/20190307/ut20/ #path after sky_path where the pictures are stored
+#movie_file_numbers :: 	#Indicate Start:End:Step for the file list. Files are read in chronological order.
 
-#sky_file nya6/6300/2020/20200217/all_night/
 
-sky_wavelength 557.7    # To be able to pass from Rayleigh to nW
+sky_wavelength 557.7    # Check if this works. To be able to pass from Rayleigh to nW.
 
 # ###############################################################################
 ### Altitude map parameters
 
-use_alt_map 1
+use_alt_map 0 # 0 or 1, if you want to compute terrain occultations and environmental geometry with real terrain elevations.
 
-alt_map_path /home/bossel/These/Analysis/data/elevation/
-alt_map_radius 100 #in km
-alt_map_N_bins_max 0
-alt_map_resolution 0.5 .031 # en km. Minimum 1arcsec = 31m = 0.031 km
+alt_map_path /home/bossel/These/Analysis/data/elevation/ #Path where the elevations data are stored
+alt_map_radius 100 		#radius of the map in km. Can be different from the ground emission map
+alt_map_N_bins_max 0  #Maximum number of bins to use in the map.
+alt_map_resolution 0.5 .031 # Resolution of the map you want to achieve in km. Minimum 1 arcsec = 31m = 0.031 km. The map will be downgraded to match the resolution.
 
 # ###############################################################################
 ### Ground map parameters
 
-# image
-# uniform_IXXX, I in nW/m2/sr
-# point_IXXX_aAAA_dDD, I in nW/m2/sr
-# gaussian_IXXX_wWWW_aAAA_dDD
+### Emission mode. real image or synthetic emission.
+# image 									# use sattelite images
+# uniform_IXXX 						#	I in nW/m2/sr. uniform map emmiting I.
+# point_IXXX_aAAA_dDD     # I in nW/m2/sr, a=azimut in degrees, d=distance in km. point source emitting I, positioned at azimut AA and distance DD from the instrument.
+# gaussian_IXXX_wWWW_aAAA_dDD # Deprecated! Gaussian emission (more real point source), with the same paremters than a point source. w=1/2width
+ground_mode image uniform_I100 point_I100_a180_d5       none      none image uniform_I100 gaussian_I100_w1_a45_d10
 
-ground_mode none uniform_I0 image point_I100_a180_d5    none      none image uniform_I100 gaussian_I100_w1_a45_d10
-
+### Shade to create more complex synthetic emissions. Takes the emission map and then apply the following filter.
 # none
 # half_aXXX : half of the ground is black. Replace XXX by the azimuth of the centre of the black semi-disk
 # random_PP : Randomly set to 0 the emission of the ground map pixels. PP is the percentage of wanted black pixels [0, 100].
-# in_dist_mxx_MXX : Shade all pixels between the given minimum (mxx) and Maximum (MXX) distance.
+# in_dist_mxx_MXX : Shade all pixels between the given minimum (mxx) and Maximum (MXX) distance. Replace the x's, not the m's
 # out_dist_mxx_MXX : Shade all pixels below the given minimum (mxx) and above the Maximum (MXX) distance.
 # ring_i : replace i by the index of the 1 pixel wide ring you want to keep.
 shader_mode none ring_0 out_dist_m2.5_M3 half_a0 out_dist_m90_M100 half_a0 none random_01 half_a0
 
-ground_emission_radius 100  # in km.
-ground_N_bins_max 1000
+ground_emission_radius 100  # in km. Can be != from the altitude map
+ground_N_bins_max 1000			# the map will be downgraded to match this pixel count.
 
-ground_albedo altitude_0.2_0.2_0.5_0.5_0.8 constant_0.5    constant_0.5    #in [0, 1]. Albedo of the ground. The reflection of the sky emission will be added to the ground map.
+### Albedo mode of the ground. Only used if sky emissions != none. The reflection of the sky emission will be added to the ground map.
+# altitude_alb1_alt_1_alb2_alt2_..._altN_alb(N+1)  # defines the albedo altitude layers. alb1 is the albedo of the layer below alt1 (layer 0 is the sea level). Then alb2 is the albedo between altitudes alt1 and alt2, etc... The last layer (N+1) is infinity.
+# constant_AAA # the albedo AAA in [0, 1] is constant on the whole map, whatever the altitude.
+ground_albedo altitude_0.2_0.2_0.5_0.5_0.8 constant_0.5
 
-### If mode is image: use following satellite ground map
+### If ground_mode is image: use following satellite ground map
 
 ground_path /home/bossel/These/Analysis/data/Night_pollution/
 ground_file nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-ntl_v10_c201807311200.avg_rade9.tif
 
 ### Night time pollution maps: Found at: https://eogdata.mines.edu/download_dnb_composites.html
-
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm_v10_c201807311200.avg_rade9.tif
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm_v10_c201807311200.avg_rade9.tif # "vcm-orm" (VIIRS Cloud Mask - Outlier Removed) This product contains cloud-free average radiance values that have undergone an outlier removal process to filter out fires and other ephemeral lights.
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-ntl_v10_c201807311200.avg_rade9.tif # "vcm-ntl" (VIIRS Cloud Mask - Nighttime Lights) This product contains the "vcm" average, with background (non-lights) set to zero.
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-ntl_v10_c201807311200.avg_rade9.tif # "vcm-orm-ntl" (VIIRS Cloud Mask - Outlier Removed - Nighttime Lights) This product contains the "vcm-orm" average, with background (non-lights) set to zero.
+
+
+
+# ###############################################################################
+### PLOTTING FLAGS
+### Following parameters help the user that want to select the optional plots produced by POMEROL.
+
+show_ground_albedo 	 0 # Produce a map of the ground emissions with the albedo layers as contour plots (only if ground_albedo is set to altitude_...).
+show_sky_cube				 0 # Produce a plot with all sky maps used in the simulation. Usefull for time-evolving setups and movie sky mode.
+
+show_cross_section	 0 # Produce a plot of aerosol cross sections.
+show_atmosphere		   0 # Produce a plot of temperature, pression, and O3 profile of the atmosphere

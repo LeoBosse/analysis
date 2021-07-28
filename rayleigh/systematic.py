@@ -103,24 +103,24 @@ def PlotData(data, x_axis_name, y_axis_name, zaxis=None, **kwargs):
 		axs = ParameterMap(data, x_axis_name, y_axis_name, zaxis, **kwargs)
 
 	### Plot Rayleigh scattering DoLP function for an infinitely far away point source
+	### Start
 	# N=100
 	# a = np.linspace(0, 360*DtoR, N)
-	# # los = np.array([np.sin(45*DtoR),
-	# # 				np.cos(45*DtoR) * np.sin(a),
-	# # 				np.cos(45*DtoR) * np.cos(a)
-	# # ])
-	# # EA = np.array([0, 0, 1])
 	# theta = np.arccos(np.cos(45*DtoR) * np.cos(a))
 	# y = np.sin(theta)**2 / (1 + np.cos(theta)**2)
 	#
 	# axs[1].plot(a*RtoD, y*100, "k--")
-	# # axs[2].plot(a*RtoD, theta*RtoD, "k--")
-
-	# axs[0].xaxis.set_minor_locator(mpl.ticker.AutoMinorLocator())
+	### End
 
 
-	if "azimut" in x_axis_name.lower():
-		x_axis_name = "azimuth"
+	for ax in axs:
+		ax.xaxis.set_minor_locator(mpl.ticker.AutoMinorLocator())
+		ax.yaxis.set_minor_locator(mpl.ticker.AutoMinorLocator())
+		ax.grid(True)
+
+
+	# if "azimut" in x_axis_name.lower():
+	# 	x_axis_name = "azimuth"
 	axs[-1].set_xlabel(x_axis_name.capitalize().replace("_", "-") + " (°)")
 
 	axs[0].set_title(" ".join([k + "=" + str(v) for k, v in kwargs.items() if v != "*"]).replace("_", "-"))
@@ -226,6 +226,7 @@ def SimplePlot(data, x_axis_name, y_axis_name, **kwargs):
 	return axs
 
 def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
+	# free_list == list of parrameter names (column name) of free parameters
 	print("PlotFreeData")
 
 	x_axis_shift = 0
@@ -238,7 +239,7 @@ def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
 			x %= x_axis_mod
 		return x
 
-	GetFreeValues = lambda i, free: [data[m][i] for m in free_list]
+	# GetFreeValues = lambda i, free: [data[m][i] for m in free_list]
 
 	#Initialize axis and figure
 	if y_axis_name == "all":
@@ -255,16 +256,23 @@ def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
 	# legend_title = "Distance (km)"
 	legend_title = "; ".join(free_list).replace("_", "-")
 
-	#SIngle free parameter case
+	#Single free parameter case
 	# free_value_list = list(set(data[free_list[0]]))
 	#Multiple free parameter case
 	free_value_list = [list(set(data[f])) for f in free_list] #list of list of values for each free parameter in free_list
 
-	if type(free_value_list[0]) == type(str()):
-		if "point" in free_value_list[0]:
-			free_value_list = sorted(free_value_list, key = lambda x: int(x.split("_")[3][1:]))
+	if type(free_value_list[0][0]) == type(str()):
+		if "point" in free_value_list[0][0]:
+			print("DEBUG")
+			free_value_list[0] = sorted(free_value_list[0], key = lambda x: int(x.split("_")[3][1:]))
 	else:
 		free_value_list = [sorted(fvl) for fvl in free_value_list]
+
+	############################################################################
+	### ONLY FOR POMEROL ARTICLE FIG 4 !!!!!!!! TO DECOMMENT !!!!!!
+	### WILL NOT PLOT THE LAST TWO FREE PARAMETER VALUES !!!!!
+	# free_value_list[0] = free_value_list[0][:-2]
+	############################################################################
 
 	# Number of possible combinaison between all free parameters (number of lines to plots)
 	nb_free_param = [len(fvl) for fvl in free_value_list]
@@ -281,10 +289,12 @@ def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
 		# Set the default color cycle for the free paramter with the highest number of values
 		if len(free_list) == 2:
 			colors = ["black", "red", "blue", "yellow", "pink", "purple", "orange", "turquoise"]
+			colors = [(i, 0, 1 - i) for i in np.linspace(0, 1, max(nb_free_param))]
 		elif len(free_list) == 1:
 			colors = [(i, 0, 1 - i) for i in np.linspace(0, 1, max(nb_free_param))]
 		# Set the default style cycle for the free paramter with the lowest number of values
-		styles = ["-", "--", "-.", "+"]
+		styles = ["-","--", "-."]
+		markers = [None, "x"]
 		# ax.set_prop_cycle("c", colors)
 		# ax.set_prop_cycle("linestyle", styles)
 
@@ -294,6 +304,7 @@ def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
 		# for ip, p in enumerate(free_list):
 		# 	line_style = styles[ip]
 		# 	for im, m in enumerate(free_value_list[ip]):
+
 		for perm in permutations_dicts:
 			keys, values = zip(*perm.items())
 			indexes = [free_value_list[i].index(value) for i, value in enumerate(values)]
@@ -310,7 +321,7 @@ def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
 
 
 			x_axis, y_axis = SortAxis(x_axis, y_axis, x_axis_name, y_axis_name)
-			print(x_axis, y_axis)
+			# print(x_axis, y_axis)
 			# if x_axis_name == "shader_mode":
 			# 	if "dist" in x_axis[0]:
 			# 		x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: float(x[0].split("_")[2][1:])))
@@ -322,13 +333,15 @@ def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
 			# print(x_axis, y_axis)
 			if len(free_list) == 2:
 				linestyle = styles[indexes[0]]
+				markerstyle = markers[indexes[0]]
 				color = colors[indexes[1]]
 			elif len(free_list) == 1:
 				linestyle = styles[0]
+				markerstyle = markers[0]
 				color = colors[indexes[0]]
-			print(linestyle, color)
+			# print(linestyle, color)
 
-			ax.plot(x_axis, y_axis, linestyle = linestyle, color = color, label = ";".join([f"{v}" for v in values]))
+			ax.plot(x_axis, y_axis, linestyle = linestyle, marker = markerstyle, markersize = 10, color = color, label = ";".join([f"{v}" for v in values]))
 
 		ax.set_ylabel(axs_y_names[iax].replace("_", "-"))
 		handles, labels = ax.get_legend_handles_labels()
@@ -341,16 +354,18 @@ def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
 			# labels, handles = zip(*sorted(zip(labels, handles), key = lambda x: x[0]))
 
 	axs[0].legend(handles, labels, title=legend_title, loc='upper left', bbox_to_anchor=(1, 1), fontsize="small", title_fontsize="xx-small")
-	axs[0].set_yscale("log")
+	# axs[0].set_yscale("log")
 	axs[0].tick_params(axis="y", which='minor')
-	axs[0].grid(axis="y", b=True, which='both', color='0.65', linestyle='-')
-	if len(axs) > 1:
-		axs[1].tick_params(axis="y", which='minor')
-		axs[1].minorticks_on()
-		axs[1].grid(axis="y", b=True, which='both', color='0.65', linestyle='-')
+	# axs[0].grid(axis="y", b=True, which='both', color='0.65', linestyle='-')
+	# if len(axs) > 1:
+	# 	axs[1].tick_params(axis="y", which='minor')
+	# 	axs[1].minorticks_on()
+	# 	axs[1].grid(axis="y", b=True, which='both', color='0.65', linestyle='-')
 	return axs
 
 def SortAxis(x_axis, y_axis, xname, yname, label=False):
+
+	# print("SortAxis...")
 	if xname == "shader_mode":
 		mode = x_axis[0]
 		if "dist" in mode:
@@ -365,8 +380,10 @@ def SortAxis(x_axis, y_axis, xname, yname, label=False):
 	else:
 		# print(x_axis, y_axis)
 		if label:
+			# x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: float(x[0].split(";")[1])))
 			x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: x[0]))
 		else:
+			print(x_axis, y_axis, xname, yname)
 			x_axis, y_axis = zip(*sorted(zip(x_axis, y_axis), key = lambda x: float(x[0])))
 
 
@@ -380,10 +397,13 @@ def RunSystematicSimulation():
 	4: To plot parameter comparisons run ./systematic.py with the right keyword arguments.
 	"""
 
-	### Define parameter space. All combinations of these parameters will be simulated.
 
+	output_result_file = "log/systematic_atm_max_height"
+	### Define parameter space. All combinations of these parameters will be simulated.
 	in_dict = {	"azimuts": ["all"],
-				"elevations": [46, 47, 48, 49, 51, 52, 53, 54],
+				"elevations": [45],
+				# "use_analytic": ["false", "true"],
+				# "Nb_points_along_los": [2**i for i in range(1, 9)]
 				# "use_ozone": [0, 1],
 				# "use_aerosol": [1],
 				# "aer_complexity": [1],
@@ -399,18 +419,18 @@ def RunSystematicSimulation():
 				# "aer_nBK": [300],
 				# "Nb_points_along_los": [100],
 				# "RS_min_altitude": [0],# np.arange(0, 100, 1), #, 1, 5, 10, 25, 50, 100]
-				# "RS_max_altitude": [100],# np.arange(0, 100, 1), #np.arange(5, 100, 5) #[91, 92, 93, 94],
+				"RS_max_altitude": np.arange(1, 10, 1),
 				# "use_analytic": ["true", "false"],
 				# "Atmospheric_profile": [f"atm_profiles/{p}.atm" for p in ["day", "equ", "ngt", "sum", "win"]],
-				# "wavelength": [557.7],
+				"wavelength": [557.7, 630.0],
 				# "emission_altitude": [110],
 				# "Nb_emission_points": [100, 500, 1000, 2000, 5000],
 				# "max_angle_discretization": [0], 	#[1, 2, 5, 10, 15, 20, 40, 50, 90, 180, 360],
-				# "ground_mode": [f"point_I100_a180_d1", f"point_I100_a180_d10", f"point_I100_a180_d100"],
+				"ground_mode": ["point_I100_a180_d5"],
 				# "ground_mode": [f"point_I100_a180_d{i}" for i in np.arange(1, 100)],
 				# "shader_mode": [f"ring_{i}" for i in np.arange(0, 100)],
 				# "ground_emission_radius": [50],  # in km.,
-				# "ground_N_bins_max": [1000]
+				# "ground_N_bins_max": [20, 50]
 
 			}
 
@@ -452,7 +472,7 @@ def RunSystematicSimulation():
 		#Run simulation and print the results in log/systematic_results.csv
 		# with MPIPoolExecutor() as executor:
 		# 	executor.map(RunSimulation, file_name, show = False, output_result_file = "log/systematic_results.csv", header = not bool(count))
-		RunSimulation(file_name, show = False, output_result_file = "log/20190307_v_rot_elevation_test.csv", header = not bool(count))
+		RunSimulation(file_name, show = False, output_result_file = output_result_file, header = not bool(count))
 
 		#Shift output back to the terminal
 		sys.stdout = terminal
@@ -479,5 +499,8 @@ if __name__ == "__main__":
 			data = GetData()
 
 		# PlotData(data, "azimuts", "all",  aer_model="*", use_aerosol = "*")
-		PlotData(data, "azimuts", "I0", elevations="*")
+		# PlotData(data, "azimuts", "all", use_analytic="*", Nb_points_along_los="*")
+		# PlotData(data, "azimuts", "all", ground_N_bins_max="*")
+		PlotData(data, "azimuts", "all", RS_max_altitude="*", wavelength=557.7)
+		# PlotData(data, "azimuts", "all", elevations="*")
 		plt.show()

@@ -31,8 +31,8 @@ class Input:
 
 		input = [l.split()[:] for l in input if l != "\n"] #get first two words (separated by a space) for all non empty line
 
-		dict = {i[0]: i[1] for i in input} #Create dictionnary
-		comments = {i[0]: " ".join(i[2:]) for i in input if len(i) > 2}
+		dict = {i[0]: i[1] for i in input if len(i)>1} #Create dictionnary with all parameters names and values.
+		comments = {i[0]: " ".join(i[2:]) for i in input if len(i) > 2} #Create a dictionnary of all comments of the input file.
 
 		return dict, comments
 

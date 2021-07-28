@@ -1,0 +1,48 @@
+Correct input file in use: systemic/systemic_azimutsall_elevations45_wavelength557.7_ground_modespot_I100_a180_d50
+All input parameter from the input file:
+path: /home/bossel/These/Analysis/data/Night_pollution/
+src_path: /home/bossel/These/Analysis/src/rayleigh/
+saving_graphs: 0
+flux_unit: W
+azimuts: all
+elevations: 45
+location: lagorge
+instrument_opening_angle: 1
+instrument_area: 20
+wavelength: 557.7
+RS_min_altitude: 0
+RS_max_altitude: 100
+resolution_along_los: 1
+max_angle_discretization: 0
+Atmospheric_profile: atm_profiles/win.atm
+sky_mode: none
+emission_altitude: 110
+Nb_emission_points: 1000
+Nb_emission_maps: 1
+I_zone_a_min: 0
+I_zone_a_max: 360
+I_zone_e_min: 0
+I_zone_e_max: 90
+sky_path: /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
+sky_file: skn4/5577/2019/20190307/ut20/
+sky_wavelength: 557.7
+use_alt_map: 0
+alt_map_path: /home/bossel/These/Analysis/data/elevation/
+alt_map_radius: 50
+alt_map_N_bins_max: 10000
+alt_map_resolution: 0.2
+ground_mode: spot_I100_a180_d50
+shader_mode: none
+ground_emission_radius: 60
+ground_N_bins_max: 2000
+ground_albedo: 0
+ground_path: /home/bossel/These/Analysis/data/Night_pollution/
+ground_file: nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm_v10_c201807311200.avg_rade9.tif
+Has_sky_emission: False
+WARNING: Ground map mode is not correct. Ground map not used.
+Has_ground_emission: False
+Initialization DONE
+/home/bossel/These/Analysis/src/rayleigh/simulation.py:558: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
+  f, axs = plt.subplots(3, sharex = True, figsize=(16, 8))
+Print results in log/systematic_ptsrc_dist_study_analytic.csv
+Simulation ran in: 0:00:00.082691

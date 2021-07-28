@@ -1,0 +1,52 @@
+Correct input file in use: systemic/systemic_azimuts0_elevations90_wavelength557.7_ground_modeuniform_I100_shader_modering_97_ground_emission_radius5_ground_N_bins_max10000
+All input parameter from the input file:
+path: /home/bossel/These/Analysis/data/Night_pollution/
+src_path: /home/bossel/These/Analysis/src/rayleigh/
+saving_graphs: 0
+flux_unit: W
+azimuts: 0
+elevations: 90
+location: lagorge
+instrument_opening_angle: 1
+instrument_area: 20
+wavelength: 557.7
+RS_min_altitude: 0
+RS_max_altitude: 100
+resolution_along_los: 1
+max_angle_discretization: 0
+Atmospheric_profile: atm_profiles/win.atm
+sky_mode: none
+emission_altitude: 110
+Nb_emission_points: 1000
+Nb_emission_maps: 1
+I_zone_a_min: 0
+I_zone_a_max: 360
+I_zone_e_min: 0
+I_zone_e_max: 90
+sky_path: /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
+sky_file: skn4/5577/2019/20190307/ut20/
+sky_wavelength: 557.7
+use_alt_map: 0
+alt_map_path: /home/bossel/These/Analysis/data/elevation/
+alt_map_radius: 50
+alt_map_N_bins_max: 10000
+alt_map_resolution: 0.2
+ground_mode: uniform_I100
+shader_mode: ring_97
+ground_emission_radius: 5
+ground_N_bins_max: 10000
+ground_albedo: 0.2
+ground_path: /home/bossel/These/Analysis/data/Night_pollution/
+ground_file: nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm_v10_c201807311200.avg_rade9.tif
+Has_sky_emission: False
+Has_ground_emission: True
+Initialization DONE
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 1/1:
+Observation at point (5.936935, 45.212343), azimuth 0.0, elevation 90.0. Observed point at altitude 110.0, position (5.936934999999999, 45.212343)
+Starting time:  19:36:02
+990000.0 bins to compute per processor
+Computing DONE in:  0:00:03.995739
+Making and NOT saving plots...
+Print results in log/systematic_const_dist_ring_study.csv
+Simulation ran in: 0:00:04.339857

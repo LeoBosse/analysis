@@ -75,6 +75,7 @@ def GetNbLines(bottle_name):
 if instrument_name in ["ptcu", "gdcu", "ptcu_v2", "carmen", "corbel"]:
 	nb_lines = GetNbLines(bottle_name)
 	print("nb_lines", nb_lines)
+	# for l in [3]:
 	for l in range(1, nb_lines+1):
 		print("##################################################################")
 		print("##################################################################")
@@ -119,7 +120,7 @@ if mag_data_file:
 		mag_data = False
 else:
 	mag_data = False
-# mag_data = False
+# mag_data = True
 
 Cru = Mixer(bottles, mag_data=mag_data, comp_bottles=comp_bottles)
 

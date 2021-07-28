@@ -80,7 +80,9 @@ class ObservationPoint:
 		# print(AH_vect)
 		lon, lat = self.GetPCoordinates(AH = AH_vect)
 
-		alt = self.A_alt + np.sin(self.e) * range
+		# alt = self.A_alt + np.sin(self.e) * range
+		alt = (self.A_alt+RT)**2 + range**2 + 2 * (self.A_alt+RT) * range * np.sin(self.e)
+		alt = np.sqrt(alt) - RT
 
 		return lon, lat, alt
 
@@ -140,7 +142,8 @@ class ObservationPoint:
 	@staticmethod
 	def GetAHNorm(elevation, altitude, A_alt=0):
 		RT = 6371 #km
-		return - (RT + A_alt) * m.sin(elevation) + m.sqrt(abs(- m.cos(elevation)**2 * (RT + A_alt)**2 + (RT + altitude) ** 2))
+		return - (RT + A_alt) * m.sin(elevation) + m.sqrt(- m.cos(elevation)**2 * (RT + A_alt)**2 + (RT + altitude) ** 2)
+		# return - (RT + A_alt) * m.sin(elevation) + m.sqrt(abs(- m.cos(elevation)**2 * (RT + A_alt)**2 + (RT + altitude) ** 2))
 
 	#@timer
 	def GetAH(self, **kwargs):
@@ -327,7 +330,7 @@ class ObservationPoint:
 
 
 	def GetApparentAngle(self, Bp, Blos=False):
-		"""Return the apparent angle of the input vector Bp (horizontal(1,3)) and the z axis of SPP"""
+		"""Return the apparent angle of the input vector Bp (horizontal(1,3)) and the z axis of SPP. Angle returned in radians. 0 is vertical, pi/2 horizontal."""
 		#Reshaping of Bp horizontal to vertical (1,3) to (3,1)
 		Bpu, Bpe, Bpn = Bp[0], Bp[1], Bp[2]
 		Bp = np.array([[Bpu], [Bpe], [Bpn]])

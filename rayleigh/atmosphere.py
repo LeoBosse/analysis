@@ -8,11 +8,13 @@ mpi_size = mpi_comm.Get_size()
 mpi_name = mpi_comm.Get_name()
 
 import sys as sys
+import os as os
 import subprocess as subp
 import numpy as np
 import pandas as pd
 import time as tm
 import scipy.constants as cst
+import scipy.integrate as integrate
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -26,6 +28,7 @@ matplotlib.rcParams['text.usetex'] = True
 # gdal.UseExceptions()  # not required, but a good idea
 
 import imageio
+import numba as nba
 
 from observation import *
 from rayleigh_utils import *
@@ -35,12 +38,23 @@ class Atmosphere:
 
 		self.wavelength = float(in_dict["wavelength"]) #in nanometers
 
+		try:
+			self.show_cross_section = int(in_dict["show_cross_section"])
+		except:
+			self.show_cross_section = 0
+
+		try:
+			self.show_atmosphere = int(in_dict["show_atmosphere"])
+		except:
+			self.show_atmosphere = 0
+
+
 		self.h_r_min			= float(in_dict["RS_min_altitude"])  			# Minimum altitude of the scatering layer
 		self.h_r_max			= float(in_dict["RS_max_altitude"]) 			# Maximum altitude of the scatering layer
 		# if self.h_r_max == self.h: 		# h_r_max must be != h or it crashes...
 		# 	self.h_r_max += 0.01
 		self.Nlos = int(in_dict["Nb_points_along_los"]) 	# Lenth bin along line of sight
-		self.d_los = float(in_dict["resolution_along_los"]) 	# Lenth bin along line of sight
+		# self.d_los = float(in_dict["resolution_along_los"]) 	# Lenth bin along line of sight
 
 		# self.d_0 	= 2.5468 * 10 ** 25 	#=1.2250 kg/m3	sea level density
 		# self.T 		= 288.15 				# K, sea level standard temperature
@@ -58,6 +72,7 @@ class Atmosphere:
 		self.profile_name = in_dict["Atmospheric_profile"] #name of the atmospheric profile file to use
 		self.LoadAllProfiles(self.profile_name)
 
+
 		self.P0 = 101325 # in Pa
 		self.T0 = 288.15 # in Kelvin
 
@@ -70,8 +85,12 @@ class Atmosphere:
 		if self.aer_complexity > 0:
 			self.aerosol = Aerosol(in_dict)
 
+			self.aerosol.PlotPhaseFunction(["1low", "2high"], [391.4, 557.7, 630.0])
+			plt.show()
+
 		self.GetAerosolProfil(in_dict)
 
+		if mpi_rank == 0: print("DEBUG ATMOSPHERE TOTAL OD (0-120km):", self.GetO3Absorbtion(0, 120) + self.GetRSOpticalDepth(0, 120) + self.GetAerosolsAbsorbtion(0, 120))
 
 		# self.depola = 0
 		# if self.wavelength == 630:
@@ -83,10 +102,14 @@ class Atmosphere:
 		# elif self.wavelength == 391.4:
 		# 	self.depola = 2.954e-2
 
-		# if mpi_rank == 0:
-		# 	# self.MakePlots()
-		# 	self.MakeCrossSectionPlot()
-		# 	plt.show()
+		if mpi_rank == 0 and self.show_cross_section:
+			# self.MakePlots()
+			self.MakeCrossSectionPlot()
+			# plt.show()
+		if mpi_rank == 0 and self.show_atmosphere:
+			# self.MakePlots()
+			self.MakePlots()
+			# plt.show()
 
 
 
@@ -122,7 +145,8 @@ class Atmosphere:
 		self.profiles["delta_z"] = [self.profiles["HGT"][i+1] - self.profiles["HGT"][i] for i in range(self.nb_profile_alt-1)]
 		self.profiles["delta_z"].append(self.profiles["delta_z"][-1])
 
-
+	# @timer
+	# @nba.njit(nogil=True)
 	def GetProfileValue(self, alt, name):
 		"""From any altitude in km, gives the profile value with linear approx."""
 
@@ -152,7 +176,16 @@ class Atmosphere:
 	def SetObservation(self, obs, ouv_pc):
 
 		self.instrument_altitude = obs.A_alt
-		self.range_min, self.range_max = self.h_r_min / np.sin(obs.e) , self.h_r_max / np.sin(obs.e)
+
+		if self.h_r_min <= self.instrument_altitude:
+			self.range_min = 0.
+		else:
+			self.range_min = GetArbitraryDistance(self.instrument_altitude + RT, self.h_r_min + RT, obs.e)
+
+		if self.h_r_max > self.instrument_altitude:
+			self.range_max = GetArbitraryDistance(self.instrument_altitude + RT, self.h_r_max + RT, obs.e)
+		else:
+			raise Exception("Maximum atmospheric height < instrument altitude. The geometry can not handle it.")
 
 		#numbers of scattering point along the line of sight
 		self.los_length = self.range_max - self.range_min
@@ -170,22 +203,24 @@ class Atmosphere:
 		self.mid_range_list = np.array([(self.range_list[i+1] + self.range_list[i]) / 2. for i in range(0, self.Nlos)]) #in km
 		self.d_los_list = np.array([self.range_list[i+1] - self.range_list[i] for i in range(0, self.Nlos)]) #in km
 
-		self.mid_altitudes_list = obs.A_alt + self.mid_range_list * np.sin(obs.e)
+		self.mid_altitudes_list = [GetArbitraryAltitude(RT + obs.A_alt, ab, obs.e) for ab in self.mid_range_list]
 
 		self.volumes = np.array([self.GetVolume(r, ouv_pc, dr = dr, unit="km", type = "cone") for r, dr in zip(self.mid_range_list, self.d_los_list)])
 
+		delta_z = np.abs(self.instrument_altitude - self.mid_altitudes_list)
+
 		if self.use_ozone:
 			los_O3_abs = np.array([self.GetO3Absorbtion(self.instrument_altitude, h)  for h in self.mid_altitudes_list])
-			self.los_O3_transmittance = np.exp(- los_O3_abs / np.sin(obs.e))
+			self.los_O3_transmittance = np.exp(- los_O3_abs * self.mid_range_list / delta_z)
 		else:
 			self.los_O3_transmittance = 1
 
 		los_RS_abs = np.array([self.GetRSOpticalDepth(self.instrument_altitude, h)  for h in self.mid_altitudes_list])
-		self.los_RS_transmittance = np.exp(- los_RS_abs / np.sin(obs.e))
+		self.los_RS_transmittance = np.exp(- los_RS_abs * self.mid_range_list / delta_z)
 
 		if self.use_aerosol:
 			los_aer_abs = np.array([self.GetAerosolsAbsorbtion(self.instrument_altitude, h) for h in self.mid_altitudes_list])
-			self.los_aer_transmittance = np.exp(- los_aer_abs / np.sin(obs.e))
+			self.los_aer_transmittance = np.exp(- los_aer_abs * self.mid_range_list / delta_z)
 		else:
 			self.los_aer_transmittance = 1
 
@@ -198,8 +233,9 @@ class Atmosphere:
 	def GetVolume(self, AR, ouv_pc, da = None, dr=None, index = None , unit="km", type="cone"):
 		"""Get the volume of a truncated cone of length d_los, and half opening angle ouv_pc.
 		Unit defines the unit you want it in. can be "cm", "m" or "km". (the cube is implicit)"""
-		if dr is None:
-			dr = self.d_los
+
+		if dr is None and index is None:
+			raise ValueError("Incorrect arguments passed to atmosphere.GetVolume(). Must give at least one of dr or index parameter")
 
 		if type == "index":
 			V = self.volumes[index]
@@ -387,7 +423,7 @@ class Atmosphere:
 
 	#@timer
 	def GetO3Absorbtion(self, z_min, z_max):
-		"""Returns the vertical absorption due to O3 between altitude zmin and zmax. """
+		"""Returns the vertical absorption due to O3 between altitude zmin and zmax."""
 		# if z_min > z_max:
 		# 	z_min, z_max = z_max, z_min
 
@@ -541,49 +577,74 @@ class Atmosphere:
 
 		elif self.aer_complexity == 0:
 			self.aerosol_profile_name = in_dict['aer_ext_profile_name'].lower()
+
+			print(f"Using simple WMO aerosol profile: {self.aerosol_profile_name}")
 			if self.aerosol_profile_name in ["urban", "urb"]:
-				profil_lim_alt 	= [2, 12, 20, 30] # in km: Upper limits of layers of different exctinction coefficients.
+				profil_lim_alt 	= [0, 2, 12, 20, 30] # in km: lower limits of layers of different exctinction coefficients.
 				profil_ext		= np.array([0.5, 0.0025, 2.18e-4, 3.32e-5, 0]) # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
 			elif self.aerosol_profile_name in ["continental", "con"]:
-				profil_lim_alt 	= [2, 12, 20, 30] # in km: Upper limits of layers of different exctinction coefficients.
+				profil_lim_alt 	= [0, 2, 12, 20, 30] # in km: lower limits of layers of different exctinction coefficients.
 				profil_ext		= [0.1, 0.0025, 2.18e-4, 3.32e-5, 0] # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
 			elif self.aerosol_profile_name in ["maritime", "mar"]:
-				profil_lim_alt 	= [2, 12, 20, 30] # in km: Upper limits of layers of different exctinction coefficients.
+				profil_lim_alt 	= [0, 2, 12, 20, 30] # in km: lower limits of layers of different exctinction coefficients.
 				profil_ext		= [0.025, 0.0025, 2.18e-4, 3.32e-5, 0] # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
+			elif self.aerosol_profile_name in ["pust"]:
+				profil_lim_alt 	= [0, 5.5, 120] # in km: lower limits of layers of different exctinction coefficients.
+				profil_ext		= [0.01, 0.005, 0] # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
+			elif self.aerosol_profile_name in ["pust2"]:
+				profil_lim_alt 	= [0, 10] # in km: lower limits of layers of different exctinction coefficients.
+				profil_ext		= [0.015, 0] # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
 			elif self.aerosol_profile_name in ["test1"]:
-				profil_lim_alt 	= [2, 12, 20, 30] # in km: Upper limits of layers of different exctinction coefficients.
+				profil_lim_alt 	= [0, 2, 12, 20, 30] # in km: lower limits of layers of different exctinction coefficients.
 				profil_ext		= [0.05, 0.0025, 2.18e-4, 3.32e-5, 0] # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
 			elif self.aerosol_profile_name in ["test2"]:
-				profil_lim_alt 	= [2, 12, 20, 30] # in km: Upper limits of layers of different exctinction coefficients.
+				profil_lim_alt 	= [0, 2, 12, 20, 30] # in km: lower limits of layers of different exctinction coefficients.
 				profil_ext		= [0.25, 0.0025, 2.18e-4, 3.32e-5, 0] # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
 			elif self.aerosol_profile_name in ["test3"]:
-				profil_lim_alt 	= [2, 12, 20, 30] # in km: Upper limits of layers of different exctinction coefficients.
+				profil_lim_alt 	= [0, 2, 12, 20, 30] # in km: lower limits of layers of different exctinction coefficients.
 				profil_ext		= [0.001, 0.0025, 2.18e-4, 3.32e-5, 0] # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
 			elif self.aerosol_profile_name in ["test4"]:
-				profil_lim_alt 	= [2, 12, 20, 30] # in km: Upper limits of layers of different exctinction coefficients.
+				profil_lim_alt 	= [0, 2, 12, 20, 30] # in km: lower limits of layers of different exctinction coefficients.
 				profil_ext		= [1, 0.0025, 2.18e-4, 3.32e-5, 0] # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
 			elif self.aerosol_profile_name in ["test5"]:
-				profil_lim_alt 	= [2, 12, 20, 30] # in km: Upper limits of layers of different exctinction coefficients.
+				profil_lim_alt 	= [0, 2, 12, 20, 30] # in km: lower limits of layers of different exctinction coefficients.
 				profil_ext		= [0., 0.0025, 2.18e-4, 3.32e-5, 0] # in km-1: Exctinction coefficient of the different altitude layers. index 0 correspond to the layer below altitude profil_lim_alt[0], index 1 correspond to the layer between altitude profil_lim_alt[0] and altitude profil_lim_alt[1],... index -1 correspond to the layer above altitude profil_lim_alt[-1]
 
-			self.exctinction_profile = []
-			for ih, h in enumerate(self.profiles["HGT"]):
-				index = np.searchsorted(profil_lim_alt, h)
-				self.exctinction_profile.append(profil_ext[index])
-			self.exctinction_profile = np.array(self.exctinction_profile)
+			# self.exctinction_profile = []
+			# for ih, h in enumerate(self.profiles["HGT"]):
+			# 	index = np.searchsorted(profil_lim_alt, h)
+			# 	self.exctinction_profile.append(profil_ext[index-1])
+			# self.exctinction_profile = np.array(self.exctinction_profile)
+			self.exctinction_profile = np.interp(self.profiles["HGT"], profil_lim_alt, profil_ext)
+
 			self.single_scatter_albedo = float(in_dict["aer_single_scatter_albedo"])
 			self.aer_phase_fct_asym_g = float(in_dict["aer_phase_fct_asym_g"])
 
 			d = lambda i: self.exctinction_profile[i] * self.profiles["delta_z"][i] #[km-1] * [km]
 			tau = lambda z_min, z_max: np.sum([d(ih) for ih, h in enumerate(self.profiles["HGT"]) if z_min <= h <= z_max])
 
-
 		self.tau_aer_list = np.array([tau(0, h) for h in self.profiles["HGT"]])
 
+		if mpi_rank == 0: print("DEBUG AEROSOL Optical Depth (0-120km)", self.GetAerosolsAbsorbtion(0, 120))
+
+		try:
+			self.total_OD_goal = float(in_dict["total_OD"])
+			if self.total_OD_goal != 0:
+				correction = self.total_OD_goal / self.GetAerosolsAbsorbtion(0, 120)
+				self.tau_aer_list *= correction
+				if self.aer_complexity > 0:
+					self.profiles["AER"] *= correction
+		except:
+			pass
+
+		if mpi_rank == 0: print("DEBUG AEROSOL Optical Depth (0-120km)", self.GetAerosolsAbsorbtion(0, 120))
+
 		# f, ax = plt.subplots(1)
-		# ax.plot(self.profiles["AER"], self.profiles["HGT"])
-		# ax1 = ax.twiny()
-		# ax1.plot(self.tau_aer_list, self.profiles["HGT"], "r")
+		# # ax.plot(self.exctinction_profile, self.profiles["HGT"])
+		# # ax.plot(self.better_exctinction_profile, self.profiles["HGT"])
+		# # ax1 = ax.twiny()
+		# ax.plot(self.tau_aer_list, self.profiles["HGT"], "r")
+		# plt.show()
 
 	def GetAerosolCS(self, z):
 		if self.use_aerosol:
@@ -626,12 +687,14 @@ class Atmosphere:
 
 
 class Aerosol:
-	def __init__(self, in_dict):
+	def __init__(self, in_dict, run_mie=True):
+
+		self.in_dict = in_dict
 
 		self.path = in_dict["src_path"] + "mie/"
 
-		self.name = in_dict["aer_name"].lower()
 		self.model = in_dict["aer_model"].lower()
+		self.name = in_dict["aer_name"].lower()
 
 		### Size distribution fct is:
 		### rn = self.rn0 * np.exp(-(np.log(r_aer/self.rmg))**2 / (2 * self.ln_sigma**2)) / r_aer / self.ln_sigma / (2 * np.pi)**0.5
@@ -653,7 +716,9 @@ class Aerosol:
 
 		elif self.model != "default":
 			self.SetModel()
+			self.name = self.GetFileName()
 		else:
+			self.name = self.GetFileName()
 			#Colette example values
 			self.index_re = 1.43
 			self.index_im = -2.0E-03 #<0
@@ -667,20 +732,42 @@ class Aerosol:
 			self.n0 = 1 #cm-3
 			self.nB = 0#cm-3
 
-		mpi_comm.Barrier()
-		if mpi_rank == 0:
-		# for wl in [620, 557.7, 427.8, 413, 391.4]:
-			self.WriteInputFile()
-			self.RunMieCode()
-		mpi_comm.Barrier()
+
+		self.Compute()
+
+
+	def Compute(self):
+		input_file_exists = os.path.isfile(self.path + self.name)
+		result_file_exists = os.path.isfile(self.path + "res_" + self.name)
+		if not result_file_exists or not input_file_exists:
+			# if not self.standard:
+			mpi_comm.Barrier()
+			if mpi_rank == 0:
+			# for wl in [620, 557.7, 427.8, 413, 391.4]:
+				self.WriteInputFile()
+				self.RunMieCode()
+			mpi_comm.Barrier()
+
 		self.LoadOpticalProperties()
 
+	def GetFileName(self, model = None, wl = None):
+		if model is None:
+			model = self.model
+		if wl is None:
+			wl = self.wavelength
+
+		return model + "_" + str(wl)
 
 
 	def SetModel(self):
+		self.standard = True
+
 		if mpi_rank == 0:
 			print("Aerosol Model:", self.model)
+
 		if self.model in ["maritime", "1-low", "1low"]:
+			self.model = "1low"
+
 			self.index_re = 1.45
 			self.index_im = -0.0035 #<0
 
@@ -694,7 +781,78 @@ class Aerosol:
 			self.n0 = 4000   	#cm-3
 			self.nB = 10  		#cm-3
 
+		elif self.model in ["mar1"]:
+			self.index_re = 1.6
+			self.index_im = -0.0035 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.15 #0.133 #micrometers
+			self.ln_sigma = 0.29
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 0.440  	#km
+			self.n0 = 4000   	#cm-3
+			self.nB = 10  		#cm-3
+		elif self.model in ["mar2"]:
+			self.index_re = 1.6
+			self.index_im = -0.0035 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.15 #0.133 #micrometers
+			self.ln_sigma = 0.29
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 0.440  	#km
+			self.n0 = 3000   	#cm-3
+			self.nB = 10  		#cm-3
+
+		elif self.model in ["mar3"]:
+			self.index_re = 1.6
+			self.index_im = -0.0035 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.5 #0.133 #micrometers
+			self.ln_sigma = 0.29
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 0.440  	#km
+			self.n0 = 100   	#cm-3
+			self.nB = 10  		#cm-3
+
+		elif self.model in ["mar4"]:
+			self.index_re = 1.6
+			self.index_im = -0.005 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.15 #0.133 #micrometers
+			self.ln_sigma = 0.29
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 0.440  	#km
+			self.n0 = 3000   	#cm-3
+			self.nB = 10  		#cm-3
+		elif self.model in ["mar5"]:
+			self.index_re = 1.6
+			self.index_im = -0.008 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.15 #0.133 #micrometers
+			self.ln_sigma = 0.29
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 0.440  	#km
+			self.n0 = 3000   	#cm-3
+			self.nB = 10  		#cm-3
+
+
+
 		elif self.model in ["urban", "2-high", "2high"]:
+			self.model = "2high"
 			self.index_re = 1.61
 			self.index_im = -0.03 #<0
 
@@ -709,6 +867,7 @@ class Aerosol:
 			self.nB = 1  		#cm-3
 
 		elif self.model in ["rural", "3-mid", "3mid"]:
+			self.model = "3mid"
 			self.index_re = 1.61
 			self.index_im = -0.03 #<0
 
@@ -734,7 +893,9 @@ class Aerosol:
 
 			self.Hn = 100  	#km
 			self.n0 = 200   	#cm-3
-			self.nB = 200  		#cm-3
+			self.nB = 200  		#cm-
+		else:
+			self.standard = False
 
 	def WriteInputFile(self):
 		with open(self.path + self.name, "w") as f:
@@ -742,7 +903,7 @@ class Aerosol:
 			f.write(f"{self.rn0} {self.rmg} {self.ln_sigma} {self.r_min} {self.r_max} ! No,rmg,ln(sigmag),Rmin,Rmax: in micrometer\n")
 
 	def RunMieCode(self):
-		print("Running aerosol optical properties. May take 10sec...")
+		print(f"Running aerosol optical properties: name {self.name}. May take 10sec...")
 		subp.run(f"{self.path}pmie < {self.path}{self.name} > {self.path}res_{self.name}", shell=True)
 
 	def LoadOpticalProperties(self):
@@ -776,6 +937,15 @@ class Aerosol:
 		self.sca_data["delta_theta"] = np.gradient(self.sca_data["theta"])
 		self.sca_data["delta_mu"] = np.gradient(self.sca_data["mu"])
 
+
+		# if mpi_rank == 0:
+		# 	print("AEROSOL phase function")
+		#
+		# 	print(self.sca_data["theta"])
+		# 	print(self.sca_data["i"])
+		# 	print(self.sca_data["d"])
+
+
 		# f, axs = plt.subplots(3) #, sharex=True)
 		#
 		# axs[0].plot(self.sca_data["theta"], self.sca_data["i"], "k")
@@ -799,7 +969,68 @@ class Aerosol:
 
 
 
+	def PlotPhaseFunction(self, aero_type_list, wavelengths):
 
+		fig, axs = plt.subplots(nrows=len(aero_type_list), ncols=len(aero_type_list), sharex = True)
+
+		rayleigh = lambda t: 3/4 * (1 + np.cos(t)**2)# / 4 / np.pi
+		rayleigh_DoLP = lambda t: np.sin(t)**2 / (1 + np.cos(t)**2)
+
+		for iax, aero_type in enumerate(aero_type_list):
+
+			phase_fct = []
+			for wl in wavelengths:
+				aero = Aerosol(self.in_dict)
+				aero.model = aero_type
+				aero.wavelength = wl
+				aero.name = aero.GetFileName()
+
+				aero.SetModel()
+
+				aero.Compute()
+
+				phase_fct.append([aero.model, aero.wavelength, aero.sca_data["theta"], aero.sca_data["i"], aero.sca_data["d"]])
+
+			if mpi_rank==0:
+
+				for mod, wl, t, i, d in phase_fct:
+					if wl == 391.4:
+						c = "xkcd:purple"
+					elif wl == 557.7:
+						c = "xkcd:green"
+					elif wl == 620:
+						c = "xkcd:orange"
+					elif wl == 630:
+						c = "xkcd:red"
+
+					axs[iax, 0].plot(np.array(t)*RtoD, i, "-", color=c)
+					axs[iax, 0].plot(np.array(t)*RtoD, [rayleigh(theta) for theta in np.array(t)], "--k")
+
+					axs[iax, 1].plot(np.array(t)*RtoD, d, "-", color=c)
+					axs[iax, 1].plot(np.array(t)*RtoD, [rayleigh_DoLP(theta) for theta in np.array(t)], "--k")
+
+					# print(t, i)
+					print("INTEGRAL OF Phi(theta):", integrate.quad(lambda x: np.sin(x) * np.interp(x, t, i), 0, np.pi)[0] * 2 * np.pi, 4*np.pi)
+
+					# ax.plot(np.array(t)*RtoD, i, color=c, linewidth=2, marker=m, markevery=10, markersize=7)
+					# ax.plot(np.array(t)*RtoD, d, color=c, linewidth=2, marker=m, linestyle="dashed", markevery=10, markersize=7)
+
+
+			axs[iax, 0].set_ylabel(aero_type)
+		# axs[0, 0].set_title("Phase function")
+		# axs[0, 1].set_title("DoLP")
+		axs[0, 0].set_title("Fonction de phase")
+		axs[0, 1].set_title("DoLP")
+
+		axs[-1, 1].set_xlabel("Angle de diffusion (°)")
+		axs[-1, 0].set_xlabel("Angle de diffusion (°)")
+		# axs[-1, 0].set_xlabel("Scattering angle (°)")
+		# axs[-1, 1].set_xlabel("Scattering angle (°)")
+
+		axs[0, 0].semilogy()
+		axs[1, 0].semilogy()
+
+		# plt.show()
 
 
 

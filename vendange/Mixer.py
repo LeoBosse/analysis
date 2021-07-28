@@ -50,10 +50,11 @@ class Mixer:
 			self.eq_currents = EqCurrent(bottle, file_type=None)
 			if self.eq_currents.valid and bottle.observation_type == "fixed":
 
-				AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
+				# AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
 				# self.eq_currents.FindJup(bottle.observation, AoLPs)
 
 				self.eq_currents.GetApparentAngle(bottle.observation)#, shift=bottle.graph_angle_shift)
+				self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
 
 				self.eq_currents.SaveTXT()
 
@@ -62,60 +63,155 @@ class Mixer:
 
 			if self.show_RS_model and self.RS_model_files:
 				self.J2RAYS1_models = [Model.InitFromBottle(bottle, f, time_divisor = self.divisor, x_axis = self.x_axis_list, shift = self.shift_model) for i, f in enumerate(self.RS_model_files[bottle.line - 1])]
+				# print(self.J2RAYS1_models[1].data.index)
+				if bottle.observation_type == "fixed": #fixed obs -> set the xaxis of the ground (should be at index 0) model to the sky model (should be at index 1)
+					self.J2RAYS1_models[0].SetXAxisAndLength(self.J2RAYS1_models[1].x_axis)
+
 
 				# self.J2RAYS1_models[0]["DoLP"] = self.J2RAYS1_models[0]["DoLP"]  / 10.
 				# self.J2RAYS1_models[0].SetVParam()
 				# self.J2RAYS1_models[1]["DoLP"] = self.J2RAYS1_models[1]["DoLP"]  * 2
 				# self.J2RAYS1_models[1].SetVParam()
 
+
+				####Find the best model with equivalent current object
+				# best_model, best_param = Model.FindBestDirectPola(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=True, least_square_factors = [1, 1, 1], eq_current = self.eq_currents.GetInterpolation(self.J2RAYS1_models[0].x_axis, bottle.observation, divisor=self.divisor))
+				# self.J2RAYS1_models.append(best_model)
+				####Find the best model with a constant and uniform current
+				# best_model, best_param = Model.FindBestDirectPola(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False, least_square_factors = [1, 1, 1], eq_current = None)
+				# self.J2RAYS1_models.append(best_model)
+
+				### Buikd a model ans compute its square difference
+				# model = Model.BuildCompleteModel((0, 0, 0, 30), bottle, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp")
+				# least_square = model.GetBottleLeastSquare(bottle, self.x_axis_list)
+				# self.J2RAYS1_models.append(model)
+				# print("least square 20%", least_square, np.sum(least_square))
+
+
+				### For 20200224 ski sud green best model
+				# best_param = (120*DtoR, 0*DtoR, 1, 0)
+
+				### For 20200227 green best model
+				# best_param = (230*DtoR, 25*DtoR, 5, 20)
+				best_param = (50*DtoR, -20*DtoR, 5, 20)
+
+				### For 20200227 purple best model
+				# best_param = (230*DtoR, 20*DtoR, 11.1, 10.7, 6.24, 0.35)
+
+				### For 20190307 green best model
+				# best_param = (244*DtoR, 5*DtoR, 1.3, 7.1)#, 6.24, 0.35) ### rotation e45
+				# best_param = (4.49678563, 0.37226045, 0.        , 9.13981123) # a164e45 with free current
+				# best_param = (0.3388598, 8.3487529) # with Equivalent current
+				### For 20190307 purple best model
+				# best_param = (249*DtoR, 2.3*DtoR, 3, 10, 0.00093955034896, 1.) ### rotation e45
+				# best_param = (4.29988166e+00, 3.44626175e-01, 6.36127072e+00, 1.72867582e+01, 8.01634464e-04, 9.99956375e-01)  # with free current direction
+				# best_param = (4.89073016, 21.40499469, 74.189954  ,  1.) # with Equivalent current
+				### For 20190307 blue best model
+				# best_param = (232*DtoR, 0*DtoR, 5.9, 26, 4.27494363, 0.98) ### rotation e45
+				# best_param = (50*DtoR, 10*DtoR, 6, 25, 20, 0.98)
+				# best_param = (3.89422949e+00, 3.81413283e-01, 4.09738726e+00, 1.29324498e+01, 8.13699802e-09, 9.90971225e-01)  # with free current
+				# best_param = (2.90791549e+00, 1.97557372e+01, 9.26151992e-15, 1.00000000e+00)  # with Equivalent current
+
+
+				Model.MakeParamSpacePlot(best_param, (0,1), bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False, least_square_factors = [1, 1, 1])#, eq_current = self.eq_currents.GetInterpolation(self.J2RAYS1_models[0].x_axis, bottle.observation, divisor=self.divisor))
+
+
+
+				#Build a model with equivalent current object
+				# self.J2RAYS1_models.append(Model.BuildCompleteModel(best_param, bottle, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", eq_current = self.eq_currents.GetInterpolation(self.J2RAYS1_models[0].x_axis, bottle.observation, divisor=self.divisor)))
+				# #Build a model with a constant and uniform current
+				# best_param = (3.89422949e+00, 3.81413283e-01, 4.09738726e+00, 1.29324498e+01, 8.13699802e-09, 9.90971225e-01)  # with free current
+				# self.J2RAYS1_models.append(Model.BuildCompleteModel(best_param, bottle, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", eq_current = None))
+
+				# print(self.J2RAYS1_models[-1].data)
+
+				# for m in self.J2RAYS1_models:
+				# 	print(m.x_axis)
+
+
+
+				# Model.MCMC(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode="rayleigh", AoLP_mode="para", ISO=False, least_square_factors = [1, 1, 1])
+
+
+				# best_total_model, total_diff, min_total_diff, best_total_param, best_total_index = Model.ManuallyFindBestDirectPola(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode="rayleigh", AoLP_mode="para", ISO=False, least_square_factors = [1, 1, 1])
+
+
+				# best_total_model, total_diff, min_total_diff, best_total_param = Model.ManuallyFindBestDirectPola(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False)
+				# self.J2RAYS1_models.append(best_total_model)
+
+
+				# if self.AddDirectPola and len(self.J2RAYS1_models) >= 2:
+				# 	print("Adding direct polarisation to model...")
+				# 	if self.fit_RS_model_to_flux: # Model 0 and 1 are grd and sky. 2 is the direct light only and 3 is the Linear Comb of 0 and 1
+				# 		direct_model = self.J2RAYS1_models[2]
+				# 		base_model = self.J2RAYS1_models[3]
+				# 	else: # Model 0 is the diffusion model. 1 is the direct only model
+				# 		base_model = self.J2RAYS1_models[1]
+				# 		direct_model = self.J2RAYS1_models[2]
+				#
+				# 	for dolp_factor in self.AddDirectPola:
+				# 		self.J2RAYS1_models.append(base_model.AddDirectPola(direct_model["DDoLP"] * dolp_factor, direct_model["DAoLP"]))
+				# 		self.J2RAYS1_models[-1].SetMandatoryColumns()
+				# 		self.J2RAYS1_models[-1].SetArbitraryUnits(bottle = bottle)
+				#
+				#
+				#
+				if self.add_model and len(self.J2RAYS1_models) >= 2:
+					m1, m2 = self.J2RAYS1_models[0], self.J2RAYS1_models[1]
+					print("Adding model together:", np.average(m1["I0"]), np.average(m2["I0"]))
+					for a in self.add_model:
+					# for a, b in self.add_model:
+
+						sum = a * m1 + (1-a) * m2
+						sum.SetMandatoryColumns()
+						sum.SetArbitraryUnits(bottle = bottle)
+						sum.x_axis = m1.x_axis
+						self.J2RAYS1_models.append(sum)
+
 				if self.fit_RS_model_to_flux and len(self.J2RAYS1_models) >= 2:
 					print("Fitting J2RAYS-1 models to data...")
-					# best_model = Model.FitModelToFlux(self.x_axis_list, bottle.smooth_I0, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
-					best_model = Model.FitModelToFluxPlusIso(self.x_axis_list, bottle.smooth_I0, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
+					if self.fit_func == "GS":
+						best_model = Model.FitModelToFlux(self.x_axis_list, bottle.smooth_I0, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
+					elif self.fit_func == "GSK":
+						best_model = Model.FitModelToFluxPlusIso(self.x_axis_list, bottle.smooth_I0, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
 
-					# best_model = Model.FitModelToDoLP(self.x_axis_list, bottle.smooth_DoLP, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
-					# best_model = Model.FitModelToFluxAndDoLP(self.x_axis_list, bottle.smooth_I0, bottle.smooth_DoLP, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
-
-					# best_model = Model.FitModelToAoLP(self.x_axis_list, bottle.smooth_AoLP, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
-					# best_model = Model.FitModelToFluxRatio(self.x_axis_list, bottle.smooth_I0, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
-					# self.J2RAYS1_models = [best_model]
 					best_model.SetMandatoryColumns()
 					best_model.SetArbitraryUnits(bottle = bottle)
 					self.J2RAYS1_models.append(best_model)
-					# print("DEBUG best_model", self.J2RAYS1_models[0].data["DV"], self.J2RAYS1_models[0].data["DVcos"])#, "RSDoLP", "RSAoRD", "RSV", "RSVcos", "RSVsin"])
-					# print("DEBUG best_model", self.J2RAYS1_models[1].data["DV"], self.J2RAYS1_models[1].data["DVcos"])#, "RSDoLP", "RSAoRD", "RSV", "RSVcos", "RSVsin"])
-					# print("DEBUG best_model", best_model.data["RSV"], best_model.data["RSVcos"], best_model.data["RSDoLP"])
-					# self.J2RAYS1_models.append((self.J2RAYS1_models[0] * param[0]) + (self.J2RAYS1_models[1] * param[1]))
 
-				if self.AddDirectPola and len(self.J2RAYS1_models) >= 2:
-					print("Adding direct polarisation to model...")
-					if self.fit_RS_model_to_flux: # MOdel 0 and 1 are grd and sky. 2 is the direct light only and 3 is the Linear Comb of 0 and 1
-						direct_model = self.J2RAYS1_models[2]
-						base_model = self.J2RAYS1_models[3]
-					else: # Model 0 is the diffusion model. 1 is the direct only model
-						base_model = self.J2RAYS1_models[0]
-						direct_model = self.J2RAYS1_models[1]
+				if self.addFDA_to_model != []:
+					max_data, min_data = np.max(bottle.smooth_I0), np.min(bottle.smooth_I0)
+					ratio_data = max_data / min_data
+					for i, m in enumerate(self.J2RAYS1_models):
+						try:
+							addF, addD, addA = self.addFDA_to_model[bottle.line - 1][i]
 
-					for dolp_factor in self.AddDirectPola:
-						self.J2RAYS1_models.append(base_model.AddDirectPola(direct_model["DDoLP"] * dolp_factor, direct_model["DAoLP"]))
-						self.J2RAYS1_models[-1].SetMandatoryColumns()
-						self.J2RAYS1_models[-1].SetArbitraryUnits(bottle = bottle)
+							max_model, min_model = np.max(m["I0"]) , np.min(m["I0"])
+							ratio_model = max_model / min_model
+							shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
 
-				for i, m in enumerate(self.J2RAYS1_models):
-					try:
-						addF, addD, addA = self.addFDA_to_model[bottle.line - 1][i]
-						m.AddFDA(addF, addD, addA)
-						print("DEBUG: add FDA to model", addF, addD, addA)
-					except:
-						print("DEBUG: DID NOT add FDA to model", bottle.line - 1, i)
-						pass
-						# addF, addD, addA = 0, 0, 0
+							print(f"Adding constant background to model...: {addF} (old data unit), {addF / m.bottle_factor}, {addD}, {addA}")
+							print(f"OLD: Min model, Max model, Ratio model, Shift to match data (model unit): {min_model / m.bottle_factor}, {max_model / m.bottle_factor}, {ratio_model}, {shift / m.bottle_factor}")
+
+							m.AddFDA(addF, addD, addA)
+
+							max_model, min_model = np.max(m["I0"]) , np.min(m["I0"])
+							ratio_model = max_model / min_model
+							shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
+							print(f"NEW: Min model, Max model, Ratio model, Shift to match data (model unit): {min_model / m.bottle_factor}, {max_model / m.bottle_factor}, {ratio_model}, {shift / m.bottle_factor}")
+
+
+						except:
+							print("WARNING: DID NOT add FDA to model number:", bottle.line - 1, i)
+							pass
+							# addF, addD, addA = 0, 0, 0
+
 			self.mode = mode
 
 			self.MakeFigure()
 			self.MakePlots(bottle)
-			for m in self.J2RAYS1_models:
-				self.SubtractModel(bottle, m)
+			# for m in self.J2RAYS1_models:
+			# 	self.SubtractModel(bottle, m)
 			# if self.show_RS_model:
 			# 	self.CompareRayleigh(bottle, self.J2RAYS1_model)
 			if self.make_optional_plots:
@@ -167,14 +263,44 @@ class Mixer:
 	def MakeXAxis(self, bottle):
 
 		self.divisor = 1.
+		delta = bottle.all_times[-1] - bottle.all_times[0]
+		if delta > time.timedelta(hours=2):
+			self.divisor = 3600.
+			if self.langue == "en": self.xlabel = "Time (hours)"
+			else : 					self.xlabel = "Durée (heure)"
+		elif delta > time.timedelta(minutes=2):
+			self.divisor = 60.
+			if self.langue == "en": self.xlabel = "Time (minutes)"
+			else : 					self.xlabel = "Durée (minutes)"
+		else:
+			if self.langue == "en": self.xlabel = "Time (seconds)"
+			else : 					self.xlabel = "Durée (secondes)"
+
+		# self.x_axis_list 	   = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
+		norm = bottle.all_times[0].total_seconds()
+		# self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
+		self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
+		self.x_time_list = self.x_axis_list
+
+
 		if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_continue_rotation":
+			### Treat continue rotations differently to have all rotations appear the same length. x axis is coded by azimuth, not time. So if the rotations are done by hand, they will appear to have all the same length!
 			self.x_axis_list = np.array(())
+			self.x_time_ticks_label = [bottle.DateTime("start", format=self.time_format)]
+			self.x_time_ticks_pos = [0]
 			for ir in range(bottle.nb_continue_rotation):
-				start = dt.timedelta(minutes=bottle.continue_rotation_times[ir])
-				end = dt.timedelta(minutes=bottle.continue_rotation_times[ir+1])
+				start 	= dt.timedelta(minutes=bottle.continue_rotation_times[ir])
+				end 	= dt.timedelta(minutes=bottle.continue_rotation_times[ir+1])
 				nb_points = len([t for t in bottle.all_times if start <= t <= end ])
 
 				self.x_axis_list = np.append(self.x_axis_list, np.linspace(360 * ir, 360 * (ir+1), nb_points))
+
+				self.x_time_ticks_pos.append(360 * (ir+1))
+				# self.x_time_ticks_pos.append(self.x_time_ticks_pos[-1] + 360)
+				self.x_time_ticks_label.append(bottle.DateTime("start", format=self.time_format, delta=end))
+
+			self.x_time_ticks_label = [x.strftime("%H:%M:%S") for x in self.x_time_ticks_label]
+
 			# print(len(self.x_axis_list), len(bottle.all_times))
 			self.xlabel = "Azimuth"
 
@@ -185,27 +311,37 @@ class Mixer:
 				self.x_axis_ticks_pos = np.arange(0, 360 * bottle.nb_continue_rotation, 90)
 				self.x_axis_ticks_label = ["N", "E", "S", "W"] *  bottle.nb_continue_rotation
 
-		else:
-			delta = bottle.all_times[-1] - bottle.all_times[0]
-			if delta > time.timedelta(hours=2):
-				self.divisor = 3600.
-				self.xlabel = "Time (hours)"
-			elif delta > time.timedelta(minutes=2):
-				self.divisor = 60.
-				self.xlabel = "Time (minutes)"
-			else:
-				self.xlabel = "Time (seconds)"
 
-			# self.x_axis_list 	   = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
-			norm = bottle.all_times[0].total_seconds()
+		else:
+			# delta = bottle.all_times[-1] - bottle.all_times[0]
+			# if delta > time.timedelta(hours=2):
+			# 	self.divisor = 3600.
+			# 	self.xlabel = "Time (hours)"
+			# elif delta > time.timedelta(minutes=2):
+			# 	self.divisor = 60.
+			# 	self.xlabel = "Time (minutes)"
+			# else:
+			# 	self.xlabel = "Time (seconds)"
+			#
+			# # self.x_axis_list 	   = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
+			# norm = bottle.all_times[0].total_seconds()
+			# # self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
 			# self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
-			self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
 
 			if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_discrete_rotation":
 				self.xlabel = "Azimuth (°)"
 				self.x_axis_ticks_pos = bottle.discrete_rotation_times[::9]
 				self.x_axis_ticks_label = np.round(bottle.discrete_rotation_azimuts * RtoD % 360)[::9]
 				self.x_axis_ticks_label = [int(x) for x in self.x_axis_ticks_label]
+
+				self.x_time_ticks_pos = []
+				self.x_time_ticks_label = []
+				for it, t in enumerate(self.x_axis_ticks_pos):
+					self.x_time_ticks_pos.append(t)
+					self.x_time_ticks_label.append(bottle.DateTime("start", format=self.time_format) + dt.timedelta(minutes=t))
+
+				self.x_time_ticks_label = [x.strftime("%H:%M:%S") for x in self.x_time_ticks_label]
+
 
 		if self.max_error_bars:
 			self.error_step = len(self.x_axis_list) // self.max_error_bars + 1
@@ -231,31 +367,85 @@ class Mixer:
 			# ax2.set_xlabel(self.xlabel)
 			self.ax3.set_xlabel(self.xlabel)
 
+			if self.show_grid_lines:
+				for ax in [self.ax1, self.ax2, self.ax3]:
+					ax.set_axisbelow(True)
+					ax.grid(True, zorder=-10)
+
 	def SetGraphParameter(self, bottle, comp = False):
+		self.langue = "fr" #"fr" or "en"
+
 		self.marker_size = 3
 		self.single_star_size = self.marker_size*5
+
+		self.show_Ipola = False
+		self.show_Iref = False
+
+		self.show_time = not comp
+		self.time_format = "UT" #LT or UT
+		self.time_label = "UTC"
+
+		self.show_raw_data = False
+		self.show_smooth_data = True
+
+		self.show_error_bars 		= True
+		self.show_smooth_error_bars = True
+		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
+		self.show_SN = False
+
+		self.show_avg_I0 = False
+		self.show_avg_Iref = False
+		self.show_avg_DoLP = False
+		self.show_avg_AoLP = False
+
+		#If True Will show the azimut on the xaxis instead of time for rotations
+		self.xaxis_azimut = True
 
 		self.show_legend = False
 
 		self.show_allsky = False
-		self.show_eiscat = False
+		self.show_eiscat = False #True
 
-		self.show_mag_data 	= False
-		self.show_AoBapp 	= False
-		self.show_AoRD	 	= False
-		self.show_currents	= True
+		self.show_mag_data 	= True #True
+		self.show_AoBapp 	= True
+		self.show_AoRD	 	= True
+		self.show_currents	= True #True
 
 
-		self.make_optional_plots = False
+		self.make_optional_plots = True # True
+
+		self.show_grid_lines = True
+
+
+		self.show_RS_model		= False
+
+		self.fit_RS_model_to_flux = False
+		self.fit_func = "GS" #"GS" for Ground+Sky. "GSK" for Ground+Sky+background
+
+		self.add_model = [] #Will add the 1st two models m1 and m2 together with a linear combination a*m1 + (1-a)m2
+		# self.add_model = [(0.001, 0.999), (0.075, 0.925), (0.05, 0.95), (0.1, 0.90)]
+
+		self.AddDirectPola = [] #[0.15]
+
+		self.show_model_list = []
+
+		self.addFDA_to_model = []
+
+		self.adapt_flux_scale 	= True
+		self.shift_model = 0
+		self.model_colors = ["black", "red", "magenta", "xkcd:mustard",  "blue", "green", "purple", "cyan"] * 10
+		self.model_symbols = ["*", "+", "x", "1", "2", "3", "4", ".", "s", "<", "^", ">", "X", "D"] * 10
+
+
 
 		# tmp_path = "/home/bossel/These/Documentation/Mes_articles/scattering/new_pictures/FIG8/"
 		# self.RS_model_files	= [	tmp_path + "v_grd_only.txt",
 		# 						tmp_path + "v_sky_alb.txt",
 		# 						tmp_path + "v_sky_albx1+v_grd_onlyx2e-09",
 		# 						tmp_path + "v_sky_albx1+v_direct_only_Bx1"]#,
-								# tmp_path + "m_sky_albx1+m_grd_onlyx2e-09"]#,
-								# tmp_path + "b_sky_albx1+b_grd_onlyx5e-10",
-								# tmp_path + "b_sky_albx1+b_grd_onlyx1e-10"]
+		# 						tmp_path + "m_sky_albx1+m_grd_onlyx2e-09"]#,
+		# 						tmp_path + "b_sky_albx1+b_grd_onlyx5e-10",
+		# 						tmp_path + "b_sky_albx1+b_grd_onlyx1e-10"]
 
 		# tmp_path = "/home/bossel/These/Documentation/Mes_articles/scattering/new_pictures/FIG7/"
 		# self.RS_model_files	= [	tmp_path + "m_rot_e45_grd_only.txt",
@@ -270,100 +460,172 @@ class Mixer:
 
 		# tmp_path = "/home/bossel/These/Documentation/Mes_articles/scattering/new_pictures/FIG5/"
 		# self.RS_model_files	= [	[tmp_path + "2021_lagorge_v_grd_only.txt", tmp_path + "2021_lagorge_v_grd_only_aero_mar.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_4000.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_10000.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_250nm.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_200nm.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_150nm.txt"]]#,#,
+
 		### Bosse et al 2021 Fig 10+
 		# self.RS_model_files	= [	[tmp_path + "2021_lagorge_b_grd_only_FULL_aero_mar_n4000_150nm.txt"],
 		# 						[tmp_path + "2021_lagorge_o_grd_only_FULL_aero_mar_n4000_150nm.txt"],
 		# 						[tmp_path + "2021_lagorge_m_grd_only_FULL_aero_mar_n4000_150nm.txt"],
 		# 						[tmp_path + "2021_lagorge_t_grd_only_FULL_aero_mar_n4000_150nm.txt"]]
+		# self.addFDA_to_model = [[(10, 0, 0)], [(21, 0, 0)], [(2, 0, 0)], [(20, 0, 0)]] # 20210120_Lagorge_bomt_rot_lente NEW AEROSOLS
 
 		### Bosse et al 2021 Fig 9
 		# self.RS_model_files	= [	[tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_150nm.txt"]]
+		# self.addFDA_to_model = [[(190, 0, 0)]]
 		### Bosse et al 2021 Fig 8
 		# self.RS_model_files	= [	[tmp_path + "2021_lagorge_v_grd_only.txt", tmp_path + "2021_lagorge_v_grd_only.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_150nm.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_rur_1000.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_rur_500.txt"]]
 
+		# tmp_path = "/home/bossel/These/Documentation/Mes_articles/courants/POMEROL/"
+		# # self.RS_model_files	= [[tmp_path + "20200224_skibotnSud_v_e66_MAR1.txt",
+		# # 							tmp_path + "uni_sky_noDoLP.txt"]]
+		# self.RS_model_files	= [[tmp_path + "20200224_skibotnSud_v_e30_MAR1.txt",
+		# 						tmp_path + "uni_sky_noDoLP.txt"]]
+		# # self.show_model_list = [0, 2]
+
 
 		tmp_path = "/home/bossel/These/Documentation/Mes_articles/auroral_pola/"
+		### 20200227 XYvm e52 Direct Po la
+		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/uni_sky_o_e52_aero_MAR1_albedo.txt"],
+		# 						[tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
+		# 						[tmp_path + "grd_only/v_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo_skySHIFT20.txt"],
+		# 						# tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo_Dpola-0.310.5_perp_rayleigh.txt"],
+		# 						[tmp_path + "grd_only/m_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/20200227_m_e52_sky_only_aero_MAR1_albedo_skySHIFT20.txt"]]#,
+		# 						# tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo_Dpola-0.310.5_perp_rayleigh.txt"]]
+
+		# For turquoise bottle (3rd)
+		# self.AddDirectPola = [0.4]
+		# self.add_model = [(0.25, 0.75)]
+		# self.show_model_list = [-1]
+		# self.fit_RS_model_to_flux = True
+		# self.fit_func = "GS" #"GSK" for Ground+Sky+background
+
+
+		# For green bottle (3rd)
+		# self.AddDirectPola = [0.4]
+		# self.add_model = [(0.35, 0.65)]
+		# # self.fit_RS_model_to_flux = True
+		# # self.fit_func = "GS" #"GSK" for Ground+Sky+background
+		# self.show_model_list = [0, 3, 4]
+
+		# For mauve bottle (4rd)
+		# self.AddDirectPola = [0.9]
+		# self.add_model = [(0.25, 0.75)]
+		# self.show_model_list = [-1]#[0, 2, 3, 4]
+		# self.addFDA_to_model = [[(0, 0, 0), (6, 0, 0), (0, 0, 0), (6, 0, 0), (5.2, 0, 0)]]  * len(self.RS_model_files)
+
 		### 20200227 XYvm e52 best fit
-		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/uni_sky_o_e52_aero_1low_albedo.txt"],
-		# 						[tmp_path + "grd_only/t_e52_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/uni_sky_t_e52_aero_1low_albedo.txt",
-		# 						tmp_path + "t_e52_grd_only_aero_1lowx1702.6351068301055+uni_sky_t_e52_aero_1low_albedox63627.19976961118"], #MANUAL fit because of the East flux jump. Coeff are : 4335.3242154348345 * 0.39273535777746454 and 25450.87990784447 * 2.5.
-		# 						# [tmp_path + "grd_only/t_e52_grd_only_aero_1low.txt",
-		# 						# tmp_path + "sky_only/uni_sky_t_e52_aero_1low_albedo.txt"],
-		# 						[tmp_path + "grd_only/v_e52_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/20200227_v_e52_sky_only_aero_1low_albedo.txt"],
-		# 						[tmp_path + "grd_only/m_e52_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/20200227_m_e52_sky_only_aero_1low_albedo.txt"]]
+		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/uni_sky_o_e52_aero_MAR1_albedo.txt"],
+		# 						[tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
+		# 						# tmp_path + "t_e52_grd_only_aero_MAR1x1702.6351068301055+uni_sky_t_e52_aero_MAR1_albedox63627.19976961118"], #MANUAL fit because of the East flux jump. Coeff are : 4335.3242154348345 * 0.39273535777746454 and 25450.87990784447 * 2.5.
+		# 						# [tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
+		# 						# tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
+		# 						[tmp_path + "grd_only/v_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo.txt"],
+		# 						[tmp_path + "grd_only/m_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/20200227_m_e52_sky_only_aero_MAR1_albedo.txt"]]
 
 		### 20200227 XYvm e52 test aerosols
 		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_NO_aero.txt",
-		# 						tmp_path + "grd_only/o_e52_grd_only_aero_arctic.txt",
-		# 						tmp_path + "grd_only/o_e52_grd_only_aero_1low.txt",
+		# 						# tmp_path + "grd_only/o_e52_grd_only_NO_aero.txt",
+		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_arctic.txt",
+		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt"],
+		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_MAR2.txt"],
+		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_3mid.txt",
+		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_2high.txt"],
+		# 						[tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR3.txt"],
+		# 						[tmp_path + "grd_only/v_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR3.txt",
 		# 						tmp_path + "grd_only/o_e52_grd_only_aero_3mid.txt",
 		# 						tmp_path + "grd_only/o_e52_grd_only_aero_2high.txt"],
-		# 						[tmp_path + "grd_only/t_e52_grd_only_aero_1low.txt"],
-		# 						[tmp_path + "grd_only/v_e52_grd_only_aero_1low.txt"],
-		# 						[tmp_path + "grd_only/m_e52_grd_only_aero_1low.txt"]]
-		# self.RS_model_files	= [[tmp_path + "CL/o_e52_grd_only_aero_1lowx1+uni_sky_o_e52_aero_1low_albedox6.0"],
+		# 						[tmp_path + "grd_only/m_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR3.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_3mid.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_2high.txt"]]
+		# self.RS_model_files	= [[tmp_path + "CL/o_e52_grd_only_aero_MAR1x1+uni_sky_o_e52_aero_MAR1_albedox6.0"],
 								# [],[],[]]
 
 		# ### 20190307 br rot e45
-		# self.shift_model = -30
-		# self.RS_model_files	= [[tmp_path + "grd_only/b_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/20190307_b_sky_only_aero_1low_albedo.txt"],
+		# self.RS_model_files	= [[tmp_path + "grd_only/b_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/20190307_b_sky_only_aero_MAR1_albedo_skySHIFT20.txt"],
+		# 						# tmp_path + "sky_only/20190307_b_sky_only_aero_MAR1_albedo_Dpola-0.210_para_Rayleigh.txt",],
 		# 						[],[],[]]
+		# self.AddDirectPola = [0.25]
+		# self.add_model = [(0.15, 0.85)]
+		# self.show_model_list = []# [1, 3, 4]
+		# self.addFDA_to_model = [[(10, 0, 0), (25, 0, 0), (25, 0, 0), (25, 0, 0), (25, 0, 0), (25, 0, 0), (25, 0, 0)]]  * len(self.RS_model_files)
+
 		### 20190307 mr rot e45
-		# self.shift_model = -30
-		# self.RS_model_files	= [[tmp_path + "grd_only/m_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/20190307_m_sky_only_aero_1low_albedo.txt"],
+		# self.RS_model_files	= [[tmp_path + "grd_only/m_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/20190307_m_sky_only_aero_MAR1_albedo_skySHIFT20.txt"],#,
+		# 						# tmp_path + "sky_only/20190307_m_sky_only_aero_MAR1_albedo_gazm.txt"],
+		# 						# tmp_path + "sky_only/20190307_m_sky_only_aero_MAR1_Dpola-0.110_Rayleigh.txt"],
 		# 						[],[],[]]
-		### 20190307 vr rot e45
-		# self.RS_model_files	= [[tmp_path + "grd_only/v_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/20190307_v_sky_only_aero_1low_albedo.txt"],
-		# 						# tmp_path + "sky_only/20190307_v_sky_only_aero_1low_NOalbedo.txt"],
+		# # self.AddDirectPola = [0.175]
+		# self.add_model = [(0.075, 0.925)]
+		# self.show_model_list = [1, 3, 4]
+
+		# ### 20190307 vr rot e45
+		# self.RS_model_files	= [[tmp_path + "grd_only/v_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/20190307_v_sky_only_aero_MAR1_albedo_skySHIFT20.txt"],
+		# 						# tmp_path + "sky_only/20190307_v_sky_only_aero_MAR1_albedo_Dpola-0.210_Rayleigh.txt"],
 		# 						[],[],[]]
+		# self.AddDirectPola = [0.04]
+		# self.add_model = [(0.05, 0.95)]
+		# self.show_model_list = [1, 3, 4]
+
 		## 20190307 vr a164 e45
-		# self.RS_model_files	= [[tmp_path + "grd_only/v_a164_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/v_a164_sky_only_aero_1low.txt"],
+		# self.RS_model_files	= [[tmp_path + "grd_only/v_a164_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/v_a164_sky_only_aero_MAR1_step1.txt"],
 		# 						[],[],[]]
+		# self.add_model = [0.09]
+		# self.show_model_list = [-3, -2, -1]
 		## 20190307 br a164 e45
-		# self.RS_model_files	= [[tmp_path + "grd_only/b_a164_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/b_a164_sky_only_aero_1low.txt"],
+		# self.RS_model_files	= [[tmp_path + "grd_only/b_a164_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/b_a164_sky_only_aero_MAR1_step1.txt"],
 		# 						[],[],[]]
+		# self.add_model = [0.15, 0.292]
+		# self.show_model_list = [-4, -3, -2, -1]
 		# ## 20190307 mr a164 e45
-		# self.RS_model_files	= [[tmp_path + "grd_only/m_a164_grd_only_aero_1low.txt",
-		# 						tmp_path + "sky_only/m_a164_sky_only_aero_1low.txt"],
+		# self.RS_model_files	= [[tmp_path + "grd_only/m_a164_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/m_a164_sky_only_aero_MAR1_step1.txt"],
 		# 						[],[],[]]
+		# self.add_model = [0.2, 0.438]
+		# self.show_model_list = [-4, -3, -2, -1]
 
 		### 20200227 XYvm e52 Direct Pola test
-		self.RS_model_files	= [[],
-								[],
-								[tmp_path + "grd_only/v_e52_grd_only_aero_1low.txt",
-								 tmp_path + "sky_only/20200227_v_e52_sky_only_aero_1low_albedo.txt",
-								 tmp_path + "sky_only/20200227_v_e52_sky_only_aero_1low_albedo_DpolaNW_cos.txt"],
-								[tmp_path + "grd_only/m_e52_grd_only_aero_1low.txt",
-								 tmp_path + "sky_only/20200227_m_e52_sky_only_aero_1low_albedo.txt",
-								 tmp_path + "sky_only/20200227_v_e52_sky_only_aero_1low_albedo_DpolaNW_cos.txt"]]
+		# self.RS_model_files	= [[],
+		# 					[],
+		# 					[tmp_path + "grd_only/v_e52_grd_only_aero_MAR1.txt",
+		# 					 tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo.txt"],
+		# 					 # tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo_Dpola201_sin2.txt"],
+		# 					[tmp_path + "grd_only/m_e52_grd_only_aero_MAR1.txt",
+		# 					 tmp_path + "sky_only/20200227_m_e52_sky_only_aero_MAR1_albedo.txt"]]
+							 # tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo_Dpola201_sin2.txt"]]
 		# self.RS_model_files	= [[],
 		# 						[],
-		# 						[tmp_path + "sky_only/20200227_v_e52_sky_only_aero_1low_albedo.txt",
-		# 						 tmp_path + "sky_only/20200227_v_e52_sky_only_aero_1low_albedo_DpolaNW_cos.txt"],
-		# 						[tmp_path + "sky_only/20200227_m_e52_sky_only_aero_1low_albedo.txt",
-		# 						 tmp_path + "sky_only/20200227_v_e52_sky_only_aero_1low_albedo_DpolaNW_cos.txt"]]
+		# 						[tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo.txt",
+		# 						 tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo_DpolaNW_cos.txt"],
+		# 						[tmp_path + "sky_only/20200227_m_e52_sky_only_aero_MAR1_albedo.txt",
+		# 						 tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo_DpolaNW_cos.txt"]]
 
-		self.show_RS_model		= True
-		self.fit_RS_model_to_flux = True
-
-		self.AddDirectPola = [1, 2]
-
-		self.adapt_flux_scale 	= True
-		self.shift_model = 0
-		self.model_colors = ["black", "red", "blue", "magenta", "purple",  "yellow", "pink", "orange", "magenta", "cyan"] * 10
-		self.model_symbols = ["*", "+", "x", "1", "2", "3", "4", ".", "s", "<", "^", ">", "X", "D"] * 10
-		self.addFDA_to_model = [[(0, 0, 0), (0, 0, 0)]]  * len(self.RS_model_files)
+		# self.addFDA_to_model = [[(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]]  * len(self.RS_model_files)
 		# self.addFDA_to_model = np.array([[(0.3, 0, 0), (2, 0, 0), (20, 0, 0), (18, 0, 0), (21, 0, 0)]])*1.5 # 20200227 rotation XYvm à skibotn pour test d'aerosols fit le median
 		# self.addFDA_to_model = np.array([[(0.26, 0, 0), (2.14, 0, 0), (33.2, 0, 0), (30, 0, 0), (43, 0, 0)]]) # 20200227 rotation XYvm à skibotn pour test d'aerosols fit le min
+		# self.addFDA_to_model = np.array([[(0, 0, 0),(0.26, 0, 0),(0, 0, 0),(43.3, 0, 0)]]) # MORE 20200227 rotation XYvm à skibotn pour test d'aerosols fit le min
+		# self.addFDA_to_model = np.array([[(0, 0, 0), (0, 0, 0), (48, 0, 0)]]) # MORE 20200227 rotation XYvm à skibotn pour test d'aerosols fit le min
+		# self.addFDA_to_model = np.array([[(43.3, 0, 0)]]) # 20200227 rotation XYvm à skibotn pour best fit (fit le min)
+
 		# self.addFDA_to_model = [[], [], [], [(0, 0, 0), (0, 0, 0), (0, 0, 0)]] # 20200227 rotation XYvm à skibotn pour test de background dans le mauve (fct:average)
 
 		# self.addFDA_to_model = [[(190, 0, 0)]] #Bosse et al 2021 Fig 9
@@ -371,34 +633,10 @@ class Mixer:
 
 		# self.addFDA_to_model = [[(10, 0, 0)], [(21, 0, 0)], [(2, 0, 0)], [(20, 0, 0)]] # 20210120_Lagorge_bomt_rot_lente NEW AEROSOLS
 
-		self.show_Ipola = False
-		self.show_Iref = False
-
-		self.show_time = not comp
-		self.time_format = "UT" #LT or UT
-		self.time_label = "UTC"
-
-
-		self.show_raw_data = False
-		self.show_smooth_data = True
-
-		self.show_error_bars 		= False
-		self.show_smooth_error_bars = True
-		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
-		self.show_SN = False
-
-		self.show_avg_I0 = False
-		self.show_avg_Iref = False
-		self.show_avg_DoLP = False
-		self.show_avg_AoLP = False
-
-		#If True Will show the azimut on the xaxis instead of time for rotations
-		self.xaxis_azimut = True
 
 		self.SetColors(bottle, comp=comp)
 
-		font = {'weight' : 'bold',
-        'size'   : 24}
+		font = {'size'   : 24}
 		matplotlib.rc('font', **font)
 
 		# plt.tight_layout(pad=0, h_pad=None, w_pad=None, rect=None)
@@ -414,7 +652,7 @@ class Mixer:
 		self.smooth_ref_color = "xkcd:green"
 		self.AoBapp_color = "xkcd:turquoise"
 		self.AoRD_color = "xkcd:hot pink"
-		self.currents_color = "xkcd:blue"
+		self.currents_color = "xkcd:lilac"
 		if comp:
 			self.AoBapp_color = "xkcd:blue"
 			self.AoRD_color = "xkcd:salmon"
@@ -606,12 +844,17 @@ class Mixer:
 		if self.eiscat_data.valid and self.show_eiscat:
 			self.ax22 = self.ax1.twinx()
 
+			# parameter = "v_i"
 			parameter = "N_e"
 			altitude = bottle.filters[0]
 			if altitude == "r": altitude = 220
 			elif altitude == "v": altitude = 110
 			elif altitude == "b" or "m": altitude = 85
-			label = parameter.replace("_", "\_") + " at " + str(altitude) + " km (EISCAT)"
+			if self.langue == "en":
+				label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m$^{-3}$)"
+			else:
+				label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m$^{-3}$)"
+
 			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor)
 			l_eiscat_data, capline, barlinecol = self.ax22.errorbar(t, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
 			# Md, md = max(d), min(d)
@@ -621,6 +864,28 @@ class Mixer:
 				self.ax22.set_ylim((-3*10**10, 5*10**10))
 			self.ax1_lines.append([l_eiscat_data, label])
 			self.ax22.set_ylabel(label)
+
+
+			self.ax221 = self.ax3.twinx()
+			parameter = "v_i"
+			altitude = bottle.filters[0]
+			if altitude == "r": altitude = 220
+			elif altitude == "v": altitude = 110
+			elif altitude == "b" or "m": altitude = 85
+			if self.langue == "en":
+				label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m/s)"
+			else:
+				label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m/s)"
+
+			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor)
+			l_eiscat_data, capline, barlinecol = self.ax221.errorbar(t, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
+			# Md, md = max(d), min(d)
+			if bottle.location.lower() == "skibotn" and bottle.filters == "mr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+				self.ax221.set_ylim((-180, 48))
+			# elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+			# 	self.ax221.set_ylim((-3*10**10, 5*10**10))
+			self.ax3_lines.append([l_eiscat_data, label])
+			self.ax221.set_ylabel(label)
 
 
 		if self.show_raw_data:
@@ -682,17 +947,33 @@ class Mixer:
 
 
 		if self.show_currents and self.eq_currents.valid:
-			self.ax23 = self.ax2.twinx()
-			l_AoJlos, = self.ax23.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["AoJlos"] * RtoD, "*", color = self.currents_color, label="AoJlos")
-			# l_AoJlos, = self.ax23.plot(self.eq_currents.GetNormTimes(self.divisor), np.sin(self.eq_currents.data["AoJlos"]) * self.eq_currents.data["J_norm"], color = self.currents_color, label="AoJlos")
-			self.ax2_lines.append([l_AoJlos, l_AoJlos.get_label()])
+			self.ax12 = self.ax1.twinx()
+			if self.eiscat_data.valid and self.show_eiscat:
+				self.ax12.spines["right"].set_position(("axes", 1.075))
 
-			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["AoJapp"] * RtoD, "*", color = self.currents_color, label="AoJapp")
+			l_AoJnorm, = self.ax12.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["J_norm"], "-*", color = self.currents_color, label="J_norm")
+
+			self.ax12.set_ylabel(r"J (A/m)")
+
+			# self.ax23 = self.ax2.twinx()
+			# l_AoJlos, = self.ax23.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["AoJlos"] * RtoD, "*", color = self.currents_color, label="AoJlos")
+			# # l_AoJlos, = self.ax23.plot(self.eq_currents.GetNormTimes(self.divisor), np.sin(self.eq_currents.data["AoJlos"]) * self.eq_currents.data["J_norm"], color = self.currents_color, label="AoJlos")
+			# self.ax2_lines.append([l_AoJlos, l_AoJlos.get_label()])
+
+			AoJapp = self.eq_currents.data["AoJapp"]
+			if bottle.graph_angle_shift == 1:
+				AoJapp = SetAngleBounds(self.eq_currents.data["AoJapp"], 0, np.pi)
+			AoJappperp = self.eq_currents.data["AoLP"]
+			if bottle.graph_angle_shift == 1:
+				AoJappperp = SetAngleBounds(self.eq_currents.data["AoLP"], 0, np.pi)
+
+			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
+
+			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJappperp * RtoD, "*", color = self.currents_color, label="AoJapp_perp")
+
 			self.ax3_lines.append([l_AoJapp, l_AoJapp.get_label()])
 
-
 		# self.ax3.set_ylim(45, 60)
-
 
 		if bottle.observation_type == "fixed":
 			if bottle.AoRD is not False and self.show_AoRD:
@@ -793,8 +1074,11 @@ class Mixer:
 			# self.ax22 = self.ax2.twinx()
 
 			tmp_xshift = 0
-
 			maxDoLP = np.max(bottle.smooth_DoLP)
+
+			if self.show_model_list:
+				self.J2RAYS1_models = [self.J2RAYS1_models[i] for i in self.show_model_list]
+
 			for im, models in enumerate(self.J2RAYS1_models):
 				# print(self.J2RAYS1_model.x_axis)
 				# self.ax11.yaxis.set_visible(False)
@@ -818,7 +1102,8 @@ class Mixer:
 					ratio_model = max_model / min_model
 					shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
 					# shift = (ratio_model * min_data - max_data) / (1 - ratio_model)
-					print(f"Min model, Max model, Ratio model, Shift to match data: {min_model}, {max_model}, {ratio_model}, {shift}")
+					print(f"Min model, Max model, Ratio model, Shift to match data (data unit): {min_model}, {max_model}, {ratio_model}, {shift}")
+					print(f"Min model, Max model, Ratio model, Shift to match data (model unit): {min_model / models.bottle_factor}, {max_model / models.bottle_factor}, {ratio_model}, {shift / models.bottle_factor}")
 					nt.append(max_model)
 					nb.append(min_model)
 
@@ -876,12 +1161,28 @@ class Mixer:
 			plt.minorticks_on()
 
 		if self.show_time:
+
 			self.ax12 = self.ax1.twiny()
 			self.ax12.set_xlim(self.ax1.get_xlim())
-			xticks = plt.xticks()[0] * self.divisor
-			xticks = [bottle.DateTime("start", format=self.time_format) + time.timedelta(seconds = t) for t in xticks]
-			# xticks = [bottle.DateTime() + time.timedelta(seconds = t) + bottle.head_jump for t in xticks]
-			self.ax12.set_xticklabels([st.strftime("%H:%M") for st in xticks])
+
+			# print("DEBUG*********************************************************************************************")
+			# print("DEBUG*********************************************************************************************")
+
+			if self.xaxis_azimut and bottle.observation_type in ["fixed_elevation_continue_rotation", "fixed_elevation_discrete_rotation"]:
+				xticks = self.x_time_ticks_pos
+				plt.xticks(ticks=xticks, labels=self.x_time_ticks_label)
+
+			else:
+				print(plt.xticks()[0], self.divisor)
+				xticks = plt.xticks()[0] * self.divisor
+				xticks = [bottle.DateTime("start", format=self.time_format, delta=time.timedelta(seconds = t)) for t in xticks]
+				# xticks = [bottle.DateTime("start", format=self.time_format) + time.timedelta(seconds = t) for t in xticks]
+				# xticks = [bottle.DateTime() + time.timedelta(seconds = t) + bottle.head_jump for t in xticks]
+
+			print(xticks)
+
+			if bottle.observation_type == "fixed":
+				self.ax12.set_xticklabels([st.strftime("%H:%M") for st in xticks])
 			self.ax12.set_xlabel(self.time_label)
 
 		if self.show_legend:
@@ -949,8 +1250,8 @@ class Mixer:
 	def MakeI0SNratio(self, bottle):
 		f6, ax = plt.subplots(1, figsize=(10, 20))
 
-		print(bottle.all_I0,  bottle.std_I0, bottle.all_I0 / bottle.std_I0)
-		print(bottle.smooth_I0, bottle.std_smooth_I0, bottle.smooth_I0 / bottle.std_smooth_I0)
+		# print(bottle.all_I0,  bottle.std_I0, bottle.all_I0 / bottle.std_I0)
+		# print(bottle.smooth_I0, bottle.std_smooth_I0, bottle.smooth_I0 / bottle.std_smooth_I0)
 
 		ax.plot(self.x_axis_list, bottle.all_I0 / bottle.std_I0, "--", color = self.all_SN_color, label="I0 SN")
 		ax.set_ylabel("Raw")
