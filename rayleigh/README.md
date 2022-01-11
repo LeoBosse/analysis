@@ -4,7 +4,7 @@ This is a README file for the POMEROL simulation code.
 INSTALLATION
 ################################################################################
 
-Download the sources files from ????.
+Download the sources files from https://gricad-gitlab.univ-grenoble-alpes.fr/bossel/analysis.
 Place them all in a directory, and change the "src_path" in the RS_default.in input file (and all input files you'll use).
 
 In a terminal, go to this folder and run the following command:
@@ -16,9 +16,6 @@ It takes care of all complex geometry calculation (angles, distances, heights fo
 
 Then downlaod the data you need. (ground emission maps, all sky camera pictures, elevation map).
 They are not included in the package for size and legal reasons.
-
-
-
 
 
 

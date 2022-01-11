@@ -174,9 +174,22 @@ ground_albedo altitude_0.2_0.2_0.5_0.5_0.8 constant_0.5    constant_0.5    #in [
 ground_path /home/bossel/These/Analysis/data/Night_pollution/
 ground_file nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-ntl_v10_c201807311200.avg_rade9.tif
 
-### Night time pollution maps: Found at: https://eogdata.mines.edu/download_dnb_composites.html
+### Night time pollution maps: Found at: https://eogdata.mines.edu/products/vnl/
 
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm_v10_c201807311200.avg_rade9.tif
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm_v10_c201807311200.avg_rade9.tif # "vcm-orm" (VIIRS Cloud Mask - Outlier Removed) This product contains cloud-free average radiance values that have undergone an outlier removal process to filter out fires and other ephemeral lights.
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-ntl_v10_c201807311200.avg_rade9.tif # "vcm-ntl" (VIIRS Cloud Mask - Nighttime Lights) This product contains the "vcm" average, with background (non-lights) set to zero.
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-ntl_v10_c201807311200.avg_rade9.tif # "vcm-orm-ntl" (VIIRS Cloud Mask - Outlier Removed - Nighttime Lights) This product contains the "vcm-orm" average, with background (non-lights) set to zero.
+
+
+
+
+# ###############################################################################
+### PLOTTING FLAGS
+### Following parameters help the user that want to select the optional plots produced by POMEROL.
+
+show_ground_albedo 	 1 # Produce a map of the ground emissions with the albedo layers as contour plots (only if ground_albedo is set to altitude_...).
+show_sky_cube				 0 # Produce a plot with all sky maps used in the simulation. Usefull for time-evolving setups and movie sky mode.
+
+show_cross_section	 0 # Produce a plot of aerosol cross sections.
+show_atmosphere		   0 # Produce a plot of temperature, pression, and O3 profile of the atmosphere

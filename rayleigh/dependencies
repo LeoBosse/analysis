@@ -1,0 +1,28 @@
+import sys
+import numpy
+import pandas
+import scipy
+import matplotlib
+mpi4py
+os
+subprocess
+time
+datetime
+imageio
+numba
+astropy
+cv2
+osgeo.gdal
+mysql
+setuptools
+itertools
+chaosmagpy
+tqdm
+copy
+imp
+routines
+webgeodyn
+math
+pymc3
+arviz
+vtk

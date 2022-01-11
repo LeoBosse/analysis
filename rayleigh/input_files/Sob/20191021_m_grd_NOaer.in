@@ -12,11 +12,9 @@
 
 src_path /home/bossel/These/Analysis/src/rayleigh/ #Path to all the python source files
 
-saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
-save_path /home/bossel/These/Documentation/Mes_articles/auroral_pola/sky_only/ # Path to the folder where you want to save your results (graphs, txt...)
-save_name 20190307_m_sky_only_aero_1low_albedo #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
-
-
+saving_graphs 1  		# 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
+save_path /home/bossel/These/Analysis/results/rayleigh/Sob/			  # Path to the folder where you want to save your results (graphs, txt...)
+save_name 20191021_m_rot_e45_grd_Noaer 										# Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
 
 ### Units for the result flux (used in the graphs, but maybe not in the computations.)
 # W = for nanoWatts (default input unit)
@@ -33,10 +31,10 @@ use_analytic false # Should stay as "false". If "true", POMEROL will compute the
 ### All instrumental inuts
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
 ### Put "azimuts all" if you want to perform an almucantar (every 10°), or "elevations all" for a scan. See the world.__init__() for the code.
-azimuts 		 0
+azimuts 		 all
 elevations 	 45
 
-location 										lagorge     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
+location 										sob     #Accepted locations: lagorge, skibotn, skibotnSud, skibotnNord, stveran, nyalesund, vigan, sob or LON;LAT in degrees
 
 start_datetime 20190116-02:44:00
 end_datetime   20190116-04:00:00
@@ -44,7 +42,7 @@ end_datetime   20190116-04:00:00
 instrument_opening_angle 	1	  		# Half opening angle of the instrument (degrees)
 instrument_area 					20 			# Area of Petit Cru in cm^2 (gets converted in km**2 in the code)
 
-wavelength 557.7  #in nm
+wavelength 391.4  #in nm
 
 # ###############################################################################
 ### Add a constant light with given polarisation parameters
@@ -66,15 +64,15 @@ Nb_points_along_los   			100		  # Number of bins along the line of sight between
 
 max_angle_discretization		0				# In degrees. If scattering volume solid angle seen from E is larger than that, cut the volume in pieces.
 
-Atmospheric_profile atm_profiles/mlw.atm   #name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure). Files stored in ./atm_profiles/
+Atmospheric_profile atm_profiles/equ.atm   #name of the atmospheric profile file to use http://eodg.atm.ox.ac.uk/RFM/atm/ (MIPAS model 2001 works for sure). Files stored in ./atm_profiles/
 
 ### Ozone absorption
 use_ozone 1 # 0 or 1. Will compute absorption along the paths due to ozone.
 
 
 ### Aerosols
-use_aerosol 1			# 0 or 1. Main flag to decide wether to use aerosol scattering/absorption or not.
-aer_complexity 1		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
+use_aerosol 0			# 0 or 1. Main flag to decide wether to use aerosol scattering/absorption or not.
+aer_complexity 0		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
 
 ### Complex aerosol profile parameters: use if aer_complexity == 1
 aer_model maritime 		# manual: use the aerosols properties listed below. Or name of a pre configured model.  (preconfigured model are hard-coded in atmosphere.py, in Aerosol.SetModel() function)
@@ -190,7 +188,7 @@ ground_albedo altitude_0.2_0.2_0.5_0.5_0.8 constant_0.5
 ground_path /home/bossel/These/Analysis/data/Night_pollution/
 ground_file nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-ntl_v10_c201807311200.avg_rade9.tif
 
-### Night time pollution maps: Found at: https://eogdata.mines.edu/products/vnl/
+### Night time pollution maps: Found at: https://eogdata.mines.edu/download_dnb_composites.html
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm_v10_c201807311200.avg_rade9.tif
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm_v10_c201807311200.avg_rade9.tif # "vcm-orm" (VIIRS Cloud Mask - Outlier Removed) This product contains cloud-free average radiance values that have undergone an outlier removal process to filter out fires and other ephemeral lights.
 # nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-ntl_v10_c201807311200.avg_rade9.tif # "vcm-ntl" (VIIRS Cloud Mask - Nighttime Lights) This product contains the "vcm" average, with background (non-lights) set to zero.
@@ -204,8 +202,6 @@ ground_file nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-nt
 
 show_ground_albedo 	 0 # Produce a map of the ground emissions with the albedo layers as contour plots (only if ground_albedo is set to altitude_...).
 show_sky_cube				 0 # Produce a plot with all sky maps used in the simulation. Usefull for time-evolving setups and movie sky mode.
-
-show_altitude				 0 # Produce an altitude map around the instrument, in meters.
 
 show_cross_section	 0 # Produce a plot of aerosol cross sections.
 show_aer_size	 			 1 # Produce a plot of aerosol size distribution

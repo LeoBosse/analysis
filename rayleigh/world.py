@@ -48,14 +48,15 @@ class World:
 		self.wavelength = float(in_dict["wavelength"])
 		self.src_path = in_dict["src_path"]
 
-		try:
-			self.show_ground_albedo = int(in_dict["show_ground_albedo"])
-		except:
-			self.show_ground_albedo = 0
-		try:
-			self.show_sky_cube = int(in_dict["show_sky_cube"])
-		except:
-			self.show_sky_cube = 0
+		self.show_ground_albedo = False
+		self.show_sky_cube = False
+		self.show_altitude = False
+		if "show_ground_albedo" in in_dict:
+			self.show_ground_albedo = bool(int(in_dict["show_ground_albedo"]))
+		if "show_sky_cube" in in_dict:
+			self.show_sky_cube = bool(int(in_dict["show_sky_cube"]))
+		if "show_altitude" in in_dict:
+			self.show_altitude = bool(int(in_dict["show_altitude"]))
 
 		# Angle de demi-ouverture de l'instrument (1 deg pour les crus)
 		self.ouv_pc		= float(in_dict["instrument_opening_angle"]) * DtoR
@@ -119,7 +120,8 @@ class World:
 		self.a_pc_list		= np.array(in_dict["azimuts"].split(";"))  # List of azimuts for the observations
 		if self.a_pc_list[0] == "all":
 			# self.a_pc_list = np.arange(179.5, 180.5, 0.005) * DtoR
-			self.a_pc_list = np.arange(0, 360, 10) * DtoR
+			# self.a_pc_list = np.arange(0, 360, 10) * DtoR
+			self.a_pc_list = np.arange(0, 350, 15) * DtoR
 			# self.a_pc_list = np.arange(-10, 10, 1) * DtoR
 		else:
 			self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
@@ -181,27 +183,37 @@ class World:
 		if self.Nb_a_pc == self.Nb_e_pc == 1:
 			self.is_single_observation = True
 
+		if mpi_rank==0: print("Has_sky_emission:", self.has_sky_emission)
 		#Show the skymaps if they change in time or we move the instrument
 		# if self.has_sky_emission and (self.is_time_dependant or not self.is_single_observation):
 		if self.has_sky_emission and self.show_sky_cube and mpi_rank==0:
 			self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
 
 
-		if mpi_rank==0: print("Has_sky_emission:", self.has_sky_emission)
 
 		### Initialize the groundmap. Even if we don't use it, some parameters must be initialized
 		self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
 
 		self.has_ground_emission = self.ground_map.exist
-		if mpi_rank==0: print("Has_ground_emission:", self.has_ground_emission)
+		if mpi_rank == 0: print("Has_ground_emission:", self.has_ground_emission)
 
 		### Initialize the atlitude maps
 		self.alt_map = ElevationMap(in_dict)
 		self.use_elevation_map = bool(int(in_dict["use_alt_map"]))
+		if self.show_altitude:
+			self.alt_map.PlotMap()
 
 		self.instrument_altitude = self.alt_map.GetAltitudeFromLonLat(self.ground_map.A_lon, self.ground_map.A_lat) / 1000. #In km
 
 		self.albedo_mode = in_dict["ground_albedo"].lower()
+		if mpi_rank == 0 and self.show_ground_albedo:
+			if "altitude" in self.albedo_mode:
+				layers = np.array([float(a)*1000 for a in self.albedo_mode.split("_")[2:-1:2]])
+				self.MakeGroundMapPlot(iso=layers)
+			else:
+				self.MakeGroundMapPlot()
+			plt.show()
+
 		if self.has_ground_emission and self.has_sky_emission and self.albedo_mode != "none":
 			self.albedo_map = np.zeros_like(self.ground_map.I_map)
 			if "constant" in self.albedo_mode:
@@ -219,19 +231,6 @@ class World:
 
 						layer = int(np.searchsorted(layers, alt))
 						self.albedo_map[id, ia] = albedo[layer]
-
-				if mpi_rank == 0 and self.show_ground_albedo:
-					self.MakeGroundMapPlot(iso=layers)
-
-						# if alt < 0.5:
-						# 	self.albedo_map[id, ia] = 0.2
-						# elif alt < 1:
-						# 	self.albedo_map[id, ia] = 0.5
-						# else:
-						# 	self.albedo_map[id, ia] = 0.8
-			# if mpi_rank == 0:
-			# 	self.alt_map.PlotMap(iso = layers * 1000)
-			# 	plt.show()
 
 			if mpi_rank == 0:
 				print("Calculating sky on ground reflection with albedo", self.albedo_mode)
@@ -258,7 +257,7 @@ class World:
 		# if mpi_rank == 0:
 		# 	self.ground_map.MakePlots(0, 0)
 		# 	self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
-		# 	plt.show()
+			# plt.show()
 
 
 	# def GetGalacticCoord(self, az, el, time):
@@ -1319,7 +1318,7 @@ class World:
 		adapt_az = np.append(self.ground_map.mid_azimuts, self.ground_map.mid_azimuts[0]+2*np.pi)
 
 		# contourset = ax.contourf(self.ground_map.mid_azimuts, self.ground_map.mid_distances, polar_alt_map, iso, cmap='Wistia') #iso is a list of the altitudes isobar to plot (in km)
-		contourset = ax.contour(adapt_az, adapt_dist, adapt_map, iso, cmap='Wistia') #iso is a list of the altitudes isobar to plot (in km)
+		contourset = ax.contour(adapt_az, adapt_dist, adapt_map, iso, cmap='Wistia') #iso is a list of the altitudes isobar to plot (in m)
 
 		# ax.add_artist(Circle((0, 0), 3, color="red", zorder = 1000))
 		ax.plot([0, np.pi], [3, 3], "r")

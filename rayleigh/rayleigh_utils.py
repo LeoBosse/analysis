@@ -361,6 +361,9 @@ def GetLonLatFromName(name, unit="radians"):
 	elif name == "stveran":
 		A_lon = 6.906917
 		A_lat = 44.696926
+	elif name == "sob":
+		A_lon = -16.4413726
+		A_lat = 14.4879441
 	else:
 		A_lon = float(name.split(";")[0])
 		A_lat = float(name.split(";")[1])

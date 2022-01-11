@@ -38,15 +38,17 @@ class Atmosphere:
 
 		self.wavelength = float(in_dict["wavelength"]) #in nanometers
 
-		try:
-			self.show_cross_section = int(in_dict["show_cross_section"])
-		except:
-			self.show_cross_section = 0
+		self.show_cross_section = False
+		if "show_cross_section" in in_dict:
+			self.show_cross_section = bool(int(in_dict["show_cross_section"]))
 
-		try:
-			self.show_atmosphere = int(in_dict["show_atmosphere"])
-		except:
-			self.show_atmosphere = 0
+		self.show_atmosphere = False
+		if "show_atmosphere" in in_dict:
+			self.show_atmosphere = bool(int(in_dict["show_atmosphere"]))
+
+		self.show_aer_size = False
+		if "show_aer_size" in in_dict:
+			self.show_aer_size = bool(int(in_dict["show_aer_size"]))
 
 
 		self.h_r_min			= float(in_dict["RS_min_altitude"])  			# Minimum altitude of the scatering layer
@@ -85,8 +87,8 @@ class Atmosphere:
 		if self.aer_complexity > 0:
 			self.aerosol = Aerosol(in_dict)
 
-			self.aerosol.PlotPhaseFunction(["1low", "2high"], [391.4, 557.7, 630.0])
-			plt.show()
+			# self.aerosol.PlotPhaseFunction(["1low", "2high"], [391.4, 557.7, 630.0])
+			# plt.show()
 
 		self.GetAerosolProfil(in_dict)
 
@@ -102,14 +104,16 @@ class Atmosphere:
 		# elif self.wavelength == 391.4:
 		# 	self.depola = 2.954e-2
 
+
 		if mpi_rank == 0 and self.show_cross_section:
-			# self.MakePlots()
 			self.MakeCrossSectionPlot()
 			# plt.show()
 		if mpi_rank == 0 and self.show_atmosphere:
-			# self.MakePlots()
 			self.MakePlots()
 			# plt.show()
+		if mpi_rank == 0 and self.show_aer_size and self.aer_complexity > 0:
+			self.MakeAerSizePlot()
+			plt.show()
 
 
 
@@ -459,6 +463,16 @@ class Atmosphere:
 		ax.set_ylabel(r"Rayleigh volume scattering coefficient $\beta$ (km$^{-1}$)")
 		ax1.set_ylabel(r"Ozone absorption cross section $\sigma$ (cm$^{2}$)")
 
+
+	def MakeAerSizePlot(self):
+		f1, axs = plt.subplots(1, sharey = True, figsize=(16, 8))
+
+		r_list = np.logspace(np.log10(self.aerosol.r_min), np.log10(self.aerosol.r_max), num=100)
+		# rn = rn0*exp(-(log(r/rm))**2/(2*(log(sig))**2))/r/log(sig)/(2*pi)**0.5 pour r<rmax
+		distrib = self.aerosol.rn0 * np.exp(-(np.log(r_list / self.aerosol.rmg))**2 / (2 * self.aerosol.ln_sigma**2)) / r_list / self.aerosol.ln_sigma / np.sqrt(2 * np.pi)
+
+		axs.plot(r_list, distrib)
+		axs.loglog()
 
 	def MakePlots(self):
 		f1, axs = plt.subplots(3, sharey = True, figsize=(16, 8))
@@ -849,8 +863,6 @@ class Aerosol:
 			self.n0 = 3000   	#cm-3
 			self.nB = 10  		#cm-3
 
-
-
 		elif self.model in ["urban", "2-high", "2high"]:
 			self.model = "2high"
 			self.index_re = 1.61
@@ -894,6 +906,73 @@ class Aerosol:
 			self.Hn = 100  	#km
 			self.n0 = 200   	#cm-3
 			self.nB = 200  		#cm-
+
+		elif self.model in ["desert", "des"]:
+			self.index_re = 1.53
+			self.index_im = -0.008 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.188 #micrometers
+			self.ln_sigma = 0.77
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 2	 		#km
+			self.n0 = 150   	#cm-3
+			self.nB = 0  		#cm-3
+
+		elif self.model in ["des2"]:
+			self.index_re = 1.53
+			self.index_im = -0.008 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.188 #micrometers
+			self.ln_sigma = 2
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 2	 		#km
+			self.n0 = 150   	#cm-3
+			self.nB = 0  		#cm-3
+		elif self.model in ["des3"]:
+			self.index_re = 1.53
+			self.index_im = -0.1 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.188 #micrometers
+			self.ln_sigma = 2
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 2	 		#km
+			self.n0 = 150   	#cm-3
+			self.nB = 0  		#cm-3
+		elif self.model in ["des4"]:
+			self.index_re = 1.53
+			self.index_im = -0.008 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.188 #micrometers
+			self.ln_sigma = 0.77
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 2	 		#km
+			self.n0 = 1000   	#cm-3
+			self.nB = 0  		#cm-3
+		elif self.model in ["des5"]:
+			self.index_re = 1.53
+			self.index_im = -0.008 #<0
+
+			self.rn0 = 1
+			self.rmg = 0.188 #micrometers
+			self.ln_sigma = 0.77
+			self.r_min = 0.001
+			self.r_max = 50
+
+			self.Hn = 2	 		#km
+			self.n0 = 500   	#cm-3
+			self.nB = 0  		#cm-3
 		else:
 			self.standard = False
 

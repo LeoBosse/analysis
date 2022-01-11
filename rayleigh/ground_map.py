@@ -72,7 +72,7 @@ class ElevationMap():
 
 	def SetMapProperties(self):
 
-		### COmpute numbers of lines, col and pixels.
+		### Compute numbers of lines, col and pixels.
 		self.nb_pix_lon = int((self.lon_max - self.lon_min) / self.lon_resolution) + 1
 		self.nb_pix_lat = int((self.lat_max - self.lat_min) / self.lat_resolution) + 1
 		self.nb_pix 	= self.nb_pix_lon * self.nb_pix_lat
@@ -101,14 +101,16 @@ class ElevationMap():
 
 		self.map = np.zeros((self.nb_pix_lat, self.nb_pix_lon))
 
+		### Computes longitudes and latitudes of pixel borders and centers
 		self.longitudes = np.linspace(self.lon_min, self.lon_max, self.nb_pix_lon + 1)
 		self.latitudes  = np.linspace(self.lat_max, self.lat_min, self.nb_pix_lat + 1)
 
 		self.mid_longitudes = np.array([(self.longitudes[i] + self.longitudes[i+1]) / 2 for i in range(self.nb_pix_lon)])
 		self.mid_latitudes = np.array([(self.latitudes[i] + self.latitudes[i+1]) / 2 for i in range(self.nb_pix_lat)])
 
-		self.lon_name_list = range(int(self.lon_min * RtoD), int(self.lon_max * RtoD) + 1,  1)
-		self.lat_name_list = range(int(self.lat_max * RtoD), int(self.lat_min * RtoD) - 1, -1)
+		### lon and lat values as int to get the map tiles. These are the coordinates of the upper left corner of the tile (north west corner)
+		self.lon_name_list = range(int(np.floor(self.lon_min * RtoD)), int(np.floor(self.lon_max * RtoD)) + 1,  1)
+		self.lat_name_list = range(int(np.floor(self.lat_max * RtoD)), int(np.floor(self.lat_min * RtoD)) - 1, -1)
 
 		self.nb_tile_lon = len(self.lon_name_list)
 		self.nb_tile_lat = len(self.lat_name_list)
@@ -127,7 +129,6 @@ class ElevationMap():
 			return True
 		else:
 			return False
-
 
 	def GetAltitudeFromLonLat(self, lon, lat, unit=1000):
 		"""Altitude of given coord above sea level.
@@ -229,8 +230,10 @@ class ElevationMap():
 
 
 	def LoadSingleTile(self, n_lon, n_lat):
+		"""Load a single tile and returns it, as well as its coordinates. Input parameters are int for lon and lat of the tile."""
+
 		file_name = self.GetNameFromLonLat(n_lon, n_lat)
-		# print(file_name)
+		# if mpi_rank==0: print(file_name)
 
 		try:
 			tile = gdal.Open(self.path + file_name, gdal.GA_ReadOnly) #get raster objsect from tif file
@@ -238,20 +241,27 @@ class ElevationMap():
 			print("WARNING: Elevation tile not found:", self.path + file_name)
 			return np.zeros((1,1)), self.A_lon, self.A_lat
 
+		# Shape of the map, width and height
 		nb_lon = tile.RasterXSize
 		nb_lat = tile.RasterYSize
 
+		### Get info on the tile:
 		tile_info = tile.GetGeoTransform()
+		# if mpi_rank==0: print("tile info", tile_info)
+		origin_lon = tile_info[0]	 * DtoR #western border
+		origin_lat = tile_info[3]	 * DtoR #northern border
+		pixel_width = tile_info[1]	 * DtoR #pixel size in lon > 0
+		pixel_height = tile_info[5]	 * DtoR #pixel size in lat < 0 because origin is lat_max !!!
 
-		# print("tile info", tile_info)
-		origin_lon = tile_info[0]	 * DtoR
-		origin_lat = tile_info[3]	 * DtoR
-		pixel_width = tile_info[1]	 * DtoR
-		pixel_height = tile_info[5]	 * DtoR
+		# if mpi_rank==0: print(origin_lon*RtoD, origin_lat*RtoD, pixel_width*RtoD, pixel_height*RtoD)
 
+		### Function to pass from lon, lat to row and column index
 		LonToCol = lambda l: int((l - origin_lon) / pixel_width)
-		LatToRow = lambda l: int((l - origin_lat) / pixel_height)
+		LatToRow = lambda l: int((l - origin_lat) / pixel_height) #both are < 0, so row is OK
 
+		# Find min and max values for lon and lat depending on the instrument position and radius of the map.
+		# if mpi_rank==0: print("test", self.A_lon*RtoD - DistToAngle(self.radius, lat=self.A_lat, az = 90*DtoR)*RtoD, origin_lon*RtoD, self.A_lon*RtoD + DistToAngle(self.radius, lat=self.A_lat, az = 90*DtoR)*RtoD, origin_lon*RtoD + pixel_width * nb_lon*RtoD)
+		# if mpi_rank==0: print("Alon, Alat", self.A_lon*RtoD, self.A_lat*RtoD, DistToAngle(self.radius, lat=self.A_lat, az = 90*DtoR)*RtoD, DistToAngle(self.radius)*RtoD)
 		lon_min = max(self.A_lon - DistToAngle(self.radius, lat=self.A_lat, az = 90*DtoR), origin_lon)
 		lon_max = min(self.A_lon + DistToAngle(self.radius, lat=self.A_lat, az = 90*DtoR), origin_lon + pixel_width * nb_lon)
 
@@ -259,7 +269,12 @@ class ElevationMap():
 		lat_max = min(self.A_lat + DistToAngle(self.radius), origin_lat)
 
 		nb_lon  = int((lon_max - lon_min) / pixel_width)
-		nb_lat  = int((lat_min - lat_max) / pixel_height)
+		nb_lat  = int((lat_min - lat_max) / pixel_height) #inversed because pixel_height < 0
+
+		# if mpi_rank==0:
+		# 	print("LON", lon_min*RtoD, lon_max*RtoD)
+		# 	print("LAT", lat_min*RtoD, lat_max*RtoD)
+		# 	print(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat)
 
 		tile = tile.GetRasterBand(1).ReadAsArray(LonToCol(lon_min), LatToRow(lat_max), nb_lon, nb_lat)
 
@@ -272,10 +287,13 @@ class ElevationMap():
 		return tile, lon_min, lat_max
 
 	def LoadMultipleTiles(self):
-		for tile_lon, tile_lat in self.tiles_coord:
-			tile, lon_min, lat_max = self.LoadSingleTile(tile_lon, tile_lat)
+		"""For a large map made of several tiles, load all accessible tiles and merge them into one map"""
 
-			tile_line, tile_col = self.GetIndexFromLonLat(lon_min, lat_max)
+		### Loop through all tiles via there coord in lon, lat (as int)
+		for tile_lon, tile_lat in self.tiles_coord:
+			tile, lon_min, lat_max = self.LoadSingleTile(tile_lon, tile_lat) #Get tile and position of the upper left corner, lon_min (left of the map, west), lat_max (top of the map, north)
+
+			tile_line, tile_col = self.GetIndexFromLonLat(lon_min, lat_max) # map index of the tile upper left corner
 			nb_lat, nb_lon = tile.shape
 
 			# print("tile.shape", tile.shape)
@@ -283,6 +301,7 @@ class ElevationMap():
 			#
 			# print(self.map.shape, tile_line, tile_line + nb_lat, tile_col, tile_col + nb_lon)
 
+			### Merge tile into the final map
 			self.map[tile_line : tile_line + nb_lat, tile_col : tile_col + nb_lon] = tile
 
 
@@ -316,18 +335,22 @@ class ElevationMap():
 			name += "N"
 		else:
 			name += "S"
-		name += str(int(lat)).zfill(3)
+		name += str(int(abs(lat))).zfill(3)
 
 		if lon >= 0:
 			name += "E"
 		else:
 			name += "W"
-		name += str(int(lon)).zfill(3)
+		name += str(int(abs(lon))).zfill(3)
 
 		return name
 
 class GroundMap:
 	def __init__(self, in_dict, Nb_a_pc, Nb_e_pc):
+
+		self.show_ground_albedo = False
+		if "show_ground_albedo" in in_dict:
+			self.show_ground_albedo = bool(int(in_dict["show_ground_albedo"]))
 
 		self.path = in_dict["ground_path"]
 		self.file = in_dict["ground_file"]
@@ -356,9 +379,9 @@ class GroundMap:
 			self.LoadMap(Nb_a_pc, Nb_e_pc)
 
 			# if mpi_rank == 0:
-			# 	self.MakeInitialMapPlot()
+				# self.MakeInitialMapPlot()
 			# 	# self.MakePlots(0, 0)
-			# 	plt.show()
+				# plt.show()
 
 	# def DistToAngle(self, dist, lat = 0, az = 0, R = RT):
 	# 	return (dist  / R) * np.sqrt(np.cos(az)**2 + np.sin(az)**2 / np.cos(lat)**2)
