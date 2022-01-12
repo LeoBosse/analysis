@@ -8,6 +8,9 @@ folder="ptcu/20191021_Sob/"
 
 folder="ptcu/20191022_Sob/"
 ../vendange/main.py $folder"or_a00_e45" -s False
+../vendange/main.py $folder"or_a90_e45" -s False
+../vendange/main.py $folder"or_a180_e45" -s False
+../vendange/main.py $folder"or_a180_e90" -s False
 ../vendange/main.py $folder"or_rot_a00" -s False
 ../vendange/main.py $folder"or_rot_a90" -s False
 ../vendange/main.py $folder"or_rot_e45" -s False

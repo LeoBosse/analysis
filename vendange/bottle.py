@@ -4,16 +4,18 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from utils import *
 from scipy import signal
 import sys as sys
 import os
 from copy import deepcopy
 from subprocess import call
-import observation
-import geometry
 import datetime as dt
 import chaosmagpy as chaos
+
+import observation
+import geometry
+from utils import *
+from vendange_configuration import *
 
 ### Bottle classes.
 
@@ -53,12 +55,13 @@ class Bottle:
 			self.observation_type = "fixed"
 		print("INFO: Observation type is", self.observation_type)
 
-
+		self.NoVref = True
 		try:
 			if self.input_parameters["I_ref"] == "off":
 				self.NoVref = True
 		except:
 			self.NoVref = False
+
 		try:
 			self.saving_name = self.input_parameters["saving_name"]
 			self.saving_name += "_voie" + str(self.line)
@@ -217,9 +220,8 @@ class Bottle:
 
 		if not self.from_txt and self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
 			# if self.DateTime() < dt.datetime(year=2020, month=10, day=1):
-			self.AoLP_correction = 0 # USE only for data observed and downloaded BEFORE October 2020!!!! For everything observed after that or doawnloaded via KVA20, you have to apply the correction below
-			# else:
-				# self.AoLP_correction = -(self.config['IS_PolarizerOffset' + str(self.line)]) * DtoR #This is the nor now (after oct 2020)
+			self.AoLP_correction = 0 # USE only for data downloaded from the database BEFORE October 2020!!!! For everything observed after that or downloaded via KVA20, you have to apply the correction below
+			# self.AoLP_correction = -(self.config['IS_PolarizerOffset' + str(self.line)]) * DtoR #This is the norm now (for all data downloaded after oct 2020)
 
 			# self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 45) * DtoR ## This was the formula apllied to convert all data from before oct 2020 in the database.
 
@@ -228,6 +230,7 @@ class Bottle:
 			self.AoLP_correction = float(self.input_parameters["AoLP_correction"]) * DtoR
 		else:
 			self.AoLP_correction = 0
+		print(self.config['IS_PolarizerOffset1'])
 		print("AoLP correction:", self.line, self.AoLP_correction * RtoD)
 
 
@@ -627,6 +630,8 @@ class Bottle:
 		print("DoLP max:", np.max(self.smooth_DoLP))
 		print("DoLP stddev:", np.std(self.smooth_DoLP))
 		print("AoLP stddev:", np.std(self.smooth_AoLP) * RtoD)
+		print("Averages: I0, DoLP, AoLP:", self.I0_average, self.DoLP_average, self.AoLP_average*RtoD)
+
 		if self.observation_type == "fixed":
 			print("AoBlos:", self.AoBlos * RtoD)
 		print("*********************************************")
@@ -783,7 +788,6 @@ class PTCUBottle(Bottle):
 			nb_filters = 4
 
 		for r in rest:
-			print("R", r)
 			if len(r) == nb_filters and np.all([a in filters_list for a in r]):
 				if self.instrument_name == "carmen" or self.instrument_name == "fake_ptcu":
 					self.filters = r
@@ -793,12 +797,12 @@ class PTCUBottle(Bottle):
 					self.filters = r[self.line - 1]
 				# print("FILTERS:", r, self.filters)
 
-			elif r[0] == "a":
-				self.azimut = float(r[1:]) * DtoR
-			elif r[0] == "e":
-				self.elevation = float(r[1:]) * DtoR
-			else:
-				self.com += "_" + r
+			# elif r[0] == "a":
+			# 	self.azimut = float(r[1:]) * DtoR
+			# elif r[0] == "e":
+			# 	self.elevation = float(r[1:]) * DtoR
+			# else:
+			# 	self.com += "_" + r
 
 		print("SetInfoFromDataFileName", self.instrument_name, self.date, self.location, self.filters, self.azimut*RtoD, self.elevation*RtoD, self.com)
 
@@ -835,11 +839,11 @@ class PTCUBottle(Bottle):
 		self.all_times = self.GetTimeFromDateTime(date)
 
 	def SetTimes(self):
-		try:
-			self.time_stamp = str(self.config["Timestamp"]).split("\"")[1] #When importing config file from mysql workbench, timestamp is between "", but when using python script, there is no more ""
-		except:
-			self.time_stamp = str(self.config["Timestamp"]).split("\'")[1]
-
+		# try:
+		# 	self.time_stamp = str(self.config["Timestamp"]).split("\"")[1] #When importing config file from mysql workbench, timestamp is between "", but when using python script, there is no more ""
+		# except:
+		# 	self.time_stamp = str(self.config["Timestamp"]).split("\'")[1]
+		self.time_stamp = self.config["Timestamp"]
 		print(self.time_stamp)
 		#Date and time of first rotation (before deleting head_jump)
 
@@ -1002,13 +1006,19 @@ class PTCUBottle(Bottle):
 		raw_data = np.genfromtxt(data_file, delimiter = d, skip_header=1)
 
 
-		if self.instrument_name in ["corbel", "ptcu_v2"]:
-			array_type = [('IDConfiguration',float),('Timestamp','S100'), ('CM_ID', float),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),('IS_ConverterGain1',float),('IS_ConverterGain2',float),('IS_ConverterGain3',float),('IS_ConverterGain4',float),("IS_ConverterOffset1", float),("IS_ConverterOffset2", float),("IS_ConverterOffset3", float),("IS_ConverterOffset4", float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float), ('IS_IpAddress',float)]
-		else:
-			array_type = [('IDConfiguration',float),('Timestamp','S100'),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),("IS_ConverterOffset4", float),("IS_ConverterOffset3", float),("IS_ConverterOffset2", float),("IS_ConverterOffset1", float),('IS_EngineTicksPerTour',float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float), ('IS_IpAddress',float)]
+		# if self.instrument_name in ["corbel", "ptcu_v2", "gdcu"]:
+		# 	array_type = [('IDConfiguration',float),('Timestamp','S100'), ('CM_ID', 'S100'),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),('IS_ConverterGain1',float),('IS_ConverterGain2',float),('IS_ConverterGain3',float),('IS_ConverterGain4',float),("IS_ConverterOffset1", float),("IS_ConverterOffset2", float),("IS_ConverterOffset3", float),("IS_ConverterOffset4", float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float), ('IS_IpAddress',float)]
+		# else:
+		# 	array_type = [('IDConfiguration',float),('Timestamp','S100'),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),("IS_ConverterOffset4", float),("IS_ConverterOffset3", float),("IS_ConverterOffset2", float),("IS_ConverterOffset1", float),('IS_EngineTicksPerTour',float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float), ('IS_IpAddress',float)]
+		#
+		# print("DEBUG", config_file, len(array_type))
+		# configuration = np.genfromtxt(config_file, dtype=array_type, delimiter=",", skip_header=1)
+		conf_df = pd.read_csv(config_file, sep=",")
+		configuration = dict()
+		for n in conf_df.columns:
+			configuration[n] = conf_df[n][0]
 
-		print("DEBUG", config_file, len(array_type))
-		configuration = np.genfromtxt(config_file, dtype=array_type, delimiter=",", skip_header=1)
+		print('configuration', configuration)
 
 
 		### For new hdf5 files

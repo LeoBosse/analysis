@@ -1,7 +1,7 @@
 #####################################################################################################################################
 ### 	Template file for the Vendange software.																																										###
 ### 	A line must be of the form:  <parameter name> <space> <paramter value> <space> # <comments>																	###
-### 	Comments at the end of a line do not need a "#", the space is enough, but it is better for clarity.													###
+### 	Comments at the end of a line do not need a "#", the space is enough, but it is better for human clarity.													###
 ### 	To comment a line, use a "#" at the begining.																																								###
 ### 	This file is used as a default setting when importing data with the "recolte.py" script (for database version V2 or lower). ###
 #####################################################################################################################################
@@ -21,8 +21,8 @@ observation_type fixed  #Default "fixed". Or "fixed_[elevation, azimut]_[discret
 #discrete_rotation_times 0
 #discrete_rotation_elevations 0
 
-pollution_source_azimut 0				# To compute pollution AoLP for a single point source.
-pollution_source_elevation 0		# To compute pollution AoLP for a single point source.
+pollution_source_azimut 0				# To compute pollution AoLP for a single point source using Rayleigh diffusion theory.
+pollution_source_elevation 0		# To compute pollution AoLP for a single point source using Rayleigh diffusion theory.
 
 rotation_per_sec 2 #Rotation speed of the polarizing filter in Hz
 

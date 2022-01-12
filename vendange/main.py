@@ -10,22 +10,25 @@ rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 ## for Palatino and other serif fonts use:
 #rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=False)
-from utils import *
-from rotation import *
-from bottle import *
-from Mixer import *
-from MagData import *
 from scipy import signal
 import sys
 import os
 import subprocess as subp
 
+from utils import *
+from rotation import *
+from bottle import *
+from Mixer import *
+from MagData import *
 # import Geometry.Leo.src.geometry as geometry
 import observation as observation
 # import Geometry.Leo.src.rayleigh as rayleigh
 
+from vendange_configuration import *
+
 ### Full path to where the data are stored (everything that comes before what is written in the argument)
-data_path = "/home/bossel/These/Analysis/data/"
+data_path = global_configuration.data_path
+# data_path = "/home/bossel/These/Analysis/data/"
 
 ### Manage the arguments. Should use only one argument: the name of the input file, without the path nor the extensions. e.g. 'ptcu20181115' will use the input file 'src/input_files/ptcu20181115.in'. Can add the data files to use as well, but I'm not sure this is working properly.
 arguments = sys.argv

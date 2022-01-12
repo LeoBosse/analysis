@@ -11,21 +11,24 @@ rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 ## for Palatino and other serif fonts use:
 #rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=False)
-from utils import *
-from rotation import *
-from bottle import *
 from scipy import signal
 import sys
 import os
 from subprocess import call
 import datetime as time
 
+from utils import *
+from rotation import *
+from bottle import *
+from vendange_configuration import *
+
 
 class EqCurrent:
 	def __init__(self, bottle = None, file = None, file_type = None):
 		print("Initialazing Equivalent current object")
 
-		self.path = "/home/bossel/These/Analysis/data/equivalent_currents/"
+		self.path = global_configuration.eq_current_data_path
+		# self.path = "/home/bossel/These/Analysis/data/equivalent_currents/"
 		self.file = file
 		self.files = []
 		self.valid = True
@@ -129,8 +132,9 @@ class EqCurrent:
 					print(f"Equivalent current file valid. {self.path + f}")
 				except:
 					print(f"Equivalent current file not valid. {self.path + f}")
-					# self.valid = False
 					# return 0
+			if data.empty:
+				self.valid = False
 			# 	print(data)
 			# print(data)
 			data = data.reset_index(drop=True)
@@ -237,8 +241,17 @@ class EqCurrent:
 		return DoLP, AoLP #[0-1] and radians
 
 
-	def GetApparentAngle(self, obs, shift=0):
+	def GetApparentAngle(self, obs, shift=0, Jup_mode=False):
 		self.data["AoJapp"], self.data["AoJlos"] = EqCurrent.ApparentAngle(self.data["Ju"], self.data["Je"], self.data["Jn"],  obs, shift)
+
+		if Jup_mode == "perp":
+			self.data["AoJapp"] += np.pi/2
+			if not shift:
+				# current.data["AoJapp"] = app_angle
+				app_angle = SetAngleBounds(self.data["AoJapp"], -np.pi/2, np.pi/2)
+			else:
+				# current.data["AoJapp"] = app_angle
+				app_angle = SetAngleBounds(self.data["AoJapp"], 0, np.pi)
 
 
 	@staticmethod
@@ -266,15 +279,53 @@ class EqCurrent:
 		return app_angle, J_los_angle
 
 
-	def FindJup(self, obs, AoLP_array):
+	def FindJup(self, obs, AoLP_array, mode = "para"):
+		"""
+		From an observation object (pointing direction), a horizontal current and an AoLP, computes the vertical current needed so that the apparent angle of the current is aligned on the AoLP.
+		The vertical component is directly added to the EqCurrent object data array. Update the norm and the elevation of the current.
+		"""
+
+		print("Computing vertical current...")
+
 		Ce, Se, Ca, Sa = obs.GetTrigo()
 
 		tanA = np.tan(AoLP_array)
 
-		Ju = lambda Je, Jn, tanA: (Je * (Se*Sa - Ca / tanA) + Jn * (Se*Ca + Sa / tanA)) / Ce
-		Ju_list = Ju(self.data["Je"], self.data["Jn"], tanA)
+		### Transform the current vector from the up-east-north coordinates at the emission (H) to the uen coordinates at the instrument in A, then in xyz of the instrument.
+		R_HA = obs.GetTransormationMatrixHA()
+		R_AI = obs.GetRotMatrixAI()
+		R_HI = R_AI @ R_HA
 
-		self.data["Ju"] = np.where(abs(Ju_list) < 12000, Ju_list, np.zeros_like(self.data["Je"]))
+		### Transforms the current vector in H to the instrument coordiates
+		J_H = np.array((np.zeros(len(self.data["Je"])), self.data["Je"], self.data["Jn"]))
+		J_I = R_HI @ J_H
+		Jx, Jy, Jz = J_I[0], J_I[1], J_I[2]
+
+		### Transforms the up normal vector (1,0,0) in H to the instrument coordiates
+		Up_H = np.array([[1], [0], [0]])
+		Up_I = R_HI @ Up_H
+		Ux, Uy, Uz = Up_I[0], Up_I[1], Up_I[2]
+
+
+		if mode.lower() == "para":
+		### We want to find x in J + x * Up. x is the same in H or I coordinat system.
+		### We want that tan(AoJ) = tan(AoLP) = tanA = (Jy + x * Upy) / ((Jz + x * Upz)) (in the I coordinates)
+		### So that x = (tanA * Jz - Jy) / (Uy - tanA * Uz)
+			Findx = lambda Jy, Jz, Uy, Uz, tanA: (tanA * Jz - Jy) / (Uy - tanA * Uz)
+		elif mode.lower() == "perp":
+			Findx = lambda Jy, Jz, Uy, Uz, tanA: - (tanA * Jy + Jz) / (Uz + tanA * Uy)
+		else:
+			raise Exception("Error: Incorrect mode to compute Jup for equivalent currents. Correct strings are :perp or para")
+
+		### Now in the Reference of H, the the new J is just (x, Je, Jn)
+		Ju_list = Findx(Jy, Jz, Uy, Uz, tanA)
+
+
+		### Old formula when considering that the A and H coordinates are equal (instrument points to the zenith for example)
+		# Ju = lambda Je, Jn, tanA: (Je * (Se*Sa - Ca / tanA) + Jn * (Se*Ca + Sa / tanA)) / Ce
+		# Ju_list = Ju(J_Ae, J_An, tanA)
+
+		self.data["Ju"] = np.where(abs(Ju_list) < 1, Ju_list, np.zeros_like(self.data["Je"]))
 		# self.data["Ju"] = Ju_list
 
 		self.data["J_norm"] = np.sqrt(self.data["Jn"] ** 2 + self.data["Je"] ** 2 + self.data["Ju"] ** 2)
@@ -308,7 +359,7 @@ class EqCurrent:
 
 		return new_data
 
-	def MakePlot(self, show=False, app_angle = True, xaxis=False, div=1):
+	def MakePlot(self, show = False, app_angle = True, xaxis = False, div = 1):
 		f1, axs1 =  plt.subplots(3, sharex=True, figsize=(16, 8))
 		f2, axs2 =  plt.subplots(1, sharex=True, figsize=(16, 8))
 
@@ -322,6 +373,7 @@ class EqCurrent:
 		axs1[0].plot(self.x_axis, self.data["Jaz"] * RtoD)
 		axs1[1].plot(self.x_axis, self.data["Jel"] * RtoD)
 		axs1[2].plot(self.x_axis, self.data["J_norm"])
+
 		if app_angle:
 			# comp = (self.data["Jn"] / self.data["Je"]) * RtoD
 			# axs2.plot(self.data["seconds"], comp, color = "blue", label = "AoJapp - AoJlos")
@@ -338,6 +390,7 @@ class EqCurrent:
 		# axs1[0].set_ylabel("Jn")
 		# axs1[1].set_ylabel("Je")
 		# axs1[2].set_ylabel("Ju")
+
 		axs1[0].set_ylabel("Jaz")
 		axs1[1].set_ylabel("Jel")
 		axs1[2].set_ylabel("J norm")
@@ -361,7 +414,8 @@ class MagData:
 
 		print("Creating Magnetometer Data Object")
 
-		self.data_path = "/home/bossel/These/Analysis/data/magnetometer/"
+		self.data_path = global_configuration.magnetometer_data_path
+		# self.data_path = "/home/bossel/These/Analysis/data/magnetometer/"
 
 		self.file = self.data_path
 		if bottle.location.lower() in ["tromso", "skibotn", "skibotnsud", "skibotnnord", "kilpisjarvi"]:

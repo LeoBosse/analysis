@@ -5,9 +5,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
-from utils import *
-from rotation import *
-from bottle import *
 from scipy import signal, io, misc
 import sys
 import os
@@ -17,14 +14,20 @@ import datetime as dtm
 import imageio
 # import skimage as ski
 
+from utils import *
+from rotation import *
+from bottle import *
 
+from vendange_configuration import *
 
 class AllSkyData:
 	def __init__(self, bottle, filename=None):
 
 		print("Creating AllSky Imager Data Object")
 
-		self.data_path = "/home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/"
+		# self.data_path = data_path + "allsky_camera/tid.uio.no/plasma/aurora/"
+
+		self.data_path = global_configuration.allsky_data_path
 
 		no_data = False
 

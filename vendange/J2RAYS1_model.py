@@ -13,9 +13,6 @@ rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 ## for Palatino and other serif fonts use:
 #rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=False)
-from utils import *
-from rotation import *
-from bottle import *
 from scipy import signal
 import sys
 import os
@@ -23,8 +20,13 @@ from subprocess import call
 import datetime as time
 import scipy.optimize as opt #import curve_fit
 
+from utils import *
+from rotation import *
+from bottle import *
 from observation import *
 from MagData import *
+
+from vendange_configuration import *
 
 
 class Model:

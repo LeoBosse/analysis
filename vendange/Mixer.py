@@ -15,6 +15,10 @@ matplotlib.rcParams['svg.fonttype'] = 'none'
 import datetime as dt
 
 import chaosmagpy as chaos
+from scipy import signal
+import sys
+import os
+from subprocess import call
 
 from utils import *
 from rotation import *
@@ -23,10 +27,8 @@ from AllSkyData import *
 from eiscat_data import *
 from MagData import *
 from J2RAYS1_model import *
-from scipy import signal
-import sys
-import os
-from subprocess import call
+
+from vendange_configuration import *
 
 class Mixer:
 	def __init__(self, bottles, mag_data=False, comp_bottles=[], mode = "default"):
@@ -36,6 +38,10 @@ class Mixer:
 		self.mag_data = mag_data
 
 		for ib,  bottle in enumerate(self.bottles):
+
+			self.SetGraphParameter(bottle)
+			self.MakeXAxis(bottle)
+
 			if self.mag_data is not False:
 				self.mag_data.StripTime(bottle.DateTime("start"), bottle.DateTime("end"))
 
@@ -48,18 +54,20 @@ class Mixer:
 			# print("DEBUG:", self.eiscat_data.valid )
 
 			self.eq_currents = EqCurrent(bottle, file_type=None)
+			print("Equivalent current is valid? ", bool(self.eq_currents.valid))
+
 			if self.eq_currents.valid and bottle.observation_type == "fixed":
 
-				# AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
-				# self.eq_currents.FindJup(bottle.observation, AoLPs)
+				AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
+				if self.compute_Jup:
+					self.eq_currents.FindJup(bottle.observation, AoLPs, mode = self.compute_Jup)
 
-				self.eq_currents.GetApparentAngle(bottle.observation)#, shift=bottle.graph_angle_shift)
+				self.eq_currents.GetApparentAngle(bottle.observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
+
 				self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
 
 				self.eq_currents.SaveTXT()
 
-			self.SetGraphParameter(bottle)
-			self.MakeXAxis(bottle)
 
 			if self.show_RS_model and self.RS_model_files:
 				self.J2RAYS1_models = [Model.InitFromBottle(bottle, f, time_divisor = self.divisor, x_axis = self.x_axis_list, shift = self.shift_model) for i, f in enumerate(self.RS_model_files[bottle.line - 1])]
@@ -113,8 +121,7 @@ class Mixer:
 				# best_param = (2.90791549e+00, 1.97557372e+01, 9.26151992e-15, 1.00000000e+00)  # with Equivalent current
 
 
-				Model.MakeParamSpacePlot(best_param, (0,1), bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False, least_square_factors = [1, 1, 1])#, eq_current = self.eq_currents.GetInterpolation(self.J2RAYS1_models[0].x_axis, bottle.observation, divisor=self.divisor))
-
+				# Model.MakeParamSpacePlot(best_param, (0,1), bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False, least_square_factors = [1, 1, 1])#, eq_current = self.eq_currents.GetInterpolation(self.J2RAYS1_models[0].x_axis, bottle.observation, divisor=self.divisor))
 
 
 				#Build a model with equivalent current object
@@ -215,8 +222,8 @@ class Mixer:
 			# if self.show_RS_model:
 			# 	self.CompareRayleigh(bottle, self.J2RAYS1_model)
 			if self.make_optional_plots:
-				self.MakeSNratio(bottle)
 				self.MakeI0SNratio(bottle)
+				self.MakeSNratio(bottle)
 				if self.eq_currents.valid:
 					self.eq_currents.MakePlot()
 
@@ -373,53 +380,59 @@ class Mixer:
 					ax.grid(True, zorder=-10)
 
 	def SetGraphParameter(self, bottle, comp = False):
-		self.langue = "fr" #"fr" or "en"
+		"""
+		Use the attributes defined here to combine your plots, hide them, add error bars or other instrument data.
+		For a color control, go to the SetColors() function.
+		"""
+		self.langue = "en" #Language used for the plots. "fr" or "en"
 
-		self.marker_size = 3
-		self.single_star_size = self.marker_size*5
+		self.marker_size = 3 # Size of the points ised for all plots
+		self.single_star_size = self.marker_size*5 # When plotting the apparent angle of B AoBapp or the light pollution Rayleighj angle AoRD, control the size of the ztar markers.
 
-		self.show_Ipola = False
-		self.show_Iref = False
+		self.show_Ipola = False # Show the plot for I0 * DoLP, i.e. the flux of polarized light
+		self.show_Iref = False # For CarmenCru only. Show the reference channel with no polarizing lens
 
-		self.show_time = not comp
-		self.time_format = "UT" #LT or UT
-		self.time_label = "UTC"
+		self.show_time = not comp #Don't touch!
+		self.time_format = "UT" #LT or UT. Self explainatory. Control the time format of the x-axis
+		self.time_label = "UTC" # The title of the time x-axis
 
-		self.show_raw_data = False
-		self.show_smooth_data = True
+		self.show_raw_data = True # Show the data with no slidding average. All rotations of the polarizing filter. In black
+		self.show_smooth_data = True # Show smoothed data (averageed over the time window defined in the input file)
 
-		self.show_error_bars 		= True
-		self.show_smooth_error_bars = True
+		self.show_error_bars 		= True # Show error bars for the raw cru data. in grey
+		self.show_smooth_error_bars = True # Show error bars for the raw cru data. in grey
 		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
-		self.show_SN = False
-
-		self.show_avg_I0 = False
-		self.show_avg_Iref = False
-		self.show_avg_DoLP = False
-		self.show_avg_AoLP = False
-
-		#If True Will show the azimut on the xaxis instead of time for rotations
-		self.xaxis_azimut = True
-
-		self.show_legend = False
-
-		self.show_allsky = False
-		self.show_eiscat = False #True
-
-		self.show_mag_data 	= True #True
-		self.show_AoBapp 	= True
-		self.show_AoRD	 	= True
-		self.show_currents	= True #True
 
 
-		self.make_optional_plots = True # True
 
-		self.show_grid_lines = True
+		self.show_avg_I0 = False #Show the flux average over the whole observation
+		self.show_avg_Iref = False #Only for Carmen Cru. Show the reference flux average over the whole observation
+		self.show_avg_DoLP = False #Show the DoLP for a smoothed data point obtained by averaging all data over the whle observation. It is different from the DoLP average because it is done on the V, Vcos and Vsin values.
+		self.show_avg_AoLP = False #Show the AoLP for a smoothed data point obtained by averaging all data over the whle observation. It is different from the AoLP average because it is done on the V, Vcos and Vsin values.
 
 
-		self.show_RS_model		= False
+		self.xaxis_azimut = True #only for almucantars. If True will show the azimut on the xaxis instead of time .
 
-		self.fit_RS_model_to_flux = False
+		self.show_legend = False #Show the legend bow over the plots
+
+		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
+		self.show_eiscat = False # If available, plot the eiscat Ne over the cru flux. Over things are possible if you want, just search for "show_eiscat" in the Mixer.MakePlot() function and have fun :)
+
+		self.show_mag_data 	= False # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
+		self.show_AoBapp 	= False # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
+		self.show_AoRD	 	= False # If True, show the AoLP produced by a point source defined in the input.in file.
+
+		self.show_currents	= True # If available, show the apparent angle of the equivalent currents from Magnar.
+		self.compute_Jup	= "perp" #False, "para" or "perp". Will add a vertical component to the equivalent current so that it match the AoLP. If para: the AoLP is parallel to the current. If perp, the AoLP is perpendicular to the current.
+
+		self.show_grid_lines = True # Just to have a nicer grpah. self explainatory
+
+		self.make_optional_plots = True # If True, will plot a lots of optional plots showing all kind of things. See the end of the __init__() function where it is used.
+		self.show_SN = True # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
+
+		### The following paramters are used when comparing the data with the POMEROL model.
+		self.show_RS_model		= False #Show or not the POMEROL model graphs.
+		self.fit_RS_model_to_flux = True
 		self.fit_func = "GS" #"GS" for Ground+Sky. "GSK" for Ground+Sky+background
 
 		self.add_model = [] #Will add the 1st two models m1 and m2 together with a linear combination a*m1 + (1-a)m2
@@ -427,7 +440,7 @@ class Mixer:
 
 		self.AddDirectPola = [] #[0.15]
 
-		self.show_model_list = []
+		self.show_model_list = [-1]
 
 		self.addFDA_to_model = []
 
@@ -482,8 +495,37 @@ class Mixer:
 		# # self.show_model_list = [0, 2]
 
 
+		# tmp_path = "/home/bossel/These/Analysis/results/rayleigh/Sob/"
+		# self.RS_model_files = [ [tmp_path + "20191021_m_rot_e45_grd_Noaer.txt"]]
+		# self.RS_model_files = [ [tmp_path + "20191022_r_rot_e45_grd_Noaer.txt"]]
+		# self.RS_model_files = [ [tmp_path + "20191023_b_rot_e45_grd_Noaer.txt"]]
+		# self.RS_model_files = [ [tmp_path + "20191023_v_rot_e45_grd_Noaer.txt"]]
+		# self.RS_model_files = [ [tmp_path + "20191022_o_rot_e45_grd_Noaer.txt"]]
+
+		# self.RS_model_files = [ [tmp_path + "20191022_o_rot_e45_grd_Noaer.txt",
+		# 						 tmp_path + "20191022_o_rot_e45_grd_aerMAR.txt",
+		# 						 # tmp_path + "20191022_o_rot_e45_grd_aerRUR.txt",
+		# 						 # tmp_path + "20191022_o_rot_e45_grd_aerURB.txt",
+		# 						 # tmp_path + "20191022_o_rot_e45_grd_aerDES2.txt",
+		# 						 # tmp_path + "20191022_o_rot_e45_grd_aerDES3.txt",
+		# 						 tmp_path + "20191022_o_rot_e45_grd_aerDES.txt",
+		# 						 tmp_path + "20191022_o_rot_e45_grd_aerDES4.txt",
+		# 						 tmp_path + "20191022_o_rot_e45_grd_aerDES5.txt"],
+		# 						[]]
+		# self.addFDA_to_model = [[(0, 0, 0),
+		# 						 (9.3, 0, 0),
+		# 						 # (38.5, 0, 0),
+		# 						 # (76.3, 0, 0),
+		# 						 # (497, 0, 0),
+		# 						 # (429, 0, 0),
+		# 						 (25.5, 0, 0),
+		# 						 (332, 0, 0),
+		# 						 (220, 0, 0)]]  * len(self.RS_model_files)
+
+
+
 		tmp_path = "/home/bossel/These/Documentation/Mes_articles/auroral_pola/"
-		### 20200227 XYvm e52 Direct Po la
+		### 20200227 XYvm e52 Direct Pola
 		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
 		# 						tmp_path + "sky_only/uni_sky_o_e52_aero_MAR1_albedo.txt"],
 		# 						[tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
@@ -495,13 +537,12 @@ class Mixer:
 		# 						tmp_path + "sky_only/20200227_m_e52_sky_only_aero_MAR1_albedo_skySHIFT20.txt"]]#,
 		# 						# tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo_Dpola-0.310.5_perp_rayleigh.txt"]]
 
-		# For turquoise bottle (3rd)
+		# For turquoise bottle (2nd)
 		# self.AddDirectPola = [0.4]
 		# self.add_model = [(0.25, 0.75)]
 		# self.show_model_list = [-1]
 		# self.fit_RS_model_to_flux = True
 		# self.fit_func = "GS" #"GSK" for Ground+Sky+background
-
 
 		# For green bottle (3rd)
 		# self.AddDirectPola = [0.4]
@@ -517,17 +558,17 @@ class Mixer:
 		# self.addFDA_to_model = [[(0, 0, 0), (6, 0, 0), (0, 0, 0), (6, 0, 0), (5.2, 0, 0)]]  * len(self.RS_model_files)
 
 		### 20200227 XYvm e52 best fit
-		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
-		# 						tmp_path + "sky_only/uni_sky_o_e52_aero_MAR1_albedo.txt"],
-		# 						[tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
-		# 						tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
-		# 						# tmp_path + "t_e52_grd_only_aero_MAR1x1702.6351068301055+uni_sky_t_e52_aero_MAR1_albedox63627.19976961118"], #MANUAL fit because of the East flux jump. Coeff are : 4335.3242154348345 * 0.39273535777746454 and 25450.87990784447 * 2.5.
-		# 						# [tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
-		# 						# tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
-		# 						[tmp_path + "grd_only/v_e52_grd_only_aero_MAR1.txt",
-		# 						tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo.txt"],
-		# 						[tmp_path + "grd_only/m_e52_grd_only_aero_MAR1.txt",
-		# 						tmp_path + "sky_only/20200227_m_e52_sky_only_aero_MAR1_albedo.txt"]]
+		self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
+								tmp_path + "sky_only/uni_sky_o_e52_aero_MAR1_albedo.txt"],
+								[tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
+								tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
+								# tmp_path + "t_e52_grd_only_aero_MAR1x1702.6351068301055+uni_sky_t_e52_aero_MAR1_albedox63627.19976961118"], #MANUAL fit because of the East flux jump. Coeff are : 4335.3242154348345 * 0.39273535777746454 and 25450.87990784447 * 2.5.
+								# [tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
+								# tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
+								[tmp_path + "grd_only/v_e52_grd_only_aero_MAR1.txt",
+								tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo.txt"],
+								[tmp_path + "grd_only/m_e52_grd_only_aero_MAR1.txt",
+								tmp_path + "sky_only/20200227_m_e52_sky_only_aero_MAR1_albedo.txt"]]
 
 		### 20200227 XYvm e52 test aerosols
 		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_NO_aero.txt",
@@ -535,10 +576,10 @@ class Mixer:
 		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_arctic.txt",
 		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
 		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
-		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt"],
-		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_MAR2.txt"],
-		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_3mid.txt",
-		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_2high.txt"],
+		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt"],
+		# 						# tmp_path + "grd_only/o_e52_grd_only_aero_MAR2.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_3mid.txt",
+		# 						tmp_path + "grd_only/o_e52_grd_only_aero_2high.txt"],
 		# 						[tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
 		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
 		# 						tmp_path + "grd_only/o_e52_grd_only_aero_MAR3.txt"],
@@ -969,7 +1010,7 @@ class Mixer:
 
 			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
 
-			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJappperp * RtoD, "*", color = self.currents_color, label="AoJapp_perp")
+			# l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJappperp * RtoD, "*", color = "red", label="AoJapp_perp")
 
 			self.ax3_lines.append([l_AoJapp, l_AoJapp.get_label()])
 
@@ -1232,11 +1273,15 @@ class Mixer:
 
 		f5, ax = plt.subplots(1, figsize=(10, 20))
 
-		ax.plot(self.x_axis_list, bottle.all_SN, "--", color = self.all_SN_color, label="all SN")
-		ax.set_ylabel("Raw")
+		ax.plot(self.x_axis_list, bottle.all_SN, ".", color = self.all_SN_color, label="all SN")
+		ax.set_ylabel("Raw Data")
 		ax1 = plt.twinx(ax)
-		ax1.plot(self.x_axis_list, bottle.smooth_SN, "--", color = self.smooth_SN_color, label="smooth SN")
-		ax1.set_ylabel("Smooth")
+		ax1.plot(self.x_axis_list, bottle.smooth_SN, ".", color = self.smooth_SN_color, label="smooth SN")
+		ax1.set_ylabel("Smoothed Data")
+
+		ax.set_xlabel(self.xlabel)
+
+		plt.minorticks_on()
 
 		ax.set_title("SN ratio")
 		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_SNratio.png')

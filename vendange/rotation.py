@@ -3,10 +3,12 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from utils import *
 from scipy import signal
 import sys as sys
 import datetime as time
+
+from utils import *
+from vendange_configuration import *
 
 DtoR = np.pi / 180.
 RtoD = 180. / np.pi
