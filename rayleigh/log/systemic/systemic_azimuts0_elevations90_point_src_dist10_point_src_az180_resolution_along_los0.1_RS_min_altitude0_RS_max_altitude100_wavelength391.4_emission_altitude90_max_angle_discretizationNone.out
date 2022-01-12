@@ -1,25 +1,0 @@
-Correct input file in use: systemic/systemic_azimuts0_elevations90_point_src_dist10_point_src_az180_resolution_along_los0.1_RS_min_altitude0_RS_max_altitude100_wavelength391.4_emission_altitude90_max_angle_discretizationNone
-Has_sky_emission: False
-AzDistToLonLat 1.2246467991473533e-15 -10.0 1.359215282115042e-19 -0.0015696123057604772 8.659560562354933e-16 -10.0
-Has_ground_emission: True
-5;45 0.08726646259971647 0.7853981633974483
-ALT MAP BOUNDS 4.100678394081269 5.899321605918731 44.100678394081264 45.899321605918736
-0.01569612305760477
-ALT MAP BOUNDS 4.091913306930224 5.890556518767685 44.09373833819535 45.892381550032816
-ALT MAP BOUNDS 4.091913306930224 5.890556518767685 44.09373833819535 45.892381550032816
-Initialization DONE
-*******************************************************************************************************************************
-STARTING calculation for obs:
-Observation at point (5.0, 45.0), azimuth 0.0, elevation 90.0. Observed point at altitude 90.0, position (5.0, 45.0)
-999 bins to compute
-  0%|          | 0/999 [00:00<?, ?it/s] 39%|███▉      | 388/999 [00:00<00:00, 3875.96it/s] 75%|███████▌  | 751/999 [00:00<00:00, 3798.73it/s]100%|██████████| 999/999 [00:00<00:00, 3659.91it/s]
-Computing DONE
-2.078164975626495e-08 5.925229370466681e-09
-/home/bossel/These/Analysis/src/rayleigh/world.py:529: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
-  f3, ax = plt.subplots(1, figsize=(16, 8))
-Making and NOT saving plots...
-/home/bossel/These/Analysis/src/rayleigh/simulation.py:324: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
-  f2, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex = True, sharey = True, figsize=(16, 8))
-/home/bossel/These/Analysis/src/rayleigh/simulation.py:362: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
-  f4, (ax1) = plt.subplots(1, sharex=True, figsize=(16, 8))
-ALL TIME SINCE START: 0.827075719833374

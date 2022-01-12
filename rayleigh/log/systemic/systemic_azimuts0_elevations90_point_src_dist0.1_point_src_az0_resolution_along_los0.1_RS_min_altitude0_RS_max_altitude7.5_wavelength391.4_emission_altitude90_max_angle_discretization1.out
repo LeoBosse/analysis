@@ -1,21 +1,0 @@
-Correct input file in use: systemic/systemic_azimuts0_elevations90_point_src_dist0.1_point_src_az0_resolution_along_los0.1_RS_min_altitude0_RS_max_altitude7.5_wavelength391.4_emission_altitude90_max_angle_discretization1
-Has_sky_emission: False
-AzDistToLonLat 0.0 0.1 0.0 1.5696123057604773e-05 0.0 0.1
-Has_ground_emission: True
-lagorge 0.10361906322688955 0.7891042478910105
-ALT MAP BOUNDS 5.037613394081269 6.836256605918731 44.31302139408126 46.111664605918726
-0.01569612305760477
-ALT MAP BOUNDS 5.036200993144891 6.8348442049823515 44.309575523615855 46.10821873545331
-ALT MAP BOUNDS 5.036200993144891 6.8348442049823515 44.309575523615855 46.10821873545331
-Initialization DONE
-*******************************************************************************************************************************
-STARTING calculation for obs:
-Observation at point (5.936935, 45.212343), azimuth 0.0, elevation 90.0. Observed point at altitude 90.0, position (5.936935000000001, 45.212343000000004)
-74 bins to compute
-  0%|          | 0/74 [00:00<?, ?it/s]  7%|▋         | 5/74 [00:00<00:01, 43.46it/s] 19%|█▉        | 14/74 [00:00<00:01, 51.10it/s] 42%|████▏     | 31/74 [00:00<00:00, 64.61it/s]100%|██████████| 74/74 [00:00<00:00, 190.21it/s]
-Computing DONE
-1.3430807520847967e-05 1.3430596135733381e-05
-/home/bossel/.local/lib/python3.6/site-packages/matplotlib/pyplot.py:514: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
-  max_open_warning, RuntimeWarning)
-Making and NOT saving plots...
-ALL TIME SINCE START: 0.8655445575714111
