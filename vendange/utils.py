@@ -3,14 +3,21 @@
 
 import numpy as np
 import time as time
+
+
 from rotation import *
+
+from vendange_configuration import *
 
 
 DtoR = np.pi / 180.
 RtoD = 180. / np.pi
-pwd = "/home/bossel/These/Analysis/"
-pwd_data = pwd + "data/"
-pwd_src = pwd + "src/"
+pwd = global_configuration.path
+# pwd = "/home/bossel/These/Analysis/"
+# pwd_data = pwd + "data/"
+# pwd_src = pwd + "src/"
+pwd_data = global_configuration.data_path
+pwd_src = global_configuration.src_path
 
 
 
@@ -136,8 +143,12 @@ def LoadPTCUData(file_names, line = 1):
 	# print(raw_data[:50])
 	# print("genfromtxt DONE")
 	# print("genfromtxt")
-	array_type = [('IDConfiguration',float),('Timestamp','S100'),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),('IS_ConverterOffset4',float),('IS_ConverterOffset3',float),('IS_ConverterOffset2',float),('IS_ConverterOffset1',float),('IS_EngineTicksPerTour',float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float),('IS_IpAddress',float)]
-	configuration = np.genfromtxt(config_file, dtype=array_type, delimiter=",", skip_header=1)
+
+	array_type = [('IDConfiguration',float),('Timestamp','S100'), ("CM_ID", float),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),('IS_ConverterOffset4',float),('IS_ConverterOffset3',float),('IS_ConverterOffset2',float),('IS_ConverterOffset1',float),('IS_EngineTicksPerTour',float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float),('IS_IpAddress',float)]
+	# configuration = np.genfromtxt(config_file, dtype=array_type, delimiter=",", skip_header=1)
+	configuration = pd.read_csv(config_file, sep=",")
+
+	print(configuration)
 
 	# print("genfromtxt DONE")
 
@@ -394,7 +405,10 @@ def GetInstrumentName(file):
 
 
 
-def FindArgument(arg_string, arguments, default_value = "", getindex = 0):
+def FindArgument(arg_string, arguments, default_value = False, getindex = 0):
+	"""Search for the arg_string argument in the list of arguments passed on the command line (arguments). If found, returns the value of the parameter (or the argument following at getindex index).
+	If not found, returns the default_value.
+	Only works for bool arguments (true, false, 0, 1, existing or not)"""
 	try:
 		index = arguments.index(arg_string) + getindex
 		result = arguments[index]
@@ -404,9 +418,14 @@ def FindArgument(arg_string, arguments, default_value = "", getindex = 0):
 		# 	del arguments[index - getindex]
 	except:
 		result = default_value
+		return result, arguments
 
-	if   result == ("False" or "f"): result = False
-	elif result in ["True", "t", arg_string]: result = True
+	if   result.lower() in ["false", "f"]:
+		result = False
+	elif result.lower() in ["true", "t", arg_string]:
+		result = True
+	elif arg_string != "-a":
+		result = bool(int(result))
 
 	print(arg_string, result)
 	return result, arguments

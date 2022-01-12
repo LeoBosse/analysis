@@ -6,9 +6,13 @@ import mysql.connector as mysql
 import sys
 import os.path
 import numpy as np
+
 import input
 
-path = "/home/bossel/These/Analysis/data/"
+from vendange_configuration import *
+
+path = global_configuration.data_path
+# path = "/home/bossel/These/Analysis/data/"
 
 
 arguments = sys.argv

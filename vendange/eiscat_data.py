@@ -8,19 +8,20 @@ from scipy import signal
 import sys as sys
 import os
 from subprocess import call
-import observation as observation
-import observation as geometry
 
 import datetime as time
 import scipy.io
 
-### Bottle classes.
+import observation as observation
+import observation as geometry
+from vendange_configuration import *
 
 class Eiscat:
 	def __init__(self, bottle):
 
 		self.valid = True
-		self.path = "/home/bossel/These/Analysis/data/eiscat/"
+		self.path = global_configuration.eiscat_data_path
+		# self.path = data_path + "eiscat/"
 
 		self.data = []
 

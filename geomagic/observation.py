@@ -202,6 +202,16 @@ class ObservationPoint:
 
 		return R_ao
 
+	def GetTransormationMatrixHA(self, transpose = False):
+		R_HO = self.GetRotMatrixAO(self.P_lon, self.P_lat, transpose = transpose)
+		R_OA = self.GetRotMatrixAO(self.lon, self.lat, transpose = not transpose)
+
+		if not transpose:
+			return R_OA @ R_HO #matrix multiplication
+		else:
+			return R_HO @ R_OA #matrix multiplication
+
+
 	#@timer
 	def GetPCoordinates(self, AH=None):
 		"""Return the coordinates of the observed point H (or P). The position of the observer and the vector OA and AH should be calculated before."""

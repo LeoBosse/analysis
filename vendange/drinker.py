@@ -5,14 +5,14 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
-from utils import *
-from rotation import *
-from bottle import *
 from scipy import signal
 import sys
 import os
 from subprocess import call
 
+from utils import *
+from rotation import *
+from bottle import *
 
 
 class Mixer:

@@ -6,6 +6,8 @@ import sys
 import os.path
 import numpy as np
 
+from vendange_configuration import *
+
 class Input:
 	def __init__(self, template, input_file="", path = "./"):
 		self.template = template
@@ -61,7 +63,9 @@ class Input:
 class VendangeInput(Input):
 	def __init__(self, input_file = ""):
 		template = "template.in"
-		path = "/home/bossel/These/Analysis/src/vendange/input_files/"
+		path = global_configuration.input_path
+		# path = "/home/bossel/These/Analysis/src/vendange/input_files/"
+
 		Input.__init__(self, template, input_file, path = path)
 
 
