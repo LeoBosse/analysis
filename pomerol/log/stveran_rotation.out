@@ -1,0 +1,270 @@
+WARNING: Wrong or no input file specified, default in use.
+Initialization DONE
+Starting computing...
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 0.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 32.06715631484985 seconds left...
+	 20.066162586212158 seconds left...
+Total scattered intensity from all direction: 8.281118190590092e-05
+Total scattered polarized intensity from all direction: 4.404568136250038e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5000131245270335 0.0037633171261878206 0.017682610425529658
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 10.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 31.453810214996338 seconds left...
+	 17.56964945793152 seconds left...
+Total scattered intensity from all direction: 8.221464990676546e-05
+Total scattered polarized intensity from all direction: 4.413096772620932e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5000625277438495 0.012730000978285987 0.02854294234855145
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 20.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 31.784902095794678 seconds left...
+	 20.420839548110962 seconds left...
+Total scattered intensity from all direction: 8.144493715608723e-05
+Total scattered polarized intensity from all direction: 4.425349854867227e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001265649357639 0.02435275131074275 0.03482827808632755
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 29.999999999999996, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 32.86599540710449 seconds left...
+	 18.180052280426025 seconds left...
+Total scattered intensity from all direction: 8.061148084042845e-05
+Total scattered polarized intensity from all direction: 4.434649195778702e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001955117574561 0.036866599447887324 0.03661274938406621
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 40.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 33.40147376060486 seconds left...
+	 18.341506958007812 seconds left...
+Total scattered intensity from all direction: 7.981039559791453e-05
+Total scattered polarized intensity from all direction: 4.436606139701216e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002617668021506 0.048891890059947 0.03425022394894239
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 50.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.548839330673218 seconds left...
+	 17.145594120025635 seconds left...
+Total scattered intensity from all direction: 7.912225721226878e-05
+Total scattered polarized intensity from all direction: 4.429745163208409e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5003183167696234 0.05915570915625039 0.028012083672737626
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 59.99999999999999, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 31.464569091796875 seconds left...
+	 17.549181699752808 seconds left...
+Total scattered intensity from all direction: 7.861428429682191e-05
+Total scattered polarized intensity from all direction: 4.414718636791767e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5003602815529783 0.06677231733516328 0.018484612772217378
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 70.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 31.441242456436157 seconds left...
+	 17.384679794311523 seconds left...
+Total scattered intensity from all direction: 7.833809530446817e-05
+Total scattered polarized intensity from all direction: 4.3929659299845017e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5003818128391069 0.07068024576749538 0.00661099194122175
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 80.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.61860466003418 seconds left...
+	 17.011956214904785 seconds left...
+Total scattered intensity from all direction: 7.832180885937223e-05
+Total scattered polarized intensity from all direction: 4.365880618416164e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5003775868012584 0.06991321989801365 -0.00584926781306313
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 90.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.257978439331055 seconds left...
+	 16.870057344436646 seconds left...
+Total scattered intensity from all direction: 7.856165296371913e-05
+Total scattered polarized intensity from all direction: 4.3347519243313667e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5003476346824729 0.06447691033844621 -0.017618571012132357
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 100.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.418762922286987 seconds left...
+	 16.85953712463379 seconds left...
+Total scattered intensity from all direction: 7.901872931575909e-05
+Total scattered polarized intensity from all direction: 4.3009376700589465e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002945032399434 0.05483355351934484 -0.026716778646453807
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 110.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.232763528823853 seconds left...
+	 16.814603567123413 seconds left...
+Total scattered intensity from all direction: 7.96156385238288e-05
+Total scattered polarized intensity from all direction: 4.2657909054057136e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002225479288903 0.041773664563214595 -0.03112121260926666
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 119.99999999999999, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.28582191467285 seconds left...
+	 16.881840705871582 seconds left...
+Total scattered intensity from all direction: 8.023320243376063e-05
+Total scattered polarized intensity from all direction: 4.230464579254374e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001461281800892 0.027903480155801137 -0.029332330792369975
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 130.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.318585634231567 seconds left...
+	 16.88879704475403 seconds left...
+Total scattered intensity from all direction: 8.073146894831239e-05
+Total scattered polarized intensity from all direction: 4.1961616713596024e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5000862839119179 0.017041745482704148 -0.021296845472637833
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 140.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.58686661720276 seconds left...
+	 16.956820487976074 seconds left...
+Total scattered intensity from all direction: 8.100569500377351e-05
+Total scattered polarized intensity from all direction: 4.16496470393229e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5000598592450495 0.012245668446099436 -0.009761178335120224
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 150.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.76473569869995 seconds left...
+	 16.840533018112183 seconds left...
+Total scattered intensity from all direction: 8.103468572625103e-05
+Total scattered polarized intensity from all direction: 4.140312139601781e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5000676137615948 0.01365311319907925 0.001352160979093313
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 160.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.571706771850586 seconds left...
+	 16.969111680984497 seconds left...
+Total scattered intensity from all direction: 8.08753167430156e-05
+Total scattered polarized intensity from all direction: 4.126215794256873e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5000993655846767 0.01941606908842622 0.009100136177027185
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 170.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.24819803237915 seconds left...
+	 16.892435789108276 seconds left...
+Total scattered intensity from all direction: 8.061938980985017e-05
+Total scattered polarized intensity from all direction: 4.125740362136602e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001396303636405 0.026724126470354423 0.012752056035960734
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 180.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.79241180419922 seconds left...
+	 16.969545125961304 seconds left...
+Total scattered intensity from all direction: 8.035682298878037e-05
+Total scattered polarized intensity from all direction: 4.1400732699827924e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5001786834998206 0.03381227068704662 0.01276591701626474
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 190.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.618709802627563 seconds left...
+	 16.92057466506958 seconds left...
+Total scattered intensity from all direction: 8.015983981181764e-05
+Total scattered polarized intensity from all direction: 4.1687331109521124e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002083222607796 0.039191705801110005 0.010201291982581764
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 200.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.25301957130432 seconds left...
+	 16.848143815994263 seconds left...
+Total scattered intensity from all direction: 8.007499372282644e-05
+Total scattered polarized intensity from all direction: 4.210214239634803e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002238275933119 0.04200592365570796 0.006116476606765205
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 210.00000000000003, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.516627073287964 seconds left...
+	 16.980506420135498 seconds left...
+Total scattered intensity from all direction: 8.011220322630262e-05
+Total scattered polarized intensity from all direction: 4.262308917126634e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002246175064188 0.04214929288461642 0.0024244362505189934
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 220.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.325007915496826 seconds left...
+	 16.956209659576416 seconds left...
+Total scattered intensity from all direction: 8.023761222377795e-05
+Total scattered polarized intensity from all direction: 4.3222089970225904e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.5002159950632273 0.0405843194453854 0.0006410240968490878
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 230.0, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)
+465948 bins to compute
+	 30.483547925949097 seconds left...
+	 16.987711191177368 seconds left...
+Total scattered intensity from all direction: 8.038172586986985e-05
+Total scattered polarized intensity from all direction: 4.3864907707156555e-05
+Computing DONE
+Start plotting...
+V, Vcos, Vsin 0.500206435611224 0.038849278906776724 0.00113567063155875
+*******************************************************************************************************************************
+STARTING calculation for obs:
+Observation at point (6.906917000000001, 44.696926), azimuth 239.99999999999997, elevation 45.0. Observed point at altitude 0.0, position (6.906917000000001, 44.696926000000005)

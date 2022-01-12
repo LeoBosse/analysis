@@ -1,0 +1,75 @@
+Correct input file in use: systemic/systemic_azimuts0_elevations45_wavelength557.7_ground_modeuniform_I100_shader_modeout_dist_m0_M0.5_ground_emission_radius50_ground_N_bins_max2000
+All input parameter from the input file:
+path: /home/bossel/These/Analysis/data/Night_pollution/
+src_path: /home/bossel/These/Analysis/src/rayleigh/
+saving_graphs: 0
+flux_unit: W
+azimuts: 0
+elevations: 45
+location: lagorge
+instrument_opening_angle: 1
+instrument_area: 20
+wavelength: 557.7
+RS_min_altitude: 0
+RS_max_altitude: 100
+resolution_along_los: 1
+max_angle_discretization: 0
+Atmospheric_profile: atm_profiles/win.atm
+sky_mode: movie
+emission_altitude: 110
+Nb_emission_points: 1000
+Nb_emission_maps: 1
+I_zone_a_min: 0
+I_zone_a_max: 360
+I_zone_e_min: 0
+I_zone_e_max: 90
+sky_path: /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
+sky_file: skn4/5577/2019/20190307/ut20/
+sky_wavelength: 557.7
+use_alt_map: 0
+alt_map_path: /home/bossel/These/Analysis/data/elevation/
+alt_map_radius: 50
+alt_map_N_bins_max: 10000
+alt_map_resolution: 0.2
+ground_mode: uniform_I100
+shader_mode: out_dist_m0_M0.5
+ground_emission_radius: 50
+ground_N_bins_max: 2000
+ground_albedo: 0.2
+ground_path: /home/bossel/These/Analysis/data/Night_pollution/
+ground_file: nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm_v10_c201807311200.avg_rade9.tif
+Loading the sky emission cube...
+Importing all sky movie data...
+1/98: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190307/ut20/skn4_20190307_203423_5577_cal.png
+2/98: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190307/ut20/skn4_20190307_203438_5577_cal.png
+3/98: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190307/ut20/skn4_20190307_203453_5577_cal.png
+4/98: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190307/ut20/skn4_20190307_203508_5577_cal.png
+5/98: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190307/ut20/skn4_20190307_203523_5577_cal.png
+6/98: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190307/ut20/skn4_20190307_203538_5577_cal.png
+7/98: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190307/ut20/skn4_20190307_203553_5577_cal.png
+8/98: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190307/ut20/skn4_20190307_203608_5577_cal.png
+9/98: Importing all sky image data from /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/skn4/5577/2019/20190307/ut20/skn4_20190307_203623_5577_cal.png
+Traceback (most recent call last):
+  File "./systematic.py", line 361, in <module>
+    RunSystematicSimulation()
+  File "./systematic.py", line 343, in RunSystematicSimulation
+    RunSimulation(file_name, show = False, output_result_file = "log/systematic_ring_study.csv", header = not bool(count))
+  File "/home/bossel/These/Analysis/src/rayleigh/main.py", line 52, in RunSimulation
+    simu = Simulation(in_dict)
+  File "/home/bossel/These/Analysis/src/rayleigh/simulation.py", line 42, in __init__
+    self.world = World(in_dict)
+  File "/home/bossel/These/Analysis/src/rayleigh/world.py", line 103, in __init__
+    self.sky_map = SkyMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/home/bossel/These/Analysis/src/rayleigh/sky_map.py", line 63, in __init__
+    self.LoadSkyEmmisionsCube(Nb_a_pc, Nb_e_pc)
+  File "/home/bossel/These/Analysis/src/rayleigh/sky_map.py", line 157, in LoadSkyEmmisionsCube
+    self.LoadAllSkyMovie()
+  File "/home/bossel/These/Analysis/src/rayleigh/sky_map.py", line 202, in LoadAllSkyMovie
+    self.cube[t, :, :] = self.LoadAllSkyImage(filename = self.image_file + f, verbose=False)
+  File "/home/bossel/These/Analysis/src/rayleigh/sky_map.py", line 240, in LoadAllSkyImage
+    ia, ie = self.GetPixFromAzEl(pix_azimut, pix_elevation)
+  File "/home/bossel/These/Analysis/src/rayleigh/sky_map.py", line 355, in GetPixFromAzEl
+    return self.GetPixFromAz(a), self.GetPixFromEl(e)
+  File "/home/bossel/These/Analysis/src/rayleigh/sky_map.py", line 345, in GetPixFromAz
+    elif self.azimuts[ia + 1] >= 2*np.pi and self.azimuts[ia] <= pix_a:
+KeyboardInterrupt

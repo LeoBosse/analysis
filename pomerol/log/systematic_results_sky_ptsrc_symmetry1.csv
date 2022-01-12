@@ -1,0 +1,640 @@
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,60.0,0.0,100.0,391.4,0.0,2.457528959856913e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,70.0,0.0,100.0,391.4,0.0,1.745806822352232e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,80.0,0.0,100.0,391.4,0.0,1.2110544170272034e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,90.0,0.0,100.0,391.4,0.0,8.530181425392973e-11,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,60.0,0.0,100.0,391.4,0.017453292519943295,1.2973927019649935e-10,1.2014866030588965e-05,89.999999999929,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,70.0,0.0,100.0,391.4,0.017453292519943295,1.2922526769457877e-10,0.0014331822022151364,-89.99999999983082,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,80.0,0.0,100.0,391.4,0.017453292519943295,1.252076764746469e-10,5.796628010426551e-06,-89.99999999977454,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,90.0,0.0,100.0,391.4,0.017453292519943295,1.2876160822056893e-10,3.7836223338401505e-06,89.99999999965449,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.0,0.0,100.0,391.4,0.0,2.0955166581651106e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,30.0,0.0,100.0,391.4,0.0,2.9538017614193687e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,35.0,0.0,100.0,391.4,0.0,3.5086336196859255e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.0,0.0,100.0,391.4,0.017453292519943295,2.1887375578371888e-10,3.925127141792687e-05,89.99999999992124,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,30.0,0.0,100.0,391.4,0.017453292519943295,1.3161323031649214e-10,0.0072130334152391735,1.9651083000301585e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,35.0,0.0,100.0,391.4,0.017453292519943295,1.3132199280209792e-10,0.006061233027960813,-2.110182673288095e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.0,0.0,100.0,391.4,0.0,1.47148436560058e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.0,0.0,100.0,391.4,0.0,1.805448206189094e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.0,0.0,100.0,391.4,0.0,1.5275053850651032e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.0,0.0,100.0,391.4,0.017453292519943295,1.484110075628274e-10,0.0031954936845610482,5.457114729396226e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.0,0.0,100.0,391.4,0.017453292519943295,1.3065342426920543e-10,0.006670104461600693,4.045709635764574e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.0,0.0,100.0,391.4,0.017453292519943295,1.539942310123722e-10,0.0037682808004483666,9.523294762713059e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.1,0.0,100.0,391.4,0.0,8.60005315882838e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.710204081632653,0.0,100.0,391.4,0.0,1.4460941422247686e-09,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.3204081632653062,0.0,100.0,391.4,0.0,1.5476175730875968e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.9306122448979592,0.0,100.0,391.4,0.0,1.9970648049576965e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,2.5408163265306123,0.0,100.0,391.4,0.0,3.0612236830123353e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.1510204081632653,0.0,100.0,391.4,0.0,1.6113306112072525e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.7612244897959184,0.0,100.0,391.4,0.0,1.4820241093968263e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.371428571428571,0.0,100.0,391.4,0.0,1.5469724920893176e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.981632653061224,0.0,100.0,391.4,0.0,1.5161655220626433e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,5.591836734693877,0.0,100.0,391.4,0.0,1.4755164693199226e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.20204081632653,0.0,100.0,391.4,0.0,1.5549640903769487e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.812244897959183,0.0,100.0,391.4,0.0,1.4909228873819782e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.422448979591836,0.0,100.0,391.4,0.0,1.502696470492757e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.03265306122449,0.0,100.0,391.4,0.0,1.4960262589298853e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.642857142857142,0.0,100.0,391.4,0.0,1.5121549130718423e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.253061224489796,0.0,100.0,391.4,0.0,1.5178005727551173e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.863265306122448,0.0,100.0,391.4,0.0,1.5180460880772282e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.4734693877551,0.0,100.0,391.4,0.0,1.5233629137800637e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.083673469387755,0.0,100.0,391.4,0.0,1.828307687164549e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.693877551020408,0.0,100.0,391.4,0.0,1.4771349217599436e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.30408163265306,0.0,100.0,391.4,0.0,1.578808269873851e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.914285714285713,0.0,100.0,391.4,0.0,1.4112151637779277e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.524489795918367,0.0,100.0,391.4,0.0,3.1528952814809753e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.13469387755102,0.0,100.0,391.4,0.0,1.3431166279600745e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.744897959183673,0.0,100.0,391.4,0.0,1.3437544956858336e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.355102040816325,0.0,100.0,391.4,0.0,1.3181955201478023e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.965306122448979,0.0,100.0,391.4,0.0,1.2767103126379383e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,16.575510204081635,0.0,100.0,391.4,0.0,1.289427745479739e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.185714285714287,0.0,100.0,391.4,0.0,1.6834912163276894e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.79591836734694,0.0,100.0,391.4,0.0,1.2832083339680152e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,18.406122448979595,0.0,100.0,391.4,0.0,1.3107293455928162e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.016326530612247,0.0,100.0,391.4,0.0,1.3546212087090065e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.6265306122449,0.0,100.0,391.4,0.0,2.2038475541966456e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.23673469387755,0.0,100.0,391.4,0.0,1.4258963322617463e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.846938775510203,0.0,100.0,391.4,0.0,1.4851028648013868e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,21.45714285714286,0.0,100.0,391.4,0.0,1.558444982255327e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.06734693877551,0.0,100.0,391.4,0.0,1.6433795629262766e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.677551020408163,0.0,100.0,391.4,0.0,1.7542969092257335e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.28775510204082,0.0,100.0,391.4,0.0,5.051845491032334e-09,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.89795918367347,0.0,100.0,391.4,0.0,1.9068088117576592e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,24.508163265306123,0.0,100.0,391.4,0.0,2.0088316385712975e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.118367346938776,0.0,100.0,391.4,0.0,2.1164861981974633e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.728571428571428,0.0,100.0,391.4,0.0,2.224878068479582e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.338775510204083,0.0,100.0,391.4,0.0,2.3352548293142665e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.948979591836736,0.0,100.0,391.4,0.0,2.4502372469068687e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,27.559183673469388,0.0,100.0,391.4,0.0,2.576281480492004e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.169387755102044,0.0,100.0,391.4,0.0,2.8793844068909736e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.779591836734696,0.0,100.0,391.4,0.0,2.753024503030523e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,29.389795918367348,0.0,100.0,391.4,0.0,2.8548672892578353e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,30.0,0.0,100.0,391.4,0.0,2.9538017614193687e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.1,0.0,100.0,391.4,0.017453292519943295,1.468696989275942e-10,0.0014120210073239625,-89.99999999996086,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.710204081632653,0.0,100.0,391.4,0.017453292519943295,1.4690461030468812e-10,0.0011567022587255864,89.9999999999555,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.3204081632653062,0.0,100.0,391.4,0.017453292519943295,1.4697242104257256e-10,0.000840760081447371,-89.99999999747448,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.9306122448979592,0.0,100.0,391.4,0.017453292519943295,1.4699156706074244e-10,0.0006459634226019837,89.99999999991432,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,2.5408163265306123,0.0,100.0,391.4,0.017453292519943295,1.4709398076968606e-10,0.00027236027796459196,89.99999999999059,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.1510204081632653,0.0,100.0,391.4,0.017453292519943295,1.4721512363896605e-10,0.00019774921114254487,4.4262247853567944e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.7612244897959184,0.0,100.0,391.4,0.017453292519943295,1.4744821044335152e-10,0.0002453080198114981,-4.2162570735698e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.371428571428571,0.0,100.0,391.4,0.017453292519943295,1.4771942195736853e-10,0.0007868861406933171,5.812698305950422e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.981632653061224,0.0,100.0,391.4,0.017453292519943295,1.4776697147047018e-10,0.000868348718947029,-2.39969364674717e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,5.591836734693877,0.0,100.0,391.4,0.017453292519943295,1.4803455161115115e-10,0.001360084348255619,5.491118264404647e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.20204081632653,0.0,100.0,391.4,0.017453292519943295,1.488564956385193e-10,0.000660628979550299,-5.871128352229221e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.812244897959183,0.0,100.0,391.4,0.017453292519943295,1.4925287645121548e-10,0.001517832151598228,-1.5635925901944328e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.422448979591836,0.0,100.0,391.4,0.017453292519943295,1.5006411832274417e-10,0.0007888730149349162,1.2903008937031644e-09,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.03265306122449,0.0,100.0,391.4,0.017453292519943295,1.5115466224565088e-10,0.002106430793124729,1.8760166158388293e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.642857142857142,0.0,100.0,391.4,0.017453292519943295,1.5244197747906337e-10,0.0017512294531954714,3.927093758417852e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.253061224489796,0.0,100.0,391.4,0.017453292519943295,1.5341910291476134e-10,0.0008899228287271921,1.8040772459393002e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.863265306122448,0.0,100.0,391.4,0.017453292519943295,1.5404494144455046e-10,0.0037569436771336287,-4.924228963123169e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.4734693877551,0.0,100.0,391.4,0.017453292519943295,1.540888703662914e-10,0.002849068586131868,-3.9105238471366893e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.083673469387755,0.0,100.0,391.4,0.017453292519943295,1.5277001884275216e-10,0.002617486526857863,-2.1698426931368198e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.693877551020408,0.0,100.0,391.4,0.017453292519943295,1.5082643765419938e-10,0.0022239855406442554,4.881458464641827e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.30408163265306,0.0,100.0,391.4,0.017453292519943295,1.47748656426041e-10,0.0021309857620332483,4.418010113461735e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.914285714285713,0.0,100.0,391.4,0.017453292519943295,1.4443555559032912e-10,0.0012439843987739612,3.629051482203731e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.524489795918367,0.0,100.0,391.4,0.017453292519943295,1.415619031046001e-10,0.0007016323684386969,-1.1550061233296869e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.13469387755102,0.0,100.0,391.4,0.017453292519943295,1.3297155453255437e-10,0.006627671995412734,4.1876922511910456e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.744897959183673,0.0,100.0,391.4,0.017453292519943295,1.3107135021660496e-10,0.006705507238406831,1.2288992457303751e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.355102040816325,0.0,100.0,391.4,0.017453292519943295,1.301116022319748e-10,0.006612948018103534,-4.808492133438505e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.965306122448979,0.0,100.0,391.4,0.017453292519943295,1.2815699331872485e-10,0.00810255162644674,3.8590232565086215e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,16.575510204081635,0.0,100.0,391.4,0.017453292519943295,1.3011272704084164e-10,0.004317481501388211,2.5241694069064063e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.185714285714287,0.0,100.0,391.4,0.017453292519943295,1.3121529124658853e-10,0.004191059209906422,5.246646762161493e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.79591836734694,0.0,100.0,391.4,0.017453292519943295,1.3072176781081738e-10,0.006063918045196667,1.922688900357108e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,18.406122448979595,0.0,100.0,391.4,0.017453292519943295,1.3534909406764586e-10,0.004436939286500308,-4.436918339654308e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.016326530612247,0.0,100.0,391.4,0.017453292519943295,1.3981067362565654e-10,0.0036167184997870504,-3.9020356345826905e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.6265306122449,0.0,100.0,391.4,0.017453292519943295,1.4489253974583562e-10,0.0033444666033606617,-3.533111400150327e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.23673469387755,0.0,100.0,391.4,0.017453292519943295,1.480959109501233e-10,0.004893509255805859,2.685578765906733e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.846938775510203,0.0,100.0,391.4,0.017453292519943295,1.5519235148805306e-10,0.004502559565885903,3.1931460599484115e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,21.45714285714286,0.0,100.0,391.4,0.017453292519943295,1.6418040098740642e-10,0.003061921179802532,-3.231770940204914e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.06734693877551,0.0,100.0,391.4,0.017453292519943295,1.7357228703526458e-10,0.0023182185134563815,-1.5359592126075557e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.677551020408163,0.0,100.0,391.4,0.017453292519943295,1.8209964798838065e-10,0.0020530351673242225,9.924338786377306e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.28775510204082,0.0,100.0,391.4,0.017453292519943295,1.9141653948815689e-10,0.0018663936894364188,2.040289648096094e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.89795918367347,0.0,100.0,391.4,0.017453292519943295,1.9827222298770122e-10,0.002993917058872887,1.4355349504321088e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,24.508163265306123,0.0,100.0,391.4,0.017453292519943295,2.101093977521148e-10,1.549106662806356e-05,-89.99999999994773,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.118367346938776,0.0,100.0,391.4,0.017453292519943295,2.2104234561131883e-10,5.4278101928578165e-05,-89.99999999995573,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.728571428571428,0.0,100.0,391.4,0.017453292519943295,2.3338961466520635e-10,0.0008655432412907751,89.99999999997394,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.338775510204083,0.0,100.0,391.4,0.017453292519943295,2.4413850588280536e-10,0.001058921669955003,89.99999999998731,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.948979591836736,0.0,100.0,391.4,0.017453292519943295,2.552205634698797e-10,0.001034014609277371,89.9999999999533,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,27.559183673469388,0.0,100.0,391.4,0.017453292519943295,2.6575271303169807e-10,0.000992061952936195,-89.99999999996189,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.169387755102044,0.0,100.0,391.4,0.017453292519943295,2.759048832250908e-10,0.0009459723640238399,-89.99999999984763,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.779591836734696,0.0,100.0,391.4,0.017453292519943295,1.3420100425056893e-10,0.0069252674584812934,2.4771585502804063e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,29.389795918367348,0.0,100.0,391.4,0.017453292519943295,1.3295214458560028e-10,0.0070757842737055035,-8.327269086253154e-14,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,30.0,0.0,100.0,391.4,0.017453292519943295,1.3161323031649214e-10,0.0072130334152391735,1.9651083000301585e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.1,0.0,100.0,391.4,0.0,8.60005315882838e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.40202020202020206,0.0,100.0,391.4,0.0,1.9596220772319768e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.704040404040404,0.0,100.0,391.4,0.0,1.636615559641108e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.006060606060606,0.0,100.0,391.4,0.0,2.6562177442773273e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.3080808080808082,0.0,100.0,391.4,0.0,1.5458006137992256e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.6101010101010103,0.0,100.0,391.4,0.0,2.3386366191701746e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.912121212121212,0.0,100.0,391.4,0.0,1.5125955092146609e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,2.214141414141414,0.0,100.0,391.4,0.0,1.513787261418477e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,2.5161616161616163,0.0,100.0,391.4,0.0,1.4995487637616166e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,2.8181818181818183,0.0,100.0,391.4,0.0,1.1223552630702721e-09,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.1202020202020204,0.0,100.0,391.4,0.0,1.4880050997154774e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.4222222222222225,0.0,100.0,391.4,0.0,3.083650132868478e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.724242424242424,0.0,100.0,391.4,0.0,1.9365147025005022e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.026262626262626,0.0,100.0,391.4,0.0,1.4933879335386476e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.328282828282828,0.0,100.0,391.4,0.0,1.7308257989715516e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.63030303030303,0.0,100.0,391.4,0.0,1.558035191669251e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.932323232323232,0.0,100.0,391.4,0.0,1.4745802266872262e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,5.234343434343434,0.0,100.0,391.4,0.0,1.352824913603895e-09,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,5.536363636363636,0.0,100.0,391.4,0.0,1.4768484006515787e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,5.838383838383838,0.0,100.0,391.4,0.0,1.475877080308002e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.14040404040404,0.0,100.0,391.4,0.0,1.483940549321017e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.442424242424242,0.0,100.0,391.4,0.0,1.4829003956060397e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.7444444444444445,0.0,100.0,391.4,0.0,1.4790785611277614e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.0464646464646465,0.0,100.0,391.4,0.0,1.4872579912762355e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.348484848484848,0.0,100.0,391.4,0.0,1.9850581962519323e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.65050505050505,0.0,100.0,391.4,0.0,1.5108646993688548e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.952525252525252,0.0,100.0,391.4,0.0,1.4937771667131976e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.254545454545454,0.0,100.0,391.4,0.0,3.926030026146862e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.556565656565656,0.0,100.0,391.4,0.0,1.5017267970766947e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.858585858585858,0.0,100.0,391.4,0.0,2.9550401803611206e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.16060606060606,0.0,100.0,391.4,0.0,1.5102639567459473e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.462626262626262,0.0,100.0,391.4,0.0,2.2841709489256755e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.764646464646464,0.0,100.0,391.4,0.0,1.5166491522452114e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.066666666666666,0.0,100.0,391.4,0.0,1.54062134841794e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.368686868686869,0.0,100.0,391.4,0.0,1.5679161724943446e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.67070707070707,0.0,100.0,391.4,0.0,1.5124441915083808e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.972727272727273,0.0,100.0,391.4,0.0,1.5427514137844065e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.274747474747475,0.0,100.0,391.4,0.0,1.544367995423576e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.576767676767677,0.0,100.0,391.4,0.0,1.4815555174887665e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.878787878787879,0.0,100.0,391.4,0.0,1.4760736445755405e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.180808080808081,0.0,100.0,391.4,0.0,3.895477976335812e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.482828282828283,0.0,100.0,391.4,0.0,1.441720998104457e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.784848484848485,0.0,100.0,391.4,0.0,1.4185582630634215e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.086868686868687,0.0,100.0,391.4,0.0,1.4090591057483915e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.38888888888889,0.0,100.0,391.4,0.0,1.5949187805662216e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.690909090909091,0.0,100.0,391.4,0.0,1.4043424214516286e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.992929292929293,0.0,100.0,391.4,0.0,1.352939480589862e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.294949494949496,0.0,100.0,391.4,0.0,1.33652885770218e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.596969696969696,0.0,100.0,391.4,0.0,1.334434928631111e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.898989898989898,0.0,100.0,391.4,0.0,1.4082249471098714e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.2010101010101,0.0,100.0,391.4,0.0,1.4641915262357856e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.503030303030302,0.0,100.0,391.4,0.0,1.296988107389101e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.805050505050504,0.0,100.0,391.4,0.0,1.2794639004024917e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,16.107070707070708,0.0,100.0,391.4,0.0,1.2760624575390222e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,16.40909090909091,0.0,100.0,391.4,0.0,1.2810811376332245e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,16.711111111111112,0.0,100.0,391.4,0.0,1.305143427247999e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.013131313131314,0.0,100.0,391.4,0.0,2.048933237086538e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.315151515151516,0.0,100.0,391.4,0.0,1.3409218792600225e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.61717171717172,0.0,100.0,391.4,0.0,1.2885889555560527e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.91919191919192,0.0,100.0,391.4,0.0,1.2863180717584696e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,18.221212121212123,0.0,100.0,391.4,0.0,1.3005881033871103e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,18.523232323232325,0.0,100.0,391.4,0.0,1.3173955077746345e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,18.825252525252527,0.0,100.0,391.4,0.0,1.3368725813499757e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.12727272727273,0.0,100.0,391.4,0.0,1.3682939822484613e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.42929292929293,0.0,100.0,391.4,0.0,1.455337204444218e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.731313131313133,0.0,100.0,391.4,0.0,3.538058432606543e-09,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.033333333333335,0.0,100.0,391.4,0.0,1.4599186908499166e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.335353535353537,0.0,100.0,391.4,0.0,1.4349255600732744e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.63737373737374,0.0,100.0,391.4,0.0,1.4635403718339172e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.93939393939394,0.0,100.0,391.4,0.0,1.4958254922763445e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,21.241414141414143,0.0,100.0,391.4,0.0,1.532058148151692e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,21.543434343434345,0.0,100.0,391.4,0.0,1.5691315657966226e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,21.845454545454547,0.0,100.0,391.4,0.0,1.610021548519433e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.14747474747475,0.0,100.0,391.4,0.0,1.6558611314873397e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.44949494949495,0.0,100.0,391.4,0.0,1.7069728438107484e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.751515151515154,0.0,100.0,391.4,0.0,1.7745909801557536e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.053535353535356,0.0,100.0,391.4,0.0,1.9707235191879835e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.355555555555558,0.0,100.0,391.4,0.0,5.516705689722821e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.65757575757576,0.0,100.0,391.4,0.0,1.8666534026546166e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.959595959595962,0.0,100.0,391.4,0.0,1.9171525661728065e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,24.261616161616164,0.0,100.0,391.4,0.0,1.9677200474449634e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,24.563636363636366,0.0,100.0,391.4,0.0,2.0181039597683304e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,24.86565656565657,0.0,100.0,391.4,0.0,2.071777871511426e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.16767676767677,0.0,100.0,391.4,0.0,2.125182328065618e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.469696969696972,0.0,100.0,391.4,0.0,2.178113542499918e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.771717171717174,0.0,100.0,391.4,0.0,2.2327284503072757e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.073737373737377,0.0,100.0,391.4,0.0,2.2873809137166395e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.37575757575758,0.0,100.0,391.4,0.0,2.341919298954444e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.67777777777778,0.0,100.0,391.4,0.0,2.3983726950815775e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.979797979797983,0.0,100.0,391.4,0.0,2.4561882983798007e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,27.281818181818185,0.0,100.0,391.4,0.0,2.515594511576988e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,27.583838383838387,0.0,100.0,391.4,0.0,2.5822421869357585e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,27.88585858585859,0.0,100.0,391.4,0.0,2.671298288186089e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.18787878787879,0.0,100.0,391.4,0.0,2.910608968532281e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.489898989898993,0.0,100.0,391.4,0.0,2.702944283720565e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.791919191919195,0.0,100.0,391.4,0.0,2.755124540922334e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,29.093939393939394,0.0,100.0,391.4,0.0,2.805924571925294e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,29.395959595959596,0.0,100.0,391.4,0.0,2.855898445170373e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,29.697979797979798,0.0,100.0,391.4,0.0,2.905670449656485e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,30.0,0.0,100.0,391.4,0.0,2.9538017614193687e-10,0.0,0.0,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.1,0.0,100.0,391.4,0.017453292519943295,1.468696989275942e-10,0.0014120210073239625,-89.99999999996086,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.40202020202020206,0.0,100.0,391.4,0.017453292519943295,1.468753046310347e-10,0.0012829865443683916,-89.999999999984,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,0.704040404040404,0.0,100.0,391.4,0.017453292519943295,1.4689271866327061e-10,0.001136660270139322,-89.99999999942494,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.006060606060606,0.0,100.0,391.4,0.017453292519943295,1.469092917990338e-10,0.001018246610766509,89.99999999993969,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.3080808080808082,0.0,100.0,391.4,0.017453292519943295,1.469531093267365e-10,0.0008904118553784503,89.99999999965635,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.6101010101010103,0.0,100.0,391.4,0.017453292519943295,1.4695582977645572e-10,0.0006649918553495005,89.9999999997276,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,1.912121212121212,0.0,100.0,391.4,0.017453292519943295,1.4700649276607493e-10,0.0005850917267891434,89.99999999931204,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,2.214141414141414,0.0,100.0,391.4,0.017453292519943295,1.4704208528352828e-10,0.0004215716551013007,89.99999999985121,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,2.5161616161616163,0.0,100.0,391.4,0.017453292519943295,1.4712142600380427e-10,0.00019429775440508323,-89.99999999987992,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,2.8181818181818183,0.0,100.0,391.4,0.017453292519943295,1.4716261663845286e-10,0.00012373987139592944,89.99999999994482,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.1202020202020204,0.0,100.0,391.4,0.017453292519943295,1.4720354872447433e-10,0.00023240318421636336,89.99999999749586,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.4222222222222225,0.0,100.0,391.4,0.017453292519943295,1.474199471088332e-10,0.00023898968784507324,5.741832269403994e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,3.724242424242424,0.0,100.0,391.4,0.017453292519943295,1.4743185881015465e-10,0.0003008234627236094,3.135526541716685e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.026262626262626,0.0,100.0,391.4,0.017453292519943295,1.4752543074055055e-10,0.0005469068146683378,-5.5416743736480014e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.328282828282828,0.0,100.0,391.4,0.017453292519943295,1.476982360991577e-10,1.1151117520235683e-05,89.99999999360126,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.63030303030303,0.0,100.0,391.4,0.017453292519943295,1.4772387964670728e-10,0.0003533461206653774,5.041568874120833e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,4.932323232323232,0.0,100.0,391.4,0.017453292519943295,1.4778032750749898e-10,0.0008676736227145141,3.408053130341993e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,5.234343434343434,0.0,100.0,391.4,0.017453292519943295,1.4773488297169344e-10,0.000642088351841976,3.768575784562788e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,5.536363636363636,0.0,100.0,391.4,0.017453292519943295,1.4802341158340245e-10,0.0014570901236314125,-6.909386311061084e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,5.838383838383838,0.0,100.0,391.4,0.017453292519943295,1.4832836367763058e-10,0.0008796365377647979,-7.431111931451683e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.14040404040404,0.0,100.0,391.4,0.017453292519943295,1.4874806947495092e-10,0.0006569870501267885,1.2023099283148581e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.442424242424242,0.0,100.0,391.4,0.017453292519943295,1.490118695641817e-10,0.0018032855867647145,2.7749856366511534e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,6.7444444444444445,0.0,100.0,391.4,0.017453292519943295,1.4933914014575439e-10,0.0015277914631125053,-1.1156112260254134e-09,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.0464646464646465,0.0,100.0,391.4,0.017453292519943295,1.495412323566773e-10,0.001012190018685912,-1.197371275590668e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.348484848484848,0.0,100.0,391.4,0.017453292519943295,1.4983211969635714e-10,0.00082937867778205,-4.4136535835634914e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.65050505050505,0.0,100.0,391.4,0.017453292519943295,1.5056534092657864e-10,0.0028826959481630457,-4.540648562084195e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,7.952525252525252,0.0,100.0,391.4,0.017453292519943295,1.509083952347542e-10,0.002224809485133082,-7.20752389401921e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.254545454545454,0.0,100.0,391.4,0.017453292519943295,1.5163556433188684e-10,0.0020373287223518586,-4.761952851493655e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.556565656565656,0.0,100.0,391.4,0.017453292519943295,1.5227593816867147e-10,0.0017407144828331103,-2.775117900192587e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,8.858585858585858,0.0,100.0,391.4,0.017453292519943295,1.5278941805854093e-10,0.0011327276325438502,1.8834554460568017e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.16060606060606,0.0,100.0,391.4,0.017453292519943295,1.5339751925101202e-10,0.0008526537715395537,1.627800664532597e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.462626262626262,0.0,100.0,391.4,0.017453292519943295,1.5355738638800017e-10,0.000839353240183856,1.4011202827888247e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,9.764646464646464,0.0,100.0,391.4,0.017453292519943295,1.5408984443768995e-10,0.0006641533951703639,2.242574186424176e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.066666666666666,0.0,100.0,391.4,0.017453292519943295,1.5398965176156814e-10,0.003749062300014936,9.330183356087162e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.368686868686869,0.0,100.0,391.4,0.017453292519943295,1.5415764284491954e-10,0.003595353915970186,1.535939334410394e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.67070707070707,0.0,100.0,391.4,0.017453292519943295,1.5400186963511793e-10,0.002686217577696453,-4.8246788193478975e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,10.972727272727273,0.0,100.0,391.4,0.017453292519943295,1.5291238150228678e-10,0.0026727525744546124,-2.5196436371272588e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.274747474747475,0.0,100.0,391.4,0.017453292519943295,1.5191978334133646e-10,0.002518574160909512,8.488651975340256e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.576767676767677,0.0,100.0,391.4,0.017453292519943295,1.512121647278917e-10,0.002351401964022805,-1.2268923103207564e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,11.878787878787879,0.0,100.0,391.4,0.017453292519943295,1.4971382940371853e-10,0.002351347901193093,1.7539828485180907e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.180808080808081,0.0,100.0,391.4,0.017453292519943295,1.4849491235242946e-10,0.002201193841977283,-1.9083620217801488e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.482828282828283,0.0,100.0,391.4,0.017453292519943295,1.4699470834155968e-10,0.002055592558492194,-2.6023672950883927e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,12.784848484848485,0.0,100.0,391.4,0.017453292519943295,1.4571532120203333e-10,0.0008239458153543881,-2.015697608090402e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.086868686868687,0.0,100.0,391.4,0.017453292519943295,1.4369302346189098e-10,0.0008852028871456848,-2.6360251389513e-09,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.38888888888889,0.0,100.0,391.4,0.017453292519943295,1.4228789216129604e-10,0.0007386750581732354,3.339551461524432e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.690909090909091,0.0,100.0,391.4,0.017453292519943295,1.409129588455433e-10,0.0006679945312679129,-5.869676777575032e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,13.992929292929293,0.0,100.0,391.4,0.017453292519943295,1.3909488604934923e-10,0.0005406469476775454,-2.3827389573346175e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.294949494949496,0.0,100.0,391.4,0.017453292519943295,1.3175845668410647e-10,0.007472332636624358,3.398019689728163e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.596969696969696,0.0,100.0,391.4,0.017453292519943295,1.3128940229473686e-10,0.006722231788196435,-1.3512705869291066e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,14.898989898989898,0.0,100.0,391.4,0.017453292519943295,1.3075866342914317e-10,0.0066854535041745685,1.1591358765483325e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.2010101010101,0.0,100.0,391.4,0.017453292519943295,1.3037979791255677e-10,0.0066373679495861666,-1.904150618979871e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.503030303030302,0.0,100.0,391.4,0.017453292519943295,1.2987763677246326e-10,0.00659740995931215,5.154271162637024e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,15.805050505050504,0.0,100.0,391.4,0.017453292519943295,1.2764881914133026e-10,0.008524461977563822,2.879988788224272e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,16.107070707070708,0.0,100.0,391.4,0.017453292519943295,1.2928341850757262e-10,0.0070472352831554425,-2.2961934927462748e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,16.40909090909091,0.0,100.0,391.4,0.017453292519943295,1.2989720111718377e-10,0.004387189448286027,-2.8224477928206013e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,16.711111111111112,0.0,100.0,391.4,0.017453292519943295,1.3034929491134413e-10,0.00427151617838276,6.75600344476156e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.013131313131314,0.0,100.0,391.4,0.017453292519943295,1.306221800022057e-10,0.004215050240715248,-1.5099001898186454e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.315151515151516,0.0,100.0,391.4,0.017453292519943295,1.3173792589553937e-10,0.004159061022430925,3.603832935818752e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.61717171717172,0.0,100.0,391.4,0.017453292519943295,1.3238796833336652e-10,0.004088339656079771,-2.0525673480673814e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,17.91919191919192,0.0,100.0,391.4,0.017453292519943295,1.3135652193397346e-10,0.005981973402576646,-9.082957346833426e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,18.221212121212123,0.0,100.0,391.4,0.017453292519943295,1.334208700170398e-10,0.005494482918262041,-1.0568244085419976e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,18.523232323232325,0.0,100.0,391.4,0.017453292519943295,1.3644798537762984e-10,0.003951491421425497,1.7165339056926584e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,18.825252525252527,0.0,100.0,391.4,0.017453292519943295,1.3843249286699204e-10,0.0036948217779713454,-3.803929387208786e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.12727272727273,0.0,100.0,391.4,0.017453292519943295,1.407711037373288e-10,0.003557826136793819,2.5491620997735964e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.42929292929293,0.0,100.0,391.4,0.017453292519943295,1.4303636569972807e-10,0.003423969860772509,-2.92476949920457e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,19.731313131313133,0.0,100.0,391.4,0.017453292519943295,1.459471792889593e-10,0.0032750948531877727,1.0554263468044107e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.033333333333335,0.0,100.0,391.4,0.017453292519943295,1.4880529883217566e-10,0.0031328248323423875,1.5024147838559933e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.335353535353537,0.0,100.0,391.4,0.017453292519943295,1.4912665091047677e-10,0.004834091303466705,2.5086581505236214e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.63737373737374,0.0,100.0,391.4,0.017453292519943295,1.5261713788052927e-10,0.0046493739581688525,8.564073996209122e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,20.93939393939394,0.0,100.0,391.4,0.017453292519943295,1.5636459211607712e-10,0.004426580246536834,-9.46805801008325e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,21.241414141414143,0.0,100.0,391.4,0.017453292519943295,1.6063657660408366e-10,0.003999389541098468,5.866247447784729e-12,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,21.543434343434345,0.0,100.0,391.4,0.017453292519943295,1.6594480583683128e-10,0.0027144895572891823,-9.475093330121306e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,21.845454545454547,0.0,100.0,391.4,0.017453292519943295,1.6985731994917014e-10,0.002483251509503461,2.8783995552412848e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.14747474747475,0.0,100.0,391.4,0.017453292519943295,1.7446645086564174e-10,0.002303417105112013,2.7892642190574057e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.44949494949495,0.0,100.0,391.4,0.017453292519943295,1.7906869013800644e-10,0.0021587610114804736,-1.8983691701747003e-09,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,22.751515151515154,0.0,100.0,391.4,0.017453292519943295,1.8319286062294412e-10,0.0020649724651994814,1.6255083447552367e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.053535353535356,0.0,100.0,391.4,0.017453292519943295,1.878773439633665e-10,0.0019188101346646832,-1.4132548741702815e-10,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.355555555555558,0.0,100.0,391.4,0.017453292519943295,1.9259398178612055e-10,0.0018085767853458828,-6.095874673488185e-11,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.65757575757576,0.0,100.0,391.4,0.017453292519943295,1.9438871455991324e-10,0.0031035997467725803,1.6688831065492928e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,23.959595959595962,0.0,100.0,391.4,0.017453292519943295,1.9930865970688455e-10,0.0029676730006508115,1.517300762627281e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,24.261616161616164,0.0,100.0,391.4,0.017453292519943295,2.0581271414924663e-10,1.1344480807880355e-05,-89.99999999999274,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,24.563636363636366,0.0,100.0,391.4,0.017453292519943295,2.110842657572527e-10,1.674252302376478e-05,-89.99999999995099,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,24.86565656565657,0.0,100.0,391.4,0.017453292519943295,2.164579792511539e-10,2.8295279974667506e-05,89.99999999991053,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.16767676767677,0.0,100.0,391.4,0.017453292519943295,2.2195470626552742e-10,6.36680621838177e-05,-89.99999999995566,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.469696969696972,0.0,100.0,391.4,0.017453292519943295,2.2771790106870039e-10,0.00020614699865281378,-89.99999999997003,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,25.771717171717174,0.0,100.0,391.4,0.017453292519943295,2.339064326521058e-10,0.0008698117482505592,89.99999999999767,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.073737373737377,0.0,100.0,391.4,0.017453292519943295,2.396105304258079e-10,0.0010167615604438536,-89.99999999997584,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.37575757575758,0.0,100.0,391.4,0.017453292519943295,2.4478676894781786e-10,0.001018112375675463,-89.99999999997007,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.67777777777778,0.0,100.0,391.4,0.017453292519943295,2.5016067058883966e-10,0.0010118921249762836,89.99999999998653,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,26.979797979797983,0.0,100.0,391.4,0.017453292519943295,2.5570441154018373e-10,0.0010830296618784757,89.99999999998455,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,27.281818181818185,0.0,100.0,391.4,0.017453292519943295,2.6080666517892623e-10,0.000991513324705836,-89.99999999994247,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,27.583838383838387,0.0,100.0,391.4,0.017453292519943295,2.6619393399664666e-10,0.0010270568677434363,89.99999999998515,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,27.88585858585859,0.0,100.0,391.4,0.017453292519943295,2.7115131249229403e-10,0.0009591033046351768,89.99999999987853,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.18787878787879,0.0,100.0,391.4,0.017453292519943295,2.7626014087198106e-10,0.0009440620224060796,89.99999999994013,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.489898989898993,0.0,100.0,391.4,0.017453292519943295,2.7851536252857067e-10,3.1899988638067525e-06,89.99999999999488,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,28.791919191919195,0.0,100.0,391.4,0.017453292519943295,1.341766141212804e-10,0.006928419810383251,1.3895540819875795e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,29.093939393939394,0.0,100.0,391.4,0.017453292519943295,1.3355868885211074e-10,0.007005309058280256,1.373985471696593e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,29.395959595959596,0.0,100.0,391.4,0.017453292519943295,1.329395546146519e-10,0.007077196055443195,-7.868041140599538e-14,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,29.697979797979798,0.0,100.0,391.4,0.017453292519943295,1.3229469574970837e-10,0.007146780703784839,1.2991288162754522e-13,0.0
+t, a_pc, e_pc, src_dist (km), dlos (km), min_alt (km), max_alt (km), wavelength (nm), max_angle_discr (rad), I0, DoLP (%), AoRD (°), Direct I0:
+0,180.0,45.0,None,30.0,0.0,100.0,391.4,0.017453292519943295,1.3161323031649214e-10,0.0072130334152391735,1.9651083000301585e-13,0.0

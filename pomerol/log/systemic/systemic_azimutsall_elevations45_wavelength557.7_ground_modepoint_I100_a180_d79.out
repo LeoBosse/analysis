@@ -1,0 +1,263 @@
+Correct input file in use: systemic/systemic_azimutsall_elevations45_wavelength557.7_ground_modepoint_I100_a180_d79
+All input parameter from the input file:
+path: /home/bossel/These/Analysis/data/Night_pollution/
+src_path: /home/bossel/These/Analysis/src/rayleigh/
+saving_graphs: 0
+flux_unit: W
+azimuts: all
+elevations: 45
+location: lagorge
+instrument_opening_angle: 1
+instrument_area: 20
+wavelength: 557.7
+RS_min_altitude: 0
+RS_max_altitude: 100
+resolution_along_los: 1
+max_angle_discretization: 0
+Atmospheric_profile: atm_profiles/win.atm
+sky_mode: none
+emission_altitude: 110
+Nb_emission_points: 1000
+Nb_emission_maps: 1
+I_zone_a_min: 0
+I_zone_a_max: 360
+I_zone_e_min: 0
+I_zone_e_max: 90
+sky_path: /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/
+sky_file: skn4/5577/2019/20190307/ut20/
+sky_wavelength: 557.7
+use_alt_map: 0
+alt_map_path: /home/bossel/These/Analysis/data/elevation/
+alt_map_radius: 50
+alt_map_N_bins_max: 10000
+alt_map_resolution: 0.2
+ground_mode: point_I100_a180_d79
+shader_mode: none
+ground_emission_radius: 60
+ground_N_bins_max: 2000
+ground_albedo: 0
+ground_path: /home/bossel/These/Analysis/data/Night_pollution/
+ground_file: nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm_v10_c201807311200.avg_rade9.tif
+Has_sky_emission: False
+Has_ground_emission: True
+Initialization DONE
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 1/36:
+Observation at point (5.936935, 45.212343), azimuth 0.0, elevation 45.0. Observed point at altitude 110.0, position (5.936934999999999, 46.1767277912057)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046104
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 2/36:
+Observation at point (5.936935, 45.212343), azimuth 10.0, elevation 45.0. Observed point at altitude 110.0, position (6.178705817290045, 46.1618244826813)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046483
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 3/36:
+Observation at point (5.936935, 45.212343), azimuth 20.0, elevation 45.0. Observed point at altitude 110.0, position (6.412752205809353, 46.117591158227064)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.045693
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 4/36:
+Observation at point (5.936935, 45.212343), azimuth 29.999999999999996, elevation 45.0. Observed point at altitude 110.0, position (6.6316331921207565, 46.04544003474757)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046432
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 5/36:
+Observation at point (5.936935, 45.212343), azimuth 40.0, elevation 45.0. Observed point at altitude 110.0, position (6.828459330235541, 45.94766716296336)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.045837
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 6/36:
+Observation at point (5.936935, 45.212343), azimuth 50.0, elevation 45.0. Observed point at altitude 110.0, position (6.9971315570967905, 45.8273692782208)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048739
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 7/36:
+Observation at point (5.936935, 45.212343), azimuth 59.99999999999999, elevation 45.0. Observed point at altitude 110.0, position (7.1325398348273055, 45.68833367058046)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048786
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 8/36:
+Observation at point (5.936935, 45.212343), azimuth 70.0, elevation 45.0. Observed point at altitude 110.0, position (7.2307142456338775, 45.534906589041896)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046761
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 9/36:
+Observation at point (5.936935, 45.212343), azimuth 80.0, elevation 45.0. Observed point at altitude 110.0, position (7.288925141090851, 45.37184632752027)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046325
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 10/36:
+Observation at point (5.936935, 45.212343), azimuth 90.0, elevation 45.0. Observed point at altitude 110.0, position (7.305732630629648, 45.2041672857422)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048168
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 11/36:
+Observation at point (5.936935, 45.212343), azimuth 100.0, elevation 45.0. Observed point at altitude 110.0, position (7.28098871938908, 45.03698102649828)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048785
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 12/36:
+Observation at point (5.936935, 45.212343), azimuth 110.0, elevation 45.0. Observed point at altitude 110.0, position (7.2157975407413835, 44.875339770597826)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.047632
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 13/36:
+Observation at point (5.936935, 45.212343), azimuth 119.99999999999999, elevation 45.0. Observed point at altitude 110.0, position (7.112440318673982, 44.72408700501419)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046963
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 14/36:
+Observation at point (5.936935, 45.212343), azimuth 130.0, elevation 45.0. Observed point at altitude 110.0, position (6.9742720295989376, 44.58771904243474)
+Starting time:  16:17:32
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048137
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 15/36:
+Observation at point (5.936935, 45.212343), azimuth 140.0, elevation 45.0. Observed point at altitude 110.0, position (6.805596394972084, 44.47026055310863)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.047808
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 16/36:
+Observation at point (5.936935, 45.212343), azimuth 150.0, elevation 45.0. Observed point at altitude 110.0, position (6.611525047201363, 44.37515635433104)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046769
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 17/36:
+Observation at point (5.936935, 45.212343), azimuth 160.0, elevation 45.0. Observed point at altitude 110.0, position (6.397825688644971, 44.30518112171093)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046872
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 18/36:
+Observation at point (5.936935, 45.212343), azimuth 170.0, elevation 45.0. Observed point at altitude 110.0, position (6.170762991081992, 44.26236818782582)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048099
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 19/36:
+Observation at point (5.936935, 45.212343), azimuth 180.0, elevation 45.0. Observed point at altitude 110.0, position (5.936934999999999, 44.247958208794294)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048809
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 20/36:
+Observation at point (5.936935, 45.212343), azimuth 190.0, elevation 45.0. Observed point at altitude 110.0, position (5.703107008918006, 44.26236818782583)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048415
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 21/36:
+Observation at point (5.936935, 45.212343), azimuth 200.0, elevation 45.0. Observed point at altitude 110.0, position (5.476044311355027, 44.30518112171094)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.047973
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 22/36:
+Observation at point (5.936935, 45.212343), azimuth 210.00000000000003, elevation 45.0. Observed point at altitude 110.0, position (5.262344952798637, 44.37515635433104)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048144
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 23/36:
+Observation at point (5.936935, 45.212343), azimuth 220.0, elevation 45.0. Observed point at altitude 110.0, position (5.0682736050279145, 44.47026055310862)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.047854
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 24/36:
+Observation at point (5.936935, 45.212343), azimuth 230.0, elevation 45.0. Observed point at altitude 110.0, position (4.899597970401062, 44.587719042434735)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046345
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 25/36:
+Observation at point (5.936935, 45.212343), azimuth 239.99999999999997, elevation 45.0. Observed point at altitude 110.0, position (4.761429681326016, 44.72408700501419)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046692
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 26/36:
+Observation at point (5.936935, 45.212343), azimuth 250.00000000000003, elevation 45.0. Observed point at altitude 110.0, position (4.658072459258616, 44.875339770597826)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.047070
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 27/36:
+Observation at point (5.936935, 45.212343), azimuth 260.0, elevation 45.0. Observed point at altitude 110.0, position (4.592881280610917, 45.03698102649828)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.049342
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 28/36:
+Observation at point (5.936935, 45.212343), azimuth 270.0, elevation 45.0. Observed point at altitude 110.0, position (4.56813736937035, 45.204167285742194)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.047447
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 29/36:
+Observation at point (5.936935, 45.212343), azimuth 280.0, elevation 45.0. Observed point at altitude 110.0, position (4.5849448589091475, 45.37184632752027)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.047761
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 30/36:
+Observation at point (5.936935, 45.212343), azimuth 290.0, elevation 45.0. Observed point at altitude 110.0, position (4.643155754366122, 45.5349065890419)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046968
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 31/36:
+Observation at point (5.936935, 45.212343), azimuth 300.0, elevation 45.0. Observed point at altitude 110.0, position (4.741330165172693, 45.68833367058046)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.049607
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 32/36:
+Observation at point (5.936935, 45.212343), azimuth 310.0, elevation 45.0. Observed point at altitude 110.0, position (4.876738442903208, 45.8273692782208)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.047198
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 33/36:
+Observation at point (5.936935, 45.212343), azimuth 320.0, elevation 45.0. Observed point at altitude 110.0, position (5.0454106697644585, 45.947667162963356)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048470
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 34/36:
+Observation at point (5.936935, 45.212343), azimuth 330.0, elevation 45.0. Observed point at altitude 110.0, position (5.242236807879241, 46.04544003474757)
+Starting time:  16:17:33
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.046424
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 35/36:
+Observation at point (5.936935, 45.212343), azimuth 340.0, elevation 45.0. Observed point at altitude 110.0, position (5.461117794190646, 46.117591158227064)
+Starting time:  16:17:34
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.048572
+*******************************************************************************************************************************
+STARTING calculation for GROUND map 36/36:
+Observation at point (5.936935, 45.212343), azimuth 350.0, elevation 45.0. Observed point at altitude 110.0, position (5.695164182709953, 46.1618244826813)
+Starting time:  16:17:34
+141.0 bins to compute per processor
+Computing DONE in:  0:00:00.047655
+/home/bossel/These/Analysis/src/rayleigh/simulation.py:558: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
+  f, axs = plt.subplots(3, sharex = True, figsize=(16, 8))
+Print results in log/systematic_ptsrc_dist_study_normal.csv
+Simulation ran in: 0:00:01.846159
