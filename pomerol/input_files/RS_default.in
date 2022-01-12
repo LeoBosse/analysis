@@ -208,5 +208,5 @@ show_sky_cube				 0 # Produce a plot with all sky maps used in the simulation. U
 show_altitude				 0 # Produce an altitude map around the instrument, in meters.
 
 show_cross_section	 0 # Produce a plot of aerosol cross sections.
-show_aer_size	 			 1 # Produce a plot of aerosol size distribution
+show_aer_size	 			 0 # Produce a plot of aerosol size distribution
 show_atmosphere		   0 # Produce a plot of temperature, pression, and O3 profile of the atmosphere

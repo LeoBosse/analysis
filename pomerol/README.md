@@ -25,6 +25,9 @@ sudo apt-get install gdal-bin libgdal-dev libgdal-doc python3-gdal
 
 And a mpi source code before being able to install mpi4py. See https://mpi4py.readthedocs.io/en/stable/install.html and https://mpi4py.readthedocs.io/en/stable/appendix.html#building-mpi for the manual.
 
+For latex (to use in plots), install latex:
+sudo apt-get install -y texlive texlive-latex-extra texlive-latex-recommended texlive-fonts-recommended
+sudo apt-get install cm-super
 
 ################################################################################
 RUNNING YOUR FIRST MODEL

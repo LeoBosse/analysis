@@ -22,6 +22,7 @@ from matplotlib.patches import Arrow
 
 import imageio
 
+from pomerol_configuration import *
 from simulation import *
 from observation import *
 from rayleigh_utils import *

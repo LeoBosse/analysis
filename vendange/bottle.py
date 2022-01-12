@@ -478,7 +478,7 @@ class Bottle:
 		except:
 			self.source_azimut = self.source_elevation = 0
 
-		B_model = chaos.load_CHAOS_matfile('/home/bossel/These/Analysis/data/magn_field/CHAOS-7.4.mat')
+		B_model = chaos.load_CHAOS_matfile(global_configuration.chaos_model_file)
 
 		if self.observation_type == "fixed" and self.azimut is not None and self.elevation is not None:
 			# print("DEBUG SOURCE:", self.source_azimut*RtoD, self.source_elevation*RtoD)
@@ -640,8 +640,8 @@ class Bottle:
 		print("Saving as .txt in", self.data_file_name + "/" + self.saving_name + '_results.txt')
 
 	def ConvertRotTimeTogmTime(self, rot_time):
-		t = time.mktime(self.DateTime())
-		tl = [time.gmtime(t + rt) for rt in rot_time]
+		t = dt.mktime(self.DateTime())
+		tl = [dt.gmtime(t + rt) for rt in rot_time]
 		return tl
 
 	def GetRotationFrequency(self):
@@ -847,7 +847,7 @@ class PTCUBottle(Bottle):
 		print(self.time_stamp)
 		#Date and time of first rotation (before deleting head_jump)
 
-		self.datetime = time.datetime.strptime(self.time_stamp, "%Y-%m-%d %H:%M:%S")
+		self.datetime = dt.datetime.strptime(self.time_stamp, "%Y-%m-%d %H:%M:%S")
 		print(self.datetime, self.datetime.strftime("%H:%M:%S"))
 		#Time in sec since EPOCH
 		# self.time = self.datetime.timestamp()
@@ -1284,18 +1284,18 @@ class SPPBottle(Bottle):
 
 		for i in range(1, len(self.rotations)):
 			while self.rotations[i].time < self.rotations[i-1].time:
-				self.rotations[i].time += time.timedelta(seconds = 24 * 3600)
+				self.rotations[i].time += dt.timedelta(seconds = 24 * 3600)
 
 		if self.jump_mode == "time": # and self.jump_unit in ["seconds", "minutes", "hours"]:
-			self.head_jump = time.timedelta(seconds=float(self.input_parameters["head_jump"]))
-			self.tail_jump = time.timedelta(seconds=float(self.input_parameters["tail_jump"]))
+			self.head_jump = dt.timedelta(seconds=float(self.input_parameters["head_jump"]))
+			self.tail_jump = dt.timedelta(seconds=float(self.input_parameters["tail_jump"]))
 
 			if self.jump_unit == "minutes":
-				self.head_jump = time.timedelta(minutes=float(self.input_parameters["head_jump"]))
-				self.tail_jump = time.timedelta(minutes=float(self.input_parameters["tail_jump"]))
+				self.head_jump = dt.timedelta(minutes=float(self.input_parameters["head_jump"]))
+				self.tail_jump = dt.timedelta(minutes=float(self.input_parameters["tail_jump"]))
 			elif self.jump_unit == "hours":
-				self.head_jump = time.timedelta(hours=float(self.input_parameters["head_jump"]))
-				self.tail_jump = time.timedelta(hours=float(self.input_parameters["tail_jump"]))
+				self.head_jump = dt.timedelta(hours=float(self.input_parameters["head_jump"]))
+				self.tail_jump = dt.timedelta(hours=float(self.input_parameters["tail_jump"]))
 
 			if self.jump_mode == "length" or self.tail_jump.seconds == 0.:
 				self.tail_jump = self.rotations[-1].time - self.tail_jump

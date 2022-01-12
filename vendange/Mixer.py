@@ -271,11 +271,11 @@ class Mixer:
 
 		self.divisor = 1.
 		delta = bottle.all_times[-1] - bottle.all_times[0]
-		if delta > time.timedelta(hours=2):
+		if delta > dt.timedelta(hours=2):
 			self.divisor = 3600.
 			if self.langue == "en": self.xlabel = "Time (hours)"
 			else : 					self.xlabel = "Durée (heure)"
-		elif delta > time.timedelta(minutes=2):
+		elif delta > dt.timedelta(minutes=2):
 			self.divisor = 60.
 			if self.langue == "en": self.xlabel = "Time (minutes)"
 			else : 					self.xlabel = "Durée (minutes)"
@@ -321,10 +321,10 @@ class Mixer:
 
 		else:
 			# delta = bottle.all_times[-1] - bottle.all_times[0]
-			# if delta > time.timedelta(hours=2):
+			# if delta > dt.timedelta(hours=2):
 			# 	self.divisor = 3600.
 			# 	self.xlabel = "Time (hours)"
-			# elif delta > time.timedelta(minutes=2):
+			# elif delta > dt.timedelta(minutes=2):
 			# 	self.divisor = 60.
 			# 	self.xlabel = "Time (minutes)"
 			# else:
@@ -799,7 +799,7 @@ class Mixer:
 			# ax13.set_xlim(ax1.get_xlim())
 			# xticks = plt.xticks()[0] * self.divisor
 			# xticks = [t + bottle.time + bottle.head_jump for t in xticks]
-			# ax12.set_xticklabels([time.strftime("%H:%M:%S", time.localtime(st)) for st in xticks])
+			# ax12.set_xticklabels([dt.strftime("%H:%M:%S", dt.localtime(st)) for st in xticks])
 
 			# l_Iref, = self.ax13.plot(self.x_axis_list[1:], bottle.all_Iref[1:], ".", color = "black", linestyle = 'none', markersize=self.marker_size, label="Ref Intensity", zorder=2)
 			# self.ax1_lines.append([l_Iref, l_Iref.get_label()])
@@ -1216,9 +1216,9 @@ class Mixer:
 			else:
 				print(plt.xticks()[0], self.divisor)
 				xticks = plt.xticks()[0] * self.divisor
-				xticks = [bottle.DateTime("start", format=self.time_format, delta=time.timedelta(seconds = t)) for t in xticks]
-				# xticks = [bottle.DateTime("start", format=self.time_format) + time.timedelta(seconds = t) for t in xticks]
-				# xticks = [bottle.DateTime() + time.timedelta(seconds = t) + bottle.head_jump for t in xticks]
+				xticks = [bottle.DateTime("start", format=self.time_format, delta=dt.timedelta(seconds = t)) for t in xticks]
+				# xticks = [bottle.DateTime("start", format=self.time_format) + dt.timedelta(seconds = t) for t in xticks]
+				# xticks = [bottle.DateTime() + dt.timedelta(seconds = t) + bottle.head_jump for t in xticks]
 
 			print(xticks)
 

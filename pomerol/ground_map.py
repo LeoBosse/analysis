@@ -23,7 +23,7 @@ import imageio
 import osgeo.gdal as gdal
 gdal.UseExceptions()  # not required, but a good idea
 
-
+from pomerol_configuration import *
 from observation import *
 from rayleigh_utils import *
 
@@ -34,7 +34,7 @@ class ElevationMap():
 
 		# self.in_dict = in_dict
 
-		self.path = in_dict["alt_map_path"]
+		self.path = pomerol_configuration.alt_map_path
 
 		self.location = in_dict["location"]
 		self.A_lon, self.A_lat = GetLonLatFromName(self.location)
@@ -352,7 +352,7 @@ class GroundMap:
 		if "show_ground_albedo" in in_dict:
 			self.show_ground_albedo = bool(int(in_dict["show_ground_albedo"]))
 
-		self.path = in_dict["ground_path"]
+		self.path = pomerol_configuration.ground_map_path
 		self.file = in_dict["ground_file"]
 
 		self.location = in_dict["location"]

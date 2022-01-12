@@ -8,7 +8,7 @@ class Config:
 
 	def __init__(self):
 		# Common denominator path. THe path shared by all data and source folders
-		self.path 						= "/home/bossel/These/Analysis/"
+		self.path 						= "/home/leob/iasb/analysis/"
 
 		self.data_path 					= self.path + "data/" # Folder where all your data are stored.
 		self.src_path 					= self.path + "src/vendange/" # Folder where all your source files are stored (this file is in this folder).
@@ -17,8 +17,7 @@ class Config:
 		self.magnetometer_data_path	 	= self.data_path + "magnetometer/" # Path for all magnetometer data
 		self.eiscat_data_path 			= self.data_path + "eiscat/" # Path for EISCAT data
 		self.eq_current_data_path 		= self.data_path + "equivalent_currents/" # Path for equivalent current data
-
-		self.input_path					= self.src_path + "input_files/" # Path where input files can be stored and where the templates are.
+		self.chaos_model_file 			= self.data_path + "magn_field/CHAOS-7.4.mat" # Path for the chaos model file		self.input_path					= self.src_path + "input_files/" # Path where input files can be stored and where the templates are.
 
 ### Making a Config() object to be used throughout the code.
 global_configuration = Config()

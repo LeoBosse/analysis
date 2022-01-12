@@ -36,6 +36,7 @@ import imageio
 
 from tqdm import tqdm
 
+from pomerol_configuration import *
 from observation import *
 from rayleigh_utils import *
 from sky_map import *
@@ -174,7 +175,8 @@ class World:
 		if self.direct_light_mode not in ["none", "only", "add"]:
 			self.direct_light_mode = "add"
 
-		self.B_model = chaos.load_CHAOS_matfile('/home/bossel/These/Analysis/data/magn_field/CHAOS-7.4.mat')
+		print(pomerol_configuration.chaos_model_file)
+		self.B_model = chaos.load_CHAOS_matfile(pomerol_configuration.chaos_model_file)
 
 
 		# print(self.times)

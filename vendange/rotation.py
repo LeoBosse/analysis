@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
 import sys as sys
-import datetime as time
+import datetime as dt
 
 from utils import *
 from vendange_configuration import *
@@ -136,7 +136,7 @@ class PTCURotation(Rotation):
 		# print(self.nb_data_per_rot)
 		# print(self.raw_data)
 		if self.nb_data_per_rot == 10:
-			self.time				= time.timedelta(milliseconds = float(self.raw_data[1]))
+			self.time				= dt.timedelta(milliseconds = float(self.raw_data[1]))
 			self.V					= self.raw_data[2]
 			self.Vcos				= self.raw_data[3]
 			self.Vsin				= self.raw_data[4]
@@ -146,7 +146,7 @@ class PTCURotation(Rotation):
 			self.TempOptical 		= self.raw_data[8]
 			self.TempAmbiant 		= self.raw_data[9]
 		elif self.nb_data_per_rot == 9:
-			self.time				= time.timedelta(milliseconds = float(self.raw_data[1]))
+			self.time				= dt.timedelta(milliseconds = float(self.raw_data[1]))
 			self.V					= self.raw_data[2]
 			self.Vcos				= self.raw_data[3]
 			self.Vsin				= self.raw_data[4]
@@ -156,7 +156,7 @@ class PTCURotation(Rotation):
 			self.TempOptical 		= self.raw_data[7]
 			self.TempAmbiant 		= self.raw_data[8]
 		elif self.nb_data_per_rot == 13:
-			self.time				= time.timedelta(milliseconds = float(self.raw_data[1]))
+			self.time				= dt.timedelta(milliseconds = float(self.raw_data[1]))
 			self.V					= self.raw_data[3]
 			self.Vcos				= self.raw_data[4]
 			self.Vsin				= self.raw_data[5]
@@ -169,7 +169,7 @@ class PTCURotation(Rotation):
 			self.Comment 			= self.raw_data[11]
 			self.live_Commentscol 	= self.raw_data[12]
 		elif self.nb_data_per_rot == 6:
-			self.time				= time.timedelta(milliseconds = float(self.raw_data[2]))
+			self.time				= dt.timedelta(milliseconds = float(self.raw_data[2]))
 			self.V					= self.raw_data[3]
 			self.Vcos				= self.raw_data[4]
 			self.Vsin				= self.raw_data[5]
@@ -182,7 +182,7 @@ class PTCURotation(Rotation):
 			self.Comment 			= False
 			self.live_Commentscol 	= False
 		elif self.nb_data_per_rot == 4:
-			self.time				= time.timedelta(milliseconds = float(self.raw_data[0]))
+			self.time				= dt.timedelta(milliseconds = float(self.raw_data[0]))
 			self.V					= self.raw_data[1]
 			self.Vcos				= self.raw_data[2]
 			self.Vsin				= self.raw_data[3]
@@ -231,13 +231,13 @@ class SPPRotation(Rotation):
 
 		### All the times are stored in seconds
 		#Date and time of rotation
-		self.datetime				= time.datetime.strptime(self.date_stamp + " " + self.time_stamp, "%Y-%m-%d %H:%M:%S")
+		self.datetime				= dt.datetime.strptime(self.date_stamp + " " + self.time_stamp, "%Y-%m-%d %H:%M:%S")
 		#Time of obs in sec since EPOCH (except if before April 2019)
-		self.time_since_EPOCH		= time.timedelta(seconds = self.datetime.timestamp())
+		self.time_since_EPOCH		= dt.timedelta(seconds = self.datetime.timestamp())
 		#Time in sec since midnight of this day
-		self.time_since_midnight 	=  self.datetime - time.datetime(self.year, self.month, self.day)
+		self.time_since_midnight 	=  self.datetime - dt.datetime(self.year, self.month, self.day)
 
-		if  self.datetime < time.datetime.strptime("2019-03-10", "%Y-%m-%d"): #I did this differently before this date, but all the input files are already done and I don't want to change everything...
+		if  self.datetime < dt.datetime.strptime("2019-03-10", "%Y-%m-%d"): #I did this differently before this date, but all the input files are already done and I don't want to change everything...
 			self.time = self.time_since_midnight
 		else:
 			self.time = self.time_since_EPOCH

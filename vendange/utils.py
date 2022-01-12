@@ -3,6 +3,7 @@
 
 import numpy as np
 import time as time
+import datetime as dt
 
 
 from rotation import *
@@ -321,11 +322,11 @@ def GetSliddingAverage(values, times, smoothing_factor, unit):
 			smooth_values[i] /= n
 	else:
 		if unit == "seconds":
-			smoothing_factor = time.timedelta(seconds = smoothing_factor)
+			smoothing_factor = dt.timedelta(seconds = smoothing_factor)
 		elif unit == "minutes":
-			smoothing_factor = time.timedelta(minutes = smoothing_factor)
+			smoothing_factor = dt.timedelta(minutes = smoothing_factor)
 		elif unit == "hours":
-			smoothing_factor = time.timedelta(hours = smoothing_factor)
+			smoothing_factor = dt.timedelta(hours = smoothing_factor)
 
 		smooth_values = np.zeros(nb_values)
 		for i in range(nb_values):
