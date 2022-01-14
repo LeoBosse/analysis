@@ -28,7 +28,7 @@ flux_unit W
 use_analytic false # Should stay as "false". If "true", POMEROL will compute the integral along the line of sight using an automatic scipy integration function. It is only slightly faster, and do not allow for voume subdivisions.
 
 # ###############################################################################
-### All instrumental inuts
+### All instrumental inputs
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
 ### Put "azimuts all" if you want to perform an almucantar (every 10°), or "elevations all" for a scan. See the world.__init__() for the code.
 azimuts 		 0
