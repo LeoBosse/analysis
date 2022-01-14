@@ -1,10 +1,10 @@
 ### Default input file for POMEROL: the Rayleigh scattering code
 ### If no input files, or a invalid one is given, the file named RS_default will be used.
-### Here is a short descritpion of the organisation of this file:
+### Here is a short description of the organization of this file:
 ### 1 line = 1 input parameter.
 ### <name of the parameter> SPACE <value of the parameter> SPACE <any comments at all. the "#" is not mandatory but helps to clarify>
-### put a "#" at the begining of the line to comment it.
-### The parameters are organised in group for an easier access. (all parameters for the ground map are together, etc...)
+### put a "#" at the beginning of the line to comment it.
+### The parameters are organized in group for an easier access. (all parameters for the ground map are together, etc...)
 
 ### The input file handling (automatic reading and writing is done by the class RayleighInput(Input). The Input class is defined for vendange.)
 
@@ -13,10 +13,8 @@
 src_path /home/leob/iasb/analysis/src/pomerol/ #Path to all the python source files
 
 saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
-save_path /home/bossel/These/Documentation/Mes_articles/auroral_pola/sky_only/ # Path to the folder where you want to save your results (graphs, txt...)
-save_name 20190307_m_sky_only_aero_1low_albedo #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
-
-
+save_path /home/leob/iasb/analysis/data/pomerol_results/ # Path to the folder where you want to save your results (graphs, txt...)
+save_name pomerol_default_test #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
 
 ### Units for the result flux (used in the graphs, but maybe not in the computations.)
 # W = for nanoWatts (default input unit)
