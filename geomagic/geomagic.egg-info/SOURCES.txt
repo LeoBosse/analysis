@@ -1,5 +1,0 @@
-setup.py
-geomagic.egg-info/PKG-INFO
-geomagic.egg-info/SOURCES.txt
-geomagic.egg-info/dependency_links.txt
-geomagic.egg-info/top_level.txt

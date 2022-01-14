@@ -1,5 +1,0 @@
-setup.py
-vendange.egg-info/PKG-INFO
-vendange.egg-info/SOURCES.txt
-vendange.egg-info/dependency_links.txt
-vendange.egg-info/top_level.txt

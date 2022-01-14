@@ -1,6 +1,0 @@
-README.md
-setup.py
-pomerol.egg-info/PKG-INFO
-pomerol.egg-info/SOURCES.txt
-pomerol.egg-info/dependency_links.txt
-pomerol.egg-info/top_level.txt
