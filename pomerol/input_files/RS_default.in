@@ -11,7 +11,7 @@
 ### To setup POMEROL on your computer, change the path names below:
 
 src_path ./ #Path to all the python source files
-
+#blabla asdgzcx
 saving_graphs 1  # 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
 save_path ../../data/pomerol_results/ # Path to the folder where you want to save your results (graphs, txt...)
 save_name skibotn_grdonly_N1000_all #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
