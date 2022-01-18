@@ -1,0 +1,24 @@
+dir.20171100
+visee_nord_20171118.spp
+4114800  	 	taille (nombre de bits (obtenus par ll))
+9.7  7.		DarkP,darkT (negative if computation requested)
+7    		Nombre de cycles moyennés en avant traitement sur les données
+7 		Nombre de cycles moyennés après traitement pour les tracés
+3	 		1 analyse  tout. 2 analyse  > 108°. 3 analyse gamme horaire
+23.011 29.583 	si prec dif de -1, ut debut et fin pour sortie lect_sp.output
+2 	Plot mesures entrées: 	0=non,1=oui,2=oui avec arret ecran
+2 	Plot 2D complet : 	0=non,1=oui,2=oui avec arret ecran
+2 	Plot 2D AoLP et DoLP : 	0=non,1=oui,2=oui avec arret ecran
+2 	Plot 3D I / fft : 	0=non,1=oui,2=oui avec arret ecran
+0 	Plot 3D complet : 	0=non,1=oui,2=oui avec arret ecran
+2 	Plot dumps 0 =non, 1=dessins auto de tous les dumps, 
+	2 = dessins à l'écran et arret, 3 dessin ecran en continu, 
+	si > 5 alors valeur du pas pour les dessins
+5  	si précédent=2, nombre de dessins à faire puis numero des dumps
+100   200    300   10000 20000
+0 	Nombre de dumps à éliminer suivit de leurs numéros canal T
+1236 1237 1672 1673 1674 1675 1676 1782 1783 1976 1977
+-29.66	Calib d'angle en degrés
+2017    319	annee  jour numero
+78.62    11.63 	latitude et longitude geographiques de SPP en deg
+30.00 189.00	elev. et azimut SPP (0 N, 90 E, 180 S, 270 W geog., en deg)

@@ -1,0 +1,15 @@
+Correct input file in use: systemic/systemic_azimuts<built-in function all>_elevations<built-in function all>_point_src_dist5_point_src_az0_resolution_along_los0.1_RS_min_altitude0_RS_max_altitude30_wavelength391.4_emission_altitude90_max_angle_discretization1
+Traceback (most recent call last):
+  File "./systematic.py", line 297, in <module>
+    RunSystematicSimulation()
+  File "./systematic.py", line 285, in RunSystematicSimulation
+    RunSimulation(file_name, show = False, output_result_file = "log/systematic_results.csv")
+  File "/home/bossel/These/Analysis/src/rayleigh/main.py", line 40, in RunSimulation
+    simu = Simulation(in_dict)
+  File "/home/bossel/These/Analysis/src/rayleigh/simulation.py", line 34, in __init__
+    self.world = World(in_dict)
+  File "/home/bossel/These/Analysis/src/rayleigh/world.py", line 38, in __init__
+    self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
+  File "/home/bossel/These/Analysis/src/rayleigh/world.py", line 38, in <listcomp>
+    self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
+ValueError: could not convert string to float: '<built-in'
