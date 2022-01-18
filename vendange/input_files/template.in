@@ -1,0 +1,48 @@
+#####################################################################################################################################
+### 	Template file for the Vendange software.																																										###
+### 	A line must be of the form:  <parameter name> <space> <paramter value> <space> # <comments>																	###
+### 	Comments at the end of a line do not need a "#", the space is enough, but it is better for human clarity.													###
+### 	To comment a line, use a "#" at the begining.																																								###
+### 	This file is used as a default setting when importing data with the "recolte.py" script (for database version V2 or lower). ###
+#####################################################################################################################################
+
+instrument_name carmen          # Name of the instrument we use (carmen ou ptcu, corbel ou ptcu_v2, gdcu, spp)
+data_files False        				# List of data files to analyse, NO SPACES, separated by commas.
+saving_name False 							# Base name for saving figures.
+
+observation_type fixed  #Default "fixed". Or "fixed_[elevation, azimut]_[discrete, continue]_rotation"
+
+#observation_type fixed_elevation_continue_rotation  #Default "fixed". Or "fixed_[elevation, azimut]_[discrete, continue]_rotation"
+#continue_rotation_elevation 0
+#continue_rotation_times 0 #in minutes
+
+#observation_type fixed_elevation_discrete_rotation  #Default "fixed". Or "fixed_[elevation, azimut]_[discrete, continue]_rotation"
+#discrete_rotation_azimut 0
+#discrete_rotation_times 0
+#discrete_rotation_elevations 0
+
+pollution_source_azimut 0				# To compute pollution AoLP for a single point source using Rayleigh diffusion theory.
+pollution_source_elevation 0		# To compute pollution AoLP for a single point source using Rayleigh diffusion theory.
+
+rotation_per_sec 2 #Rotation speed of the polarizing filter in Hz
+
+smoothing_factor 15           # The rotations will be smoothed by this factor. Average over F unit (could be rotations, seconds)
+smoothing_unit seconds 				# The unit of the rotation factor (rotations or seconds)
+smoothing_method slidding			# Smoothing method. upper: average factor number of rotations -> divides the number of rotations by smoothing_factor! slidding: average each rotation with several next. Does not change the number of rotations!
+
+head_jump 0					# Number of rotations/time to skip at the start of the observations
+tail_jump 0					# Number of rotations/time to skip at the end of the observations
+jump_unit seconds   # The unit of the head and tail jump (rotations, seconds, minutes or hours)
+jump_mode time   		#If "lenght" -> indicate the lenght of time to be jumped at start or end of obs. If "time", indicate the time (from beginning of obs) at wich to begin or end the obseravtion.
+
+AoLP_correction 0 	# AoLP correction to be applied to all AoLP results. Angle in degrees, positive or negative
+
+Imin 0.1 			#All measurments with intensity (mV) below will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
+Imax 10000 		#All measurments with intensity (mV) above will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
+DoLPmin 0		 	#All measurments with DoLP (%) below will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
+DoLPmax 100 	#All measurments with DoLP (%) above will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
+
+I_ref off 			#on or off. Only for Carmen when the reference channel is working. if off, the reference canal of carmen will not be displayed
+
+time_zone 1  						# UT+X what is the time zone of the observation (UT+1 for France/Norway)? Indicate X
+config_time_format UT 	# UT or LT. What did you use for the instrument clock? LT=UT+X is the Local Time of the clock

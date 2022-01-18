@@ -1,0 +1,926 @@
+['../vendange/vendange.py', 'ptcu/20191021_Sob/mm_a225_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed
+WARNING: No observation angles info in the input file.
+['mm', 'a225', 'e45']
+FILTERS: mm mm
+carmen 20191021 Sob mm 225.0 45.0 
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_a225_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_a225_e45/config.csv
+PTCU DATA loaded
+2019-10-21 21:15:26
+2019-10-21 21:15:26 21:15:26
+DEBUG jumps [0.0, 0.523, 1.046, 1.569, 2.091, 2.613, 3.135, 3.658, 4.18, 4.701]
+0:00:00 0:00:00
+7581 good rotations in 7582 ; 1 deleted because of time jumps.
+0:00:00 1:05:27.829000 0:00:00 1:05:27.311000
+6286 good rotations in 7581 ; 1295 deleted because of invalid data.
+0:00:00 0:11:11.177000 1:05:27.311000 2019-10-21 21:37:48.354000 2019-10-21 22:32:04.488000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 518.0801909307876
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+DEBUG SOURCE: 255.00000000000003 0.0
+DEBUG: AZ/EL 225.0 45.0
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191021_Sob', 'mm_a225_e45']
+DoLP min: 1.1859468409912604
+DoLP max: 5.774671798361599
+DoLP stddev: 0.7886880210668762
+AoLP stddev: 5.750534120684546
+AoBlos: -59.510777258072174
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_a225_e45/20191021_Sob_mm_a225_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-21_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: mm
+START PLOTTING
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_a225_e45/20191021_Sob_mm_a225_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_a225_e45/20191021_Sob_mm_a225_e45_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191021_Sob/mm_rot_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_elevation_discrete_rotation
+WARNING: No observation angles info in the input file.
+['mm', 'rot', 'e45']
+FILTERS: mm mm
+carmen 20191021 Sob mm 0.0 45.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_e45/config.csv
+PTCU DATA loaded
+2019-10-21 22:28:15
+2019-10-21 22:28:15 22:28:15
+1972 good rotations in 6273 ; 4301 deleted because of time jumps.
+0:00:00 0:17:00 0:00:00 0:16:59.967000
+1461 good rotations in 1972 ; 511 deleted because of invalid data.
+0:00:00 0:00:16.551000 0:16:34.791000 2019-10-21 22:28:48.102000 2019-10-21 22:45:06.342000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 670.0273972602739
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191021_Sob', 'mm_rot_e45']
+DoLP min: 0.06559998848738492
+DoLP max: 4.430270984821284
+DoLP stddev: 0.9046045935068626
+AoLP stddev: 43.655183193177464
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_e45/20191021_Sob_mm_rot_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-21_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: mm
+[  0.  15.  30.  45.  60.  75.  90. 105. 120. 135. 150. 165. 180. 195.
+ 210. 225. 240. 255. 270. 285. 300. 315. 330. 345.]
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_e45/20191021_Sob_mm_rot_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_e45/20191021_Sob_mm_rot_e45_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191021_Sob/mm_rot_a00', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['mm', 'rot', 'a00']
+FILTERS: mm mm
+carmen 20191021 Sob mm 0.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a00/data1.csv /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a00/config.csv
+PTCU DATA loaded
+2019-10-21 22:28:15
+2019-10-21 22:28:15 22:28:15
+1979 good rotations in 6273 ; 4294 deleted because of time jumps.
+0:22:00 0:39:00 0:22:00.240000 0:38:59.531000
+700 good rotations in 1979 ; 1279 deleted because of invalid data.
+0:22:00 0:00:47.190000 0:15:45.395000 2019-10-21 22:51:49.380000 2019-10-21 23:06:47.585000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 1284.9856938483547
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191021_Sob', 'mm_rot_a00']
+DoLP min: 0.15565943393633985
+DoLP max: 5.92700864595085
+DoLP stddev: 1.0962817714151654
+AoLP stddev: 19.30521873996044
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a00/20191021_Sob_mm_rot_a00_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-21_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: mm
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a00/20191021_Sob_mm_rot_a00_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a00/20191021_Sob_mm_rot_a00_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191021_Sob/mm_rot_a90', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['mm', 'rot', 'a90']
+FILTERS: mm mm
+carmen 20191021 Sob mm 90.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a90/data1.csv /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a90/config.csv
+PTCU DATA loaded
+2019-10-21 22:28:15
+2019-10-21 22:28:15 22:28:15
+1620 good rotations in 6273 ; 4653 deleted because of time jumps.
+0:40:00 0:53:55.282000 0:40:00.086000 0:53:54.769000
+747 good rotations in 1620 ; 873 deleted because of invalid data.
+0:40:00 0:01:14.911000 0:13:50.065000 2019-10-21 23:10:44.822000 2019-10-21 23:23:19.976000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 1012.2707774798927
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191021_Sob', 'mm_rot_a90']
+DoLP min: 0.04459980013988695
+DoLP max: 4.884674130023446
+DoLP stddev: 0.9298976634047651
+AoLP stddev: 48.12226390479014
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a90/20191021_Sob_mm_rot_a90_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-21_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: mm
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a90/20191021_Sob_mm_rot_a90_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191021_Sob/mm_rot_a90/20191021_Sob_mm_rot_a90_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191022_Sob/or_a00_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed
+WARNING: No observation angles info in the input file.
+['or', 'a00', 'e45']
+FILTERS: or or
+carmen 20191022 Sob or 0.0 45.0 
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_a00_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_a00_e45/config.csv
+PTCU DATA loaded
+2019-10-22 20:22:28
+2019-10-22 20:22:28 20:22:28
+564 good rotations in 2821 ; 2257 deleted because of time jumps.
+0:00:30.900000 0:05:24 0:00:31.254000 0:05:23.674000
+395 good rotations in 564 ; 169 deleted because of invalid data.
+0:00:30.900000 0:01:27.982000 0:04:52.420000 2019-10-22 20:25:54.864000 2019-10-22 20:29:19.302000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 518.8781725888325
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191022_Sob', 'or_a00_e45']
+DoLP min: 2.5441734151670063
+DoLP max: 3.4482012095219803
+DoLP stddev: 0.167336395385179
+AoLP stddev: 1.579163296936657
+AoBlos: 0.0
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_a00_e45/20191022_Sob_or_a00_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-22_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: or
+START PLOTTING
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_a00_e45/20191022_Sob_or_a00_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_a00_e45/20191022_Sob_or_a00_e45_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191022_Sob/or_rot_a00', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['or', 'rot', 'a00']
+FILTERS: or or
+carmen 20191022 Sob or 0.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a00/data1.csv /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a00/config.csv
+PTCU DATA loaded
+2019-10-22 23:08:47
+2019-10-22 23:08:47 23:08:47
+DEBUG jumps [0.0, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009]
+0:00:00 0:00:00
+1280 good rotations in 1281 ; 1 deleted because of time jumps.
+0:00:00 0:10:38.779000 0:00:00 0:10:38.266000
+1132 good rotations in 1280 ; 148 deleted because of invalid data.
+0:00:00 0:00:00.297000 0:10:38.266000 2019-10-22 23:08:47.594000 2019-10-22 23:19:25.563000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 564.0751547303272
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191022_Sob', 'or_rot_a00']
+DoLP min: 0.01967652682977453
+DoLP max: 3.940215616851081
+DoLP stddev: 0.9990301292277077
+AoLP stddev: 32.632824799728105
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a00/20191022_Sob_or_rot_a00_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-22_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: or
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a00/20191022_Sob_or_rot_a00_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a00/20191022_Sob_or_rot_a00_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191022_Sob/or_rot_a90', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['or', 'rot', 'a90']
+FILTERS: or or
+carmen 20191022 Sob or 90.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a90/data1.csv /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a90/config.csv
+PTCU DATA loaded
+2019-10-22 23:19:37
+2019-10-22 23:19:37 23:19:37
+DEBUG jumps [0.0, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009]
+0:00:00 0:00:00
+1191 good rotations in 1192 ; 1 deleted because of time jumps.
+0:00:00 0:10:00.049000 0:00:00 0:09:59.536000
+1112 good rotations in 1191 ; 79 deleted because of invalid data.
+0:00:00 0:00:00.281000 0:09:59.536000 2019-10-22 23:19:37.562000 2019-10-22 23:29:36.817000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 539.3834383438344
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191022_Sob', 'or_rot_a90']
+DoLP min: 0.002410926350513247
+DoLP max: 6.054099872280249
+DoLP stddev: 0.6210639277560212
+AoLP stddev: 38.70050097510087
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a90/20191022_Sob_or_rot_a90_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-22_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: or
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a90/20191022_Sob_or_rot_a90_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_a90/20191022_Sob_or_rot_a90_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191022_Sob/or_rot_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_elevation_discrete_rotation
+WARNING: No observation angles info in the input file.
+['or', 'rot', 'e45']
+FILTERS: or or
+carmen 20191022 Sob or 0.0 45.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_e45/config.csv
+PTCU DATA loaded
+2019-10-22 22:55:28
+2019-10-22 22:55:28 22:55:28
+DEBUG jumps [0.0, 0.518, 1.035, 1.552, 2.07, 2.587, 3.104, 3.621, 4.138, 4.655]
+0:00:00 0:00:00
+1512 good rotations in 1513 ; 1 deleted because of time jumps.
+0:00:00 0:12:59.835000 0:00:00 0:12:59.322000
+1367 good rotations in 1512 ; 145 deleted because of invalid data.
+0:00:00 0:00:00 0:12:59.322000 2019-10-22 22:55:28 2019-10-22 23:08:27.322000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 570.5139092240117
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191022_Sob', 'or_rot_e45']
+DoLP min: 0.01119164814775547
+DoLP max: 3.009123162567236
+DoLP stddev: 0.6904055696938144
+AoLP stddev: 39.111607382542054
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_e45/20191022_Sob_or_rot_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-22_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: or
+[  0.  15.  30.  45.  60.  75.  90. 105. 120. 135. 150. 165. 180. 195.
+ 210. 225. 240. 255. 270. 285. 300. 315. 330. 345.]
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_e45/20191022_Sob_or_rot_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/or_rot_e45/20191022_Sob_or_rot_e45_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191022_Sob/ro_a00_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed
+WARNING: No observation angles info in the input file.
+['ro', 'a00', 'e45']
+FILTERS: ro ro
+carmen 20191022 Sob ro 0.0 45.0 
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_a00_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_a00_e45/config.csv
+PTCU DATA loaded
+2019-10-22 21:11:17
+2019-10-22 21:11:17 21:11:17
+371 good rotations in 5096 ; 4725 deleted because of time jumps.
+0:00:00 0:03:12 0:00:00 0:03:11.576000
+326 good rotations in 371 ; 45 deleted because of invalid data.
+0:00:00 0:00:23.283000 0:03:11.576000 2019-10-22 21:12:03.566000 2019-10-22 21:14:51.859000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 517.8246153846154
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191022_Sob', 'ro_a00_e45']
+DoLP min: 0.49983494389446437
+DoLP max: 2.599963159464904
+DoLP stddev: 0.4399819827263923
+AoLP stddev: 9.502400209134754
+AoBlos: 0.0
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_a00_e45/20191022_Sob_ro_a00_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-22_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: ro
+START PLOTTING
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_a00_e45/20191022_Sob_ro_a00_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_a00_e45/20191022_Sob_ro_a00_e45_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191022_Sob/ro_rot_a00', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['ro', 'rot', 'a00']
+FILTERS: ro ro
+carmen 20191022 Sob ro 0.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a00/data1.csv /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a00/config.csv
+PTCU DATA loaded
+2019-10-22 22:11:06
+2019-10-22 22:11:06 22:11:06
+DEBUG jumps [0.0, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009]
+0:00:00 0:00:00
+2022 good rotations in 2023 ; 1 deleted because of time jumps.
+0:00:00 0:17:03.044000 0:00:00 0:17:02.532000
+749 good rotations in 2022 ; 1273 deleted because of invalid data.
+0:00:00 0:00:44.466000 0:15:41.138000 2019-10-22 22:12:34.932000 2019-10-22 22:27:31.604000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 1198.75935828877
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191022_Sob', 'ro_rot_a00']
+DoLP min: 0.11160014120781662
+DoLP max: 6.9581140975771225
+DoLP stddev: 0.4167666623638187
+AoLP stddev: 26.906779856158746
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a00/20191022_Sob_ro_rot_a00_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-22_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: ro
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a00/20191022_Sob_ro_rot_a00_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a00/20191022_Sob_ro_rot_a00_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191022_Sob/ro_rot_a90', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['ro', 'rot', 'a90']
+FILTERS: ro ro
+carmen 20191022 Sob ro 90.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a90/data1.csv /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a90/config.csv
+PTCU DATA loaded
+2019-10-22 22:29:52
+2019-10-22 22:29:52 22:29:52
+DEBUG jumps [0.0, 0.513, 1.026, 1.539, 2.052, 2.565, 3.078, 3.59, 4.103, 4.615]
+0:00:00 0:00:00
+1609 good rotations in 1610 ; 1 deleted because of time jumps.
+0:00:00 0:13:46.506000 0:00:00 0:13:45.994000
+777 good rotations in 1609 ; 832 deleted because of invalid data.
+0:00:00 0:00:16.404000 0:13:22.971000 2019-10-22 22:30:24.808000 2019-10-22 22:43:31.375000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 1013.6172680412371
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191022_Sob', 'ro_rot_a90']
+DoLP min: 0.024985849042406392
+DoLP max: 2.3520257665208337
+DoLP stddev: 0.45773138662872137
+AoLP stddev: 51.28756167828051
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a90/20191022_Sob_ro_rot_a90_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-22_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: ro
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a90/20191022_Sob_ro_rot_a90_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_a90/20191022_Sob_ro_rot_a90_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191022_Sob/ro_rot_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_elevation_discrete_rotation
+WARNING: No observation angles info in the input file.
+['ro', 'rot', 'e45']
+FILTERS: ro ro
+carmen 20191022 Sob ro 0.0 45.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_e45/config.csv
+PTCU DATA loaded
+2019-10-22 21:55:56
+2019-10-22 21:55:56 21:55:56
+DEBUG jumps [0.0, 0.514, 1.028, 1.542, 2.055, 2.569, 3.082, 3.596, 4.109, 4.622]
+0:00:00 0:00:00
+1728 good rotations in 1729 ; 1 deleted because of time jumps.
+0:00:00 0:14:48.252000 0:00:00 0:14:47.739000
+1229 good rotations in 1728 ; 499 deleted because of invalid data.
+0:00:00 0:00:07.192000 0:13:48.665000 2019-10-22 21:56:10.384000 2019-10-22 22:09:51.857000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 668.951954397394
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191022_Sob', 'ro_rot_e45']
+DoLP min: 0.02287859266231692
+DoLP max: 2.1967698551633736
+DoLP stddev: 0.3684314051517113
+AoLP stddev: 40.57574198627407
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_e45/20191022_Sob_ro_rot_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-22_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: ro
+[  0.  15.  30.  45.  60.  75.  90. 105. 120. 135. 150. 165. 180. 195.
+ 210. 225. 240. 255. 270. 285. 300. 315. 330. 345.]
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_e45/20191022_Sob_ro_rot_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191022_Sob/ro_rot_e45/20191022_Sob_ro_rot_e45_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191023_Sob/bo_a225_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed
+WARNING: No observation angles info in the input file.
+['bo', 'a225', 'e45']
+FILTERS: bo bo
+carmen 20191023 Sob bo 225.0 45.0 
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_a225_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_a225_e45/config.csv
+PTCU DATA loaded
+2019-10-23 22:29:14
+2019-10-23 22:29:14 22:29:14
+DEBUG jumps [0.0, 0.512, 1.024, 1.535, 2.047, 2.558, 3.069, 3.581, 4.092, 4.603]
+0:00:00 0:00:00
+7201 good rotations in 7202 ; 1 deleted because of time jumps.
+0:00:00 1:01:35.495000 0:00:00 1:01:34.982000
+7013 good rotations in 7201 ; 188 deleted because of invalid data.
+0:00:00 0:01:36.391000 1:01:34.982000 2019-10-23 22:32:26.782000 2019-10-23 23:32:25.373000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 513.2046491728465
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+DEBUG SOURCE: 255.00000000000003 0.0
+DEBUG: AZ/EL 225.0 45.0
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191023_Sob', 'bo_a225_e45']
+DoLP min: 1.5514296741950717
+DoLP max: 4.806914968476446
+DoLP stddev: 0.5166826235583645
+AoLP stddev: 3.654433591034316
+AoBlos: 120.48922274192783
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_a225_e45/20191023_Sob_bo_a225_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-23_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: bo
+START PLOTTING
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_a225_e45/20191023_Sob_bo_a225_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_a225_e45/20191023_Sob_bo_a225_e45_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191023_Sob/bo_rot_a00', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['bo', 'rot', 'a00']
+FILTERS: bo bo
+carmen 20191023 Sob bo 0.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a00/data1.csv /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a00/config.csv
+PTCU DATA loaded
+2019-10-23 22:06:15
+2019-10-23 22:06:15 22:06:15
+DEBUG jumps [0.0, 0.513, 1.026, 1.539, 2.051, 2.563, 3.075, 3.588, 4.1, 4.612]
+0:00:00 0:00:00
+1324 good rotations in 1325 ; 1 deleted because of time jumps.
+0:00:00 0:11:20.101000 0:00:00 0:11:19.588000
+456 good rotations in 1324 ; 868 deleted because of invalid data.
+0:00:00 0:00:34.372000 0:11:18.050000 2019-10-23 22:07:23.744000 2019-10-23 22:18:07.422000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 1414.6769230769228
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191023_Sob', 'bo_rot_a00']
+DoLP min: 1.6741817171815367
+DoLP max: 7.23968855860676
+DoLP stddev: 1.376334210008272
+AoLP stddev: 6.015396609365511
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a00/20191023_Sob_bo_rot_a00_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-23_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: bo
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a00/20191023_Sob_bo_rot_a00_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a00/20191023_Sob_bo_rot_a00_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191023_Sob/bo_rot_a90', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['bo', 'rot', 'a90']
+FILTERS: bo bo
+carmen 20191023 Sob bo 90.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a90/data1.csv /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a90/config.csv
+PTCU DATA loaded
+2019-10-23 22:18:06
+2019-10-23 22:18:06 22:18:06
+DEBUG jumps [0.0, 0.511, 1.023, 1.534, 2.046, 2.557, 3.068, 3.579, 4.09, 4.602]
+0:00:00 0:00:00
+1263 good rotations in 1264 ; 1 deleted because of time jumps.
+0:00:00 0:10:48.078000 0:00:00 0:10:47.567000
+469 good rotations in 1263 ; 794 deleted because of invalid data.
+0:00:00 0:00:23.512000 0:10:38.355000 2019-10-23 22:18:53.024000 2019-10-23 22:29:07.867000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 1313.7670940170942
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191023_Sob', 'bo_rot_a90']
+DoLP min: 0.25325625209442104
+DoLP max: 6.415437914444342
+DoLP stddev: 1.3626397255692166
+AoLP stddev: 46.16700263820541
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a90/20191023_Sob_bo_rot_a90_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-23_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: bo
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a90/20191023_Sob_bo_rot_a90_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_a90/20191023_Sob_bo_rot_a90_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191023_Sob/bo_rot_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_elevation_discrete_rotation
+WARNING: No observation angles info in the input file.
+['bo', 'rot', 'e45']
+FILTERS: bo bo
+carmen 20191023 Sob bo 0.0 45.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_e45/config.csv
+PTCU DATA loaded
+2019-10-23 21:29:28
+2019-10-23 21:29:28 21:29:28
+DEBUG jumps [0.0, 0.515, 1.03, 1.544, 2.058, 2.572, 3.086, 3.6, 4.114, 4.628]
+0:00:00 0:00:00
+1655 good rotations in 1656 ; 1 deleted because of time jumps.
+0:00:00 0:14:09.397000 0:00:00 0:14:08.886000
+1038 good rotations in 1655 ; 617 deleted because of invalid data.
+0:00:00 0:02:24.338000 0:14:08.374000 2019-10-23 21:34:16.676000 2019-10-23 21:46:00.712000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 678.9161041465768
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191023_Sob', 'bo_rot_e45']
+DoLP min: 0.0767211765827792
+DoLP max: 5.754652641955156
+DoLP stddev: 1.2800694428560546
+AoLP stddev: 38.00944583767674
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_e45/20191023_Sob_bo_rot_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-23_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: bo
+[  0.  15.  30.  45.  60.  75.  90. 105. 120. 135. 150. 165. 180. 195.
+ 210. 225. 240. 255. 270. 285. 300. 315. 330. 345. 360.]
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_e45/20191023_Sob_bo_rot_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/bo_rot_e45/20191023_Sob_bo_rot_e45_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191023_Sob/vo_a225_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed
+WARNING: No observation angles info in the input file.
+['vo', 'a225', 'e45']
+FILTERS: vo vo
+carmen 20191023 Sob vo 225.0 45.0 
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_a225_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_a225_e45/config.csv
+PTCU DATA loaded
+2019-10-23 20:47:43
+2019-10-23 20:47:43 20:47:43
+DEBUG jumps [0.0, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009]
+0:00:00 0:00:00
+4112 good rotations in 4113 ; 1 deleted because of time jumps.
+0:00:00 0:34:52.427000 0:00:00 0:34:51.914000
+4032 good rotations in 4112 ; 80 deleted because of invalid data.
+0:00:00 0:00:23.891000 0:34:51.914000 2019-10-23 20:48:30.782000 2019-10-23 21:22:58.805000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 513.0297692880179
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+DEBUG SOURCE: 255.00000000000003 0.0
+DEBUG: AZ/EL 225.0 45.0
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191023_Sob', 'vo_a225_e45']
+DoLP min: 2.3252171858071433
+DoLP max: 3.4473788030291144
+DoLP stddev: 0.18128630534968712
+AoLP stddev: 1.3981452040873936
+AoBlos: -59.81333224484672
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_a225_e45/20191023_Sob_vo_a225_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-23_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: vo
+START PLOTTING
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_a225_e45/20191023_Sob_vo_a225_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_a225_e45/20191023_Sob_vo_a225_e45_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191023_Sob/vo_rot_a00', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['vo', 'rot', 'a00']
+FILTERS: vo vo
+carmen 20191023 Sob vo 0.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a00/data1.csv /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a00/config.csv
+PTCU DATA loaded
+2019-10-23 20:20:16
+2019-10-23 20:20:16 20:20:16
+DEBUG jumps [0.0, 0.513, 1.025, 1.538, 2.05, 2.562, 3.077, 3.593, 4.109, 4.625]
+0:00:00 0:00:00
+1392 good rotations in 1393 ; 1 deleted because of time jumps.
+0:00:00 0:11:54.907000 0:00:00 0:11:54.395000
+493 good rotations in 1392 ; 899 deleted because of invalid data.
+0:00:00 0:00:07.205000 0:11:47.218000 2019-10-23 20:20:30.410000 2019-10-23 20:32:10.423000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 1422.790650406504
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191023_Sob', 'vo_rot_a00']
+DoLP min: 1.4171980157204966
+DoLP max: 3.1751733818530288
+DoLP stddev: 0.3898959305183863
+AoLP stddev: 7.142072501298649
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a00/20191023_Sob_vo_rot_a00_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-23_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: vo
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a00/20191023_Sob_vo_rot_a00_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a00/20191023_Sob_vo_rot_a00_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191023_Sob/vo_rot_a90', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_azimut_discrete_rotation
+WARNING: No observation angles info in the input file.
+['vo', 'rot', 'a90']
+FILTERS: vo vo
+carmen 20191023 Sob vo 90.0 0.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a90/data1.csv /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a90/config.csv
+PTCU DATA loaded
+2019-10-23 20:34:03
+2019-10-23 20:34:03 20:34:03
+DEBUG jumps [0.0, 0.512, 1.024, 1.536, 2.049, 2.564, 3.079, 3.594, 4.109, 4.624]
+0:00:00 0:00:00
+1096 good rotations in 1097 ; 1 deleted because of time jumps.
+0:00:00 0:09:22.643000 0:00:00 0:09:22.133000
+399 good rotations in 1096 ; 697 deleted because of invalid data.
+0:00:00 0:00:09.776000 0:08:42.165000 2019-10-23 20:34:22.552000 2019-10-23 20:42:54.941000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 1287.4095477386936
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191023_Sob', 'vo_rot_a90']
+DoLP min: 0.1672379964314779
+DoLP max: 3.2987651572740107
+DoLP stddev: 0.795462959768992
+AoLP stddev: 48.198799017488724
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a90/20191023_Sob_vo_rot_a90_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-23_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: vo
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a90/20191023_Sob_vo_rot_a90_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_a90/20191023_Sob_vo_rot_a90_voie1_correlations.png
+['../vendange/vendange.py', 'ptcu/20191023_Sob/vo_rot_e45', '-s', 'False']
+ls ['data1.csv']
+INFO: Observation type is fixed_elevation_discrete_rotation
+WARNING: No observation angles info in the input file.
+['vo', 'rot', 'e45']
+FILTERS: vo vo
+carmen 20191023 Sob vo 0.0 45.0 _rot
+LOADING PTCU data: line 1
+/home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_e45/data1.csv /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_e45/config.csv
+PTCU DATA loaded
+2019-10-23 20:06:10
+2019-10-23 20:06:10 20:06:10
+DEBUG jumps [0.0, 0.514, 1.028, 1.541, 2.055, 2.569, 3.082, 3.596, 4.109, 4.622]
+0:00:00 0:00:00
+1435 good rotations in 1436 ; 1 deleted because of time jumps.
+0:00:00 0:12:17.727000 0:00:00 0:12:17.216000
+987 good rotations in 1435 ; 448 deleted because of invalid data.
+0:00:00 0:00:29.842000 0:12:05.453000 2019-10-23 20:07:09.684000 2019-10-23 20:18:45.295000
+AoLP correction: 0.0
+Get Smooth Lists
+AVG DT (millisec) 705.4878296146044
+Smooting data over 15 seconds
+Get Smooth Lists: DONE
+Geometry: Start
+Geometry: DONE
+*********************************************
+INFO: ['ptcu', '20191023_Sob', 'vo_rot_e45']
+DoLP min: 0.427018103660485
+DoLP max: 3.6590375893414753
+DoLP stddev: 0.7616672866251442
+AoLP stddev: 34.1923846516193
+*********************************************
+Saving as .txt in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_e45/20191023_Sob_vo_rot_e45_voie1_results.txt
+Optional arguments: False True
+Creating Magnetometer Data Object
+WARNING: No magnetometer data found for this observation
+Creating AllSky Imager Data Object
+['/home/bossel/These/Analysis/data/eiscat/2019-10-23_beata_10@uhfa/']
+WARNING: No eiscat data files for this date.
+WARNING: No eiscat data files for this date.
+DEBUG: False
+MIXER FILTER: vo
+[  0.  15.  30.  45.  60.  75.  90. 105. 120. 135. 150. 165. 180. 195.
+ 210. 225. 240. 255. 270. 285. 300. 315. 330. 345. 360.]
+START PLOTTING
+DEBUG plot discrete
+Saving graphs in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_e45/20191023_Sob_vo_rot_e45_voie1_graphs.png
+Saving correlation in /home/bossel/These/Analysis/data/ptcu/20191023_Sob/vo_rot_e45/20191023_Sob_vo_rot_e45_voie1_correlations.png
