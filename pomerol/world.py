@@ -70,7 +70,7 @@ class World:
 		self.SetFluxUnit 		= lambda f: f
 
 		self.flux_unit 			= in_dict["flux_unit"]
-		self.eye_efficiency_data = pd.read_csv(self.src_path + "/linCIE2008v2e_fine.csv", names=["wl", "func"])
+		self.eye_efficiency_data = pd.read_csv(self.src_path + "linCIE2008v2e_fine.csv", names=["wl", "func"])
 		self.eye_efficiency		= np.interp(self.wavelength, self.eye_efficiency_data["wl"], self.eye_efficiency_data["func"])
 		self.WattToLumen 		= lambda f: f * 683.002 * self.eye_efficiency
 		self.LumenToCandela 	= lambda f: f / self.inst_solid_angle
