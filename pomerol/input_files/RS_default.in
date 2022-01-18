@@ -10,10 +10,10 @@
 
 ### To setup POMEROL on your computer, change the path names below:
 
-src_path /home/leob/iasb/analysis/src/pomerol/ #Path to all the python source files
+src_path ./ #Path to all the python source files
 
 saving_graphs 1  # 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
-save_path /home/leob/iasb/analysis/data/pomerol_results/ # Path to the folder where you want to save your results (graphs, txt...)
+save_path ../../data/pomerol_results/ # Path to the folder where you want to save your results (graphs, txt...)
 save_name skibotn_grdonly_N1000_all #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
 
 ### Units for the result flux (used in the graphs, but maybe not in the computations.)
@@ -125,7 +125,8 @@ Nb_emission_points 1000				 # Number of bins to compute. Will downgrade the init
 Nb_emission_maps 1						 # Number of emission maps to compute. Use it for time changing synthetic emissions (sky_mode == X_moving_EW_band, but not for a movie). Should be put to 1 when not varying !
 
 #If loading the sky from a picture: sky_mode == image or movie
-sky_path /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/ # constant path to the images
+#sky_path /home/bossel/These/Analysis/data/allsky_camera/tid.uio.no/plasma/aurora/ # constant path to the images
+sky_path ../../data/allsky_camera/tid.uio.no/plasma/aurora/ # constant path to the images
 
 
 ### Some exemple files for the Skibotn cameras
@@ -151,7 +152,8 @@ sky_wavelength 557.7    # Check if this works. To be able to pass from Rayleigh 
 
 use_alt_map 0 # 0 or 1, if you want to compute terrain occultations and environmental geometry with real terrain elevations.
 
-alt_map_path /home/bossel/These/Analysis/data/elevation/ #Path where the elevations data are stored
+#alt_map_path /home/bossel/These/Analysis/data/elevation/ #Path where the elevations data are stored
+alt_map_path ../../data/elevation/ #Path where the elevations data are stored
 alt_map_radius 100 		#radius of the map in km. Can be different from the ground emission map
 alt_map_N_bins_max 0  #Maximum number of bins to use in the map.
 alt_map_resolution 0.5 .031 # Resolution of the map you want to achieve in km. Minimum 1 arcsec = 31m = 0.031 km. The map will be downgraded to match the resolution.
@@ -185,7 +187,8 @@ ground_albedo altitude_0.2_0.2_0.5_0.5_0.8 constant_0.5
 
 ### If ground_mode is image: use following satellite ground map
 
-ground_path /home/leob/iasb/analysis/data/Night_pollution/
+#ground_path /home/leob/iasb/analysis/data/Night_pollution/
+ground_path ../../data/Night_pollution/
 ground_file nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-ntl_v10_c201807311200.avg_rade9.tif
 
 ### Night time pollution maps: Found at: https://eogdata.mines.edu/products/vnl/
