@@ -620,18 +620,30 @@ class Simulation:
 				self.MakePlots()
 				# pass
 			else:
-				f, axs = plt.subplots(3, sharex = True, figsize=(16, 8))
-				axs[0] = plt.subplot(311)
-				axs[1] = plt.subplot(312)
-				axs[2] = plt.subplot(313)
+				f, axs = plt.subplots(5, sharex = True, figsize=(16, 8))
+				axs[0] = plt.subplot(511)
+				axs[1] = plt.subplot(512)
+				axs[2] = plt.subplot(513)
+				axs[3] = plt.subplot(514)
+				axs[4] = plt.subplot(515)
 
 				if self.world.Nb_e_pc > 1 and self.world.Nb_a_pc > 1:
 					extent = RtoD * np.array([self.world.a_pc_list[0], self.world.a_pc_list[-1], self.world.e_pc_list[0], self.world.e_pc_list[-1]])
-					axs[0].imshow(self.I_list[0,:,:], origin="lower", extent=extent)
+					a1 = axs[0].imshow(self.I_list[0,:,:], origin="lower", extent=extent)
 					axs[0].get_xaxis().set_visible(False)
-					axs[1].imshow(self.DoLP_list[0,:,:], origin="lower", extent=extent)
+					cbar1 = f.colorbar(a1, extend='both', spacing='proportional', shrink=0.9, ax=axs[0])
+					a2 = axs[1].imshow(self.DoLP_list[0,:,:], origin="lower", extent=extent, cmap=plt.get_cmap("YlOrRd"))
 					axs[1].get_xaxis().set_visible(False)
-					axs[2].imshow(self.AoRD_list[0,:,:]*RtoD, origin="lower", extent=extent)
+					cbar1 = f.colorbar(a2, extend='both', spacing='proportional', shrink=0.9, ax=axs[1])
+					a3 = axs[2].imshow(self.AoRD_list[0,:,:]*RtoD, origin="lower", extent=extent, cmap=plt.get_cmap("twilight"))
+					axs[2].get_xaxis().set_visible(False)
+					cbar1 = f.colorbar(a3, extend='both', spacing='proportional', shrink=0.9, ax=axs[2])
+					a4 = axs[3].imshow(self.DoLP_list[0,:,:] * np.cos(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
+					axs[3].get_xaxis().set_visible(False)
+					cbar1 = f.colorbar(a4, extend='both', spacing='proportional', shrink=0.9, ax=axs[3])
+					a5 = axs[4].imshow(self.DoLP_list[0,:,:] * np.sin(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
+
+					cbar1 = f.colorbar(a5, extend='both', spacing='proportional', shrink=0.9, ax=axs[4])
 				else:
 					if self.world.Nb_e_pc == 1:
 						xaxis = self.world.a_pc_list*RtoD
@@ -678,6 +690,8 @@ class Simulation:
 				# axs[0].legend()
 				axs[1].set_ylabel("DoLP (\%)")
 				axs[2].set_ylabel("AoLP (°)")
+				axs[3].set_ylabel("Q (\%)")
+				axs[4].set_ylabel("U (\%)")
 
 				f.subplots_adjust(hspace=0)
 

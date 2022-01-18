@@ -122,7 +122,7 @@ class World:
 		if self.a_pc_list[0] == "all":
 			# self.a_pc_list = np.arange(179.5, 180.5, 0.005) * DtoR
 			# self.a_pc_list = np.arange(0, 360, 10) * DtoR
-			self.a_pc_list = np.arange(0, 350, 15) * DtoR
+			self.a_pc_list = np.arange(0, 360, 5) * DtoR
 			# self.a_pc_list = np.arange(-10, 10, 1) * DtoR
 		else:
 			self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
