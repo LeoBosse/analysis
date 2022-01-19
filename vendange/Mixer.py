@@ -349,12 +349,10 @@ class Mixer:
 
 				self.x_time_ticks_label = [x.strftime("%H:%M:%S") for x in self.x_time_ticks_label]
 
-
 		if self.max_error_bars:
 			self.error_step = len(self.x_axis_list) // self.max_error_bars + 1
 		else:
 			self.error_step = 1
-
 
 	def MakeFigure(self):
 		if self.mode == "default":

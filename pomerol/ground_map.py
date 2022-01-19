@@ -766,7 +766,7 @@ class GroundMap:
 		# i4 = ax4.pcolormesh((azimuts-A_lon) * RT, (distances-A_lat) * RT, AoRD_map * RtoD, cmap=cm.twilight)			# AoLP of scattered light from (e,a)
 
 
-	# Angle of polaisation of light from (e,a)
+		# Angle of polarisation of light from (e,a)
 		cbar1 = f.colorbar(i1, extend='both', spacing='proportional', shrink=0.9, ax=ax1)
 		cbar1.set_label('Initial emission map')
 		cbar2 = f.colorbar(i2, extend='both', spacing='proportional', shrink=0.9, ax=ax2)

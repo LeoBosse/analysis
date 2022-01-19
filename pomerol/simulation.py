@@ -402,8 +402,7 @@ class Simulation:
 		################################################################################
 		###	Polar plots of intensity
 
-		font = {'weight' : 'bold',
-		'size'   : 24}
+		font = {'weight' : 'bold', 'size'   : 24}
 		matplotlib.rc('font', **font)
 
 		if mpi_rank == 0:
