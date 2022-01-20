@@ -92,7 +92,9 @@ class Atmosphere:
 
 		self.GetAerosolProfil(in_dict)
 
-		if mpi_rank == 0: print("DEBUG ATMOSPHERE TOTAL OD (0-120km):", self.GetO3Absorbtion(0, 120) + self.GetRSOpticalDepth(0, 120) + self.GetAerosolsAbsorbtion(0, 120))
+		if mpi_rank == 0:
+			print("tau_0", self.tau_0)
+			print("DEBUG ATMOSPHERE TOTAL OD (0-120km):", self.GetO3Absorbtion(0, 120), self.GetRSOpticalDepth(0, 120), self.GetAerosolsAbsorbtion(0, 120), self.GetO3Absorbtion(0, 120)+ self.GetRSOpticalDepth(0, 120)+ self.GetAerosolsAbsorbtion(0, 120))
 
 		# self.depola = 0
 		# if self.wavelength == 630:
@@ -107,10 +109,10 @@ class Atmosphere:
 
 		if mpi_rank == 0 and self.show_cross_section:
 			self.MakeCrossSectionPlot()
-			# plt.show()
+			plt.show()
 		if mpi_rank == 0 and self.show_atmosphere:
 			self.MakePlots()
-			# plt.show()
+			plt.show()
 		if mpi_rank == 0 and self.show_aer_size and self.aer_complexity > 0:
 			self.MakeAerSizePlot()
 			plt.show()
@@ -329,20 +331,20 @@ class Atmosphere:
 
 	#@timer
 	def GetRSPhaseFunction(self, wl, theta):
-		if   wl == 391.4:
-			gamma = 1.499 * 0.01
-		elif wl == 427.8:
-			gamma = 1.483 * 0.01
-		elif wl in [557.7, 550, 500]:
-			gamma = 1.442 * 0.01
-		elif wl == 630:
-			gamma = 1.413 * 0.01
-
 		### Simple approx
 		A = 3. / 4
 		B = 1 + np.cos(theta) ** 2
 
+
 		### Chandrasekhar formula
+		# if   wl == 391.4:
+		# 	gamma = 1.499 * 0.01
+		# elif wl == 427.8:
+		# 	gamma = 1.483 * 0.01
+		# elif wl in [557.7, 550, 500]:
+		# 	gamma = 1.442 * 0.01
+		# elif wl == 630:
+		# 	gamma = 1.413 * 0.01
 		# A = 3 / (4 + 8 * gamma)
 		# B = (1 + 3 * gamma) + (1 - gamma) * np.cos(theta) ** 2
 
@@ -433,6 +435,7 @@ class Atmosphere:
 
 		if self.use_ozone:
 			absorbtion = np.interp(z_max, self.profiles["HGT"], self.tau_O3_list) - np.interp(z_min, self.profiles["HGT"], self.tau_O3_list)
+			absorbtion = abs(absorbtion)
 		else:
 			absorbtion = 0
 		# # d = lambda i: self.profiles["O3"][i] * self.profiles["PRE"][i] / cst.Boltzmann / self.profiles["TEM"][i]
@@ -444,7 +447,7 @@ class Atmosphere:
 		#
 		# absorbtion = np.sum(densities) * self.O3CS #* (z_max - z_min)
 
-		return abs(absorbtion)
+		return absorbtion
 
 	def MakeCrossSectionPlot(self):
 
@@ -481,12 +484,15 @@ class Atmosphere:
 		axs[2] = plt.subplot(133)
 		# axs[3] = plt.subplot(144)
 
+
 		axs[0].plot(self.profiles["TEM"], self.profiles["HGT"])
 
 		axs[1].plot(self.profiles["PRE"], self.profiles["HGT"])
-
+		axs[1].set_xscale('log')
 		# ax3.plot(self.profiles["N2"], self.profiles["HGT"], label="N2")
 		axs[2].plot(np.array(self.profiles["O3"]) * self.profiles["DEN"] * 1e-15, self.profiles["HGT"], label="O3")
+
+
 		# ax3.plot(self.profiles["H2O"], self.profiles["HGT"], label="H2O")
 		# ax3.plot(self.profiles["CO2"], self.profiles["HGT"], label="CO2")
 		# ax3.plot(self.profiles["O3"], self.profiles["HGT"], label="O3")
@@ -641,15 +647,13 @@ class Atmosphere:
 
 		if mpi_rank == 0: print("DEBUG AEROSOL Optical Depth (0-120km)", self.GetAerosolsAbsorbtion(0, 120))
 
-		try:
+		if "total_OD" in in_dict:
 			self.total_OD_goal = float(in_dict["total_OD"])
 			if self.total_OD_goal != 0:
 				correction = self.total_OD_goal / self.GetAerosolsAbsorbtion(0, 120)
 				self.tau_aer_list *= correction
 				if self.aer_complexity > 0:
 					self.profiles["AER"] *= correction
-		except:
-			pass
 
 		if mpi_rank == 0: print("DEBUG AEROSOL Optical Depth (0-120km)", self.GetAerosolsAbsorbtion(0, 120))
 

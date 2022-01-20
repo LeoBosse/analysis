@@ -101,7 +101,7 @@ class Mixer:
 
 				### For 20200227 green best model
 				# best_param = (230*DtoR, 25*DtoR, 5, 20)
-				best_param = (50*DtoR, -20*DtoR, 5, 20)
+				# best_param = (50*DtoR, -20*DtoR, 5, 20)
 
 				### For 20200227 purple best model
 				# best_param = (230*DtoR, 20*DtoR, 11.1, 10.7, 6.24, 0.35)
@@ -384,7 +384,7 @@ class Mixer:
 		"""
 		self.langue = "en" #Language used for the plots. "fr" or "en"
 
-		self.marker_size = 3 # Size of the points ised for all plots
+		self.marker_size = 12 # Size of the points ised for all plots
 		self.single_star_size = self.marker_size*5 # When plotting the apparent angle of B AoBapp or the light pollution Rayleighj angle AoRD, control the size of the ztar markers.
 
 		self.show_Ipola = False # Show the plot for I0 * DoLP, i.e. the flux of polarized light
@@ -394,7 +394,7 @@ class Mixer:
 		self.time_format = "UT" #LT or UT. Self explainatory. Control the time format of the x-axis
 		self.time_label = "UTC" # The title of the time x-axis
 
-		self.show_raw_data = True # Show the data with no slidding average. All rotations of the polarizing filter. In black
+		self.show_raw_data = False # Show the data with no slidding average. All rotations of the polarizing filter. In black
 		self.show_smooth_data = True # Show smoothed data (averageed over the time window defined in the input file)
 
 		self.show_error_bars 		= True # Show error bars for the raw cru data. in grey
@@ -429,8 +429,8 @@ class Mixer:
 		self.show_SN = True # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
 
 		### The following paramters are used when comparing the data with the POMEROL model.
-		self.show_RS_model		= False #Show or not the POMEROL model graphs.
-		self.fit_RS_model_to_flux = True
+		self.show_RS_model		= True #Show or not the POMEROL model graphs.
+		self.fit_RS_model_to_flux = False
 		self.fit_func = "GS" #"GS" for Ground+Sky. "GSK" for Ground+Sky+background
 
 		self.add_model = [] #Will add the 1st two models m1 and m2 together with a linear combination a*m1 + (1-a)m2
@@ -438,41 +438,41 @@ class Mixer:
 
 		self.AddDirectPola = [] #[0.15]
 
-		self.show_model_list = [-1]
+		self.show_model_list = []
 
 		self.addFDA_to_model = []
 
 		self.adapt_flux_scale 	= True
 		self.shift_model = 0
-		self.model_colors = ["black", "red", "magenta", "xkcd:mustard",  "blue", "green", "purple", "cyan"] * 10
+		self.model_colors = ["black", "red", "blue", "magenta", "purple", "xkcd:mustard", "green", "cyan"] * 10
 		self.model_symbols = ["*", "+", "x", "1", "2", "3", "4", ".", "s", "<", "^", ">", "X", "D"] * 10
 
 
 
-		# tmp_path = "/home/bossel/These/Documentation/Mes_articles/scattering/new_pictures/FIG8/"
+		# tmp_path = "/home/leob/These/Documentation/Mes_articles/POMEROL/new_pictures/FIG8/"
 		# self.RS_model_files	= [	tmp_path + "v_grd_only.txt",
 		# 						tmp_path + "v_sky_alb.txt",
 		# 						tmp_path + "v_sky_albx1+v_grd_onlyx2e-09",
-		# 						tmp_path + "v_sky_albx1+v_direct_only_Bx1"]#,
-		# 						tmp_path + "m_sky_albx1+m_grd_onlyx2e-09"]#,
+		# 						#tmp_path + "v_sky_albx1+v_direct_only_Bx1"],
+		# 						#tmp_path + "m_sky_albx1+m_grd_onlyx2e-09"],
 		# 						tmp_path + "b_sky_albx1+b_grd_onlyx5e-10",
 		# 						tmp_path + "b_sky_albx1+b_grd_onlyx1e-10"]
 
-		# tmp_path = "/home/bossel/These/Documentation/Mes_articles/scattering/new_pictures/FIG7/"
+		# tmp_path = "/home/leob/These/Documentation/Mes_articles/POMEROL/new_pictures/FIG7/"
 		# self.RS_model_files	= [	tmp_path + "m_rot_e45_grd_only.txt",
 		# 						tmp_path + "m_rot_e45_sky_albedo.txt",
 		# 						tmp_path + "m_rot_e45_grd_onlyx1+m_rot_e45_sky_albedox12000000000.0",
 		# 						tmp_path + "m_rot_e45_grd_onlyx1+m_rot_e45_sky_albedox12000000000.0"]
 
-		# tmp_path = "/home/bossel/These/Documentation/Mes_articles/scattering/new_pictures/FIG6/"
+		# tmp_path = "/home/leob/These/Documentation/Mes_articles/POMEROL/new_pictures/FIG6/"
 		# self.RS_model_files	= [	tmp_path + "o_grd_only_norm0.txt",
 		# 						tmp_path + "o_grd_only_norm0.txt"]#,
 								# tmp_path + "t_sky_alb.txt"]
 
-		# tmp_path = "/home/bossel/These/Documentation/Mes_articles/scattering/new_pictures/FIG5/"
+		tmp_path = "/home/leob/These/Documentation/Mes_articles/POMEROL/new_pictures/FIG5/"
 		# self.RS_model_files	= [	[tmp_path + "2021_lagorge_v_grd_only.txt", tmp_path + "2021_lagorge_v_grd_only_aero_mar.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_4000.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_10000.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_250nm.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_200nm.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_150nm.txt"]]#,#,
 
-		### Bosse et al 2021 Fig 10+
+		### Bosse et al (POMEROL) Fig 10+
 		# self.RS_model_files	= [	[tmp_path + "2021_lagorge_b_grd_only_FULL_aero_mar_n4000_150nm.txt"],
 		# 						[tmp_path + "2021_lagorge_o_grd_only_FULL_aero_mar_n4000_150nm.txt"],
 		# 						[tmp_path + "2021_lagorge_m_grd_only_FULL_aero_mar_n4000_150nm.txt"],
@@ -483,9 +483,10 @@ class Mixer:
 		# self.RS_model_files	= [	[tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_150nm.txt"]]
 		# self.addFDA_to_model = [[(190, 0, 0)]]
 		### Bosse et al 2021 Fig 8
-		# self.RS_model_files	= [	[tmp_path + "2021_lagorge_v_grd_only.txt", tmp_path + "2021_lagorge_v_grd_only.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_150nm.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_rur_1000.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_rur_500.txt"]]
+		self.RS_model_files	= [	[tmp_path + "2021_lagorge_v_grd_only.txt", tmp_path + "2021_lagorge_v_grd_only.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_mar_n4000_150nm.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_rur_1000.txt", tmp_path + "2021_lagorge_v_grd_only_FULL_aero_rur_500.txt"]]
+		self.addFDA_to_model = [[(0, 0, 0), (67, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]]
 
-		# tmp_path = "/home/bossel/These/Documentation/Mes_articles/courants/POMEROL/"
+		# tmp_path = "/home/leob/These/Documentation/Mes_articles/courants/POMEROL/"
 		# # self.RS_model_files	= [[tmp_path + "20200224_skibotnSud_v_e66_MAR1.txt",
 		# # 							tmp_path + "uni_sky_noDoLP.txt"]]
 		# self.RS_model_files	= [[tmp_path + "20200224_skibotnSud_v_e30_MAR1.txt",
@@ -493,7 +494,7 @@ class Mixer:
 		# # self.show_model_list = [0, 2]
 
 
-		# tmp_path = "/home/bossel/These/Analysis/results/rayleigh/Sob/"
+		# tmp_path = "/home/leob/These/Analysis/results/rayleigh/Sob/"
 		# self.RS_model_files = [ [tmp_path + "20191021_m_rot_e45_grd_Noaer.txt"]]
 		# self.RS_model_files = [ [tmp_path + "20191022_r_rot_e45_grd_Noaer.txt"]]
 		# self.RS_model_files = [ [tmp_path + "20191023_b_rot_e45_grd_Noaer.txt"]]
@@ -522,7 +523,7 @@ class Mixer:
 
 
 
-		tmp_path = "/home/bossel/These/Documentation/Mes_articles/auroral_pola/"
+		# tmp_path = "/home/leob/These/Documentation/Mes_articles/auroral_pola/"
 		### 20200227 XYvm e52 Direct Pola
 		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
 		# 						tmp_path + "sky_only/uni_sky_o_e52_aero_MAR1_albedo.txt"],
@@ -556,17 +557,17 @@ class Mixer:
 		# self.addFDA_to_model = [[(0, 0, 0), (6, 0, 0), (0, 0, 0), (6, 0, 0), (5.2, 0, 0)]]  * len(self.RS_model_files)
 
 		### 20200227 XYvm e52 best fit
-		self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
-								tmp_path + "sky_only/uni_sky_o_e52_aero_MAR1_albedo.txt"],
-								[tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
-								tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
-								# tmp_path + "t_e52_grd_only_aero_MAR1x1702.6351068301055+uni_sky_t_e52_aero_MAR1_albedox63627.19976961118"], #MANUAL fit because of the East flux jump. Coeff are : 4335.3242154348345 * 0.39273535777746454 and 25450.87990784447 * 2.5.
-								# [tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
-								# tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
-								[tmp_path + "grd_only/v_e52_grd_only_aero_MAR1.txt",
-								tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo.txt"],
-								[tmp_path + "grd_only/m_e52_grd_only_aero_MAR1.txt",
-								tmp_path + "sky_only/20200227_m_e52_sky_only_aero_MAR1_albedo.txt"]]
+		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/uni_sky_o_e52_aero_MAR1_albedo.txt"],
+		# 						[tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
+		# 						# tmp_path + "t_e52_grd_only_aero_MAR1x1702.6351068301055+uni_sky_t_e52_aero_MAR1_albedox63627.19976961118"], #MANUAL fit because of the East flux jump. Coeff are : 4335.3242154348345 * 0.39273535777746454 and 25450.87990784447 * 2.5.
+		# 						# [tmp_path + "grd_only/t_e52_grd_only_aero_MAR1.txt",
+		# 						# tmp_path + "sky_only/uni_sky_t_e52_aero_MAR1_albedo.txt"],
+		# 						[tmp_path + "grd_only/v_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/20200227_v_e52_sky_only_aero_MAR1_albedo.txt"],
+		# 						[tmp_path + "grd_only/m_e52_grd_only_aero_MAR1.txt",
+		# 						tmp_path + "sky_only/20200227_m_e52_sky_only_aero_MAR1_albedo.txt"]]
 
 		### 20200227 XYvm e52 test aerosols
 		# self.RS_model_files	= [[tmp_path + "grd_only/o_e52_grd_only_NO_aero.txt",
@@ -1121,14 +1122,14 @@ class Mixer:
 			for im, models in enumerate(self.J2RAYS1_models):
 				# print(self.J2RAYS1_model.x_axis)
 				# self.ax11.yaxis.set_visible(False)
-				self.ax1.plot(models.x_axis + tmp_xshift, models["I0"], "*", color = self.model_colors[im], marker = self.model_symbols[im])
-				self.ax2.plot(models.x_axis + tmp_xshift, models["DoLP"], "*", color = self.model_colors[im], marker = self.model_symbols[im])
+				self.ax1.plot(models.x_axis + tmp_xshift, models["I0"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
+				self.ax2.plot(models.x_axis + tmp_xshift, models["DoLP"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
 				# self.ax2.set_ylim((0, max(np.max(bottle.smooth_DoLP), np.max(models.data["DoLP"]))))
 				if np.max(models.data["DoLP"]) > maxDoLP:
 					maxDoLP = np.max(models.data["DoLP"])
 					self.ax2.set_ylim((0, 1.1 * maxDoLP))
 
-				self.ax3.plot(models.x_axis + tmp_xshift, RtoD * SetAngleBounds(DtoR * models.data["AoRD"], -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift), "*", color = self.model_colors[im], marker = self.model_symbols[im])
+				self.ax3.plot(models.x_axis + tmp_xshift, RtoD * SetAngleBounds(DtoR * models.data["AoRD"], -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift), "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
 
 			if self.adapt_flux_scale:
 				border = 1.1
