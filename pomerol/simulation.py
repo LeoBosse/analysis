@@ -43,7 +43,9 @@ class Simulation:
 		self.save_name = self.save_path + in_dict["save_name"]
 
 		mpi_comm.Barrier()
+		print(mpi_rank)
 		if mpi_rank == 0 and self.save_individual_plots:
+			print(mpi_rank)
 			confirm = input(f"Saving graph under the name: {self.save_name}. Press ENTER to confirm or any caracter to infirm, then change the input file save configuration.")
 			if confirm != "":
 				raise Exception("Go change the input file save configuration and rerun! I'm waiting for you.")

@@ -125,7 +125,7 @@ class World:
 			self.a_pc_list = np.arange(0, 360, 5) * DtoR
 			# self.a_pc_list = np.arange(-10, 10, 1) * DtoR
 		elif len(self.a_pc_list) == 3:
-			self.a_pc_list = np.linspace(float(self.a_pc_list[0]), float(self.a_pc_list[1]), float(self.a_pc_list[2])) * DtoR
+			self.a_pc_list = np.linspace(float(self.a_pc_list[0]), float(self.a_pc_list[1]), int(self.a_pc_list[2])) * DtoR
 		else:
 			self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
 
@@ -134,7 +134,7 @@ class World:
 			self.e_pc_list = np.linspace(1, 90, 20, endpoint=True) * DtoR
 			# self.e_pc_list = np.linspace(35, 55, 21, endpoint=True) * DtoR
 		elif len(self.e_pc_list) == 3:
-			self.e_pc_list = np.linspace(float(self.e_pc_list[0]), float(self.e_pc_list[1]), float(self.e_pc_list[2])) * DtoR
+			self.e_pc_list = np.linspace(float(self.e_pc_list[0]), float(self.e_pc_list[1]), int(self.e_pc_list[2])) * DtoR
 		else:
 			self.e_pc_list = np.array([float(e) for e in self.e_pc_list]) * DtoR
 
