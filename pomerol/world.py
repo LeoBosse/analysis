@@ -124,13 +124,17 @@ class World:
 			# self.a_pc_list = np.arange(0, 360, 10) * DtoR
 			self.a_pc_list = np.arange(0, 360, 5) * DtoR
 			# self.a_pc_list = np.arange(-10, 10, 1) * DtoR
-		else:
+                elif len(self.a_pc_list) == 3:
+                        self.a_pc_list = np.linspace(self.a_pc_list[0], self.a_pc_list[1], self.a_pc_list[2]) * DtoR
+                else:
 			self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
 
 		self.e_pc_list		= np.array(in_dict["elevations"].split(";"))  # List of elevation for the observations
 		if self.e_pc_list[0] == "all":
 			self.e_pc_list = np.linspace(1, 90, 20, endpoint=True) * DtoR
 			# self.e_pc_list = np.linspace(35, 55, 21, endpoint=True) * DtoR
+                elif len(self.e_pc_list) == 3:
+                        self.e_pc_list = np.linspace(self.e_pc_list[0], self.e_pc_list[1], self.e_pc_list[2]) * DtoR
 		else:
 			self.e_pc_list = np.array([float(e) for e in self.e_pc_list]) * DtoR
 

@@ -8,7 +8,7 @@ class Config:
 
 	def __init__(self):
 		# Common denominator path. THe path shared by all data and source folders
-		self.path 						= "/home/leob/iasb/analysis/"
+		self.path 						= "../../"
 
 		self.data_path 					= self.path + "data/" # Folder where all your data are stored.
 		self.src_path 					= self.path + "src/vendange/" # Folder where all your source files are stored (this file is in this folder).
