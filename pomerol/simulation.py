@@ -619,12 +619,13 @@ class Simulation:
 				self.MakePlots()
 				# pass
 			else:
-				f, axs = plt.subplots(5, sharex = True, figsize=(16, 8))
-				axs[0] = plt.subplot(511)
-				axs[1] = plt.subplot(512)
-				axs[2] = plt.subplot(513)
-				axs[3] = plt.subplot(514)
-				axs[4] = plt.subplot(515)
+				f, axs = plt.subplots(nrows=3, ncols=2, sharex = True, figsize=(16, 8))
+				axs = axs.flatten()
+				axs[0] = plt.subplot(321)
+				axs[1] = plt.subplot(322)
+				axs[2] = plt.subplot(323)
+				axs[3] = plt.subplot(324)
+				axs[4] = plt.subplot(325)
 
 				if self.world.Nb_e_pc > 1 and self.world.Nb_a_pc > 1:
 					extent = RtoD * np.array([self.world.a_pc_list[0], self.world.a_pc_list[-1], self.world.e_pc_list[0], self.world.e_pc_list[-1]])
