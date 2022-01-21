@@ -5103,3 +5103,9 @@ dependency_links.txt
 PKG-INFO
 SOURCES.txt
 top_level.txt
+AllSkyData.cpython-39.pyc
+bottle.cpython-39.pyc
+input.cpython-39.pyc
+rotation.cpython-39.pyc
+utils.cpython-39.pyc
+vendange_configuration.cpython-39.pyc
