@@ -4,7 +4,7 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
+matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{lmodern}'
 from scipy import signal, io, misc
 import sys
 import os

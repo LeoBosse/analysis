@@ -1,0 +1,616 @@
+20 0 MPI_COMM_WORLD
+WARNING: Wrong or no input file specified, default in use.
+All input parameter from the input file:
+src_path: ./
+saving_graphs: 1
+save_path: ../../data/pomerol_results/
+save_name: skibotn_grdonly_NW10
+flux_unit: W
+use_analytic: false
+azimuts: 405;425;20
+elevations: 1;20;20
+location: skibotn
+start_datetime: 20190116-02:44:00
+end_datetime: 20190116-04:00:00
+instrument_opening_angle: 1
+instrument_area: 20
+wavelength: 391.4
+cst_Flux: 0
+cst_DoLP: 0
+cst_AoLP: 0
+add_starlight: 0
+add_B_pola: 0
+RS_min_altitude: 0
+RS_max_altitude: 100
+Nb_points_along_los: 100
+max_angle_discretization: 0
+Atmospheric_profile: atm_profiles/ngt.atm
+use_ozone: 1
+use_aerosol: 0
+aer_complexity: 0
+aer_model: 3mid
+aer_name: 3mid_test
+aer_nr: 1.6
+aer_ni: -0.010
+aer_rn0: 1
+aer_rmg: 0.001
+aer_ln_sigma: 0.657
+aer_r_min: 0.001
+aer_r_max: 50
+total_OD: 0
+aer_Hn: 0.440
+aer_n0: 300
+aer_nBK: 30
+aer_ext_profile_name: mar
+aer_single_scatter_albedo: 0.9
+aer_phase_fct_asym_g: 0.7
+sky_mode: none
+direct_mode: add
+emission_altitude: 110
+Nb_emission_points: 1000
+Nb_emission_maps: 1
+sky_path: ../../data/allsky_camera/tid.uio.no/plasma/aurora/
+sky_file: skn4/5577/2019/20190308/ut01/skn4_20190308_012908_5577_cal.png
+sky_wavelength: 557.7
+use_alt_map: 0
+alt_map_path: ../../data/elevation/
+alt_map_radius: 100
+alt_map_N_bins_max: 0
+alt_map_resolution: 0.5
+ground_mode: image
+shader_mode: none
+ground_emission_radius: 100
+ground_N_bins_max: 1000
+ground_albedo: altitude_0.2_0.2_0.5_0.5_0.8
+ground_path: ../../data/Night_pollution/
+ground_file: nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-ntl_v10_c201807311200.avg_rade9.tif
+show_ground_albedo: 0
+show_sky_cube: 0
+show_altitude: 0
+show_cross_section: 0
+show_aer_size: 0
+show_atmosphere: 0
+Saving graph under the name: ../../data/pomerol_results/skibotn_grdonly_NW10. Press ENTER to confirm or any caracter to infirm, then change the input file save configuration.[mpiexec@ada1] Sending Ctrl-C to processes as requested
+[mpiexec@ada1] Press Ctrl-C again to force abort
+Using simple WMO aerosol profile: mar
+DEBUG AEROSOL Optical Depth (0-120km) 0
+DEBUG AEROSOL Optical Depth (0-120km) 0
+tau_0 0.3949117405686976
+DEBUG ATMOSPHERE TOTAL OD (0-120km): 0.00019766268029870716 0.39637328639356073 0 0.3965709490738594
+../../data/magn_field/CHAOS-7.4.mat
+Has_sky_emission: False
+Loading ground emission map data...
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+20 5 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+20 18 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+20 2 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+20 16 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+20 19 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+20 7 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+20 8 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+20 6 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+Traceback (most recent call last):
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 3139, in ndim
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+20 4 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+20 12 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+20 1 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+20 11 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+20 14 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+Traceback (most recent call last):
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 3139, in ndim
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+20 15 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+20 17 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+20 3 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+20 9 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+20 13 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+20 10 MPI_COMM_WORLD
+Using simple WMO aerosol profile: mar
+../../data/magn_field/CHAOS-7.4.mat
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    simu = Simulation(in_dict)
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    return a.ndim
+AttributeError: 'float' object has no attribute 'ndim'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    return a.ndim
+AttributeError: 'float' object has no attribute 'ndim'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 94, in <module>
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    simu = Simulation(in_dict)
+    RunSimulation(file_name)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/./main.py", line 55, in RunSimulation
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    simu = Simulation(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/simulation.py", line 61, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.world = World(in_dict)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/world.py", line 201, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 379, in __init__
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadMap(Nb_a_pc, Nb_e_pc)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 410, in LoadMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.LoadGroundImageMap()
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 617, in CarthToPolar
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 617, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 617, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 617, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 617, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 617, in CarthToPolar
+    self.LoadGroundImageMap()
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 596, in LoadGroundImageMap
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    iaz, idist = self.GetPixFromAzDist(az, dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 672, in GetPixFromAzDist
+    iaz, idist = self.GetPixFromAzDist(az, dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 672, in GetPixFromAzDist
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 192, in LonLatToAzDist
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 214, in LonLatToAzDist
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 193, in LonLatToAzDist
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 214, in LonLatToAzDist
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 201, in LonLatToAzDist
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 202, in LonLatToAzDist
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 192, in LonLatToAzDist
+    iaz, idist = self.GetPixFromAzDist(az, dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 672, in GetPixFromAzDist
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 198, in LonLatToAzDist
+    iaz, idist = self.GetPixFromAzDist(az, dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 672, in GetPixFromAzDist
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 192, in LonLatToAzDist
+    iaz, idist = self.GetPixFromAzDist(az, dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 672, in GetPixFromAzDist
+    iaz, idist = self.GetPixFromAzDist(az, dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 672, in GetPixFromAzDist
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    return self.GetPixFromAz(az), self.GetPixFromDist(dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 658, in GetPixFromAz
+    self.I_map = self.CarthToPolar(I_map, longitudes, latitudes)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 615, in CarthToPolar
+    return self.GetPixFromAz(az), self.GetPixFromDist(dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 664, in GetPixFromDist
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 197, in LonLatToAzDist
+    dist_in_rad = GetAngle(OE.T[0], OA.T[0])
+    dist_in_rad = GetAngle(OE.T[0], OA.T[0])
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 30, in <lambda>
+    OE = np.array([		[np.cos(E_lon) * np.cos(E_lat)],
+KeyboardInterrupt
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 30, in <lambda>
+    [np.sin(E_lon) * np.cos(E_lat)],
+    AE = OE - OA
+KeyboardInterrupt
+    [np.sin(A_lat)]
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 202, in LonLatToAzDist
+    R_OA = GetRotMatrixAO(A_lon, A_lat).T
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 160, in GetRotMatrixAO
+    OE = np.array([		[np.cos(E_lon) * np.cos(E_lat)],
+KeyboardInterrupt
+    return self.GetPixFromAz(az), self.GetPixFromDist(dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 667, in GetPixFromDist
+KeyboardInterrupt
+KeyboardInterrupt
+    OE = np.array([		[np.cos(E_lon) * np.cos(E_lat)],
+    return self.GetPixFromAz(az), self.GetPixFromDist(dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 658, in GetPixFromAz
+KeyboardInterrupt
+    GetAngle 		= lambda v1, v2: np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) # Return angle in radian between two vectors
+    GetAngle 		= lambda v1, v2: np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) # Return angle in radian between two vectors
+  File "<__array_function__ internals>", line 5, in clip
+KeyboardInterrupt
+    return self.GetPixFromAz(az), self.GetPixFromDist(dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 664, in GetPixFromDist
+    [np.sin(A_lon) * np.cos(A_lat)],
+    return int((az % (2*np.pi)) / self.daz) % self.Naz
+KeyboardInterrupt
+KeyboardInterrupt
+    return self.GetPixFromAz(az), self.GetPixFromDist(dist)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/ground_map.py", line 664, in GetPixFromDist
+    idist = np.searchsorted(self.distances, dist, side="right")
+KeyboardInterrupt
+    R_OA = GetRotMatrixAO(A_lon, A_lat).T
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 158, in GetRotMatrixAO
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+    return     np.array([[	Clon*Clat,	-Slon,	-Clon*Slat],
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 214, in LonLatToAzDist
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 192, in LonLatToAzDist
+KeyboardInterrupt
+    az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 194, in LonLatToAzDist
+    return int(idist)
+    return int((az % (2*np.pi)) / self.daz) % self.Naz
+KeyboardInterrupt
+KeyboardInterrupt
+    OE = np.array([		[np.cos(E_lon) * np.cos(E_lat)],
+KeyboardInterrupt
+    [np.sin(E_lat)]
+KeyboardInterrupt
+    Clat, Slat = np.cos(latA), np.sin(latA)
+KeyboardInterrupt
+    dist_in_rad = GetAngle(OE.T[0], OA.T[0])
+  File "/ae/projects4/Polarisation/analysis/src/pomerol/rayleigh_utils.py", line 30, in <lambda>
+    idist = np.searchsorted(self.distances, dist, side="right")
+  File "<__array_function__ internals>", line 5, in searchsorted
+    idist = np.searchsorted(self.distances, dist, side="right")
+  File "<__array_function__ internals>", line 2, in searchsorted
+    GetAngle 		= lambda v1, v2: np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) # Return angle in radian between two vectors
+  File "<__array_function__ internals>", line 5, in clip
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 2103, in clip
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 2103, in clip
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 1348, in searchsorted
+KeyboardInterrupt
+    return _wrapfunc(a, 'searchsorted', v, side=side, sorter=sorter)
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 58, in _wrapfunc
+    return _wrapfunc(a, 'clip', a_min, a_max, out=out, **kwargs)
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 58, in _wrapfunc
+    return _wrapfunc(a, 'clip', a_min, a_max, out=out, **kwargs)
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 58, in _wrapfunc
+    return bound(*args, **kwds)
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/_methods.py", line 136, in _clip
+    return bound(*args, **kwds)
+KeyboardInterrupt
+    return bound(*args, **kwds)
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/_methods.py", line 136, in _clip
+    if _clip_dep_is_scalar_nan(max):
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/_methods.py", line 93, in _clip_dep_is_scalar_nan
+    if ndim(a) != 0:
+  File "<__array_function__ internals>", line 5, in ndim
+    if _clip_dep_is_scalar_nan(max):
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/_methods.py", line 93, in _clip_dep_is_scalar_nan
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 3141, in ndim
+    if ndim(a) != 0:
+  File "<__array_function__ internals>", line 5, in ndim
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/fromnumeric.py", line 3141, in ndim
+    return asarray(a).ndim
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/_asarray.py", line 102, in asarray
+    return asarray(a).ndim
+  File "/bira-iasb/softs/21g/py39/lib64/python3.9/site-packages/numpy/core/_asarray.py", line 102, in asarray
+    return array(a, dtype, copy=False, order=order)
+KeyboardInterrupt
+    return array(a, dtype, copy=False, order=order)
+KeyboardInterrupt
+[mpiexec@ada1] HYDU_sock_write (utils/sock/sock.c:256): write error (Bad file descriptor)
+[mpiexec@ada1] control_cb (pm/pmiserv/pmiserv_cb.c:316): error writing to control socket
+[mpiexec@ada1] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:77): callback returned error status
+[mpiexec@ada1] HYDT_bscu_wait_for_completion (tools/bootstrap/utils/bscu_wait.c:60): error waiting for event
+[mpiexec@ada1] HYDT_bsci_wait_for_completion (tools/bootstrap/src/bsci_wait.c:22): launcher returned error waiting for completion
+[mpiexec@ada1] HYD_pmci_wait_for_completion (pm/pmiserv/pmiserv_pmci.c:215): launcher returned error waiting for completion
+[mpiexec@ada1] main (ui/mpich/mpiexec.c:336): process manager error waiting for completion

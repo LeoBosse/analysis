@@ -14,7 +14,7 @@ src_path ./ #Path to all the python source files
 
 saving_graphs 1  # 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
 save_path ../../data/pomerol_results/ # Path to the folder where you want to save your results (graphs, txt...)
-save_name skibotn_grdonly_west #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
+save_name skibotn_grdonly_all #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
 
 ### Units for the result flux (used in the graphs, but maybe not in the computations.)
 # W = for nanoWatts (default input unit)
@@ -31,8 +31,8 @@ use_analytic false # Should stay as "false". If "true", POMEROL will compute the
 ### All instrumental inputs
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
 ### Put "azimuts all" if you want to perform an almucantar (every 10°), or "elevations all" for a scan. See the world.__init__() for the code.
-azimuts 	260;280;2
-elevations 	1;20;2
+azimuts 	all 250;290;40
+elevations 	all 1;20;20
 
 location 	skibotn     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
 
@@ -177,8 +177,8 @@ ground_mode image uniform_I100 point_I100_a180_d5       none      none image uni
 # ring_i : replace i by the index of the 1 pixel wide ring you want to keep.
 shader_mode none ring_0 out_dist_m2.5_M3 half_a0 out_dist_m90_M100 half_a0 none random_01 half_a0
 
-ground_emission_radius 10  # in km. Can be != from the altitude map
-ground_N_bins_max 100			# the map will be downgraded to match this pixel count.
+ground_emission_radius 100  # in km. Can be != from the altitude map
+ground_N_bins_max 1000			# the map will be downgraded to match this pixel count.
 
 ### Albedo mode of the ground. Only used if sky emissions != none. The reflection of the sky emission will be added to the ground map.
 # altitude_alb1_alt_1_alb2_alt2_..._altN_alb(N+1)  # defines the albedo altitude layers. alb1 is the albedo of the layer below alt1 (layer 0 is the sea level). Then alb2 is the albedo between altitudes alt1 and alt2, etc... The last layer (N+1) is infinity.

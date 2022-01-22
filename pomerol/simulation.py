@@ -43,9 +43,9 @@ class Simulation:
 		self.save_name = self.save_path + in_dict["save_name"]
 
 		mpi_comm.Barrier()
-		print(mpi_rank)
+		# print(mpi_rank)
 		if mpi_rank == 0 and self.save_individual_plots:
-			print(mpi_rank)
+			# print(mpi_rank)
 			confirm = input(f"Saving graph under the name: {self.save_name}. Press ENTER to confirm or any caracter to infirm, then change the input file save configuration.")
 			if confirm != "":
 				raise Exception("Go change the input file save configuration and rerun! I'm waiting for you.")
@@ -634,18 +634,18 @@ class Simulation:
 					a1 = axs[0].imshow(self.I_list[0,:,:], origin="lower", extent=extent)
 					axs[0].get_xaxis().set_visible(False)
 					cbar1 = f.colorbar(a1, extend='both', spacing='proportional', shrink=0.9, ax=axs[0])
-					a2 = axs[1].imshow(self.DoLP_list[0,:,:], origin="lower", extent=extent, cmap=plt.get_cmap("YlOrRd"))
-					axs[1].get_xaxis().set_visible(False)
-					cbar1 = f.colorbar(a2, extend='both', spacing='proportional', shrink=0.9, ax=axs[1])
-					a3 = axs[2].imshow(self.AoRD_list[0,:,:]*RtoD, origin="lower", extent=extent, cmap=plt.get_cmap("twilight"))
+					a2 = axs[2].imshow(self.DoLP_list[0,:,:], origin="lower", extent=extent, cmap=plt.get_cmap("YlOrRd"))
 					axs[2].get_xaxis().set_visible(False)
-					cbar1 = f.colorbar(a3, extend='both', spacing='proportional', shrink=0.9, ax=axs[2])
-					a4 = axs[3].imshow(self.DoLP_list[0,:,:] * np.cos(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
-					axs[3].get_xaxis().set_visible(False)
-					cbar1 = f.colorbar(a4, extend='both', spacing='proportional', shrink=0.9, ax=axs[3])
-					a5 = axs[4].imshow(self.DoLP_list[0,:,:] * np.sin(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
+					cbar1 = f.colorbar(a2, extend='both', spacing='proportional', shrink=0.9, ax=axs[2])
+					a3 = axs[4].imshow(self.AoRD_list[0,:,:]*RtoD, origin="lower", extent=extent, cmap=plt.get_cmap("twilight"))
+					#axs[4].get_xaxis().set_visible(False)
+					cbar1 = f.colorbar(a3, extend='both', spacing='proportional', shrink=0.9, ax=axs[4])
+					a4 = axs[1].imshow(self.DoLP_list[0,:,:] * np.cos(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
+					axs[1].get_xaxis().set_visible(False)
+					cbar1 = f.colorbar(a4, extend='both', spacing='proportional', shrink=0.9, ax=axs[1])
+					a5 = axs[3].imshow(self.DoLP_list[0,:,:] * np.sin(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
 
-					cbar1 = f.colorbar(a5, extend='both', spacing='proportional', shrink=0.9, ax=axs[4])
+					cbar1 = f.colorbar(a5, extend='both', spacing='proportional', shrink=0.9, ax=axs[3])
 				else:
 					if self.world.Nb_e_pc == 1:
 						xaxis = self.world.a_pc_list*RtoD
@@ -690,10 +690,10 @@ class Simulation:
 
 				axs[0].set_ylabel("Intensity ({})".format(self.world.flux_unit))
 				# axs[0].legend()
-				axs[1].set_ylabel("DoLP (\%)")
-				axs[2].set_ylabel("AoLP (°)")
-				axs[3].set_ylabel("Q (\%)")
-				axs[4].set_ylabel("U (\%)")
+				axs[2].set_ylabel("DoLP (\%)")
+				axs[4].set_ylabel("AoLP (°)")
+				axs[1].set_ylabel("Q (\%)")
+				axs[3].set_ylabel("U (\%)")
 
 				f.subplots_adjust(hspace=0)
 
