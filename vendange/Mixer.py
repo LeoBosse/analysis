@@ -429,7 +429,7 @@ class Mixer:
 		self.show_SN = True # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
 
 		### The following paramters are used when comparing the data with the POMEROL model.
-		self.show_RS_model		= True #Show or not the POMEROL model graphs.
+		self.show_RS_model		= False #Show or not the POMEROL model graphs.
 		self.fit_RS_model_to_flux = False
 		self.fit_func = "GS" #"GS" for Ground+Sky. "GSK" for Ground+Sky+background
 

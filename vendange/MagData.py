@@ -15,7 +15,7 @@ from scipy import signal
 import sys
 import os
 from subprocess import call
-import datetime as time
+import datetime as dt
 
 from utils import *
 from rotation import *
@@ -38,7 +38,7 @@ class EqCurrent:
 		if bottle is not None:
 			self.files.append(bottle.DateTime("start", format="UT").strftime("%Y%m%d") + "_")
 			if bottle.DateTime("start").day != bottle.DateTime("end").day:
-				one_day = time.timedelta(days=1)
+				one_day = dt.timedelta(days=1)
 				start_date = bottle.DateTime("start", format="UT")
 				end_date = bottle.DateTime("end", format="UT")
 				start_date += one_day
@@ -107,8 +107,8 @@ class EqCurrent:
 		N = 1000
 
 		seconds = np.linspace(0, N, N)
-		now = time.datetime.now()
-		datetime = np.array([now + time.timedelta(seconds=s) for s in seconds])
+		now = dt.datetime.now()
+		datetime = np.array([now + dt.timedelta(seconds=s) for s in seconds])
 
 
 		Jn = np.cos(seconds * 2. * np.pi / N)
@@ -141,7 +141,7 @@ class EqCurrent:
 			# print(data)
 
 			data["Ju"] = np.zeros(data.index.stop)
-			data["datetime"] = [time.datetime.strptime(d + " " + t, "%Y-%m-%d %H:%M:%S") for d, t in zip(data["date"], data["time"])]
+			data["datetime"] = [dt.datetime.strptime(d + " " + t, "%Y-%m-%d %H:%M:%S") for d, t in zip(data["date"], data["time"])]
 			# print(data)
 
 		elif self.file_type == "digisonde":
@@ -152,7 +152,7 @@ class EqCurrent:
 				data = data.append(pd.read_fwf(self.path + f, header=0, usecols=(5, 7, 8, 10, 16), names=("date", "time", "Jn", "Je", "Ju")))
 				# print(data)
 			data = data.reset_index(drop=True)
-			data["datetime"] = [time.datetime.strptime(d, "%Y.%m.%d%H:%M:%S") for d in data["date"] + data["time"]]
+			data["datetime"] = [dt.datetime.strptime(d, "%Y.%m.%d%H:%M:%S") for d in data["date"] + data["time"]]
 			# print(data)
 
 		if self.start_time is None:
@@ -426,7 +426,7 @@ class MagData:
 
 		self.additional_files = []
 		if bottle.DateTime("start").day != bottle.DateTime("end").day:
-			one_day = time.timedelta(days=1)
+			one_day = dt.timedelta(days=1)
 			start_date = bottle.DateTime("start", format="UT")
 			end_date = bottle.DateTime("end", format="UT")
 			while start_date.day != end_date.day:
@@ -453,10 +453,10 @@ class MagData:
 			self.data = np.concatenate((self.data, np.genfromtxt(f, dtype=self.array_type, delimiter = [12, 8, 11, 10, 10, 10, 10], skip_header=7, skip_footer=1, names=None)))
 			# print(f, len(self.data))
 
-		self.datetime = ([time.datetime.strptime(d + " " + t, "%d/%m/%Y %H:%M:%S") for d, t in zip(self.data["date"], self.data["time"])])
+		self.datetime = ([dt.datetime.strptime(d + " " + t, "%d/%m/%Y %H:%M:%S") for d, t in zip(self.data["date"], self.data["time"])])
 
 		self.times = np.array([t.timestamp() for t in self.datetime]) # number of seconds since 01/01/1970
-		# self.times = np.array([time.timedelta(seconds = t.timestamp()) for t in self.datetime]) # number of seconds since 01/01/1970
+		# self.times = np.array([dt.timedelta(seconds = t.timestamp()) for t in self.datetime]) # number of seconds since 01/01/1970
 		# self.times_sec = [t.total_seconds() for t in self.times]
 
 
@@ -508,9 +508,9 @@ class MagData:
 
 		self.data = np.array([d for i, d in enumerate(self.data) if start <= self.datetime[i] <= end], dtype = self.array_type)
 
-		self.datetime = ([time.datetime.strptime(d + " " + t, "%d/%m/%Y %H:%M:%S") for d, t in zip(self.data["date"], self.data["time"])])
+		self.datetime = ([dt.datetime.strptime(d + " " + t, "%d/%m/%Y %H:%M:%S") for d, t in zip(self.data["date"], self.data["time"])])
 
-		self.times = ([time.timedelta(seconds = t.timestamp()) for t in self.datetime])
+		self.times = ([dt.timedelta(seconds = t.timestamp()) for t in self.datetime])
 		self.times_sec = [t.total_seconds() for t in self.times]
 
 		# print(len(self.data))
