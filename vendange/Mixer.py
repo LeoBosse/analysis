@@ -384,7 +384,7 @@ class Mixer:
 		"""
 		self.langue = "en" #Language used for the plots. "fr" or "en"
 
-		self.marker_size = 12 # Size of the points ised for all plots
+		self.marker_size = 5 # Size of the points ised for all plots
 		self.single_star_size = self.marker_size*5 # When plotting the apparent angle of B AoBapp or the light pollution Rayleighj angle AoRD, control the size of the ztar markers.
 
 		self.show_Ipola = False # Show the plot for I0 * DoLP, i.e. the flux of polarized light
