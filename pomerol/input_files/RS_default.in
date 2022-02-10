@@ -42,7 +42,7 @@ end_datetime   20190116-04:00:00
 instrument_opening_angle 	1	  		# Half opening angle of the instrument (degrees)
 instrument_area 		20 			# Area of Petit Cru in cm^2 (gets converted in km**2 in the code)
 
-wavelength 391.4 620 557.7 427.8 413                      #in nm
+wavelength 557.7 391.4 620  427.8 413                      #in nm
 
 # ###############################################################################
 ### Add a constant light with given polarisation parameters
@@ -59,7 +59,7 @@ add_B_pola 0 #Check if this is still working before use... Add polarisation foll
 # ###############################################################################
 ### Atmosphere parameters
 RS_min_altitude	 						0	 	    # Minimum altitude of the scattering layer
-RS_max_altitude	 						100 		# Maximum altitude of the scattering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
+RS_max_altitude	 						120 		# Maximum altitude of the scattering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
 Nb_points_along_los   			100		  # Number of bins along the line of sight between H_r_min and h_r_max
 
 max_angle_discretization		0				# In degrees. If scattering volume solid angle seen from E is larger than that, cut the volume in pieces.
@@ -71,14 +71,14 @@ use_ozone 1 # 0 or 1. Will compute absorption along the paths due to ozone.
 
 
 ### Aerosols
-use_aerosol 0			# 0 or 1. Main flag to decide wether to use aerosol scattering/absorption or not.
-aer_complexity 0		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
+use_aerosol 1			# 0 or 1. Main flag to decide wether to use aerosol scattering/absorption or not.
+aer_complexity 1		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
 
 ### Complex aerosol profile parameters: use if aer_complexity == 1
 aer_model 3mid 		# manual: use the aerosols properties listed below. Or name of a pre configured model.  (preconfigured model are hard-coded in atmosphere.py, in Aerosol.SetModel() function)
 
 # Aerosol optical properties to run the Mie code
-aer_name 3mid_test 			# Name to use for file handling of this particular properties. May erase previous files if same name is used.
+aer_name 1low_test 			# Name to use for file handling of this particular properties. May erase previous files if same name is used.
 aer_nr 1.6 					# Real optical index
 aer_ni -0.010 			# Imaginary optical index <0
 aer_rn0 1 					# Number of particles for the Mie code to run (keep it to 1)
@@ -210,4 +210,4 @@ show_altitude				 0 # Produce an altitude map around the instrument, in meters.
 
 show_cross_section	 0 # Produce a plot of aerosol cross sections.
 show_aer_size	 			 0 # Produce a plot of aerosol size distribution
-show_atmosphere		   0 # Produce a plot of temperature, pression, and O3 profile of the atmosphere
+show_atmosphere		   1 # Produce a plot of temperature, pression, and O3 profile of the atmosphere

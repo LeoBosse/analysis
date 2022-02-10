@@ -490,7 +490,14 @@ class Atmosphere:
 		axs[1].plot(self.profiles["PRE"], self.profiles["HGT"])
 		axs[1].set_xscale('log')
 		# ax3.plot(self.profiles["N2"], self.profiles["HGT"], label="N2")
-		axs[2].plot(np.array(self.profiles["O3"]) * self.profiles["DEN"] * 1e-15, self.profiles["HGT"], label="O3")
+		# axs[2].plot(np.array(self.profiles["O3"]) * self.profiles["DEN"] * 1e-15, self.profiles["HGT"], label="O3")
+		axs[2].plot(self.tau_aer_list, self.profiles["HGT"], label="O3")
+		# axs[2].plot(np.array(self.profiles["AER"]), self.profiles["HGT"], label="O3")
+		# axs[2].set_xscale('log')
+		#
+		# axs[0].set_yscale('log')
+		# axs[1].set_yscale('log')
+		# axs[2].set_yscale('log')
 
 
 		# ax3.plot(self.profiles["H2O"], self.profiles["HGT"], label="H2O")

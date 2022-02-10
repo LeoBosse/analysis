@@ -11,6 +11,7 @@ from copy import deepcopy
 from subprocess import call
 import datetime as dt
 import chaosmagpy as chaos
+import h5py as h5
 
 import observation
 import geometry
@@ -934,8 +935,8 @@ class PTCUBottle(Bottle):
 
 		### Default Format
 		times = [t.total_seconds() * 1000 for t in self.GetTimeFromDateTime(self.DateTime(moment="config"))]
-		data = pd.DataFrame(np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_I0, self.std_DoLP, self.std_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP]).transpose())
-		data.columns = ["time","V","Vcos","Vsin","I0","DoLP","AoLP","SV","SVcos","SVsin","SI0","SDoLP","SAoLP","errI0","errDoLP","errAoLP","errSI0","errSDoLP","errSAoLP"]
+		data = pd.DataFrame(np.array([times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_I0, self.std_DoLP, self.std_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP,self.all_SN, self.smooth_SN]).transpose())
+		data.columns = ["time","V","Vcos","Vsin","I0","DoLP","AoLP","SV","SVcos","SVsin","SI0","SDoLP","SAoLP","errI0","errDoLP","errAoLP","errSI0","errSDoLP","errSAoLP","SN","SSN"]
 
 		### Simple format for Jean
 		# times = [t.total_seconds() / 3600. for t in self.GetTimeFromDateTime(self.DateTime(moment="midnight", format="LT"))]
@@ -943,6 +944,30 @@ class PTCUBottle(Bottle):
 		# data.columns = ["time","SI0","SDoLP","SAoLP","errSI0","errSDoLP","errSAoLP"]
 
 		data.to_csv(self.data_file_name + "/" + self.saving_name + '_results.txt', sep="\t", index=False)
+
+
+	def SaveHDF5(self):
+		print("Saving as .hdf5 in", self.data_file_name + "/" + self.saving_name + '_results.hdf5')
+
+		times = [t.total_seconds() * 1000 for t in self.GetTimeFromDateTime(self.DateTime(moment="config"))]
+
+		data = [times, self.all_V, self.all_Vcos, self.all_Vsin, self.all_I0, self.all_DoLP, self.all_AoLP, self.smooth_V, self.smooth_Vcos, self.smooth_Vsin, self.smooth_I0, self.smooth_DoLP, self.smooth_AoLP, self.std_I0, self.std_DoLP, self.std_AoLP, self.std_smooth_I0, self.std_smooth_DoLP, self.std_smooth_AoLP,self.all_SN, self.smooth_SN]
+		columns = ["time","V","Vcos","Vsin","I0","DoLP","AoLP","SV","SVcos","SVsin","SI0","SDoLP","SAoLP","errI0","errDoLP","errAoLP","errSI0","errSDoLP","errSAoLP","SN","SSN"]
+
+		with h5.File(self.data_file_name + "/" + self.saving_name + '_results.hdf5', 'w') as f:
+
+			f.create_group("/data")
+			for ic, c in enumerate(columns):
+				print(ic, c)
+				f.create_dataset("/data/" + c,  data = data[ic])
+
+			print(self.config)
+			# f.create_group("config")
+			for k, v in self.config.items():
+				f["data"].attrs[k] = v
+				# f.create_dataset("/config/" + str(k), data = v)
+
+
 
 	def LoadPTCUData(self):
 		"""Return an array of data and a dictionnary of config from a list of data files. The first is the data, the second is the config. Each line of the data is a rotation with 6 entries, the config dict is all the parameters of the observation, common to all rotations."""
@@ -1160,6 +1185,9 @@ class PTCUBottle(Bottle):
 
 		self.std_AoLP 			= np.array([d for d, t in zip(data["errAoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
 		self.std_smooth_AoLP 	= np.array([d for d, t in zip(data["errSAoLP"], self.all_times) if self.head_jump <= t < self.tail_jump])
+
+		self.all_SN 			= np.array([d for d, t in zip(data["SN"], self.all_times) if self.head_jump <= t < self.tail_jump])
+		self.smooth_SN			= np.array([d for d, t in zip(data["SSN"], self.all_times) if self.head_jump <= t < self.tail_jump])
 
 		norm = self.head_jump
 		self.all_times = np.array([t - norm for t in self.all_times if self.head_jump <= t < self.tail_jump])

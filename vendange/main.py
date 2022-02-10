@@ -116,6 +116,7 @@ if not from_txt:
 	for b in bottles:
 		b.PrintInfo()
 		b.SaveTXT()
+		b.SaveHDF5()
 
 if mag_data_file:
 	mag_data = MagData(bottles[0])
