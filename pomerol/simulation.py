@@ -30,6 +30,7 @@ from ground_map import *
 from atmosphere import *
 from world import *
 from input import *
+from multiple_scattering import *
 
 
 class Simulation:
@@ -222,6 +223,27 @@ class Simulation:
 
 		if mpi_rank==0:
 			print("Computing DONE in: ", dt.datetime.now() - start_time)
+
+
+	def ComputeMultipleScattering(self):
+		if mpi_rank == 0: print("Computing multiple scattering")
+		instrument = (self.a_pc, self.e_pc, 0)
+		mul_sca = MultipleScattering(self.in_dict, instrument, self.world.atmosphere)
+
+		# mul_sca.MakeScatteringHistograms(1, 0)
+		# mul_sca.MakeScatteringHistograms(0, 1)
+		# mul_sca.MakeScatteringHistograms(1, 1)
+
+		# plt.show()
+
+		mul_sca.PropagateAll()
+		mul_sca.GetTotalUnpolarisedFlux(self.world.ground_map)
+
+		mul_sca.MakeOriginPlot(self.world.ground_map)
+		mul_sca.Make3DPlot()
+		mul_sca.MakeAltitudeHistogram()
+
+		# plt.show()
 
 
 	def PrintSystematicResults(self, header = True):

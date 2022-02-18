@@ -55,6 +55,8 @@ def RunSimulation(file_name = "", show = True, output_result_file=None, header =
 	simu = Simulation(in_dict)
 	simu.ComputeAllMaps()
 
+	simu.ComputeMultipleScattering()
+
 	if mpi_rank == 0:
 
 		old = sys.stdout

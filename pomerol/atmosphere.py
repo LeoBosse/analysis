@@ -81,16 +81,27 @@ class Atmosphere:
 		self.beta_0 = self.GetSquareLawFit(self.wavelength, "Volume CS") / 1 #in km-1
 		self.tau_0 = self.GetSquareLawFit(self.wavelength, "Optical Depth")
 
+		self.profiles["beta_ray"] = np.array([self.RSVolumeCS(a) for a in self.profiles["HGT"]])
+
+		self.profiles["sca_angle"] 		= np.linspace(0, np.pi, 100)
+		self.profiles["ray_Phase_Fct"]  = np.array([self.RSPhaseFunction(self.wavelength, t) for t in self.profiles["sca_angle"]])
+		self.profiles["ray_Phase_DoLP"]  = np.array([self.RSPhaseFunctionDoLP(t, f=1) for t in self.profiles["sca_angle"]])
+
 		self.LoadO3AbsorptionCS()
 
 		self.aer_complexity = int(in_dict['aer_complexity'])
 		if self.aer_complexity > 0:
 			self.aerosol = Aerosol(in_dict)
 
+			self.profiles["aer_Phase_Fct"], self.profiles["aer_Phase_DoLP"]  = zip(*[self.AerosolPhaseFunction(t) for t in self.profiles["sca_angle"]])
+			self.profiles["aer_Phase_Fct"], self.profiles["aer_Phase_DoLP"] = np.array(self.profiles["aer_Phase_Fct"]), np.array(self.profiles["aer_Phase_DoLP"])
+
 			# self.aerosol.PlotPhaseFunction(["1low", "2high"], [391.4, 557.7, 630.0])
 			# plt.show()
 
 		self.GetAerosolProfil(in_dict)
+		self.profiles["beta_aer"] = np.array([self.AerosolCS(a) for a in self.profiles["HGT"]])
+
 
 		if mpi_rank == 0:
 			print("tau_0", self.tau_0)
@@ -285,8 +296,11 @@ class Atmosphere:
 
 		return V
 
-	#@timer
 	def GetRSVolumeCS(self, alt):
+		return self.GetProfileValue(alt, "beta_ray")
+
+	#@timer
+	def RSVolumeCS(self, alt):
 		"""Return the Rayleigh scattering volume cross section as calculated in Bucholtz 95 in km-1.
 		"""
 
@@ -329,8 +343,17 @@ class Atmosphere:
 		E = - (B + C * wl + D / wl)
 		return A * wl ** E
 
-	#@timer
 	def GetRSPhaseFunction(self, wl, theta):
+		return np.interp(theta, self.profiles["sca_angle"], self.profiles["ray_Phase_Fct"])
+
+	def RSPhaseFunctionDoLP(self, RD_angle, f = 1):
+		return np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2)
+
+	def GetRSPhaseFunctionDoLP(self, RD_angle):
+		return np.interp(RD_angle, self.profiles["sca_angle"], self.profiles["ray_Phase_DoLP"])
+
+	#@timer
+	def RSPhaseFunction(self, wl, theta):
 		### Simple approx
 		A = 3. / 4
 		B = 1 + np.cos(theta) ** 2
@@ -671,7 +694,10 @@ class Atmosphere:
 		# ax.plot(self.tau_aer_list, self.profiles["HGT"], "r")
 		# plt.show()
 
-	def GetAerosolCS(self, z):
+	def GetAerosolCS(self, alt):
+		return self.GetProfileValue(alt, "beta_aer")
+
+	def AerosolCS(self, z):
 		if self.use_aerosol:
 			if self.aer_complexity > 0:
 				aer_density = self.GetProfileValue(z, "AER") #km-3
@@ -680,6 +706,7 @@ class Atmosphere:
 				cross_section = self.single_scatter_albedo * np.interp(z, self.profiles["HGT"], self.exctinction_profile)
 		else:
 			cross_section = 0
+
 		return cross_section
 
 	def GetAerosolsAbsorbtion(self, z_min, z_max):
@@ -693,7 +720,17 @@ class Atmosphere:
 		return absorbtion
 
 
+	def GetAerosolPhaseFunctionDoLP(self, a):
+		dolp = np.interp(a, self.profiles["sca_angle"], self.profiles["aer_Phase_DoLP"])
+		return dolp
+
 	def GetAerosolPhaseFunction(self, a):
+		pf   = np.interp(a, self.profiles["sca_angle"], self.profiles["aer_Phase_Fct"])
+		dolp = np.interp(a, self.profiles["sca_angle"], self.profiles["aer_Phase_DoLP"])
+		return pf, dolp
+
+
+	def AerosolPhaseFunction(self, a):
 		if self.aer_complexity == 0:
 			g = self.aer_phase_fct_asym_g # g > O == front scattering predominant, g < 0 == backscattering predominant
 			###################################################################

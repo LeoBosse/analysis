@@ -703,8 +703,9 @@ class World:
 				I0_rs = I0 * Crs * P * dvol * self.PTCU_area / AR ** 2 / 4 / np.pi # [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
 				# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)
 
-			f = 1 #(1 + self.atmosphere.depola) / (1 - self.atmosphere.depola)
-			DoLP_rs = np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2) # DoLP dependance on scattering angle for Rayleigh Scattering
+			# f = 1 #(1 + self.atmosphere.depola) / (1 - self.atmosphere.depola)
+			# DoLP_rs = np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2) # DoLP dependance on scattering angle for Rayleigh Scattering
+			DoLP_rs = self.atmosphere.GetRSPhaseFunctionDoLP(RD_angle)
 
 
 			I0_aer *= self.atmosphere.los_transmittance[ialt]
@@ -984,7 +985,7 @@ class World:
 			# print("ap_list")
 			# print(ap_list* RtoD)
 
-			###Corrdinates in cylindrical of emission point
+			###cylindrical coordinates centered in A of emission point E
 			E_u, E_e, E_n = np.sin(e_E), np.cos(e_E) * np.sin(a_E), np.cos(e_E) * np.cos(a_E)
 			E_xI, E_yI, E_zI = np.dot(Ria.transpose(), (E_u, E_e, E_n))
 			E_ap = np.arctan2(E_yI, E_zI)

@@ -615,11 +615,13 @@ class GroundMap:
 				az, dist = LonLatToAzDist(lon, lat, self.A_lon, self.A_lat)
 				dist *= RT
 				iaz, idist = self.GetPixFromAzDist(az, dist)
-				if idist is not None:
+				if idist is not None and iaz is not None:
+					# print(dist, idist, az*RtoD, iaz)
 					polar_map[idist, iaz] += carth_map[ilat, ilon]
 					divisor_map[idist, iaz] += 1
 
 		polar_map = np.divide(polar_map, divisor_map, out = np.zeros_like(polar_map), where = divisor_map != 0)
+
 		for idist in range(self.Ndist):
 			for iaz in range(self.Naz):
 				if divisor_map[idist, iaz] == 0:
@@ -655,21 +657,50 @@ class GroundMap:
 		self.is_point_source = True
 
 	def GetPixFromAz(self, az):
-		return int((az % (2*np.pi)) / self.daz) % self.Naz
+		# If the azimuth is in the map range
+		az = az%(2*np.pi)
+		if az < self.azimuts[0] or az > self.azimuts[-1]:
+			return None
+
+		iaz = int((az % (2*np.pi)) / self.daz) % self.Naz
+		# print(az*RtoD, iaz, self.azimuts*RtoD)
+		return iaz
 
 	def GetPixFromDist(self, dist):
 		# print(self.Ndist, self.ddist * RT, dist * RT, int(dist / self.ddist))
 		# idist = np.around(dist / self.ddist) #ONLY IF DISTANCE BINS ARE CONSTANT!!!
 
-		idist = np.searchsorted(self.distances, dist, side="right")
-
-		if idist < self.Ndist:
-			return int(idist)
-		else:
+		# If the distance is in the map range
+		if dist < self.distances[0] or dist > self.distances[-1]:
 			return None
+
+		idist = np.searchsorted(self.distances, dist, side="right") - 1
+		# print(dist, idist, self.distances)
+
+		return int(idist)
 
 	def GetPixFromAzDist(self, az, dist):
 		return self.GetPixFromAz(az), self.GetPixFromDist(dist)
+
+
+	def GetRadiantFluxFromAzDist(self, az, dist, t=0):
+		""" Return radiant flux (nW/m2/sr) for a given azimut (rad) and distance (km). Return 0 if outside of map.
+		"""
+		iaz, idist = self.GetPixFromAzDist(az, dist)
+		if iaz is None or idist is None:
+			return 0
+		else:
+			return self.cube[t, idist, iaz]
+
+	def GetRadiantIntensity(self, az, dist, t=0):
+		""" Return radiant intensity (nW/sr) for a given azimut (rad) and distance (km). Return 0 if outside of map.
+		"""
+		iaz, idist = self.GetPixFromAzDist(az, dist)
+		if iaz is None or idist is None:
+			return 0
+		else:
+			return self.cube[t, idist, iaz] * self.GetArea(idist)
+
 
 	#@timer
 	def GetArea(self, idist):
@@ -750,6 +781,8 @@ class GroundMap:
 
 		if save:
 			plt.savefig(save + '_ground_emission.png', bbox_inches='tight', metadata=metadata)
+
+		return f, ax
 
 	def MakePlots(self, ie_pc, ia_pc, e_pc=None, a_pc=None, atmosphere_max = None, save = False, metadata=None):
 		f, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex = True, sharey = True, figsize=(16, 8))
