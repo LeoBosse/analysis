@@ -31,6 +31,9 @@ class MultipleScattering:
         self.nb_rays = int(in_dict['MS_N_rays'])
 
 
+        self.max_distance_from_instrument = float(in_dict["ground_emission_radius"]) #km
+
+
         self.segment_distances = np.arange(0, self.segment_max_length, self.segment_bins_length)
 
         self.segment_mid_distances = self.segment_distances[:-1] + self.segment_bins_length / 2. #np.array([(self.segment_distances[i+1] - self.segment_distances[i]) / 2 for i in range(0, self.segment_Nbins_max-1)])
@@ -222,20 +225,17 @@ class MultipleScattering:
             # print(f"MS Propagate: {i}, {alt}, {el*RtoD}, {scattering_plane}, {vec}")
             length, alt, cs_ray, cs_aer, end_ray = self.GetSegmentLength(alt, el)
             nb_events += 1
+            alt_H.append(alt)
+            length_H.append(length)
 
             total_length += length
 
             if end_ray:
-                alt_H.append(alt)
-                el_H.append(el)
-                length_H.append(length)
-                sca_angle_H.append(sca_angle)
                 break
 
             sca_angle = self.GetScatteringAngle(cs_ray, cs_aer)
             # print(f"sca_angle: {sca_angle*RtoD}")
 
-            length_H.append(length)
             sca_angle_H.append(sca_angle)
 
             vec = self.RotateAboutPlane(vec, scattering_plane, sca_angle)
@@ -243,7 +243,6 @@ class MultipleScattering:
             # print("vec", vec)
             el = np.arcsin(vec[0, 0])
 
-            alt_H.append(alt)
             el_H.append(el)
             vec_H.append(vec)
             cs_ray_H.append(cs_ray)
@@ -251,10 +250,16 @@ class MultipleScattering:
 
         # print("DEBUG vec_H", len(vec_H), len(vec_H[0]))
 
+        #If the ray escape above a max altitude, do not record it!
         if alt_H[-1] == self.max_altitude:
             return False
 
         final_position = sum([v * l for v, l in zip(vec_H, length_H)])
+
+        #If the ray ends up too far from the instrument (i.e. farther than the max radius of the ground map), do not record it!
+        final_dist = np.sqrt(final_position[1]**2 + final_position[2]**2)
+        if final_dist > self.max_distance_from_instrument:
+            return False
 
         self.hist["altitudes"].append(alt_H)
         self.hist["elevations"].append(el_H)
@@ -290,9 +295,9 @@ class MultipleScattering:
                 pass
 
             axs[0].plot(range(self.hist["nb_events"][i] + 1), self.hist["altitudes"][i], color="black", alpha=0.5)
-            axs[1].plot(range(self.hist["nb_events"][i] + 1), np.array(self.hist["elevations"][i]) * RtoD, color="black", alpha=0.5)
+            axs[1].plot(range(self.hist["nb_events"][i]), np.array(self.hist["elevations"][i]) * RtoD, color="black", alpha=0.5)
             axs[2].plot(range(self.hist["nb_events"][i]), self.hist["lengths"][i], color="black", alpha=0.5)
-            axs[3].plot(range(self.hist["nb_events"][i]), np.array(self.hist["sca_angles"][i])*RtoD, color="black", alpha=0.5)
+            axs[3].plot(range(self.hist["nb_events"][i]-1), np.array(self.hist["sca_angles"][i])*RtoD, color="black", alpha=0.5)
 
         axs[4].hist(self.hist["nb_events"])
 
