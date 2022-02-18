@@ -22,7 +22,7 @@ class MultipleScattering:
         self.atmosphere = atmosphere
 
         self.segment_max_length   = float(in_dict["MS_segment_max_length"]) #km
-        self.segment_bins_length = float(in_dict["MS_segment_bins_length"]) #km
+        self.segment_bins_length  = float(in_dict["MS_segment_bins_length"]) #km
 
         self.min_altitude = float(in_dict["MS_min_altitude"]) #km
         self.max_altitude = float(in_dict["MS_max_altitude"]) #km
@@ -32,9 +32,9 @@ class MultipleScattering:
 
 
         self.segment_distances = np.arange(0, self.segment_max_length, self.segment_bins_length)
-        self.segment_Nbins_max = len(self.segment_distances)
 
-        self.segment_mid_distances = self.segment_distances[:-1] + np.array([(self.segment_distances[i] - self.segment_distances[i-1]) / 2 for i in range(1, self.segment_Nbins_max)])
+        self.segment_mid_distances = self.segment_distances[:-1] + self.segment_bins_length / 2. #np.array([(self.segment_distances[i+1] - self.segment_distances[i]) / 2 for i in range(0, self.segment_Nbins_max-1)])
+        self.segment_Nbins_max = len(self.segment_mid_distances)
 
         # print(self.segment_mid_distances)
 
@@ -64,23 +64,29 @@ class MultipleScattering:
         Return the segment length."""
 
 
-        #compute the segment altitudes of each bin
-        if elevation > 0:
+        #Compute the distance to escape to space or touch ground
+        if elevation >= 0:
             # segment_altitudes = np.arange(altitude, self.atmosphere.h_r_max, self.segment_bins_length * np.sin(elevation))
-            segment_max_distance = self.segment_bins_length + (self.max_altitude - altitude) / np.sin(elevation) #+1 in case it passes the max altitude and escape to space!
+            segment_max_distance = (self.max_altitude - altitude) / np.sin(elevation)
+            segment_end_altitude = self.max_altitude
         else:
             # segment_altitudes = np.arange(altitude, 0, self.segment_bins_length * np.sin(elevation))
+            segment_max_distance = (self.min_altitude - altitude) / np.sin(elevation)
+            segment_end_altitude = self.min_altitude
 
-            segment_max_distance = self.segment_bins_length + (self.min_altitude - altitude) / np.sin(elevation) #+1 in case it attains ground
 
+        segment_max_bin = int(segment_max_distance / self.segment_bins_length) #Number of bins in the segment
+        # print("segment_max_bin", segment_max_bin)
+        if segment_max_bin > self.segment_Nbins_max: #In case the segment is longer than very long (see input file). For example if elevation ~ 0
+            segment_max_bin = self.segment_Nbins_max
+            segment_max_distance = self.segment_max_length
+            # print("segment_max_bin", segment_max_bin)
 
-        segment_max_bin = int(segment_max_distance / self.segment_bins_length)
-        if segment_max_bin > 4999: #in case elevation ~0, the max number of bins of a list is 4999 ????!!!
-            segment_max_bin = 4999
-            segment_max_distance = 4999 * self.segment_bins_length
         segment_mid_distances = self.segment_mid_distances[:segment_max_bin]
         segment_altitudes = segment_mid_distances * np.sin(elevation)
         segment_altitudes += altitude
+
+        # print("len", len(segment_mid_distances))
 
         # Get the cross section of one bin (ray+aer)
         cross_section = lambda alt: self.atmosphere.GetRSVolumeCS(alt) + self.atmosphere.GetAerosolCS(alt)
@@ -88,10 +94,18 @@ class MultipleScattering:
         # Get the cross section of each bin as defined above
         cross_sections = np.array([cross_section(a) for a in segment_altitudes])
 
+        #Append one last bin to the lists that correspond to no scattering (either ground impact or escape to space), with cross section 1
+        segment_max_bin += 1
+        segment_mid_distances   = np.append(segment_mid_distances, segment_max_distance)
+        segment_altitudes       = np.append(segment_altitudes, segment_end_altitude)
+        cross_sections          = np.append(cross_sections, 1)
+
+        # print(len(segment_mid_distances), len(cross_sections), segment_max_bin)
+
         #For bin number n, compute the probability that scattering does not happen before on the segment (1-p(-1)) * ((1-p(-2))) * ... * ((1-p(-n)))
-        # print(elevation*RtoD, altitude, segment_max_distance, segment_max_bin)
-        cumul_anti_cs = np.zeros(segment_max_bin)
+        cumul_anti_cs = np.zeros_like(cross_sections)
         cumul_anti_cs[0] = 1
+
         for i in range(1, segment_max_bin):
             cacs = (1 - cross_sections[i-1]) * cumul_anti_cs[i-1]
             cumul_anti_cs[i] = cacs
@@ -102,6 +116,10 @@ class MultipleScattering:
         proba = cross_sections * cumul_anti_cs
         # print(proba, sum(proba))
         proba = proba / sum(proba)
+
+        # if len(proba) < 10:
+        #     print("alt", segment_altitudes)
+            # print("proba", proba)
 
         # print(segment_altitudes)
         # print(cross_sections, sum(cross_sections))
@@ -120,13 +138,17 @@ class MultipleScattering:
         #     a.set_yscale('log')
 
         bin = np.random.choice(segment_max_bin, p = proba)
+        end_ray = False
+        if bin == segment_max_bin - 1:
+            # print("Ray done !!")
+            end_ray = True
 
         length  = segment_mid_distances[bin]
         alt     = segment_altitudes[bin]
         cs_ray  = self.atmosphere.GetRSVolumeCS(alt)
         cs_aer  = self.atmosphere.GetAerosolCS(alt)
 
-        return length, alt, cs_ray, cs_aer
+        return length, alt, cs_ray, cs_aer, end_ray
 
     # @timer
     def GetScatteringAngle(self, cs_ray, cs_aer):
@@ -198,26 +220,16 @@ class MultipleScattering:
         nb_events = 0
         for i in range(self.max_events):
             # print(f"MS Propagate: {i}, {alt}, {el*RtoD}, {scattering_plane}, {vec}")
-            length, alt, cs_ray, cs_aer = self.GetSegmentLength(alt, el)
+            length, alt, cs_ray, cs_aer, end_ray = self.GetSegmentLength(alt, el)
             nb_events += 1
 
             total_length += length
 
-            if alt <= 0:
-                # print(f"MS HIT GROUND after {i} scattering!!!")
+            if end_ray:
                 alt_H.append(alt)
                 el_H.append(el)
                 length_H.append(length)
                 sca_angle_H.append(sca_angle)
-                # N = nb_events+1
-                break
-            elif alt >= self.max_altitude:
-                # print(f"MS ESCAPE to SPACE after {i} scattering!!!")
-                alt_H.append(alt)
-                el_H.append(el)
-                length_H.append(length)
-                sca_angle_H.append(sca_angle)
-                # N = nb_events+1
                 break
 
             sca_angle = self.GetScatteringAngle(cs_ray, cs_aer)
@@ -238,6 +250,9 @@ class MultipleScattering:
             cs_aer_H.append(cs_aer)
 
         # print("DEBUG vec_H", len(vec_H), len(vec_H[0]))
+
+        if alt_H[-1] == self.max_altitude:
+            return False
 
         final_position = sum([v * l for v, l in zip(vec_H, length_H)])
 
@@ -264,12 +279,15 @@ class MultipleScattering:
         #
         # plt.show()
 
+        return True
+
     @timer
     def PropagateAll(self):
         f_path, axs = plt.subplots(5, sharex=True)
 
         for i in range(self.nb_rays):
-            self.Propagate()
+            while not self.Propagate():
+                pass
 
             axs[0].plot(range(self.hist["nb_events"][i] + 1), self.hist["altitudes"][i], color="black", alpha=0.5)
             axs[1].plot(range(self.hist["nb_events"][i] + 1), np.array(self.hist["elevations"][i]) * RtoD, color="black", alpha=0.5)
