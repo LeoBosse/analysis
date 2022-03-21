@@ -4,6 +4,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from mpi4py import MPI
+mpi_comm = MPI.COMM_WORLD
+mpi_rank = mpi_comm.Get_rank()
+mpi_size = mpi_comm.Get_size()
+mpi_name = mpi_comm.Get_name()
+
 from time import perf_counter #For the timer decorator
 
 from atmosphere import *
@@ -105,9 +111,10 @@ class MultipleScattering:
 
         # print(len(segment_mid_distances), len(cross_sections), segment_max_bin)
 
-        #For bin number n, compute the probability that scattering does not happen before on the segment (1-p(-1)) * ((1-p(-2))) * ... * ((1-p(-n)))
-        cumul_anti_cs = np.zeros_like(cross_sections)
-        cumul_anti_cs[0] = 1
+        #For bin number n, compute the probability that scattering does not happen before on the segment, i.e. probability that the ray reaches bin n. (1-p(-1)) * ((1-p(-2))) * ... * ((1-p(-n)))
+
+        cumul_anti_cs = np.zeros_like(cross_sections) #Initialize the proba to zeros
+        cumul_anti_cs[0] = 1 #First scattering bin along los: no scattering can happen before -> Probability 1 to reach first scattering bin
 
         for i in range(1, segment_max_bin):
             cacs = (1 - cross_sections[i-1]) * cumul_anti_cs[i-1]
@@ -165,8 +172,6 @@ class MultipleScattering:
         # axs[0].plot(self.atmosphere.profiles["sca_angle"], proba)
 
         return np.random.choice(self.atmosphere.profiles["sca_angle"], p = proba)
-
-
 
     def GetScatteringPlane(self):
         ### Rotation matrix from instrument ref frame to UpEastNorth
@@ -302,6 +307,72 @@ class MultipleScattering:
         axs[4].hist(self.hist["nb_events"])
 
 
+    def GetTotalComtribution(self):
+        S_total = self.Stocks_list * self.Stocks_list
+
+        return S_total
+
+
+
+    def SetStocksParameters(self):
+        """Compute the stocks paramters of each individual rays and stock them in a list"""
+        self.Stocks_list = []
+        for i_ray in range(self.nb_rays):
+            self.Stocks_list.append(self.GetRayStocksParameters(i_ray))
+
+
+    def GetRayStocksParameters(self, ray_id):
+        """Forward scattering of a single ray. Th ray is supposed emited unpolarized (1, 0)."""
+        S = np.vstack(1, 0)
+
+        for i_sca in range(self.hist["nb_events"][ray_id]):
+            theta = self.hist["sca_angles"]
+            M = self.GetTotalScatteringMatrix(theta)
+
+            S = M @ S
+
+        return S
+
+
+    def GetRayleighScatteringMatrix(self, a):
+
+        ca = np.cos(a)
+        M11 = ca**2 + 1
+        M12 = ca**2 - 1
+
+        M = 3/4 * np.matrix([[M11, M12], [M12, M11]])
+
+        return M
+
+    def GetMieScatteringMatrix(self, a):
+        """NOT SURE ABOUT THAT!!!"""
+        i, d = self.atmosphere.GetAerosolPhaseFunction(a)
+
+        M = np.matrix([[i, 0], [0, d]])
+
+        return M
+
+    def GetTotalScatteringMatrix(self, a):
+        """Average of the rayleigh and Mie scattering scattering matrices."""
+        M_rs = self.GetRayleighScatteringMatrix(a)
+        M_mie = self.GetMieScatteringMatrix(a)
+
+        return (M_rs + M_mie) / 2
+
+
+    def GetTotalUnpolarisedFlux(self, grd_map):
+
+        F = np.sum(self.Flux_list)
+
+        print("F", F)
+        return F
+
+    def SetRaysFluxList(self):
+        self.Flux_list = []
+        for ir in range(self.nb_rays):
+            self.Flux_list.append(self.GetRayUnpolarisedFlux(ir, grd_map))
+
+
     def GetRayUnpolarisedFlux(self, ray_id, grd_map):
 
         u, e, n = self.hist["final_pos"][ray_id]
@@ -328,15 +399,6 @@ class MultipleScattering:
         return F0
 
 
-    def GetTotalUnpolarisedFlux(self, grd_map):
-
-        F = 0
-        for ir in range(self.nb_rays):
-            F += self.GetRayUnpolarisedFlux(ir, grd_map)
-
-        print("F", F)
-        return F
-
 
 
     def GetNextScatteringPos(self, init_pos, vec, length):
@@ -357,6 +419,7 @@ class MultipleScattering:
             pos = next_pos
 
         return pos_H
+
 
     def Make3DPlot(self, grd_map = None):
 

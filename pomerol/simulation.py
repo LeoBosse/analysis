@@ -237,7 +237,11 @@ class Simulation:
 		# plt.show()
 
 		mul_sca.PropagateAll()
+		mul_sca.SetRaysFluxList(self.world.ground_map)
 		mul_sca.GetTotalUnpolarisedFlux(self.world.ground_map)
+
+		mul_sca.SetStocksParameters()
+
 
 		mul_sca.MakeOriginPlot(self.world.ground_map)
 		mul_sca.Make3DPlot()

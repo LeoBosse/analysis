@@ -1073,19 +1073,20 @@ class Aerosol:
 		# 	print(self.sca_data["d"])
 
 
-		# f, axs = plt.subplots(3) #, sharex=True)
-		#
-		# axs[0].plot(self.sca_data["theta"], self.sca_data["i"], "k")
-		# axs[0].plot(self.sca_data["theta"], self.sca_data["q"], "r")
-		# # axs[0].plot(self.sca_data["theta"], self.sca_data["u"], "b")
-		# axs[1].plot(self.sca_data["theta"], self.sca_data["d"]*100, "b")
-		# rayleigh_dolp = lambda a: np.sin(a)**2 / (1 + np.cos(a)**2)
-		# axs[1].plot(self.sca_data["theta"], rayleigh_dolp(self.sca_data["theta"])*100, "r--")
-		# # axs[2].plot(self.sca_data["theta"], np.sqrt(self.sca_data["q"]**2 + self.sca_data["u"]**2) / self.sca_data["i"], "b")
-		# # axs[2].plot(self.sca_data["theta"], self.sca_data["AoLP"], "b")
-		# r_aer = np.logspace(np.log(self.r_min), np.log(self.r_max))
-		# rn = self.rn0 * np.exp(-(np.log(r_aer/self.rmg))**2 / (2 * self.ln_sigma**2)) / r_aer / self.ln_sigma / (2 * np.pi)**0.5
-		# axs[2].loglog(r_aer, rn, "b")
+		f, axs = plt.subplots(3) #, sharex=True)
+
+		axs[0].plot(self.sca_data["theta"], self.sca_data["i"], "k")
+		axs[0].plot(self.sca_data["theta"], self.sca_data["q"], "r")
+		axs[0].plot(self.sca_data["theta"], self.sca_data["u"], "b")
+		axs[0].plot(self.sca_data["theta"], np.sqrt(self.sca_data["q"]**2 + self.sca_data["u"]**2), "g")
+		axs[1].plot(self.sca_data["theta"], self.sca_data["d"]*100, "b")
+		rayleigh_dolp = lambda a: np.sin(a)**2 / (1 + np.cos(a)**2)
+		axs[1].plot(self.sca_data["theta"], rayleigh_dolp(self.sca_data["theta"])*100, "r--")
+		# axs[2].plot(self.sca_data["theta"], np.sqrt(self.sca_data["q"]**2 + self.sca_data["u"]**2) / self.sca_data["i"], "b")
+		# axs[2].plot(self.sca_data["theta"], self.sca_data["AoLP"], "b")
+		r_aer = np.logspace(np.log(self.r_min), np.log(self.r_max))
+		rn = self.rn0 * np.exp(-(np.log(r_aer/self.rmg))**2 / (2 * self.ln_sigma**2)) / r_aer / self.ln_sigma / (2 * np.pi)**0.5
+		axs[2].loglog(r_aer, rn, "b")
 
 		# print(self.c_ext, self.c_sca, self.ssa, self.pi_0)
 		# print(sum(self.sca_data["i"] * self.sca_data["delta_theta"]))

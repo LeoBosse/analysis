@@ -105,7 +105,9 @@ aer_phase_fct_asym_g 0.7 #[-1; 1], g>0 -> front scatter dominant. g<0 -> back sc
 MS_min_altitude	 						0	 	  # Minimum altitude of the MS scattering layer
 MS_max_altitude	 						100 		# Maximum altitude of the MS scattering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
 
-MS_N_rays 100
+use_MS 0
+
+MS_N_rays 10
 MS_max_events 100 #Maximum number of scattering events
 MS_segment_max_length   500 #km Maximum distances for each segment
 MS_segment_bins_length 0.1  #km Bin length for each segment
@@ -177,7 +179,7 @@ alt_map_resolution 0.5 .031 # Resolution of the map you want to achieve in km. M
 # uniform_IXXX 						#	I in nW/m2/sr. uniform map emmiting I.
 # point_IXXX_aAAA_dDD     # I in nW/m2/sr, a=azimut in degrees, d=distance in km. point source emitting I, positioned at azimut AA and distance DD from the instrument.
 # gaussian_IXXX_wWWW_aAAA_dDD # Deprecated! Gaussian emission (more real point source), with the same paremters than a point source. w=1/2width
-ground_mode image point_I100_a0_d5    uniform_I100        none      none image uniform_I100 gaussian_I100_w1_a45_d10
+ground_mode point_I100_a0_d5 image    uniform_I100        none      none image uniform_I100 gaussian_I100_w1_a45_d10
 
 ### Shade to create more complex synthetic emissions. Takes the emission map and then apply the following filter.
 # none
