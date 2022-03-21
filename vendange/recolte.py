@@ -46,6 +46,16 @@ elif instrument == "corbel":
 	db_name = "K2PI"
 	nb_voies = 2
 	data_requete = lambda v, id: "SELECT IDProcessedData, Time, PMAvg, PMCosAvg, PMSinAvg, Comment, Temp_PM, Temp_Optic, Temp_Ambiant FROM processeddata{0} LEFT OUTER JOIN temperatures USING (Time, IDConfiguration) LEFT OUTER JOIN live_comments USING (Time, IDConfiguration) WHERE IDConfiguration = {1};".format(v, id)
+elif instrument == "corbel2":
+	instrument = "corbel"
+	db = mysql.connect(
+	  host = "193.156.98.136",
+	  user = "root",
+	  passwd = "Skib0tn2019"
+	)
+	db_name = "K2PI"
+	nb_voies = 2
+	data_requete = lambda v, id: "SELECT IDProcessedData, Time, PMAvg, PMCosAvg, PMSinAvg, Comment, Temp_PM, Temp_Optic, Temp_Ambiant FROM processeddata{0} LEFT OUTER JOIN temperatures USING (Time, IDConfiguration) LEFT OUTER JOIN live_comments USING (Time, IDConfiguration) WHERE IDConfiguration = {1};".format(v, id)
 elif instrument == "gdcu":
 	db = mysql.connect(
 	  host = "152.77.134.81",
@@ -141,12 +151,31 @@ for id in IDConfiguration:
 			else:
 				raise("ValueError")
 	except:
-		print("IDConfiguration {0}: Wrong Title. I don't know where to save it...".format(id))
-		print("Wrong title is:" + config[columns.index("CM_Comments")])
-		continue
+		if config[columns.index("CM_Comments")] == "Scheduled Campaign":
+			# For automatic observation when Corbel Cru was in Corbel (2021-22)
+			observation_type = "fixed"
+			el = 45
+			az = 35
+			filters = "vm"
+			lieu = "Corbel"
+			date = config[columns.index("Timestamp")]
+			i = 0
+			speed = 5
+			com = ""
+		else:
+			print("IDConfiguration {0}: Wrong Title. I can't save it...".format(id))
+			print("Wrong title is:" + config[columns.index("CM_Comments")])
+			continue
 
-	folder = "ptcu/" + date.strftime("%Y%m%d") + "_" + lieu + "/"
-	subfolder = "_".join(title[2+i:])
+
+	### For saving nice titles.
+	# folder = "ptcu/" + date.strftime("%Y%m%d") + "_" + lieu + "/"
+	# # subfolder = "_".join(title[2+i:])
+	# subfolder = f"{filters}_a{int(az)}_e{int(el)}_{int(speed)}hz"
+
+	### For saving weird titles. Just save it as is, with the ID configuration
+	folder = "ptcu/"
+	subfolder = str(config[columns.index("IDConfiguration")]) + "_" + str(config[columns.index("CM_Comments")])
 
 	###Create saving data folder
 	os.makedirs(path + folder, exist_ok=True)
@@ -174,6 +203,8 @@ for id in IDConfiguration:
 
 	###Write config.csv
 	np.savetxt(path + folder + subfolder + "/config.csv", [columns, config], delimiter = ",", fmt='%s')
+
+	# print(f"saving config in {path + folder + subfolder}...")
 
 	###Get Data
 	for v in range(1, nb_voies + 1):

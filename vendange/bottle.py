@@ -48,6 +48,7 @@ class Bottle:
 		self.instrument_name = self.input_parameters["instrument_name"]
 		if self.instrument_name == "ptcu": self.instrument_name = "carmen"
 		elif self.instrument_name == "ptcu_v2" : self.instrument_name = "corbel"
+		elif self.instrument_name == "corbel2" : self.instrument_name = "corbel"
 
 
 		try:

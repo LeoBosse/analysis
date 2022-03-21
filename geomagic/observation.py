@@ -25,7 +25,8 @@ def timer(fn):
     return inner
 
 
-path = "/home/bossel/These/Analysis/src/geomagic"
+path = "/home/leob/iasb/analysis/src/geomagic"
+# path = "/home/bossel/These/Analysis/src/geomagic"
 DtoR = np.pi/ 180.
 RtoD = 180. / np.pi
 RT = 6371 # #km
@@ -56,7 +57,7 @@ class ObservationPoint:
 		self.B_model = None
 
 		if init_full:
-			self.B_model = chaos.load_CHAOS_matfile('/home/bossel/These/Analysis/data/magn_field/CHAOS-7.4.mat')
+			self.B_model = chaos.load_CHAOS_matfile('/home/leob/iasb/analysis/data/magn_field/CHAOS-7.4.mat')
 
 	def SinglePointGeometry(self, GetBatP=True, B_model = None): #, A_lon, A_lat, h, a, e):
 		if GetBatP:
@@ -286,7 +287,7 @@ class ObservationPoint:
 
 		if B_model is None:
 			if self.B_model is None:
-				B_model = chaos.load_CHAOS_matfile('/home/bossel/These/Analysis/data/magn_field/CHAOS-7.4.mat')
+				B_model = chaos.load_CHAOS_matfile('/home/leob/iasb/analysis/data/magn_field/CHAOS-7.4.mat')
 			else:
 				B_model = self.B_model
 		else:

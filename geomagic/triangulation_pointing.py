@@ -32,8 +32,9 @@ lonH, latH = obs0.P_lon, obs0.P_lat
 print("lonH, latH", lonH, latH)
 
 ### Lon, lat of the instrument 1 we want to know the direction
-name1 = "plateforme"
-lon1, lat1 = GetLonLatFromName(name1) #19.21*DtoR, 70.5*DtoR
+name1 = "skibotn"
+lat1, lon1 = 68.924606*DtoR, 20.935396*DtoR
+# lon1, lat1 = GetLonLatFromName(name1) #19.21*DtoR, 70.5*DtoR
 
 ### vector from point 1 to point H in carthesian coord, then in up-east-north coordinate at point 1
 v_OH = np.array((np.cos(lonH) * np.cos(latH), np.sin(lonH) * np.cos(latH), np.sin(latH))) #XYZ

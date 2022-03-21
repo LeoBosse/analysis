@@ -13,6 +13,7 @@ class Config:
 		self.data_path 					= self.path + "data/" # Folder where all your data are stored.
 		self.src_path 					= self.path + "src/vendange/" # Folder where all your source files are stored (this file is in this folder).
 
+		self.input_path 				= self.path + "src/vendange/input_files/" # Folder where all your input files are stored..
 		self.allsky_data_path 			= self.data_path + "allsky_camera/tid.uio.no/plasma/aurora/" #Path for all_sky camera pictures. It follows the automatic path scheme of the website.
 		self.magnetometer_data_path	 	= self.data_path + "magnetometer/" # Path for all magnetometer data
 		self.eiscat_data_path 			= self.data_path + "eiscat/" # Path for EISCAT data

@@ -391,10 +391,10 @@ class Mixer:
 		self.show_Iref = False # For CarmenCru only. Show the reference channel with no polarizing lens
 
 		self.show_time = not comp #Don't touch!
-		self.time_format = "UT" #LT or UT. Self explainatory. Control the time format of the x-axis
-		self.time_label = "UTC" # The title of the time x-axis
+		self.time_format = "LT" #LT or UT. Self explainatory. Control the time format of the x-axis
+		self.time_label = "LTC" # The title of the time x-axis
 
-		self.show_raw_data = False # Show the data with no slidding average. All rotations of the polarizing filter. In black
+		self.show_raw_data = True # Show the data with no slidding average. All rotations of the polarizing filter. In black
 		self.show_smooth_data = True # Show smoothed data (averageed over the time window defined in the input file)
 
 		self.show_error_bars 		= True # Show error bars for the raw cru data. in grey
@@ -425,7 +425,7 @@ class Mixer:
 
 		self.show_grid_lines = True # Just to have a nicer grpah. self explainatory
 
-		self.make_optional_plots = True # If True, will plot a lots of optional plots showing all kind of things. See the end of the __init__() function where it is used.
+		self.make_optional_plots = False # If True, will plot a lots of optional plots showing all kind of things. See the end of the __init__() function where it is used.
 		self.show_SN = True # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
 
 		### The following paramters are used when comparing the data with the POMEROL model.
