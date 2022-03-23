@@ -237,8 +237,8 @@ class MultipleScattering:
         ### Normal vector to plane in UpEastNorth coord.
         Pu, Pe, Pn = np.dot(Ria, (Pxi, Pyi, Pzi))
 
+        # return (0, 1, 0), plane_angle
         return (Pu, Pe, Pn), plane_angle
-        # return np.cross(self.los, (Pu, Pe, Pn))
 
     # @timer
     def RotateAboutPlane(self, incident_vec, scattering_plane, angle):
@@ -371,11 +371,15 @@ class MultipleScattering:
 
         is_scattered = False
 
+        # While the ray is not scattered == while the ray goes in a straight line == while we are on the same path segment
         while not is_scattered:
 
-            # print(alt)
-            alt += (vec[0, 0] * self.segment_bins_length)
-            segment_length += self.segment_bins_length
+            # print(alt, vec, vec[0, 0], segment_length, self.segment_bins_length)
+
+            alt += (vec[0, 0] * self.segment_bins_length) #Increment the altitude
+            segment_length += self.segment_bins_length #Increment the segment length
+
+            # print(alt, vec, vec[0, 0], segment_length, self.segment_bins_length)
 
             if alt < self.min_altitude:
                 hist = np.append(hist, [[alt, None, None, None, None, segment_length]], axis = 0)
@@ -387,7 +391,9 @@ class MultipleScattering:
 
         _, cs_ray, cs_aer = is_scattered
         sca_angle = self.GetScatteringAngle(cs_ray, cs_aer)
+        # print(vec, sca_angle*RtoD)
         vec = self.RotateAboutPlane(vec, scattering_plane, sca_angle)
+        # print(vec)
 
         hist = np.append(hist, [[alt, vec, sca_angle, cs_ray, cs_aer, segment_length]], axis = 0)
 
@@ -411,35 +417,45 @@ class MultipleScattering:
 
             vec = np.vstack(self.los)
 
-            hist = np.array([[alt, vec, None, None, None, None]])
 
-            hit_ground = False
-            while not hit_ground:
+            invalid_ray = True
+            while invalid_ray:
+                hist = np.array([[alt, vec, None, None, None, None]])
+                # print("START OVER")
                 hit_ground, hist = self.Propagate(alt, vec, scattering_plane, id_ray = id_ray, hist = hist)
+                if not hit_ground:
+                    continue
+
+                vectors         = hist[:-1, 1]
+                lengths         = hist[1:, 5]
+                final_position  = sum(vectors * lengths)
+
+                if np.linalg.norm(final_position) > self.max_distance_from_instrument:
+                    continue
+
+                invalid_ray = False
+
 
             nb_events = hist.shape[0] - 2 # Number of scattering events (not counting the start and end of the ray)
-            print("nb_events", nb_events)
+            # print("nb_events", nb_events)
             altitudes   = hist[:, 0]
-            print("altitudes", altitudes)
-            vectors     = hist[:-1, 1]
-            print("vectors", vectors)
+            # print("altitudes", altitudes)
+            # print("vectors", vectors)
             elevations  = np.arcsin([v[0, 0] for v in vectors])
-            print("elevations", elevations*RtoD)
+            # print("elevations", elevations*RtoD)
             sca_angles  = hist[1:-1, 2]
-            print("sca_angles", sca_angles*RtoD)
-            lengths         = hist[1:, 5]
-            print("lengths", lengths)
+            # print("sca_angles", sca_angles*RtoD)
+            # print("lengths", lengths)
 
             total_length    = sum(lengths)
-            print("total_length", total_length)
+            # print("total_length", total_length)
 
-            final_position  = sum(vectors * lengths)
-            print("final_position", final_position)
+            # print("final_position", final_position)
 
             ray_cross_section = hist[1:-1, 3]
-            print("ray_cross_section", ray_cross_section)
+            # print("ray_cross_section", ray_cross_section)
             aer_cross_section = hist[1:-1, 4]
-            print("aer_cross_section", aer_cross_section)
+            # print("aer_cross_section", aer_cross_section)
 
             self.hist["altitudes"].append(altitudes)
             self.hist["elevations"].append(elevations)
@@ -665,7 +681,7 @@ class MultipleScattering:
 
         altitudes_data = []
         for ray in self.hist["altitudes"]:
-            altitudes_data.extend([a for a in ray if a != 0])
+            altitudes_data.extend([a for a in ray if a > 0])
 
         w = np.ones_like(altitudes_data) / len(altitudes_data)
         hist, bins, _ = axs.hist(altitudes_data, weights=w)

@@ -31,7 +31,7 @@ use_analytic false # Should stay as "false". If "true", POMEROL will compute the
 ### All instrumental inputs
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
 ### Put "azimuts all" if you want to perform an almucantar (every 10°), or "elevations all" for a scan. See the world.__init__() for the code.
-azimuts 	10 250;290;40
+azimuts 	0 250;290;40
 elevations 	45 1;20;20
 
 location 	lagorge     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
@@ -107,7 +107,7 @@ MS_max_altitude	 						100 		# Maximum altitude of the MS scattering layer (maxi
 
 use_MS 1
 
-MS_N_rays 1
+MS_N_rays 1000
 MS_max_events 100 #Maximum number of scattering events
 MS_segment_max_length   500 #km Maximum distances for each segment
 MS_segment_bins_length 0.1  #km Bin length for each segment
