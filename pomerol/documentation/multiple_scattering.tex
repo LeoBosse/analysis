@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+
+\begin{document}
+
+We implement the reverse Monte-Carlo method described in details in \citep{yong2016}.
+The idea is to propagate a certain number of unpolarized light rays backward from the instrument and see where they end up.
+The radiant flux of the ground at the end point is associated to the ray.
+Once the ray touches the ground, we can trace it from the ground to the instrument to compute its polarisation at each scattering event.
+Then we can just add all rays together to get the polarisation due to multiple scattering.\\
+
+This has the huge advantage over forward monte carlo simulation to reduce th number of useless rays drastically, as all computed rays reach the detector.\\
+
+An unpolarised ray of undefined intensity is propagated from the instrument detector along its line of sight.
+At every predifined step of length $l$, the rays has a given probability to be scattered.
+This probability is defined at every altitude as the scattering cross-section of the air and aerosols.
+From \cite{bucholtz1995}, we have the Rayleigh scaterring cross-section per volume of atmosphere:
+\begin{equation}
+\beta(\lambda, z) = \beta_0(\lambda) \frac{P(z)}{P_0} \frac{T_0}{T(z)}\,,
+  \label{eq:beta_z}
+\end{equation}
+with $P(z)$ and $T(z)$ the atmospheric pressure and temperature profiles.
+$P_0 = 101\,325$ Pa and $T_0 = 288.15$ K are the pressure and temperature at sea level, and
+\begin{linenomath*}\begin{equation}
+    \beta_0(\lambda) = A_{ray}\lambda^{-(B+C\lambda + D/\lambda)}\,,
+    \label{eqn:sqlaw}
+\end{equation}\end{linenomath*}
+with $\lambda$ the wavelength (in $\mu$m).
+
+For now, I take as the probability of scattering for the ray:
+\begin{equation}
+  p(sca) = \beta l
+\end{equation}
+
+
+
+\end{document}

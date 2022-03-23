@@ -237,15 +237,19 @@ class Simulation:
 		# plt.show()
 
 		mul_sca.PropagateAll()
-		mul_sca.SetRaysFluxList(self.world.ground_map)
-		mul_sca.GetTotalUnpolarisedFlux(self.world.ground_map)
+		if mpi_rank == 0:
+			mul_sca.SetRaysFluxList(self.world.ground_map)
+			mul_sca.GetTotalUnpolarisedFlux(self.world.ground_map)
 
-		mul_sca.SetStocksParameters()
+			mul_sca.SetStocksParameters()
 
 
-		mul_sca.MakeOriginPlot(self.world.ground_map)
-		mul_sca.Make3DPlot()
-		mul_sca.MakeAltitudeHistogram()
+			print("MS TotalContribution", mul_sca.GetTotalContribution())
+
+
+			mul_sca.MakeOriginPlot(self.world.ground_map)
+			mul_sca.Make3DPlot()
+			mul_sca.MakeAltitudeHistogram()
 
 		# plt.show()
 

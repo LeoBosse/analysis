@@ -14,6 +14,7 @@ from time import perf_counter #For the timer decorator
 
 from atmosphere import *
 from observation import *
+from simulation import *
 
 
 
@@ -36,11 +37,11 @@ class MultipleScattering:
         self.max_events = int(in_dict['MS_max_events'])
         self.nb_rays = int(in_dict['MS_N_rays'])
 
+        self.nb_rays = int(np.ceil(self.nb_rays / mpi_size) * mpi_size)
 
         self.max_distance_from_instrument = float(in_dict["ground_emission_radius"]) #km
 
-
-        self.segment_distances = np.arange(0, self.segment_max_length, self.segment_bins_length)
+        self.segment_distances = np.arange(0, self.segment_max_length, self.segment_bins_length) #km
 
         self.segment_mid_distances = self.segment_distances[:-1] + self.segment_bins_length / 2. #np.array([(self.segment_distances[i+1] - self.segment_distances[i]) / 2 for i in range(0, self.segment_Nbins_max-1)])
         self.segment_Nbins_max = len(self.segment_mid_distances)
@@ -53,18 +54,32 @@ class MultipleScattering:
 
         self.los = (np.sin(self.initial_el), np.cos(self.initial_el) * np.sin(self.initial_az), np.cos(self.initial_el) * np.cos(self.initial_az))
 
-        self.hist = { "altitudes": [],
-                      "elevations": [],
-                      "lengths": [],
-                      "sca_angles": [],
-                      "nb_events": [],
-                      "vectors": [],
-                      "sca_planes": [],
-                      "ray_cross_section": [],
-                      "aer_cross_section": [],
-                      "final_pos": [],
-                      "total_length": []
+        self.hist = { "altitudes":[],
+                      "elevations":[],
+                      "lengths":[],
+                      "sca_angles":[],
+                      "nb_events":[],
+                      "vectors":[],
+                      "sca_planes":[],
+                      "AoLPs":[],
+                      "ray_cross_section":[],
+                      "aer_cross_section":[],
+                      "final_pos":[],
+                      "total_length":[]
         }
+        # self.hist = { "altitudes": [None] * self.nb_rays,
+        #               "elevations": [None] * self.nb_rays,
+        #               "lengths": [None] * self.nb_rays,
+        #               "sca_angles": [None] * self.nb_rays,
+        #               "nb_events": [None] * self.nb_rays,
+        #               "vectors": [None] * self.nb_rays,
+        #               "sca_planes": [None] * self.nb_rays,
+        #               "AoLPs": [None] * self.nb_rays,
+        #               "ray_cross_section": [None] * self.nb_rays,
+        #               "aer_cross_section": [None] * self.nb_rays,
+        #               "final_pos": [None] * self.nb_rays,
+        #               "total_length": [None] * self.nb_rays
+        # }
 
     # @timer
     def GetSegmentLength(self, altitude, elevation):
@@ -97,11 +112,21 @@ class MultipleScattering:
 
         # print("len", len(segment_mid_distances))
 
-        # Get the cross section of one bin (ray+aer)
-        cross_section = lambda alt: self.atmosphere.GetRSVolumeCS(alt) + self.atmosphere.GetAerosolCS(alt)
+        # Get the volume cross section of one bin (ray+aer) in km-1
+        cross_section = lambda alt: (self.atmosphere.GetRSVolumeCS(alt) + self.atmosphere.GetAerosolCS(alt))
 
-        # Get the cross section of each bin as defined above
+        # Get the cross section of each bin as defined above km-1
         cross_sections = np.array([cross_section(a) for a in segment_altitudes])
+        # print(cross_sections)
+
+        # Compute the volume coefficient of the bin in km. I compute here only a proportionnal term because the proba is scaled to 1 in the end
+        # volume_coeff = lambda l, dl: 3 * l**2 + (dl / 2)**2
+        # volume_coeff = lambda l, dl: dl + dl**3 / (12 * l**2)
+        # volumes = np.array([volume_coeff(l, self.segment_bins_length) for l in segment_mid_distances])
+
+        cross_sections *= self.segment_bins_length
+
+        # print(volumes, cross_sections)
 
         #Append one last bin to the lists that correspond to no scattering (either ground impact or escape to space), with cross section 1
         segment_max_bin += 1
@@ -135,17 +160,6 @@ class MultipleScattering:
         # print(cross_sections, sum(cross_sections))
         # print(cumul_anti_cs, sum(cumul_anti_cs))
 
-        # f1, axs = plt.subplots(3, sharex = True, figsize=(16, 8))
-        # # axs[0] = plt.subplot(111)
-        # # axs[1] = plt.subplot(212)
-        # # axs[2] = plt.subplot(313)
-        #
-        # axs[0].plot(segment_altitudes, cross_sections)
-        # axs[1].plot(segment_altitudes, proba)
-        # axs[2].plot(segment_altitudes, cumul_anti_cs)
-        #
-        # for a in axs:
-        #     a.set_yscale('log')
 
         bin = np.random.choice(segment_max_bin, p = proba)
         end_ray = False
@@ -157,6 +171,19 @@ class MultipleScattering:
         alt     = segment_altitudes[bin]
         cs_ray  = self.atmosphere.GetRSVolumeCS(alt)
         cs_aer  = self.atmosphere.GetAerosolCS(alt)
+
+        # f1, axs = plt.subplots(3, sharex = True, figsize=(16, 8))
+        # # axs[0] = plt.subplot(111)
+        # # axs[1] = plt.subplot(212)
+        # # axs[2] = plt.subplot(313)
+        #
+        # axs[0].plot(segment_altitudes, cross_sections)
+        # axs[1].plot(segment_altitudes, proba)
+        # axs[2].plot(segment_altitudes, cumul_anti_cs)
+        #
+        #
+        # for a in axs:
+        #     a.set_yscale('log')
 
         return length, alt, cs_ray, cs_aer, end_ray
 
@@ -171,7 +198,25 @@ class MultipleScattering:
         #
         # axs[0].plot(self.atmosphere.profiles["sca_angle"], proba)
 
-        return np.random.choice(self.atmosphere.profiles["sca_angle"], p = proba)
+        random_angle = np.random.choice([-1, 1]) * np.random.choice(self.atmosphere.profiles["sca_angle"], p = proba)
+        return random_angle
+
+
+    def IsScattered(self, alt):
+        cs_ray  = self.atmosphere.GetRSVolumeCS(alt)
+        cs_aer  = self.atmosphere.GetAerosolCS(alt)
+
+        cross_section = cs_ray + cs_aer
+        cross_section *= self.segment_bins_length
+
+        is_scattered = np.random.random() < cross_section
+
+        if is_scattered:
+            return True, cs_ray, cs_aer
+        else:
+            return False
+
+
 
     def GetScatteringPlane(self):
         ### Rotation matrix from instrument ref frame to UpEastNorth
@@ -181,37 +226,52 @@ class MultipleScattering:
                             [	 ce * sa,	-ca,	-se * sa],
                             [	 ce * ca,	sa,		-se * ca]])
 
-        plane_angle = np.random.random() * np.pi
+        ### Random plane angle
+        plane_angle = np.random.random() * np.pi - np.pi/2
 
+        ### Normal vector to plane in ref frame of instrument (==AoLP)
         Pxi = 0
         Pyi = np.sin(plane_angle)
         Pzi = np.cos(plane_angle)
 
+        ### Normal vector to plane in UpEastNorth coord.
         Pu, Pe, Pn = np.dot(Ria, (Pxi, Pyi, Pzi))
 
-        return np.cross(self.los, (Pu, Pe, Pn))
+        return (Pu, Pe, Pn), plane_angle
+        # return np.cross(self.los, (Pu, Pe, Pn))
 
     # @timer
     def RotateAboutPlane(self, incident_vec, scattering_plane, angle):
         x, y, z = scattering_plane
-        S = np.matrix([ [0, -z, y],
-                        [z, 0, -x],
-                        [-y, x, 0]])
-        S2 = S @ S
+        # S = np.matrix([ [0, -z, y],
+        #                 [z, 0, -x],
+        #                 [-y, x, 0]])
+        # S2 = S @ S
+        #
+        # R = np.identity(3) + np.sin(angle) * S + (1-np.cos(angle)) * S2
 
-        R = np.identity(3) + np.sin(angle) * S + (1-np.cos(angle)) * S2
+        ca, sa = np.cos(angle), np.sin(angle)
+        u = 1 - ca
+        x2, y2, z2 = x**2, y**2, z**2
+
+        R = np.matrix([ [ca + x2*u,         x*y*u - z*sa,       x*z*u + y*sa],
+                        [x*y*u + z*sa,      ca + y2*u,          y*z*u - x*sa],
+                        [x*z*u - y*sa,      y*z*u + x*sa,       ca + z2*u]])
 
         # print(R)
         # print(np.vstack(incident_vec))
         return R @ incident_vec
 
+
+
     # @timer
-    def Propagate(self):
+    def Propagate_old(self, id_ray = 0):
         N = self.max_events
 
         alt = self.initial_alt
         el  = self.initial_el
-        scattering_plane = self.GetScatteringPlane()
+        scattering_plane, AoLP = self.GetScatteringPlane()
+
         vec = np.vstack(self.los)
 
         alt_H = [alt]
@@ -273,10 +333,24 @@ class MultipleScattering:
         self.hist["vectors"].append(vec_H)
         self.hist["nb_events"].append(nb_events)
         self.hist["sca_planes"].append(scattering_plane)
+        self.hist["AoLPs"].append(AoLP)
         self.hist["ray_cross_section"].append(cs_ray_H)
         self.hist["aer_cross_section"].append(cs_aer_H)
         self.hist["final_pos"].append(final_position)
         self.hist["total_length"].append(total_length)
+
+        # self.hist["altitudes"][id_ray] = alt_H
+        # self.hist["elevations"][id_ray] = el_H
+        # self.hist["lengths"][id_ray] = length_H
+        # self.hist["sca_angles"][id_ray] = sca_angle_H
+        # self.hist["vectors"][id_ray] = vec_H
+        # self.hist["nb_events"][id_ray] = nb_events
+        # self.hist["sca_planes"][id_ray] = scattering_plane
+        # self.hist["AoLPs"][id_ray] = AoLP
+        # self.hist["ray_cross_section"][id_ray] = cs_ray_H
+        # self.hist["aer_cross_section"][id_ray] = cs_aer_H
+        # self.hist["final_pos"][id_ray] = final_position
+        # self.hist["total_length"][id_ray] = total_length
 
         # print("DEBUG MS.hist.vec_H", len(self.hist["vectors"]), len(self.hist["vectors"][0]), len(self.hist["vectors"][0][0]))
 
@@ -291,46 +365,180 @@ class MultipleScattering:
 
         return True
 
+
+
+    def Propagate(self, alt, vec, scattering_plane, id_ray = 0, hist = np.zeros((0, 6)), segment_length = 0):
+
+        is_scattered = False
+
+        while not is_scattered:
+
+            # print(alt)
+            alt += (vec[0, 0] * self.segment_bins_length)
+            segment_length += self.segment_bins_length
+
+            if alt < self.min_altitude:
+                hist = np.append(hist, [[alt, None, None, None, None, segment_length]], axis = 0)
+                return True, hist
+            elif alt > self.max_altitude:
+                return False, hist
+
+            is_scattered = self.IsScattered(alt)
+
+        _, cs_ray, cs_aer = is_scattered
+        sca_angle = self.GetScatteringAngle(cs_ray, cs_aer)
+        vec = self.RotateAboutPlane(vec, scattering_plane, sca_angle)
+
+        hist = np.append(hist, [[alt, vec, sca_angle, cs_ray, cs_aer, segment_length]], axis = 0)
+
+        # print(hist)
+
+        segment_length = 0
+
+        return self.Propagate(alt, vec, scattering_plane, id_ray=id_ray, hist = hist, segment_length=segment_length)
+
+
     @timer
     def PropagateAll(self):
-        f_path, axs = plt.subplots(5, sharex=True)
+        # f_path, axs = plt.subplots(5, sharex=True)
 
-        for i in range(self.nb_rays):
-            while not self.Propagate():
-                pass
+        for id_ray in range(int(self.nb_rays / mpi_size)):
+            # id_ray = i * mpi_size + mpi_rank
+            # print(i, id_ray, self.nb_rays)
 
-            axs[0].plot(range(self.hist["nb_events"][i] + 1), self.hist["altitudes"][i], color="black", alpha=0.5)
-            axs[1].plot(range(self.hist["nb_events"][i]), np.array(self.hist["elevations"][i]) * RtoD, color="black", alpha=0.5)
-            axs[2].plot(range(self.hist["nb_events"][i]), self.hist["lengths"][i], color="black", alpha=0.5)
-            axs[3].plot(range(self.hist["nb_events"][i]-1), np.array(self.hist["sca_angles"][i])*RtoD, color="black", alpha=0.5)
+            alt = self.initial_alt
+            scattering_plane, AoLP = self.GetScatteringPlane()
 
-        axs[4].hist(self.hist["nb_events"])
+            vec = np.vstack(self.los)
+
+            hist = np.array([[alt, vec, None, None, None, None]])
+
+            hit_ground = False
+            while not hit_ground:
+                hit_ground, hist = self.Propagate(alt, vec, scattering_plane, id_ray = id_ray, hist = hist)
+
+            nb_events = hist.shape[0] - 2 # Number of scattering events (not counting the start and end of the ray)
+            print("nb_events", nb_events)
+            altitudes   = hist[:, 0]
+            print("altitudes", altitudes)
+            vectors     = hist[:-1, 1]
+            print("vectors", vectors)
+            elevations  = np.arcsin([v[0, 0] for v in vectors])
+            print("elevations", elevations*RtoD)
+            sca_angles  = hist[1:-1, 2]
+            print("sca_angles", sca_angles*RtoD)
+            lengths         = hist[1:, 5]
+            print("lengths", lengths)
+
+            total_length    = sum(lengths)
+            print("total_length", total_length)
+
+            final_position  = sum(vectors * lengths)
+            print("final_position", final_position)
+
+            ray_cross_section = hist[1:-1, 3]
+            print("ray_cross_section", ray_cross_section)
+            aer_cross_section = hist[1:-1, 4]
+            print("aer_cross_section", aer_cross_section)
+
+            self.hist["altitudes"].append(altitudes)
+            self.hist["elevations"].append(elevations)
+            self.hist["lengths"].append(lengths)
+            self.hist["sca_angles"].append(sca_angles)
+            self.hist["vectors"].append(vectors)
+            self.hist["nb_events"].append(nb_events)
+            self.hist["sca_planes"].append(scattering_plane)
+            self.hist["AoLPs"].append(AoLP)
+            self.hist["ray_cross_section"].append(ray_cross_section)
+            self.hist["aer_cross_section"].append(aer_cross_section)
+            self.hist["final_pos"].append(final_position)
+            self.hist["total_length"].append(total_length)
+
+            # print(self.hist)
 
 
-    def GetTotalComtribution(self):
-        S_total = self.Stocks_list * self.Stocks_list
 
-        return S_total
+        #     axs[0].plot(range(self.hist["nb_events"][i] + 1), self.hist["altitudes"][i], color="black", alpha=0.5)
+        #     axs[1].plot(range(self.hist["nb_events"][i]), np.array(self.hist["elevations"][i]) * RtoD, color="black", alpha=0.5)
+        #     axs[2].plot(range(self.hist["nb_events"][i]), self.hist["lengths"][i], color="black", alpha=0.5)
+        #     axs[3].plot(range(self.hist["nb_events"][i]-1), np.array(self.hist["sca_angles"][i])*RtoD, color="black", alpha=0.5)
+        #
+        # axs[4].hist(self.hist["nb_events"])
+
+        mpi_comm.Barrier()
+        for k in self.hist.keys():
+            # if mpi_rank == 0: print(k, len(self.hist[k]))
+            receiver = mpi_comm.gather(self.hist[k][:], root=0)
+            # if mpi_rank == 0: print(len(self.hist[k]), self.hist[k])
+            if mpi_rank == 0:
+                for i in range(1, mpi_size):
+                    self.hist[k].extend(receiver[i])
+            # if mpi_rank == 0: print(len(self.hist[k]), self.hist[k])
 
 
+
+    def GetTotalContribution(self):
+
+        # print(self.Flux_list, self.Stocks_I_list, self.Stocks_Q_list)
+
+        V = 0
+        Vc = 0
+        Vs = 0
+
+        d_l = []
+        a_l = []
+
+        for i_ray in range(self.nb_rays):
+            I = self.Stocks_I_list[i_ray]
+            DoLP = self.Stocks_Q_list[i_ray]
+            AoLP = self.hist["AoLPs"][i_ray]
+            if DoLP < 0:
+                DoLP *= -1
+                AoLP += np.pi/2
+
+            V += I / 2
+            Vc += I * DoLP * np.cos(2 * AoLP) / 4
+            Vs += I * DoLP * np.sin(2 * AoLP) / 4
+
+            DoLP = 100 * 2 * np.sqrt(Vc**2 + Vs**2) / V
+            AoLP = np.arctan2(Vs, Vc) / 2.
+            d_l.append(DoLP)
+            a_l.append(AoLP*RtoD)
+
+            # print(DoLP, AoLP*RtoD)
+
+        DoLP = 100 * 2 * np.sqrt(Vc**2 + Vs**2) / V
+        AoLP = np.arctan2(Vs, Vc) / 2.
+
+        f = plt.figure()
+        plt.plot(range(self.nb_rays), d_l)
+        plt.plot(range(self.nb_rays), a_l)
+
+        # print(V, Vc, Vs, DoLP, AoLP*RtoD)
+        return V, Vc, Vs, DoLP, AoLP
+
+        # return S_I_total, S_Q_total
 
     def SetStocksParameters(self):
         """Compute the stocks paramters of each individual rays and stock them in a list"""
-        self.Stocks_list = []
+        self.Stocks_I_list = np.zeros(self.nb_rays)
+        self.Stocks_Q_list = np.zeros(self.nb_rays)
         for i_ray in range(self.nb_rays):
-            self.Stocks_list.append(self.GetRayStocksParameters(i_ray))
+            self.Stocks_I_list[i_ray], self.Stocks_Q_list[i_ray] = self.GetRayStocksParameters(i_ray)
 
+        # print("self.Stocks_I_list", self.Stocks_I_list)
+        # print("self.Stocks_Q_list", self.Stocks_Q_list)
 
     def GetRayStocksParameters(self, ray_id):
         """Forward scattering of a single ray. Th ray is supposed emited unpolarized (1, 0)."""
-        S = np.vstack(1, 0)
+        S = np.vstack((1, 0))
 
-        for i_sca in range(self.hist["nb_events"][ray_id]):
-            theta = self.hist["sca_angles"]
+        for i_sca in range(self.hist["nb_events"][ray_id] - 1):
+            theta = self.hist["sca_angles"][ray_id][- 1 - i_sca]
             M = self.GetTotalScatteringMatrix(theta)
 
             S = M @ S
-
+        # print("ray stocks", S)
         return S
 
 
@@ -350,7 +558,8 @@ class MultipleScattering:
 
         M = np.matrix([[i, 0], [0, d]])
 
-        return M
+        # return M
+        return 0
 
     def GetTotalScatteringMatrix(self, a):
         """Average of the rayleigh and Mie scattering scattering matrices."""
@@ -364,37 +573,38 @@ class MultipleScattering:
 
         F = np.sum(self.Flux_list)
 
-        print("F", F)
+        # print("F", F)
         return F
 
-    def SetRaysFluxList(self):
-        self.Flux_list = []
+    def SetRaysFluxList(self, grd_map):
+        self.Flux_list = np.zeros(self.nb_rays)
         for ir in range(self.nb_rays):
-            self.Flux_list.append(self.GetRayUnpolarisedFlux(ir, grd_map))
+            self.Flux_list[ir] = self.GetRayUnpolarisedFlux(ir, grd_map)
 
 
     def GetRayUnpolarisedFlux(self, ray_id, grd_map):
 
+        # print(self.hist["final_pos"][ray_id])
         u, e, n = self.hist["final_pos"][ray_id]
-        print(u, e, n)
+        # print(u, e, n)
 
         az   = np.arctan2(e, n)
         dist = np.sqrt(e**2 + n**2)
 
-        print(az, dist)
+        # print(az*RtoD, dist)
 
         F0 = grd_map.GetRadiantIntensity(az, dist)
 
-        print("1", F0)
+        # print("1", F0)
         if F0 == 0:
             return 0
 
         # F0 *= grd_map.GetArea(id)
-        print("2", F0)
-        print(self.hist["lengths"][ray_id])
-        F0 /= np.prod([l**2 for l in self.hist["lengths"][ray_id] if l != 0])
+        # print("2", F0)
+        # print(self.hist["lengths"][ray_id])
+        F0 /= np.prod([(l*1000)**2 for l in self.hist["lengths"][ray_id] if l != 0])
 
-        print("3", F0)
+        # print("3", F0)
 
         return F0
 
@@ -430,6 +640,7 @@ class MultipleScattering:
             pos_H = self.GetRayPath(id)
             u, e, n = zip(*pos_H)
             ax.plot(n, e, u, "*", alpha = 0.5)
+            ax.plot([self.los[2], self.los[2]* 50], [self.los[1], self.los[1]* 50], [self.los[0], self.los[0]* 50], "r-", alpha = 0.5)
 
         ### Plot the norm vector of all scattering planes in black and the line of sight in red
         f  = plt.figure()
@@ -477,7 +688,7 @@ class MultipleScattering:
         phase_function /= np.sum(phase_function)
         # phase_function /= 2
 
-        print(np.sum(hist), np.sum(phase_function))
+        # print(np.sum(hist), np.sum(phase_function))
 
         # axs1 = axs.twinx()
         axs.plot(self.atmosphere.profiles["sca_angle"]*RtoD, phase_function, "r")
