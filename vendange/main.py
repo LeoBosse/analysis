@@ -78,8 +78,8 @@ def GetNbLines(bottle_name):
 if instrument_name in ["ptcu", "gdcu", "ptcu_v2", "carmen", "corbel"]:
 	nb_lines = GetNbLines(bottle_name)
 	print("nb_lines", nb_lines)
-	for l in [1]:
-	# for l in range(1, nb_lines+1):
+	# for l in [1]:
+	for l in range(1, nb_lines+1):
 		print("##################################################################")
 		print("##################################################################")
 		print(bottle_name)

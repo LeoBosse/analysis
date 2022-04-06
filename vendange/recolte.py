@@ -120,11 +120,11 @@ for id in IDConfiguration:
 		continue
 
 	### Get saving folder names
+	title = config[columns.index("CM_Comments")].split(" ")
+	date = config[columns.index("Timestamp")]
+	lieu = title[1].capitalize()
+	i = 0
 	try:
-		title = config[columns.index("CM_Comments")].split("_")
-		date = config[columns.index("Timestamp")]
-		lieu = title[1].capitalize()
-		i = 0
 		if title[2].lower() in ["sud", "north"]:
 			i = 1
 			lieu += title[2].capitalize()
@@ -165,7 +165,7 @@ for id in IDConfiguration:
 		else:
 			print("IDConfiguration {0}: Wrong Title. I can't save it...".format(id))
 			print("Wrong title is:" + config[columns.index("CM_Comments")])
-			continue
+			# continue
 
 
 	### For saving nice titles.
