@@ -31,6 +31,7 @@ from atmosphere import *
 from world import *
 from input import *
 from multiple_scattering import *
+# from multiple_scattering_python import *
 
 
 class Simulation:
@@ -237,6 +238,7 @@ class Simulation:
 		# plt.show()
 
 		mul_sca.PropagateAll()
+
 		if mpi_rank == 0:
 			mul_sca.SetRaysFluxList(self.world.ground_map)
 			mul_sca.GetTotalUnpolarisedFlux(self.world.ground_map)
@@ -250,6 +252,7 @@ class Simulation:
 			mul_sca.MakeOriginPlot(self.world.ground_map)
 			mul_sca.Make3DPlot()
 			mul_sca.MakeAltitudeHistogram()
+			mul_sca.MakeScatteringHistograms()
 
 		# plt.show()
 
@@ -270,7 +273,7 @@ class Simulation:
 			str_header += "datetime,I0,DoLP,AoRD,DI0,DDoLP,DAoLP"
 			print(str_header)
 			if self.save_name:
-				print(str_header, file = save_file)
+				print(str_header, file=save_file)
 
 
 		for t in range(self.world.sky_map.Nt):

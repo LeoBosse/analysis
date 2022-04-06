@@ -107,7 +107,7 @@ MS_max_altitude	 						100 		# Maximum altitude of the MS scattering layer (maxi
 
 use_MS 1
 
-MS_N_rays 1000
+MS_N_rays 10
 MS_max_events 100 #Maximum number of scattering events
 MS_segment_max_length   500 #km Maximum distances for each segment
 MS_segment_bins_length 0.1  #km Bin length for each segment

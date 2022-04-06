@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: multiple_scattering.aux
+The style file: unsrtnat.bst
+Database file #1: multiple_scattering.bib
+You've used 2 entries,
+            2481 wiz_defined-function locations,
+            569 strings with 4791 characters,
+and the built_in function-call counts, 806 in all, are:
+= -- 74
+> -- 28
+< -- 1
++ -- 12
+- -- 8
+* -- 69
+:= -- 136
+add.period$ -- 10
+call.type$ -- 2
+change.case$ -- 4
+chr.to.int$ -- 2
+cite$ -- 2
+duplicate$ -- 38
+empty$ -- 73
+format.name$ -- 10
+if$ -- 164
+int.to.chr$ -- 1
+int.to.str$ -- 3
+missing$ -- 2
+newline$ -- 22
+num.names$ -- 6
+pop$ -- 10
+preamble$ -- 1
+purify$ -- 2
+quote$ -- 0
+skip$ -- 20
+stack$ -- 0
+substring$ -- 38
+swap$ -- 6
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 14
+warning$ -- 0
+while$ -- 7
+width$ -- 0
+write$ -- 41
