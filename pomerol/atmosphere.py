@@ -32,6 +32,7 @@ import imageio
 
 from observation import *
 from rayleigh_utils import *
+from pomerol.cythonized import *
 
 class Atmosphere:
 	def __init__(self, in_dict):
@@ -162,13 +163,18 @@ class Atmosphere:
 		self.profiles["delta_z"] = [self.profiles["HGT"][i+1] - self.profiles["HGT"][i] for i in range(self.nb_profile_alt-1)]
 		self.profiles["delta_z"].append(self.profiles["delta_z"][-1])
 
-	# @timer
-	# @nba.njit(nogil=True)
+		for k, v in self.profiles.items():
+			self.profiles[k] = np.array(v)
+
+	@GlobalTimer
 	def GetProfileValue(self, alt, name):
 		"""From any altitude in km, gives the profile value with linear approx."""
-
+		# index = np.searchsorted(self.profiles["HGT"], alt)
+		# return self.profiles[name][index]
 		return np.interp(alt, self.profiles["HGT"], self.profiles[name])
+		# return FastInterp(alt, self.profiles["HGT"], self.profiles[name])
 
+		#
 		# if alt in self.profiles["HGT"]:
 		# 	i = self.profiles["HGT"].index(alt)
 		# 	return self.profiles[name][i]
@@ -247,6 +253,7 @@ class Atmosphere:
 		# 	print(los_RS_abs[it], los_O3_abs[it], los_aer_abs[it])
 
 	# #@timer
+	@GlobalTimer
 	def GetVolume(self, AR, ouv_pc, da = None, dr=None, index = None , unit="km", type="cone"):
 		"""Get the volume of a truncated cone of length d_los, and half opening angle ouv_pc.
 		Unit defines the unit you want it in. can be "cm", "m" or "km". (the cube is implicit)"""

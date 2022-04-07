@@ -73,6 +73,10 @@ def RunSimulation(file_name = "", show = True, output_result_file=None, header =
 
 		simu.MakeSummaryPlot()
 
+		print("Global timers recap:")
+		for timer in GlobalTimer.fn_list:
+			print(timer)
+
 		if show:
 			plt.show()
 

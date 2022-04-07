@@ -243,7 +243,7 @@ class Simulation:
 			mul_sca.SetRaysFluxList(self.world.ground_map)
 			mul_sca.GetTotalUnpolarisedFlux(self.world.ground_map)
 
-			mul_sca.SetStocksParameters()
+			mul_sca.SetStokesParameters()
 
 
 			print("MS TotalContribution", mul_sca.GetTotalContribution())

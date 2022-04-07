@@ -19,6 +19,8 @@ from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.time import Time
 from astropy import units as u
 
+from functools import wraps
+
 # import numba as nba
 
 DtoR = np.pi / 180.
@@ -31,10 +33,44 @@ GetAngle 		= lambda v1, v2: np.arccos(np.clip(np.dot(v1, v2), -1.0, 1.0)) # Retu
 GenPythagore	= lambda a, b, theta: np.sqrt(a**2 + b**2 - 2*a*b*np.cos(theta)) # Generalised Pythagorean theorem. From 2 sides and the angle between them, return the length of third side.
 
 RadToKm			= lambda rad: rad * RT
+
+
+class GlobalTimer:
+    fn_list = []
+
+    def __init__(self, fn):
+        self.fn = fn
+        self.name = fn.__name__
+        self.counts = 0
+        self.total_time = 0
+
+        self.fn_list.append(self)
+
+    def __call__(self, *args, **kwargs):
+        self.counts += 1
+
+        start_time = perf_counter()
+        result = self.fn(*args, **kwargs)
+        end_time = perf_counter()
+
+        self.total_time += (end_time - start_time)
+
+        return result
+
+    def __repr__(self):
+         return f"{self.name} \t\t ran {self.counts} times in \t\t {self.total_time} sec \t\t (avg={self.total_time / self.counts})"
+
+    def __get__(self, obj, objtype):
+        """Support instance methods."""
+        import functools
+        return functools.partial(self.__call__, obj)
+
+    def __lt__(self, other):
+         return self.total_time < other.total_time
+
 # Timer decorator
-
 def timer(fn):
-
+    @wraps(fn)
     def inner(*args, **kwargs):
         start_time = perf_counter()
         to_execute = fn(*args, **kwargs)
