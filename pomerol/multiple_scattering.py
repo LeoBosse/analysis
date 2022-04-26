@@ -537,7 +537,7 @@ class MultipleScattering:
         axs[2].plot(range(self.nb_rays), a_l, "b-")
 
         # print(V, Vc, Vs, DoLP, AoLP*RtoD)
-        return V, Vc, Vs, DoLP, AoLP
+        return V, Vc, Vs, DoLP, AoLP*RtoD
 
         # return S_I_total, S_Q_total
 

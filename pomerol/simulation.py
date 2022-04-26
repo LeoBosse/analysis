@@ -81,17 +81,22 @@ class Simulation:
 		list_shapes = (self.world.sky_map.Nt, len(self.world.e_pc_list), len(self.world.a_pc_list))
 		### Initialize lists to save the final observable of each observation
 		self.I_direct_list 	= np.zeros(list_shapes)
-		self.I_list 	= np.zeros(list_shapes)
+		self.I_list 		= np.zeros(list_shapes)
 		self.IPola_list 	= np.zeros(list_shapes)
 		self.InonPola_list 	= np.zeros(list_shapes)
-		self.DoLP_list 	= np.zeros(list_shapes)
-		self.AoRD_list = np.zeros(list_shapes)
+		self.DoLP_list 		= np.zeros(list_shapes)
+		self.AoRD_list 		= np.zeros(list_shapes)
 
-		self.I_list_err = np.zeros(list_shapes)
+		self.I_list_err 	= np.zeros(list_shapes)
 		self.InonPola_list_err = np.zeros(list_shapes)
 		self.IPola_list_err = np.zeros(list_shapes)
-		self.DoLP_list_err = np.zeros(list_shapes)
-		self.AoRD_list_err = np.zeros(list_shapes)
+		self.DoLP_list_err 	= np.zeros(list_shapes)
+		self.AoRD_list_err 	= np.zeros(list_shapes)
+
+		self.MS_I0			= np.zeros(list_shapes)
+		self.MS_DoLP		= np.zeros(list_shapes)
+		self.MS_AoLP		= np.zeros(list_shapes)
+
 
 
 		self.add_B_pola = bool(float(in_dict["add_B_pola"]))
@@ -239,14 +244,19 @@ class Simulation:
 
 		mul_sca.PropagateAll()
 
+
 		if mpi_rank == 0:
 			mul_sca.SetRaysFluxList(self.world.ground_map)
 			mul_sca.GetTotalUnpolarisedFlux(self.world.ground_map)
 
 			mul_sca.SetStokesParameters()
 
+			V, Vc, Vs, DoLP, AoLP = mul_sca.GetTotalContribution()
+			self.MS_I0[self.time, self.ie_pc, self.ia_pc] = V
+			self.MS_DoLP[self.time, self.ie_pc, self.ia_pc] = DoLP
+			self.MS_AoLP[self.time, self.ie_pc, self.ia_pc] = AoLP
 
-			print("MS TotalContribution", mul_sca.GetTotalContribution())
+			print("MS TotalContribution", V, Vc, Vs, DoLP, AoLP)
 
 
 			mul_sca.MakeOriginPlot(self.world.ground_map)
@@ -270,7 +280,7 @@ class Simulation:
 				if key[0] != "#":
 					str_header += key + ","
 
-			str_header += "datetime,I0,DoLP,AoRD,DI0,DDoLP,DAoLP"
+			str_header += "datetime,I0,DoLP,AoRD,DI0,DDoLP,DAoLP,MSI0,MSDoLP,MSAoLP"
 			print(str_header)
 			if self.save_name:
 				print(str_header, file=save_file)
@@ -298,6 +308,9 @@ class Simulation:
 					values += f"{self.I_direct_list[t, ie_pc, ia_pc]},"
 					values += f"{self.add_B_DoLP[t, ie_pc, ia_pc] * 100},"
 					values += f"{self.add_B_AoLP[t, ie_pc, ia_pc] * RtoD}"
+					values += f"{self.MS_I0[t, ie_pc, ia_pc]}"
+					values += f"{self.MS_DoLP[t, ie_pc, ia_pc]}"
+					values += f"{self.MS_AoLP[t, ie_pc, ia_pc]}"
 
 					print(values[:])
 					if self.save_name:
@@ -359,7 +372,7 @@ class Simulation:
 
 
 	def GetLightParameters(self, ground = False, sky = False, time = None, ie_pc = None, ia_pc = None):
-		"""Once the contributions of emmision maps are computed, compute the I, DOLP, AoLP and the AoLP histogram."""
+		"""Once the contributions of emission maps are computed, compute the I, DOLP, AoLP and the AoLP histogram."""
 
 		if time == None: time = self.time
 		if ie_pc == None: ie_pc = self.ie_pc
@@ -380,8 +393,6 @@ class Simulation:
 			self.I0  = np.sum(self.world.sky_map.total_scattering_map[time, ie_pc, ia_pc].flatten())
 			self.I0 += self.I_direct_list[time, ie_pc, ia_pc]
 			self.InonPola = self.I0 - np.sum(self.world.sky_map.scattering_map[time, ie_pc, ia_pc].flatten())
-
-		tmp_start = tm.time()
 
 
 		direct_V, direct_Vcos, direct_Vsin = self.world.GetVParamFromLightParam(self.I_direct_list[time, ie_pc, ia_pc], 0, 0)
