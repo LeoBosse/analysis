@@ -2,7 +2,7 @@
 # -*-coding:utf-8 -*
 
 import numpy as np
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import rc
 #matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
@@ -10,8 +10,8 @@ rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 ## for Palatino and other serif fonts use:
 #rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=False)
-matplotlib.rcParams['font.size'] = 16
-matplotlib.rcParams['svg.fonttype'] = 'none'
+mpl.rcParams['font.size'] = 16
+mpl.rcParams['svg.fonttype'] = 'none'
 import datetime as dt
 
 import chaosmagpy as chaos
@@ -37,7 +37,7 @@ class Mixer:
 		self.comp_bottles = comp_bottles
 		self.mag_data = mag_data
 
-		for ib,  bottle in enumerate(self.bottles):
+		for ib, bottle in enumerate(self.bottles):
 
 			self.SetGraphParameter(bottle)
 			self.MakeXAxis(bottle)
@@ -50,8 +50,13 @@ class Mixer:
 				self.allsky_data = AllSkyData(bottle)
 				self.allsky_data_available = bool(self.allsky_data.all_datetimes)
 
-			self.eiscat_data = Eiscat(bottle)
-			# print("DEBUG:", self.eiscat_data.valid )
+
+			if self.show_eiscat:
+				self.eiscat_data = Eiscat(bottle)
+				if not self.eiscat_data.valid:
+					# print("EISCAT HDF5")
+					self.eiscat_data = EiscatHDF5(bottle, antenna = self.eiscat_type)
+				print("EISCAT data valid? ", self.eiscat_data.valid )
 
 			self.eq_currents = EqCurrent(bottle, file_type=None)
 			print("Equivalent current is valid? ", bool(self.eq_currents.valid))
@@ -246,7 +251,7 @@ class Mixer:
 				self.MakeMagDataPlots(bottle)
 				self.MakeCorrelationPlots(bottle)
 
-			if self.make_optional_plots and self.eiscat_data.valid:
+			if self.show_eiscat and self.make_optional_plots and self.eiscat_data.valid:
 				self.MakeEiscatDataPlot(bottle)
 
 			if self.make_optional_plots and bottle.observation_type == "fixed_elevation_continue_rotation":
@@ -283,12 +288,22 @@ class Mixer:
 			if self.langue == "en": self.xlabel = "Time (seconds)"
 			else : 					self.xlabel = "Durée (secondes)"
 
-		# self.x_axis_list 	   = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
+		# self.x_axis_list = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
 		norm = bottle.all_times[0].total_seconds()
-		# self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
 		self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
-		self.x_time_list = self.x_axis_list
 
+		if self.use_24h_time_format: #Specifically for the current article where I needed to match Jean xaxis in format hour+24
+			self.x_axis_list = bottle.DateTime("start", format="LT") + bottle.all_times
+			# day = self.x_axis_list[0].day
+			# GetHour = lambda t: t.hour + t.minute / 60. + t.second / 3600.
+			# GetDay = lambda d: d.day
+			# self.x_axis_list = np.where(np.vectorize(GetDay)(self.x_axis_list) > day, np.vectorize(GetHour)(self.x_axis_list)+24, np.vectorize(GetHour)(self.x_axis_list))
+			# self.x_axis_list = np.array([GetHour(t) for t in self.x_axis_list])
+			self.xlabel = "Local Time"
+			# plt.rcParams['axes.xmargin'] = 0
+
+
+		self.x_time_list = self.x_axis_list
 
 		if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_continue_rotation":
 			### Treat continue rotations differently to have all rotations appear the same length. x axis is coded by azimuth, not time. So if the rotations are done by hand, they will appear to have all the same length!
@@ -377,6 +392,12 @@ class Mixer:
 					ax.set_axisbelow(True)
 					ax.grid(True, zorder=-10)
 
+			if self.use_24h_time_format:
+				# self.ax3.xaxis.set_major_locator(mpl.dates.DayLocator())
+				# self.ax3.xaxis.set_minor_locator(mpl.dates.HourLocator(range(0, 25, 1)))
+				# self.ax3.xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m-%d'))
+				self.f1.autofmt_xdate()
+
 	def SetGraphParameter(self, bottle, comp = False):
 		"""
 		Use the attributes defined here to combine your plots, hide them, add error bars or other instrument data.
@@ -393,12 +414,13 @@ class Mixer:
 		self.show_time = not comp #Don't touch!
 		self.time_format = "LT" #LT or UT. Self explainatory. Control the time format of the x-axis
 		self.time_label = "LTC" # The title of the time x-axis
+		self.use_24h_time_format = 1
 
-		self.show_raw_data = True # Show the data with no slidding average. All rotations of the polarizing filter. In black
+		self.show_raw_data = 1 # Show the data with no slidding average. All rotations of the polarizing filter. In black
 		self.show_smooth_data = True # Show smoothed data (averageed over the time window defined in the input file)
 
 		self.show_error_bars 		= True # Show error bars for the raw cru data. in grey
-		self.show_smooth_error_bars = True # Show error bars for the raw cru data. in grey
+		self.show_smooth_error_bars = 0 # Show error bars for the raw cru data. in grey
 		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
 
 
@@ -414,9 +436,11 @@ class Mixer:
 		self.show_legend = False #Show the legend bow over the plots
 
 		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
-		self.show_eiscat = False # If available, plot the eiscat Ne over the cru flux. Over things are possible if you want, just search for "show_eiscat" in the Mixer.MakePlot() function and have fun :)
 
-		self.show_mag_data 	= False # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
+		self.show_eiscat = True # If available, plot the eiscat Ne over the cru flux. Over things are possible if you want, just search for "show_eiscat" in the Mixer.MakePlot() function and have fun :)
+		self.eiscat_type = "uhf_v" #Initally for March 2022 data. Chose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
+
+		self.show_mag_data 	= True # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
 		self.show_AoBapp 	= False # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
 		self.show_AoRD	 	= False # If True, show the AoLP produced by a point source defined in the input.in file.
 
@@ -426,7 +450,7 @@ class Mixer:
 		self.show_grid_lines = True # Just to have a nicer grpah. self explainatory
 
 		self.make_optional_plots = False # If True, will plot a lots of optional plots showing all kind of things. See the end of the __init__() function where it is used.
-		self.show_SN = True # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
+		self.show_SN = False # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
 
 		### The following paramters are used when comparing the data with the POMEROL model.
 		self.show_RS_model		= False #Show or not the POMEROL model graphs.
@@ -881,51 +905,65 @@ class Mixer:
 			# self.ax21.set_ylabel("dB/dt (nT/s)")
 
 
-		if self.eiscat_data.valid and self.show_eiscat:
-			self.ax22 = self.ax1.twinx()
+		if self.show_eiscat and self.eiscat_data.valid:
 
+			time_format = "delta"
+			if self.use_24h_time_format:
+				time_format = "datetime"
+				if self.time_format == "LT":
+					time_delta = dt.timedelta(hours=1)
+
+			### Plot a first eiscat parameter onto the top graph
 			# parameter = "v_i"
-			parameter = "N_e"
-			altitude = bottle.filters[0]
-			if altitude == "r": altitude = 220
-			elif altitude == "v": altitude = 110
-			elif altitude == "b" or "m": altitude = 85
-			if self.langue == "en":
-				label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m$^{-3}$)"
+			if self.eiscat_type != "uhf_v":
+				self.ax22 = self.ax1.twinx()
+				parameter = "ne"
+				altitude = bottle.GetAltitude()
+
+				if self.langue == "en":
+					label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m$^{-3}$)"
+				else:
+					label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m$^{-3}$)"
+
+				t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
+				l_eiscat_data, capline, barlinecol = self.ax22.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
+				# Md, md = max(d), min(d)
+				if bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 7):
+					self.ax22.set_ylim((10**11, 4.1*10**11))
+				elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+					self.ax22.set_ylim((-3*10**10, 5*10**10))
+				self.ax1_lines.append([l_eiscat_data, label])
+				self.ax22.set_ylabel(label)
+
+
+			### Plot a second eiscat parameter onto the bottom graph
+			if self.eiscat_type != "uhf_v":
+				self.ax221 = self.ax3.twinx()
+				parameter = "vo"
 			else:
-				label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m$^{-3}$)"
+				parameter = "AoVi"
 
-			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor)
-			l_eiscat_data, capline, barlinecol = self.ax22.errorbar(t, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
-			# Md, md = max(d), min(d)
-			if bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 7):
-				self.ax22.set_ylim((10**11, 4.1*10**11))
-			elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
-				self.ax22.set_ylim((-3*10**10, 5*10**10))
-			self.ax1_lines.append([l_eiscat_data, label])
-			self.ax22.set_ylabel(label)
-
-
-			self.ax221 = self.ax3.twinx()
-			parameter = "v_i"
-			altitude = bottle.filters[0]
-			if altitude == "r": altitude = 220
-			elif altitude == "v": altitude = 110
-			elif altitude == "b" or "m": altitude = 85
+			altitude = bottle.GetAltitude()
 			if self.langue == "en":
 				label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m/s)"
 			else:
 				label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m/s)"
 
-			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor)
-			l_eiscat_data, capline, barlinecol = self.ax221.errorbar(t, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
-			# Md, md = max(d), min(d)
-			if bottle.location.lower() == "skibotn" and bottle.filters == "mr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
-				self.ax221.set_ylim((-180, 48))
-			# elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
-			# 	self.ax221.set_ylim((-3*10**10, 5*10**10))
+			if self.eiscat_type != "uhf_v":
+				t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
+				l_eiscat_data, capline, barlinecol = self.ax221.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
+				# Md, md = max(d), min(d)
+				if bottle.location.lower() == "skibotn" and bottle.filters == "mr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+					self.ax221.set_ylim((-180, 48))
+				# elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+				# 	self.ax221.set_ylim((-3*10**10, 5*10**10))
+				self.ax221.set_ylabel(label)
+			else:
+				t, d, e = self.eiscat_data.GetUHFApparentAngle(bottle, time_divisor = self.divisor, time_format = time_format)
+				l_eiscat_data, capline, barlinecol = self.ax3.errorbar(t+time_delta, d*RtoD, color = self.EISCAT_color, fmt = ".", label = label, zorder=2, markersize=self.marker_size*2)
+
 			self.ax3_lines.append([l_eiscat_data, label])
-			self.ax221.set_ylabel(label)
+
 
 
 		if self.show_raw_data:
@@ -1200,30 +1238,30 @@ class Mixer:
 		if bottle.observation_type == "fixed":
 			plt.minorticks_on()
 
-		if self.show_time:
-
-			self.ax12 = self.ax1.twiny()
-			self.ax12.set_xlim(self.ax1.get_xlim())
-
-			# print("DEBUG*********************************************************************************************")
-			# print("DEBUG*********************************************************************************************")
-
-			if self.xaxis_azimut and bottle.observation_type in ["fixed_elevation_continue_rotation", "fixed_elevation_discrete_rotation"]:
-				xticks = self.x_time_ticks_pos
-				plt.xticks(ticks=xticks, labels=self.x_time_ticks_label)
-
-			else:
-				print(plt.xticks()[0], self.divisor)
-				xticks = plt.xticks()[0] * self.divisor
-				xticks = [bottle.DateTime("start", format=self.time_format, delta=dt.timedelta(seconds = t)) for t in xticks]
-				# xticks = [bottle.DateTime("start", format=self.time_format) + dt.timedelta(seconds = t) for t in xticks]
-				# xticks = [bottle.DateTime() + dt.timedelta(seconds = t) + bottle.head_jump for t in xticks]
-
-			print(xticks)
-
-			if bottle.observation_type == "fixed":
-				self.ax12.set_xticklabels([st.strftime("%H:%M") for st in xticks])
-			self.ax12.set_xlabel(self.time_label)
+		# if self.show_time:
+		#
+		# 	self.ax12 = self.ax1.twiny()
+		# 	self.ax12.set_xlim(self.ax1.get_xlim())
+		#
+		# 	# print("DEBUG*********************************************************************************************")
+		# 	# print("DEBUG*********************************************************************************************")
+		#
+		# 	if self.xaxis_azimut and bottle.observation_type in ["fixed_elevation_continue_rotation", "fixed_elevation_discrete_rotation"]:
+		# 		xticks = self.x_time_ticks_pos
+		# 		plt.xticks(ticks=xticks, labels=self.x_time_ticks_label)
+		#
+		# 	else:
+		# 		print(plt.xticks()[0], self.divisor)
+		# 		xticks = plt.xticks()[0] * self.divisor
+		# 		xticks = [bottle.DateTime("start", format=self.time_format, delta=dt.timedelta(seconds = t)) for t in xticks]
+		# 		# xticks = [bottle.DateTime("start", format=self.time_format) + dt.timedelta(seconds = t) for t in xticks]
+		# 		# xticks = [bottle.DateTime() + dt.timedelta(seconds = t) + bottle.head_jump for t in xticks]
+		#
+		# 	print(xticks)
+		#
+		# 	if bottle.observation_type == "fixed":
+		# 		self.ax12.set_xticklabels([st.strftime("%H:%M") for st in xticks])
+		# 	self.ax12.set_xlabel(self.time_label)
 
 		if self.show_legend:
 			self.ax1.legend(list(zip(*self.ax1_lines))[0], list(zip(*self.ax1_lines))[1])

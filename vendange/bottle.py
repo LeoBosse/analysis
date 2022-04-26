@@ -230,14 +230,24 @@ class Bottle:
 
         if not self.from_txt and self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
             # if self.DateTime() < dt.datetime(year=2020, month=10, day=1):
-            self.AoLP_correction = 0  # USE only for data downloaded from the database BEFORE October 2020!!!! For everything observed after that or downloaded via KVA20, you have to apply the correction below
-            # self.AoLP_correction = -(self.config['IS_PolarizerOffset' + str(self.line)]) * DtoR #This is the norm now (for all data downloaded after oct 2020)
+            # self.AoLP_correction = 0  # USE only for data downloaded from the database BEFORE October 2020!!!! For everything observed after that or downloaded via KVA20, you have to apply the correction below
+
+            self.AoLP_correction = -(self.config['IS_PolarizerOffset' + str(self.line)]) * DtoR #This is the norm now (for all data downloaded after oct 2020)
 
             # self.AoLP_correction = (self.config['IS_PolarizerOffset' + str(self.line)] + 45) * DtoR ## This was the formula apllied to convert all data from before oct 2020 in the database.
 
+            ##################################################
+            ##################################################
+            # ATTENTION, A UTILISER UNIQUEMENT POURT DES CAS PARTICULIER. DANS LE DOUTE, ELLE DOIT TOUJOURS ETRE COMMENTEE
+            print("self.AoLP_correction", self.AoLP_correction*RtoD)
+            self.AoLP_correction -= float(self.input_parameters["AoLP_correction"]) * DtoR
+            # self.AoLP_correction -= float(self.input_parameters["AoLP_correction"].split(";")[self.line - 1]) * DtoR
+            print("self.AoLP_correction", self.AoLP_correction*RtoD)
+            ##################################################
+            ##################################################
+
         elif not self.from_txt and self.instrument_name == "spp":
-            self.AoLP_correction = float(
-                self.input_parameters["AoLP_correction"]) * DtoR
+            self.AoLP_correction = float(self.input_parameters["AoLP_correction"]) * DtoR
         else:
             self.AoLP_correction = 0
         print(self.config['IS_PolarizerOffset1'])
@@ -262,8 +272,7 @@ class Bottle:
         self.all_DoLP = np.array([r.DoLP for r in self.rotations])
 
         # AoLP_correction -133 en janvier 2019 -> angle de calib pas sur avant
-        self.all_AoLP = np.array(
-            [r.AoLP for r in self.rotations]) + self.AoLP_correction
+        self.all_AoLP = np.array([r.AoLP for r in self.rotations]) + self.AoLP_correction
         self.all_AoLP = SetAngleBounds(self.all_AoLP, -np.pi / 2, np.pi / 2)
 
     # def CreateListsFromGivenData(self):
@@ -503,12 +512,7 @@ class Bottle:
         A_lon, A_lat = False, False
         A_lon, A_lat = geometry.GetLonLatFromName(self.location.lower())
 
-        if self.filters[0] == "r":
-            h = 220
-        elif self.filters[0] == "v":
-            h = 110
-        else:
-            h = 90
+        h = self.GetAltitude()
 
         try:
             self.source_azimut = float(
@@ -766,15 +770,18 @@ class Bottle:
 
     def __add__(self, bottle_to_add):
 
-        print("Adding:")
+        print(f"Adding: {self} + {bottle_to_add}")
 
-        norm = bottle_to_add.DateTime("config") - self.DateTime("config")
+        if len(bottle_to_add.rotations) > 0:
+            bottle_to_add.CleanRotations()
+
+        norm = bottle_to_add.DateTime("start") - self.DateTime("start")
         for ir, r in enumerate(bottle_to_add.rotations):
             bottle_to_add.rotations[ir].time += norm
             # bottle_to_add.rotations[ir].time += self.rotations[-1].time
 
         if len(bottle_to_add.rotations) > 0:  # If not read from a file
-
+            # print("DEBUG adding  with rotations")
             # print(len(self.rotations), len(bottle_to_add.rotations))
             self.rotations = np.append(self.rotations, bottle_to_add.rotations)
 
@@ -782,15 +789,15 @@ class Bottle:
 
             self.tail_jump = self.rotations[-1].time
             if not self.from_txt:
-                self.CleanRotations()
+                # self.CleanRotations()
 
             # Now that we have all our rotations, creating lists of usefull data for easier smoothing
                 self.CreateLists()
                 self.GetSmoothLists()
 
         else:  # If read from a file (-f)
-            bottle_to_add.all_times += bottle_to_add.DateTime(
-                "start") - self.DateTime("start")
+            # print("DEBUG adding  without rotations (from file)")
+            bottle_to_add.all_times += bottle_to_add.DateTime("start") - self.DateTime("start")
             # bottle_to_add.all_times += self.all_times[-1]
 
             self.all_times = np.append(self.all_times, bottle_to_add.all_times)
@@ -843,6 +850,20 @@ class Bottle:
         self.Geometry()
 
         return self
+
+
+    def GetAltitude(self, filter = None):
+        if filter is None:
+            # print(self.filters)
+            filter = self.filters
+
+        altitude = 110
+
+        if filter == "r": altitude = 220
+        elif filter == "v": altitude = 110
+        elif filter == "b" or "m": altitude = 100
+
+        return altitude
 
 
 #####################################################################################
@@ -973,9 +994,10 @@ class PTCUBottle(Bottle):
             self.rotations[i].time -= norm
 
         # Add 24h when next rotation is earlier than the previous one. Happens sometimes when we change the date
+        one_day = dt.timedelta(days=1)
         for i in range(1, len(self.rotations)):
             while self.rotations[i].time < self.rotations[i - 1].time:
-                self.rotations[i].time += dt.timedelta(day=1)
+                self.rotations[i].time += one_day
 
         # Get and set the head and tail jumps
         # if self.jump_mode == "time": # and self.jump_unit in ["seconds", "minutes", "hours"]:

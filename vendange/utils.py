@@ -425,7 +425,7 @@ def FindArgument(arg_string, arguments, default_value = False, getindex = 0):
 		result = False
 	elif result.lower() in ["true", "t", arg_string]:
 		result = True
-	elif arg_string != "-a":
+	elif arg_string not in  ["-a", "-b"]:
 		result = bool(int(result))
 
 	print(arg_string, result)
