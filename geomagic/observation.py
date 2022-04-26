@@ -112,8 +112,11 @@ class ObservationPoint:
 		# 				 [	 Ce,	-Se * Sa,	-Se * Ca]])
 		# n_ptcu = np.dot(Raspp, n_uen)
 
-		# sin_AoRD = n_ptcu[1]
-		# cos_AoRD = n_ptcu[2]
+        ### See Bosse et al 2020, appendix C.
+        ### instrunment-source vector in the ref frame of the instrument
+        ### Get vector product of los and instrunment-source vector.
+        ### Sinus and cosinus of this vector
+        ### Here presented with a minus sign and without the normalization (not necessary because of the division in the tangent).
 		sin_AoRD = Se*(src_n*Ca + src_e*Sa) - src_u*Ce
 		cos_AoRD = src_n*Sa - src_e*Ca
 
