@@ -58,7 +58,12 @@ class GlobalTimer:
         return result
 
     def __repr__(self):
-         return f"{self.name} \t\t ran {self.counts} times in \t\t {self.total_time} sec \t\t (avg={self.total_time / self.counts})"
+
+        if self.counts > 0:
+            string = f"{self.name} \t\t ran {self.counts} times in \t\t {self.total_time} sec \t\t (avg={self.total_time / self.counts})"
+        else:
+            string = f"{self.name} was not called."
+        return string
 
     def __get__(self, obj, objtype):
         """Support instance methods."""
