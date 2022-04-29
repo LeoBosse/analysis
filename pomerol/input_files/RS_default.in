@@ -191,7 +191,7 @@ ground_mode image uniform_I100 point_I100_a0_d5     gaussian_I100_w1_a45_d10
 shader_mode none ring_0 out_dist_m2.5_M3 half_a0 out_dist_m90_M100 half_a0 none random_01 half_a0
 
 ground_emission_radius 50  # in km. Can be != from the altitude map
-ground_N_bins_max 500			# the map will be downgraded to match this pixel count.
+ground_N_bins_max 50			# the map will be downgraded to match this pixel count.
 
 ### Albedo mode of the ground. Only used if sky emissions != none. The reflection of the sky emission will be added to the ground map.
 # altitude_alb1_alt_1_alb2_alt2_..._altN_alb(N+1)  # defines the albedo altitude layers. alb1 is the albedo of the layer below alt1 (layer 0 is the sea level). Then alb2 is the albedo between altitudes alt1 and alt2, etc... The last layer (N+1) is infinity.

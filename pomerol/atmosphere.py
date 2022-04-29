@@ -32,7 +32,7 @@ import imageio
 
 from observation import *
 from rayleigh_utils import *
-from pomerol.cythonized import *
+# from pomerol.cythonized import *
 
 class Atmosphere:
 	def __init__(self, in_dict):
