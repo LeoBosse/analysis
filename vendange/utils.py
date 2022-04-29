@@ -21,7 +21,6 @@ pwd_data = global_configuration.data_path
 pwd_src = global_configuration.src_path
 
 
-
 def VtoFDA(V, Vcos, Vsin):
 	"""Return the flux F, the DoLP D [0-1] and AoLP A in radians from V, Vcos, Vsin"""
 	F = 2*V
