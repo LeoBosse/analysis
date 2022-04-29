@@ -14,7 +14,7 @@ src_path ./ #Path to all the python source files
 
 saving_graphs 0  # 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
 save_path ../../data/pomerol_results/ # Path to the folder where you want to save your results (graphs, txt...)
-save_name skibotn_grdonly_all #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
+save_name skibotn_grdonly_N500 #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
 
 ### Units for the result flux (used in the graphs, but maybe not in the computations.)
 # W = for nanoWatts (default input unit)
@@ -31,10 +31,10 @@ use_analytic false # Should stay as "false". If "true", POMEROL will compute the
 ### All instrumental inputs
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
 ### Put "azimuts all" if you want to perform an almucantar (every 10°), or "elevations all" for a scan. See the world.__init__() for the code.
-azimuts 	0 250;290;40
-elevations 	45 1;20;20
+azimuts 	all 250;290;40
+elevations 	all 1;20;20
 
-location 	lagorge     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
+location 	skibotn     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
 
 start_datetime 20190116-02:44:00
 end_datetime   20190116-04:00:00
@@ -42,7 +42,7 @@ end_datetime   20190116-04:00:00
 instrument_opening_angle 	1	  		# Half opening angle of the instrument (degrees)
 instrument_area 		20 			# Area of Petit Cru in cm^2 (gets converted in km**2 in the code)
 
-wavelength 620 557.7 391.4   427.8 413                      #in nm
+wavelength 557.7 391.4   427.8 413                      #in nm
 
 # ###############################################################################
 ### Add a constant light with given polarisation parameters
@@ -50,7 +50,6 @@ wavelength 620 557.7 391.4   427.8 413                      #in nm
 cst_Flux 0 	# in nW
 cst_DoLP 0 	# in %
 cst_AoLP 0 	# in degrees
-
 
 add_starlight 0 #Check if this is still working before use... Will add starlight as a function of the galactic latitude of the observation. Be sure to have the time and location right!
 
@@ -78,7 +77,7 @@ aer_complexity 1		# 0: Use a simple C_ext(altitude) profile. 1: use a more compl
 aer_model 1low 		# manual: use the aerosols properties listed below. Or name of a pre configured model.  (preconfigured model are hard-coded in atmosphere.py, in Aerosol.SetModel() function)
 
 # Aerosol optical properties to run the Mie code
-aer_name 1low_test 			# Name to use for file handling of this particular properties. May erase previous files if same name is used.
+aer_name 1low_test 	# Name to use for file handling of this particular properties. May erase previous files if same name is used.
 aer_nr 1.6 					# Real optical index
 aer_ni -0.010 			# Imaginary optical index <0
 aer_rn0 1 					# Number of particles for the Mie code to run (keep it to 1)
@@ -93,6 +92,7 @@ total_OD 0			    # Total vertical optical depth of the aerosols (from ground to 
 aer_Hn 	0.440   # Scale height (km)
 aer_n0 	300 		# Surface value (cm-3)
 aer_nBK 30      # Background value (cm-3)
+aer_max_alt 12  # Maximum altitude of the aerosol profile (km)
 
 ### Simple model with only a c_ext(alt) profile from WMO 1980. use if aer_complexity == 0
 aer_ext_profile_name mar #urban (urb), continental (con), maritime (mar) from WCP-12 (World Climate Programme 1980)

@@ -606,12 +606,20 @@ class Atmosphere:
 			Hn = self.aerosol.Hn #float(in_dict['aer_Hn'])  #0.7 #km
 			n0 = self.aerosol.n0 #float(in_dict['aer_n0']) #cm-3
 			nB = self.aerosol.nB #float(in_dict['aer_nBK']) #cm-3
+			max_alt =
 			v = Hn / abs(Hn)
+
 			p = lambda z: n0 * (np.exp(-z / Hn) + (nB/n0)**v)**v * (1e5)**3
 
 			self.aerosol_profil_param = [Hn, n0, nB]
 
-			self.profiles["AER"] = p(np.array(self.profiles["HGT"])) #in km-3
+			self.profiles["AER"] = np.zeros_like(self.profiles["HGT"])
+			for i, alt in enumerate(self.profiles["HGT"]):
+				if alt <= self.aerosol.max_alt:
+					self.profiles["AER"][i] = p(alt) #in km-3
+				else:
+					break
+
 
 			# f = plt.figure()
 			# plt.loglog(self.profiles["AER"], self.profiles["HGT"], label = f"{Hn} {n0} {nB}")
@@ -783,6 +791,8 @@ class Aerosol:
 			self.n0 = float(in_dict['aer_n0']) #cm-3
 			self.nB = float(in_dict['aer_nBK']) #cm-3
 
+			self.max_alt = float(in_dict['aer_max_alt']) #km
+
 		elif self.model != "default":
 			self.SetModel()
 			self.name = self.GetFileName()
@@ -800,6 +810,8 @@ class Aerosol:
 			self.Hn = 0#km
 			self.n0 = 1 #cm-3
 			self.nB = 0#cm-3
+
+			self.max_alt = 12 #km
 
 
 		self.Compute()
@@ -849,6 +861,7 @@ class Aerosol:
 			self.Hn = 0.440  	#km
 			self.n0 = 4000   	#cm-3
 			self.nB = 10  		#cm-3
+			self.max_alt = 12 #km
 
 		elif self.model in ["mar1"]:
 			self.index_re = 1.6
@@ -863,6 +876,7 @@ class Aerosol:
 			self.Hn = 0.440  	#km
 			self.n0 = 4000   	#cm-3
 			self.nB = 10  		#cm-3
+			self.max_alt = 12 #km
 		elif self.model in ["mar2"]:
 			self.index_re = 1.6
 			self.index_im = -0.0035 #<0
@@ -876,6 +890,7 @@ class Aerosol:
 			self.Hn = 0.440  	#km
 			self.n0 = 3000   	#cm-3
 			self.nB = 10  		#cm-3
+			self.max_alt = 12 #km
 
 		elif self.model in ["mar3"]:
 			self.index_re = 1.6
@@ -890,6 +905,7 @@ class Aerosol:
 			self.Hn = 0.440  	#km
 			self.n0 = 100   	#cm-3
 			self.nB = 10  		#cm-3
+			self.max_alt = 12 #km
 
 		elif self.model in ["mar4"]:
 			self.index_re = 1.6
@@ -904,6 +920,7 @@ class Aerosol:
 			self.Hn = 0.440  	#km
 			self.n0 = 3000   	#cm-3
 			self.nB = 10  		#cm-3
+			self.max_alt = 12 #km
 		elif self.model in ["mar5"]:
 			self.index_re = 1.6
 			self.index_im = -0.008 #<0
@@ -917,6 +934,7 @@ class Aerosol:
 			self.Hn = 0.440  	#km
 			self.n0 = 3000   	#cm-3
 			self.nB = 10  		#cm-3
+			self.max_alt = 12 #km
 
 		elif self.model in ["urban", "2-high", "2high"]:
 			self.model = "2high"
@@ -932,6 +950,7 @@ class Aerosol:
 			self.Hn = 0.50  	#km
 			self.n0 = 1000   	#cm-3
 			self.nB = 1  		#cm-3
+			self.max_alt = 12 #km
 
 		elif self.model in ["rural", "3-mid", "3mid"]:
 			self.model = "3mid"
@@ -947,6 +966,7 @@ class Aerosol:
 			self.Hn = 0.50  	#km
 			self.n0 = 500   	#cm-3
 			self.nB = 1  		#cm-3
+			self.max_alt = 12 #km
 
 		elif self.model in ["arctic"]:
 			self.index_re = 1.45
@@ -961,6 +981,7 @@ class Aerosol:
 			self.Hn = 100  	#km
 			self.n0 = 200   	#cm-3
 			self.nB = 200  		#cm-
+			self.max_alt = 12 #km
 
 		elif self.model in ["desert", "des"]:
 			self.index_re = 1.53
@@ -975,6 +996,7 @@ class Aerosol:
 			self.Hn = 2	 		#km
 			self.n0 = 150   	#cm-3
 			self.nB = 0  		#cm-3
+			self.max_alt = 12 #km
 
 		elif self.model in ["des2"]:
 			self.index_re = 1.53
@@ -989,6 +1011,7 @@ class Aerosol:
 			self.Hn = 2	 		#km
 			self.n0 = 150   	#cm-3
 			self.nB = 0  		#cm-3
+			self.max_alt = 12 #km
 		elif self.model in ["des3"]:
 			self.index_re = 1.53
 			self.index_im = -0.1 #<0
@@ -1002,6 +1025,7 @@ class Aerosol:
 			self.Hn = 2	 		#km
 			self.n0 = 150   	#cm-3
 			self.nB = 0  		#cm-3
+			self.max_alt = 12 #km
 		elif self.model in ["des4"]:
 			self.index_re = 1.53
 			self.index_im = -0.008 #<0
@@ -1015,6 +1039,7 @@ class Aerosol:
 			self.Hn = 2	 		#km
 			self.n0 = 1000   	#cm-3
 			self.nB = 0  		#cm-3
+			self.max_alt = 12 #km
 		elif self.model in ["des5"]:
 			self.index_re = 1.53
 			self.index_im = -0.008 #<0
@@ -1028,6 +1053,7 @@ class Aerosol:
 			self.Hn = 2	 		#km
 			self.n0 = 500   	#cm-3
 			self.nB = 0  		#cm-3
+			self.max_alt = 12 #km
 		else:
 			self.standard = False
 
