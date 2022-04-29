@@ -606,7 +606,6 @@ class Atmosphere:
 			Hn = self.aerosol.Hn #float(in_dict['aer_Hn'])  #0.7 #km
 			n0 = self.aerosol.n0 #float(in_dict['aer_n0']) #cm-3
 			nB = self.aerosol.nB #float(in_dict['aer_nBK']) #cm-3
-			max_alt =
 			v = Hn / abs(Hn)
 
 			p = lambda z: n0 * (np.exp(-z / Hn) + (nB/n0)**v)**v * (1e5)**3

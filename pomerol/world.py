@@ -121,8 +121,8 @@ class World:
 		self.a_pc_list		= np.array(in_dict["azimuts"].split(";"))  # List of azimuts for the observations
 		if self.a_pc_list[0] == "all":
 			# self.a_pc_list = np.arange(179.5, 180.5, 0.005) * DtoR
-			# self.a_pc_list = np.arange(0, 360, 10) * DtoR
-			self.a_pc_list = np.arange(0, 360, 2) * DtoR
+			self.a_pc_list = np.arange(0, 360, 10) * DtoR
+			# self.a_pc_list = np.arange(0, 360, 2) * DtoR
 			# self.a_pc_list = np.arange(-10, 10, 1) * DtoR
 		elif len(self.a_pc_list) == 3:
 			self.a_pc_list = np.linspace(float(self.a_pc_list[0]), float(self.a_pc_list[1]), int(self.a_pc_list[2])) * DtoR
@@ -131,7 +131,7 @@ class World:
 
 		self.e_pc_list		= np.array(in_dict["elevations"].split(";"))  # List of elevation for the observations
 		if self.e_pc_list[0] == "all":
-			self.e_pc_list = np.geomspace(1, 90, 45, endpoint=True) * DtoR
+			self.e_pc_list = np.geomspace(1, 90, 20, endpoint=True) * DtoR
 			# self.e_pc_list = np.linspace(35, 55, 21, endpoint=True) * DtoR
 		elif len(self.e_pc_list) == 3:
 			self.e_pc_list = np.linspace(float(self.e_pc_list[0]), float(self.e_pc_list[1]), int(self.e_pc_list[2])) * DtoR
