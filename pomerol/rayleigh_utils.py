@@ -389,9 +389,9 @@ def GetPointingCoords(coords, type="az"):
         coords = np.array([float(a) for a in coords.split("_")])
 
         if type=="az":
-            coords = np.linspace(coords[0], coords[1], coords[2])
+            coords = np.linspace(coords[0], coords[1], int(coords[2]))
         else:
-            coords = np.geomspace(coords[0], coords[1], coords[2], endpoint=True)
+            coords = np.geomspace(coords[0], coords[1], int(coords[2]), endpoint=True)
 
     else: # Single value
         coords = np.array([float(coords)])

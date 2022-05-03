@@ -14,7 +14,7 @@ src_path ./ #Path to all the python source files
 
 saving_graphs 1  # 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
 save_path ../../data/pomerol_results/ # Path to the folder where you want to save your results (graphs, txt...)
-save_name skibotn_grdonly_R100_N1000 #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
+save_name finlande_rot_e47_grdonly skibotn_grdonly_R100_N1000 #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
 
 ### Units for the result flux (used in the graphs, but maybe not in the computations.)
 # W = for nanoWatts (default input unit)
@@ -31,7 +31,7 @@ use_analytic false # Should stay as "false". If "true", POMEROL will compute the
 ### All instrumental inputs
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";". If automatic spacing write the numpy.linspace(endpoint=False) (for azimuths or numpy.geomspace(endpoint=True) for elevations) parameters separated by "_".
 ### See the world.__init__() and rayleigh_utils.GetPointingCoords() for the code.
-azimuts  0_360_36
+azimuts  0 0_360_36
 elevations  47
 
 location 	finlande     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens, finlande or LON;LAT in degrees
@@ -216,7 +216,7 @@ ground_file nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-nt
 ### PLOTTING FLAGS
 ### Following parameters help the user that want to select the optional plots produced by POMEROL.
 
-show_ground_albedo 	 0 # Produce a map of the ground emissions with the albedo layers as contour plots (only if ground_albedo is set to altitude_...).
+show_ground_albedo 	 1 # Produce a map of the ground emissions with the albedo layers as contour plots (only if ground_albedo is set to altitude_...).
 show_sky_cube				 0 # Produce a plot with all sky maps used in the simulation. Usefull for time-evolving setups and movie sky mode.
 
 show_altitude				 0 # Produce an altitude map around the instrument, in meters.
