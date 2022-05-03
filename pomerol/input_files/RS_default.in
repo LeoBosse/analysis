@@ -29,12 +29,12 @@ use_analytic false # Should stay as "false". If "true", POMEROL will compute the
 
 # ###############################################################################
 ### All instrumental inputs
-### Where do you point the instrument. In degrees. If multiples observations, separate by ";"
-### Put "azimuts all" if you want to perform an almucantar (every 10°), or "elevations all" for a scan. See the world.__init__() for the code.
-azimuts 	all 250;290;40
-elevations 	all 1;20;20
+### Where do you point the instrument. In degrees. If multiples observations, separate by ";". If automatic spacing write the numpy.linspace(endpoint=False) (for azimuths or numpy.geomspace(endpoint=True) for elevations) parameters separated by "_".
+### See the world.__init__() and rayleigh_utils.GetPointingCoords() for the code.
+azimuts  0_360_36
+elevations  47
 
-location 	skibotn     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens or LON;LAT in degrees
+location 	finlande     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens, finlande or LON;LAT in degrees
 
 start_datetime 20190116-02:44:00
 end_datetime   20190116-04:00:00

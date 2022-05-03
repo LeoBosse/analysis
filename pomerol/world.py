@@ -118,25 +118,32 @@ class World:
 
 
 		### Get all the azimuts and elevations of the instruments.
-		self.a_pc_list		= np.array(in_dict["azimuts"].split(";"))  # List of azimuts for the observations
-		if self.a_pc_list[0] == "all":
-			# self.a_pc_list = np.arange(179.5, 180.5, 0.005) * DtoR
-			self.a_pc_list = np.arange(0, 360, 2) * DtoR
-			# self.a_pc_list = np.arange(0, 360, 2) * DtoR
-			# self.a_pc_list = np.arange(-10, 10, 1) * DtoR
-		elif len(self.a_pc_list) == 3:
-			self.a_pc_list = np.linspace(float(self.a_pc_list[0]), float(self.a_pc_list[1]), int(self.a_pc_list[2])) * DtoR
-		else:
-			self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
 
-		self.e_pc_list		= np.array(in_dict["elevations"].split(";"))  # List of elevation for the observations
-		if self.e_pc_list[0] == "all":
-			self.e_pc_list = np.geomspace(1, 90, 45, endpoint=True) * DtoR
-			# self.e_pc_list = np.linspace(35, 55, 21, endpoint=True) * DtoR
-		elif len(self.e_pc_list) == 3:
-			self.e_pc_list = np.linspace(float(self.e_pc_list[0]), float(self.e_pc_list[1]), int(self.e_pc_list[2])) * DtoR
-		else:
-			self.e_pc_list = np.array([float(e) for e in self.e_pc_list]) * DtoR
+		self.a_pc_list = GetPointingCoords(in_dict["azimuts"], 		type="az")
+		self.e_pc_list = GetPointingCoords(in_dict["elevations"], 	type="el")
+
+		# if ";" in azimuts:
+		# 	self.a_pc_list		= np.array(azimuts.split(";"))  # List of azimuts for the observations
+		# elif "_" in azimuts:
+		# 	self.a_pc_list		= np.array(azimuts.split("_"))  # List of azimuts for the observations
+		# if self.a_pc_list[0] == "all":
+		# 	# self.a_pc_list = np.arange(179.5, 180.5, 0.005) * DtoR
+		# 	self.a_pc_list = np.arange(0, 360, 2) * DtoR
+		# 	# self.a_pc_list = np.arange(0, 360, 2) * DtoR
+		# 	# self.a_pc_list = np.arange(-10, 10, 1) * DtoR
+		# elif len(self.a_pc_list) == 3:
+		# 	self.a_pc_list = np.linspace(float(self.a_pc_list[0]), float(self.a_pc_list[1]), int(self.a_pc_list[2])) * DtoR
+		# else:
+		# 	self.a_pc_list = np.array([float(a) for a in self.a_pc_list]) * DtoR
+		#
+		# self.e_pc_list		= np.array(in_dict["elevations"].split(";"))  # List of elevation for the observations
+		# if self.e_pc_list[0] == "all":
+		# 	self.e_pc_list = np.geomspace(1, 90, 45, endpoint=True) * DtoR
+		# 	# self.e_pc_list = np.linspace(35, 55, 21, endpoint=True) * DtoR
+		# elif len(self.e_pc_list) == 3:
+		# 	self.e_pc_list = np.linspace(float(self.e_pc_list[0]), float(self.e_pc_list[1]), int(self.e_pc_list[2])) * DtoR
+		# else:
+		# 	self.e_pc_list = np.array([float(e) for e in self.e_pc_list]) * DtoR
 
 		self.a_pc, self.e_pc = self.a_pc_list[0], self.e_pc_list[0]
 

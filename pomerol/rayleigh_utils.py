@@ -374,6 +374,30 @@ def GetScattered(I0, AR, ER, RD_angle, ouv_pc, alt, d_los, elevation = 0):
     return w_I, w_DoLP
 
 
+
+def GetPointingCoords(coords, type="az"):
+    """From an input string (from a pomerol input file) of the azimuths or elevations parameters, return the array of azimuths/elevations for which pomerol will run.
+    Accepts:
+        - single value
+        - list of single values separated by ';'
+        - 3 values separated by '_' as input parameters for the np.linspace() function."""
+
+    if ";" in coords: # List of explicit observation directions.
+        coords = np.array([float(a) for a in coords.split(";")])
+
+    elif "_" in coords: # Input paramters for automatic pointing direction using np.linspace (or geomspace)
+        coords = np.array([float(a) for a in coords.split("_")])
+
+        if type=="az":
+            coords = np.linspace(coords[0], coords[1], coords[2])
+        else:
+            coords = np.geomspace(coords[0], coords[1], coords[2], endpoint=True)
+
+    else: # Single value
+        coords = np.array([float(coords)])
+
+    return coords * DtoR
+
 def GetLonLatFromName(name, unit="radians"):
     name = name.lower()
     if name == "mens":
@@ -400,6 +424,9 @@ def GetLonLatFromName(name, unit="radians"):
     elif name == "sob":
         A_lon = -16.4413726
         A_lat = 14.4879441
+    elif "finland" in name:
+        A_lon = 20.935396
+        A_lat = 68.924606
     else:
         A_lon = float(name.split(";")[0])
         A_lat = float(name.split(";")[1])
