@@ -227,25 +227,28 @@ class Mixer:
 			# if self.show_RS_model:
 			# 	self.CompareRayleigh(bottle, self.J2RAYS1_model)
 			if self.make_optional_plots:
-				self.MakeI0SNratio(bottle)
-				self.MakeSNratio(bottle)
+				if self.show_SN:
+					self.MakeI0SNratio(bottle)
+					self.MakeSNratio(bottle)
 				if self.eq_currents.valid:
-					self.eq_currents.MakePlot()
+					self.eq_currents.MakePlot(coords = "uen")
+					self.eq_currents.MakePlot(coords = "azel")
 
 			if self.comp_bottles:
 				self.SetGraphParameter(self.comp_bottles[ib], comp=True)
 				self.MakeXAxis(self.comp_bottles[ib])
 				self.MakePlots(self.comp_bottles[ib])
 				if self.make_optional_plots:
-					self.MakeSNratio(self.comp_bottles[ib])
+					if self.show_SN:
+						self.MakeSNratio(self.comp_bottles[ib])
 
 					self.SetGraphParameter(bottle)
 					self.MakeXAxis(bottle)
 
 					self.CompareBottles(self.comp_bottles[ib], bottle)
 
-			if self.make_optional_plots:
-				self.MakeFFT(bottle)
+			# if self.make_optional_plots:
+			# 	self.MakeFFT(bottle)
 
 			if self.make_optional_plots and self.mag_data is not False:
 				self.MakeMagDataPlots(bottle)
@@ -437,7 +440,7 @@ class Mixer:
 
 		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
 
-		self.show_eiscat = True # If available, plot the eiscat Ne over the cru flux. Over things are possible if you want, just search for "show_eiscat" in the Mixer.MakePlot() function and have fun :)
+		self.show_eiscat = 0 # If available, plot the eiscat Ne over the cru flux. Over things are possible if you want, just search for "show_eiscat" in the Mixer.MakePlot() function and have fun :)
 		self.eiscat_type = "uhf_v" #Initally for March 2022 data. Chose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
 
 		self.show_mag_data 	= True # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
@@ -449,7 +452,7 @@ class Mixer:
 
 		self.show_grid_lines = True # Just to have a nicer grpah. self explainatory
 
-		self.make_optional_plots = False # If True, will plot a lots of optional plots showing all kind of things. See the end of the __init__() function where it is used.
+		self.make_optional_plots = 1 # If True, will plot a lots of optional plots showing all kind of things. See the end of the __init__() function where it is used.
 		self.show_SN = False # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
 
 		### The following paramters are used when comparing the data with the POMEROL model.
@@ -908,6 +911,7 @@ class Mixer:
 		if self.show_eiscat and self.eiscat_data.valid:
 
 			time_format = "delta"
+			time_delta = 0
 			if self.use_24h_time_format:
 				time_format = "datetime"
 				if self.time_format == "LT":
@@ -1025,11 +1029,18 @@ class Mixer:
 
 
 		if self.show_currents and self.eq_currents.valid:
+			time_format = "delta"
+			time_delta = 0
+			if self.use_24h_time_format:
+				time_format = "datetime"
+				if self.time_format == "LT":
+					time_delta = dt.timedelta(hours=1)
+
 			self.ax12 = self.ax1.twinx()
-			if self.eiscat_data.valid and self.show_eiscat:
+			if self.show_eiscat and self.eiscat_data.valid:
 				self.ax12.spines["right"].set_position(("axes", 1.075))
 
-			l_AoJnorm, = self.ax12.plot(self.eq_currents.GetNormTimes(self.divisor), self.eq_currents.data["J_norm"], "-*", color = self.currents_color, label="J_norm")
+			l_AoJnorm, = self.ax12.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, self.eq_currents.data["J_norm"], "*", color = self.currents_color, label="J_norm")
 
 			self.ax12.set_ylabel(r"J (A/m)")
 
@@ -1039,13 +1050,16 @@ class Mixer:
 			# self.ax2_lines.append([l_AoJlos, l_AoJlos.get_label()])
 
 			AoJapp = self.eq_currents.data["AoJapp"]
-			if bottle.graph_angle_shift == 1:
-				AoJapp = SetAngleBounds(self.eq_currents.data["AoJapp"], 0, np.pi)
+			# if bottle.graph_angle_shift == 1:
+			# 	AoJapp = SetAngleBounds(self.eq_currents.data["AoJapp"], 0, np.pi)
 			AoJappperp = self.eq_currents.data["AoLP"]
-			if bottle.graph_angle_shift == 1:
-				AoJappperp = SetAngleBounds(self.eq_currents.data["AoLP"], 0, np.pi)
+			# if bottle.graph_angle_shift == 1:
+			# 	AoJappperp = SetAngleBounds(self.eq_currents.data["AoLP"], 0, np.pi)
 
-			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
+			AoJapp = SetAngleBounds(AoJapp, -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift)
+			AoJappperp = SetAngleBounds(AoJappperp, -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift)
+
+			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
 
 			# l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJappperp * RtoD, "*", color = "red", label="AoJapp_perp")
 

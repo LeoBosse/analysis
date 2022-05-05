@@ -35,15 +35,40 @@ class EqCurrent:
 
 		self.file_type = file_type ## Used when given a file and not a bottle. If file_type is None, then equivalent current file from magnar. If == "digisonde", then digisonde file
 
+		self.SetFileNames(bottle=bottle)
+
+		# print(self.file)
+
+		# print(self.start_time, self.end_time)
+
+		self.x_axis = []
+
+		if self.valid:
+			self.saving_name = self.file.split(".")[0]
+			if self.file != "fake":
+				try:
+					self.LoadData()
+				except:
+					print("Warning: Current data not valid")
+					self.valid = False
+			else:
+				self.LoadFakeData()
+
+	def SetFileNames(self, bottle=None):
+
+		date_format = "%Y%m%d_"
+		if bottle.DateTime("start", format="UT").year >= 2022:
+			date_format = "%Y-%m-%d_"
+
 		if bottle is not None:
-			self.files.append(bottle.DateTime("start", format="UT").strftime("%Y%m%d") + "_")
+			self.files.append(bottle.DateTime("start", format="UT").strftime(date_format))
 			if bottle.DateTime("start").day != bottle.DateTime("end").day:
 				one_day = dt.timedelta(days=1)
 				start_date = bottle.DateTime("start", format="UT")
 				end_date = bottle.DateTime("end", format="UT")
 				start_date += one_day
 				while start_date.day <= end_date.day:
-					self.files.append(start_date.strftime("%Y%m%d") + "_")
+					self.files.append(start_date.strftime(date_format))
 					start_date += one_day
 
 			# print("self.files", self.files)
@@ -51,15 +76,26 @@ class EqCurrent:
 			for i in range(len(self.files)):
 				if self.file_type is None:
 					# self.files[i] = bottle.DateTime("start", format="UT").strftime("%Y%m%d") + "_"
-
 					if bottle.location.lower() in ["tromso", "skibotn", "skibotnsud", "skibotnnord", "kilpisjarvi"]:
-						self.files[i] += "TRO"
+						self.files[i] += "TRO_pola"
 					elif bottle.location.lower() in ["nyalesund", "corbel"]:
-						self.files[i] += "NAL"
+						self.files[i] += "NAL_pola"
+					elif "finland" in bottle.location.lower():
+						self.files[i] += "Location_"
+						if bottle.azimut*RtoD == -42:
+							self.files[i] += "0"
+						elif bottle.azimut*RtoD == -162:
+								self.files[i] += "1"
+						elif bottle.azimut*RtoD == 48:
+								self.files[i] += "4"
+						elif bottle.azimut*RtoD == 210:
+								self.files[i] += "5"
+						elif bottle.azimut*RtoD == 260:
+								self.files[i] += "6"
 					else:
 						self.valid = False
 
-					self.files[i] += "_pola.txt"
+					self.files[i] += ".txt"
 
 				elif self.file_type == "digisonde":
 					# self.files[i] = bottle.DateTime("start", format="UT").strftime("%Y%m%d") + "_"
@@ -84,23 +120,6 @@ class EqCurrent:
 			self.files = [file]
 			self.start_time = None
 			self.end_time = None
-
-		# print(self.file)
-
-		# print(self.start_time, self.end_time)
-
-		self.x_axis = []
-
-		if self.valid:
-			self.saving_name = self.file.split(".")[0]
-			if self.file != "fake":
-				try:
-					self.LoadData()
-				except:
-					print("Warning: Current data not valid")
-					self.valid = False
-			else:
-				self.LoadFakeData()
 
 	def LoadFakeData(self):
 
@@ -134,6 +153,7 @@ class EqCurrent:
 					print(f"Equivalent current file not valid. {self.path + f}")
 					# return 0
 			if data.empty:
+				print("No equivalent current data retrieved from files")
 				self.valid = False
 			# 	print(data)
 			# print(data)
@@ -315,7 +335,7 @@ class EqCurrent:
 		elif mode.lower() == "perp":
 			Findx = lambda Jy, Jz, Uy, Uz, tanA: - (tanA * Jy + Jz) / (Uz + tanA * Uy)
 		else:
-			raise Exception("Error: Incorrect mode to compute Jup for equivalent currents. Correct strings are :perp or para")
+			raise Exception("Error: Incorrect mode to compute Jup for equivalent currents. Correct strings are: perp or para")
 
 		### Now in the Reference of H, the the new J is just (x, Je, Jn)
 		Ju_list = Findx(Jy, Jz, Uy, Uz, tanA)
@@ -325,15 +345,19 @@ class EqCurrent:
 		# Ju = lambda Je, Jn, tanA: (Je * (Se*Sa - Ca / tanA) + Jn * (Se*Ca + Sa / tanA)) / Ce
 		# Ju_list = Ju(J_Ae, J_An, tanA)
 
-		self.data["Ju"] = np.where(abs(Ju_list) < 1, Ju_list, np.zeros_like(self.data["Je"]))
+		max_Ju = 2 * max(max(abs(self.data["Je"])), max(abs(self.data["Jn"])))
+		self.data["Ju"] = np.where(abs(Ju_list) < max_Ju, Ju_list, np.zeros_like(self.data["Je"]))
 		# self.data["Ju"] = Ju_list
 
 		self.data["J_norm"] = np.sqrt(self.data["Jn"] ** 2 + self.data["Je"] ** 2 + self.data["Ju"] ** 2)
 		self.data["Jel"] = np.arcsin(self.data["Ju"] / self.data["J_norm"])
 
-	def GetNormTimes(self, divisor = 1):
-		norm = self.data["seconds"][0]
-		self.x_axis = [(t - norm) / divisor for t in self.data["seconds"]]
+	def GetNormTimes(self, divisor = 1, format = "delta"):
+		if format == "delta":
+			norm = self.data["seconds"][0]
+			self.x_axis = [(t - norm) / divisor for t in self.data["seconds"]]
+		else:
+			self.x_axis = self.data["datetime"]
 
 		return self.x_axis
 
@@ -359,20 +383,21 @@ class EqCurrent:
 
 		return new_data
 
-	def MakePlot(self, show = False, app_angle = True, xaxis = False, div = 1):
+	def MakePlot(self, show = False, app_angle = True, xaxis = False, div = 1, coords = "uen"):
 		f1, axs1 =  plt.subplots(3, sharex=True, figsize=(16, 8))
 		f2, axs2 =  plt.subplots(1, sharex=True, figsize=(16, 8))
 
-		if not self.x_axis or xaxis:
-			self.x_axis = self.GetNormTimes(divisor=div)
+		# if not self.x_axis or xaxis:
+		# 	self.x_axis = self.GetNormTimes(divisor=div)
 
-		# axs1[0].plot(self.x_axis, self.data["Jn"])
-		# axs1[1].plot(self.x_axis, self.data["Je"])
-		# axs1[2].plot(self.x_axis, self.data["Ju"])
-
-		axs1[0].plot(self.x_axis, self.data["Jaz"] * RtoD)
-		axs1[1].plot(self.x_axis, self.data["Jel"] * RtoD)
-		axs1[2].plot(self.x_axis, self.data["J_norm"])
+		if coords == "uen":
+			axs1[0].plot(self.x_axis, self.data["Jn"], "*")
+			axs1[1].plot(self.x_axis, self.data["Je"], "*")
+			axs1[2].plot(self.x_axis, self.data["Ju"], "*")
+		elif coords == "azel":
+			axs1[0].plot(self.x_axis, self.data["Jaz"] * RtoD, "*")
+			axs1[1].plot(self.x_axis, self.data["Jel"] * RtoD, "*")
+			axs1[2].plot(self.x_axis, self.data["J_norm"], "*")
 
 		if app_angle:
 			# comp = (self.data["Jn"] / self.data["Je"]) * RtoD
@@ -387,13 +412,14 @@ class EqCurrent:
 
 			f2.legend()
 
-		# axs1[0].set_ylabel("Jn")
-		# axs1[1].set_ylabel("Je")
-		# axs1[2].set_ylabel("Ju")
-
-		axs1[0].set_ylabel("Jaz")
-		axs1[1].set_ylabel("Jel")
-		axs1[2].set_ylabel("J norm")
+		if coords == "uen":
+			axs1[0].set_ylabel("Jn")
+			axs1[1].set_ylabel("Je")
+			axs1[2].set_ylabel("Ju")
+		elif coords == "azel":
+			axs1[0].set_ylabel("Jaz")
+			axs1[1].set_ylabel("Jel")
+			axs1[2].set_ylabel("J norm")
 
 		if show:
 			plt.show()

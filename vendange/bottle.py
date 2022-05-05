@@ -908,12 +908,12 @@ class PTCUBottle(Bottle):
                     self.filters = r[self.line - 1]
                 # print("FILTERS:", r, self.filters)
 
-            # elif r[0] == "a":
-            #     self.azimut = float(r[1:]) * DtoR
-            # elif r[0] == "e":
-            #     self.elevation = float(r[1:]) * DtoR
-            # else:
-            #     self.com += "_" + r
+            elif r[0] == "a":
+                self.azimut = float(r[1:]) * DtoR
+            elif r[0] == "e":
+                self.elevation = float(r[1:]) * DtoR
+            else:
+                self.com += "_" + r
 
         print("SetInfoFromDataFileName", self.instrument_name, self.date,
               self.location, self.filters, self.azimut * RtoD, self.elevation * RtoD, self.com)
