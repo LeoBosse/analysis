@@ -46,8 +46,15 @@ from atmosphere import *
 
 class World:
 	def __init__(self, in_dict):
+
+		self.in_dict = in_dict
+		
 		self.wavelength = float(in_dict["wavelength"])
 		self.src_path = in_dict["src_path"]
+
+
+		self.save_path = in_dict["save_path"]
+		self.save_name = self.save_path + in_dict["save_name"]
 
 		self.show_ground_albedo = False
 		self.show_sky_cube = False
@@ -149,8 +156,6 @@ class World:
 
 		self.Nb_a_pc, self.Nb_e_pc = len(self.a_pc_list), len(self.e_pc_list)
 
-
-
 		### Init the atmosphere object
 		self.atmosphere = Atmosphere(in_dict)
 
@@ -189,7 +194,6 @@ class World:
 		print(pomerol_configuration.chaos_model_file)
 		self.B_model = chaos.load_CHAOS_matfile(pomerol_configuration.chaos_model_file)
 
-
 		# print(self.times)
 
 		self.is_single_observation = False
@@ -201,8 +205,6 @@ class World:
 		# if self.has_sky_emission and (self.is_time_dependant or not self.is_single_observation):
 		if self.has_sky_emission and self.show_sky_cube and mpi_rank==0:
 			self.sky_map.MakeSkyCubePlot(self.a_pc_list, self.e_pc_list, self.ouv_pc)
-
-
 
 		### Initialize the groundmap. Even if we don't use it, some parameters must be initialized
 		self.ground_map = GroundMap(in_dict, self.Nb_a_pc, self.Nb_e_pc)
@@ -225,7 +227,7 @@ class World:
 				self.MakeGroundMapPlot(iso=layers)
 			else:
 				self.MakeGroundMapPlot()
-			plt.show()
+
 
 		if self.has_ground_emission and self.has_sky_emission and self.albedo_mode != "none":
 			self.albedo_map = np.zeros_like(self.ground_map.I_map)
@@ -1344,3 +1346,6 @@ class World:
 		ax.set_theta_zero_location("N")
 		ax.set_theta_direction(-1)
 		ax.set_ylim(0, None)
+
+		if self.save_name:
+			plt.savefig(self.save_name + "_grdmap.png", metadata=self.in_dict)

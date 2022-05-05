@@ -14,7 +14,7 @@ src_path ./ #Path to all the python source files
 
 saving_graphs 1  # 0:False or 1:True, decide whether or not saving graphs for individual measures. Allows to gain time for almucantar or time dependant.
 save_path ../../data/pomerol_results/ # Path to the folder where you want to save your results (graphs, txt...)
-save_name finlande_rot_e47_grdonly skibotn_grdonly_R100_N1000 #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
+save_name skibotn_W_grdonly_R100_N1000 skibotn_grdonly_R100_N1000 #Base for the name of your results files. It will be appended with a identifier (such as grd_map, sky_map, etc...)
 
 ### Units for the result flux (used in the graphs, but maybe not in the computations.)
 # W = for nanoWatts (default input unit)
@@ -31,10 +31,10 @@ use_analytic false # Should stay as "false". If "true", POMEROL will compute the
 ### All instrumental inputs
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";". If automatic spacing write the numpy.linspace(endpoint=False) (for azimuths or numpy.geomspace(endpoint=True) for elevations) parameters separated by "_".
 ### See the world.__init__() and rayleigh_utils.GetPointingCoords() for the code.
-azimuts  0 0_360_36
-elevations  47
+azimuts  225_315_45
+elevations  10_50_20
 
-location 	finlande     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens, finlande or LON;LAT in degrees
+location 	skibotn     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens, finlande or LON;LAT in degrees
 
 start_datetime 20190116-02:44:00
 end_datetime   20190116-04:00:00
@@ -165,7 +165,7 @@ sky_wavelength 557.7    # Check if this works. To be able to pass from Rayleigh 
 
 use_alt_map 1 # 0 or 1, if you want to compute terrain occultations and environmental geometry with real terrain elevations.
 
-#alt_map_path /home/bossel/These/Analysis/data/elevation/ #Path where the elevations data are stored
+#alt_map_path Analysis/data/elevation/ #Path where the elevations data are stored
 alt_map_path ../../data/elevation/ #Path where the elevations data are stored
 alt_map_radius 100 		#radius of the map in km. Can be different from the ground emission map
 alt_map_N_bins_max 0  #Maximum number of bins to use in the map.

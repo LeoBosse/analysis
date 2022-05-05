@@ -739,7 +739,7 @@ class Simulation:
 				axs[1].set_ylabel("Q (\%)")
 				axs[3].set_ylabel("U (\%)")
 
-				f.subplots_adjust(hspace=0)
+				# f.subplots_adjust(hspace=0)
 
 				if self.save_name:
 					plt.savefig(self.save_name + "_summary.png", metadata=self.in_dict)
