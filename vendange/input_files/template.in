@@ -46,3 +46,8 @@ I_ref off 			#on or off. Only for Carmen when the reference channel is working. 
 
 time_zone 1  						# UT+X what is the time zone of the observation (UT+1 for France/Norway)? Indicate X
 config_time_format LT 	# LT or LT. What did you use for the instrument clock? LT=UT+X is the Local Time of the clock
+
+density 0;0;0;0 #If you used a density to reduce the light flux in the instrument, put 1 on the corresponding channel (separated by ;) and 0 to the others
+density_period 0:0_0:0_0:0_0:0 #Indicate the time period the density filter was on. Times are normalized AFTER deleteing the time jumps!!! Separate each channel by a "_" and the start:end by a ":" -> start0:end0_start1:end1_start2:end2_etc...
+density_time_unit minutes #Same format as for time jumps
+density_factor 4;4;4;4 #Teh strength of the density (in general 4, 8, 100...)

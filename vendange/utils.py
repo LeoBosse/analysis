@@ -306,19 +306,22 @@ def GetAnglesDifference(A1, A2):
 
 
 def GetSliddingAverage(values, times, smoothing_factor, unit):
-	"""Given a list of values, a list of their associated times, the smoothing factor and its unit, return an array of smooth values. If unit==rotations each data is averaged with a window of smoothing_factor rotations centered on itself.
+	"""DEPRECATED, USE bottle.GetSliddingAverage() NOW! USING np.convolve() IT GOES MUCH FASTER.
+	Given a list of values, a list of their associated times, the smoothing factor and its unit, return an array of smooth values. If unit==rotations each data is averaged with a window of smoothing_factor rotations centered on itself.
 	If unit==seconds each data is averaged with a window of smoothing_factor seconds centered on itself. Both ways have the same results if each rotation has the same time step, but this is not True for the 20181115 PTCU data!!! This has still to be explained, but this is a temporary solution.
 	"""
 	nb_values = len(values)
 	if unit == "rotations":
-		smooth_values = np.zeros(nb_values)
-		for i in range(nb_values):
-			n = 0.
-			for j in range(- int(smoothing_factor / 2.), int(smoothing_factor / 2.) + 1):
-				if 0 <= i + j < nb_values:
-					smooth_values[i] += float(values[i+j])
-					n += 1.
-			smooth_values[i] /= n
+		window = np.ones(smoothing_factor) / smoothing_factor
+		smooth_values = np.convolve(values, window, 'valid')
+		# smooth_values = np.zeros(nb_values)
+		# for i in range(nb_values):
+		# 	n = 0.
+		# 	for j in range(- int(smoothing_factor / 2.), int(smoothing_factor / 2.) + 1):
+		# 		if 0 <= i + j < nb_values:
+		# 			smooth_values[i] += float(values[i+j])
+		# 			n += 1.
+		# 	smooth_values[i] /= n
 	else:
 		if unit == "seconds":
 			smoothing_factor = dt.timedelta(seconds = smoothing_factor)
@@ -327,23 +330,23 @@ def GetSliddingAverage(values, times, smoothing_factor, unit):
 		elif unit == "hours":
 			smoothing_factor = dt.timedelta(hours = smoothing_factor)
 
-		smooth_values = np.zeros(nb_values)
-		for i in range(nb_values):
-			j, n, stop_up, stop_down = 1, 1., False, False
-			smooth_values[i] += values[i]
-			while not stop_up or not stop_down:
-				if i + j < nb_values and abs(times[i + j] - times[i]) < smoothing_factor / 2.:
-					smooth_values[i] += values[i + j]
-					n += 1.
-				else:
-					stop_up = True
-				if 0 <= i - j and abs(times[i - j] - times[i]) < smoothing_factor / 2.:
-					smooth_values[i] += values[i - j]
-					n += 1.
-				else:
-					stop_down = True
-				j += 1
-			smooth_values[i] = smooth_values[i] / n
+		# smooth_values = np.zeros(nb_values)
+		# for i in range(nb_values):
+		# 	j, n, stop_up, stop_down = 1, 1., False, False
+		# 	smooth_values[i] += values[i]
+		# 	while not stop_up or not stop_down:
+		# 		if i + j < nb_values and abs(times[i + j] - times[i]) < smoothing_factor / 2.:
+		# 			smooth_values[i] += values[i + j]
+		# 			n += 1.
+		# 		else:
+		# 			stop_up = True
+		# 		if 0 <= i - j and abs(times[i - j] - times[i]) < smoothing_factor / 2.:
+		# 			smooth_values[i] += values[i - j]
+		# 			n += 1.
+		# 		else:
+		# 			stop_down = True
+		# 		j += 1
+		# 	smooth_values[i] = smooth_values[i] / n
 	return smooth_values
 
 def UnifyAngles(angles, manual_shift = -1):

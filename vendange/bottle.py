@@ -135,7 +135,7 @@ class Bottle:
         return dict
 
     def SetJumps(self):
-        self.jump_unit = self.input_parameters["jump_unit"]
+        self.jump_unit = self.input_parameters["jump_unit"].lower()
         self.head_jump = float(self.input_parameters["head_jump"])
         self.tail_jump = float(self.input_parameters["tail_jump"])
         try:
@@ -143,7 +143,8 @@ class Bottle:
         except:
             self.jump_mode = "lenght"
         # Until the bug at the begining of the observation is not fixed, delete head and tail after treatment. When fixed, we'll be able to do it before
-        if self.jump_unit in ("seconds", "minutes", "hours"):
+        # if self.jump_unit in ("seconds", "minutes", "hours"):
+        if "sec" in self.jump_unit or "min" in self.jump_unit or "h" in self.jump_unit:
             self.head_jump = dt.timedelta(0)
             self.tail_jump = dt.timedelta(0)
 
@@ -153,12 +154,12 @@ class Bottle:
                 seconds=float(self.input_parameters["head_jump"]))
             self.tail_jump = dt.timedelta(
                 seconds=float(self.input_parameters["tail_jump"]))
-            if self.jump_unit == "minutes":
+            if "min" in self.jump_unit:
                 self.head_jump = dt.timedelta(
                     minutes=float(self.input_parameters["head_jump"]))
                 self.tail_jump = dt.timedelta(
                     minutes=float(self.input_parameters["tail_jump"]))
-            elif self.jump_unit == "hours":
+            elif "h" in self.jump_unit:
                 # print("DEBUG jumps", [r.time.total_seconds() for r in self.rotations[:10]])
                 # print(time.timedelta(hours=float(self.input_parameters["head_jump"])), time.timedelta(hours=float(self.input_parameters["tail_jump"])))
                 self.head_jump = dt.timedelta(
@@ -171,6 +172,41 @@ class Bottle:
                     self.tail_jump = self.all_times[-1] - self.tail_jump
                 except:
                     self.tail_jump = self.rotations[-1].time - self.tail_jump
+
+
+    def CorrectDensity(self):
+        try:
+            use_density = int(self.input_parameters["density"].split(";")[self.line-1])
+        except KeyError:
+            print("Warning, no density paramters in the input files (exist only since 20220523). Not a probelm if you did not use a density filter during your mesurments.")
+            return False
+
+        print(f"use_density {use_density}")
+        if not use_density:
+            return False
+
+        self.time_unit = self.input_parameters["density_time_unit"].lower()
+
+
+        self.density_factor = int(self.input_parameters["density_factor"].split(";")[self.line-1])
+        time_period = self.input_parameters["density_period"].split("_")[self.line-1].split(":")
+        start = float(time_period[0])
+        end = float(time_period[1])
+
+        if "sec" in self.time_unit:
+            start = dt.timedelta(seconds=start)
+            end = dt.timedelta(seconds=end)
+        elif "min" in self.time_unit:
+            start = dt.timedelta(minutes=start)
+            end = dt.timedelta(minutes=end)
+        elif "h" in self.time_unit:
+            start = dt.timedelta(hours=start)
+            end = dt.timedelta(hours=end)
+
+        self.density_start = start
+        self.density_end = end
+
+        return True
 
     def LoadData(self):
         # Loading the data files
@@ -330,8 +366,7 @@ class Bottle:
 
         self.nb_smooth_rot = self.nb_rot
 
-        self.avg_dt = 1000 * np.average([self.all_times[i].total_seconds() - self.all_times[i - 1].total_seconds()
-                                        for i in range(1, len(self.all_times))])  # in millisec
+        self.avg_dt = 1000 * np.average([self.all_times[i].total_seconds() - self.all_times[i - 1].total_seconds() for i in range(1, len(self.all_times))])  # in millisec
 
         print("AVG DT (millisec)", self.avg_dt)
 
@@ -341,14 +376,14 @@ class Bottle:
 
         print("Smooting data over {} {}".format(
             self.smoothing_factor, self.smoothing_unit))
-        self.smooth_V = GetSliddingAverage(
+        self.smooth_V = self.GetSliddingAverage(
             self.all_V,    self.all_times, self.smoothing_factor, self.smoothing_unit)
-        self.smooth_Vcos = GetSliddingAverage(
+        self.smooth_Vcos = self.GetSliddingAverage(
             self.all_Vcos, self.all_times, self.smoothing_factor, self.smoothing_unit)
-        self.smooth_Vsin = GetSliddingAverage(
+        self.smooth_Vsin = self.GetSliddingAverage(
             self.all_Vsin, self.all_times, self.smoothing_factor, self.smoothing_unit)
         if not self.NoVref:
-            self.smooth_Iref = GetSliddingAverage(
+            self.smooth_Iref = self.GetSliddingAverage(
                 self.all_Iref, self.all_times, self.smoothing_factor, self.smoothing_unit)
             self.Iref_average = np.average(self.all_Iref)
 
@@ -703,6 +738,25 @@ class Bottle:
 
         return new_bottle
 
+    def GetSliddingAverage(self, values, times, smoothing_factor, unit):
+        """Given a list of values, a list of their associated times, the smoothing factor and its unit, return an array of smooth values. If unit==rotations each data is averaged with a window of smoothing_factor rotations centered on itself.
+        If unit==seconds, minutes or hours, the smoothing factor is first converted to a number of rotations using the average delta t between all rotations points. Then each data is averaged with a window centered on itself as above. Both ways have the same results if each rotation has the same time step, but if the instrument has a probelm and each rotations are not equally spaced, this might cause unwanted effects.
+        """
+        nb_values = len(values)
+        if unit != "rotations":
+            smoothing_factor *= 1000
+            if unit == "minutes":
+                smoothing_factor *= 60 #dt.timedelta(minutes = smoothing_factor)
+            elif unit == "hours":
+                smoothing_factor *= 3600 #dt.timedelta(hours = smoothing_factor)
+
+            smoothing_factor = int(smoothing_factor / self.avg_dt)
+
+        window = np.ones(smoothing_factor) / smoothing_factor
+        smooth_values = np.convolve(values, window, 'same')
+        return smooth_values
+
+
     def PrintInfo(self):
         print("*********************************************")
         print("INFO:", self.data_file_name.split("/")[-3:])
@@ -1040,6 +1094,18 @@ class PTCUBottle(Bottle):
         # plt.plot(time, dV_dt)
         # plt.show()
 
+        if self.CorrectDensity():
+            print("Correcting density")
+            # print(self.density_start, self.density_end)
+            # print(self.rotations[0].time, self.rotations[-1].time)
+            for ir, r in enumerate(self.rotations):
+                if self.density_start <= r.time < self.density_end:
+                    self.rotations[ir].V    *= self.density_factor
+                    self.rotations[ir].Vcos *= self.density_factor
+                    self.rotations[ir].Vsin *= self.density_factor
+                    self.rotations[ir].I0   *= self.density_factor
+
+
         self.rotations = [r for r in self.rotations if r.IsGood(
             Imin=self.Imin, Imax=self.Imax, DoLPmin=self.DoLPmin, DoLPmax=self.DoLPmax)]
         print(len(self.rotations), "good rotations in", self.nb_rot, ";",
@@ -1082,10 +1148,10 @@ class PTCUBottle(Bottle):
 
             f.create_group("/data")
             for ic, c in enumerate(columns):
-                print(ic, c)
+                # print(ic, c)
                 f.create_dataset("/data/" + c,  data=data[ic])
 
-            print(self.config)
+            # print(self.config)
             # f.create_group("config")
             for k, v in self.config.items():
                 f["data"].attrs[k] = v

@@ -82,16 +82,20 @@ class EqCurrent:
 						self.files[i] += "NAL_pola"
 					elif "finland" in bottle.location.lower():
 						self.files[i] += "Location_"
-						if bottle.azimut*RtoD == -42:
+
+						if int(bottle.azimut*RtoD)%360 == -42%360:
 							self.files[i] += "0"
-						elif bottle.azimut*RtoD == -162:
+						elif int(bottle.azimut*RtoD)%360 == -162%360:
 								self.files[i] += "1"
-						elif bottle.azimut*RtoD == 48:
+						elif int(bottle.azimut*RtoD)%360 == 48%360:
 								self.files[i] += "4"
-						elif bottle.azimut*RtoD == 210:
+						elif int(bottle.azimut*RtoD)%360 == 210%360:
 								self.files[i] += "5"
-						elif bottle.azimut*RtoD == 260:
+						elif int(bottle.azimut*RtoD)%360 == 260%360:
 								self.files[i] += "6"
+						else:
+							print(f"Warning, azimut {bottle.azimut*RtoD} not recognized for equivalent current in finland")
+							self.valid = False
 					else:
 						self.valid = False
 
@@ -280,9 +284,11 @@ class EqCurrent:
 		for i in range(len(cu)):
 			app_angle.append(obs.GetApparentAngle([cu[i], ce[i], cn[i]], Blos=True))
 
+
+
 		# print(app_angle)
 		app_angle, J_los_angle = zip(*app_angle)
-		app_angle = np.array(app_angle)
+		app_angle = np.array(app_angle) #+ (np.pi/2)
 		# print(J_los_angle)
 		if not shift:
 			# current.data["AoJapp"] = app_angle
@@ -346,6 +352,7 @@ class EqCurrent:
 		# Ju_list = Ju(J_Ae, J_An, tanA)
 
 		max_Ju = 2 * max(max(abs(self.data["Je"])), max(abs(self.data["Jn"])))
+
 		self.data["Ju"] = np.where(abs(Ju_list) < max_Ju, Ju_list, np.zeros_like(self.data["Je"]))
 		# self.data["Ju"] = Ju_list
 
@@ -359,7 +366,7 @@ class EqCurrent:
 		else:
 			self.x_axis = self.data["datetime"]
 
-		return self.x_axis
+		return np.array(self.x_axis)
 
 	def GetInterpolation(self, new_time, obs, divisor=1, shift=0):
 
