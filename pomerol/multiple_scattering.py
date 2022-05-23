@@ -406,7 +406,7 @@ class MultipleScattering:
     @timer
     def PropagateAll(self):
         # f_path, axs = plt.subplots(5, sharex=True)
-
+        nb_escapes = 0
         for id_ray in range(int(self.nb_rays / mpi_size)):
             # id_ray = i * mpi_size + mpi_rank
             # print(i, id_ray, self.nb_rays)
@@ -423,6 +423,7 @@ class MultipleScattering:
                 # print("START OVER")
                 hit_ground, hist = self.Propagate(alt, vec, scattering_plane, id_ray = id_ray, hist = hist)
                 if not hit_ground:
+                    nb_escapes += 1
                     continue
 
                 vectors         = hist[:-1, 1]
@@ -430,6 +431,7 @@ class MultipleScattering:
                 final_position  = sum(vectors * lengths)
 
                 if np.linalg.norm(final_position) > self.max_distance_from_instrument:
+                    nb_escapes += 1
                     continue
 
                 invalid_ray = False
@@ -490,7 +492,10 @@ class MultipleScattering:
                     self.hist[k].extend(receiver[i])
             # if mpi_rank == 0: print(len(self.hist[k]), self.hist[k])
 
-
+        all_escapes = np.zeros(1, dtype=int)
+        mpi_comm.Reduce(np.array([nb_escapes]), all_escapes, op=MPI.SUM, root=0)
+        if mpi_rank == 0:
+            print(f"All {self.nb_rays} rays are propagated forward: {all_escapes[0]} escaped!")
 
     def GetTotalContribution(self):
 
@@ -635,11 +640,10 @@ class MultipleScattering:
         return F0
 
 
-
-
     def GetNextScatteringPos(self, init_pos, vec, length):
         new_pos = np.array(init_pos) + np.array(vec) * length
         return np.reshape(new_pos, 3)
+
 
     def GetRayPath(self, ray_id):
         pos = np.array([0, 0, 0])
@@ -662,6 +666,7 @@ class MultipleScattering:
         #Plot the path of all rays in 3D space
         f  = plt.figure()
         ax = plt.axes(projection ='3d')
+        ax.set_title("All scattering events")
         for id in range(self.nb_rays):
             pos_H = self.GetRayPath(id)
             u, e, n = zip(*pos_H)
@@ -675,8 +680,12 @@ class MultipleScattering:
         ax.plot(n, e, u, "k*", alpha = 0.5)
         ax.plot(self.los[2], self.los[1], self.los[0], "r*", alpha = 0.5)
 
+        ax.set_title("Scattering planes normals")
+
     def MakeOriginPlot(self, grd_map):
         f, ax = grd_map.MakeInitialMapPlot()
+
+        ax.set_title("MS ray origin")
 
         for iray in range(self.nb_rays):
             u, e, n = self.hist["final_pos"][iray]
@@ -697,6 +706,7 @@ class MultipleScattering:
         hist, bins, _ = axs.hist(altitudes_data, bins = 100, weights=w)
 
         axs.set_title("MS Scattering events altitude histogram")
+        axs.set_xlabel('Altitude (km)')
 
     def MakeScatteringHistograms(self, cs_ray=0, cs_aer=0):
         f, axs  = plt.subplots(1)
@@ -709,6 +719,7 @@ class MultipleScattering:
         hist, bins, _ = axs.hist(scattering_data, bins = 100, weights=w)
 
         axs.set_title("MS Scattering events angle histogram")
+        axs.set_xlabel('Scattering angle (deg)')
 
 
         #Make histogram of N random scattering angle given the relative cross section of Rayleigh and Mie scaterring.
