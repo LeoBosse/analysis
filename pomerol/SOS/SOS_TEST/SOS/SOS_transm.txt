@@ -1,0 +1,31 @@
+ Solar Zenithal Angle  :   32.48
+ Direct transmission  TOA -> surface :  0.522557386
+  
+ Diffuse transmittance : TOA -> surface
+    thetas = 32.480   td(thetas) =  0.3225
+  
+ Diffuse transmittance : surface -> TOA
+    thetav =  2.841   td(thetav) =  0.2914
+    thetav =  6.521   td(thetav) =  0.2924
+    thetav = 10.223   td(thetav) =  0.2942
+    thetav = 13.930   td(thetav) =  0.2967
+    thetav = 17.638   td(thetav) =  0.3000
+    thetav = 21.348   td(thetav) =  0.3042
+    thetav = 25.058   td(thetav) =  0.3093
+    thetav = 28.768   td(thetav) =  0.3155
+    thetav = 32.479   td(thetav) =  0.3225
+    thetav = 36.190   td(thetav) =  0.3307
+    thetav = 39.901   td(thetav) =  0.3399
+    thetav = 43.611   td(thetav) =  0.3503
+    thetav = 47.322   td(thetav) =  0.3621
+    thetav = 51.033   td(thetav) =  0.3752
+    thetav = 54.744   td(thetav) =  0.3896
+    thetav = 58.455   td(thetav) =  0.4054
+    thetav = 62.167   td(thetav) =  0.4222
+    thetav = 65.878   td(thetav) =  0.4397
+    thetav = 69.589   td(thetav) =  0.4566
+    thetav = 73.300   td(thetav) =  0.4705
+    thetav = 77.011   td(thetav) =  0.4769
+    thetav = 80.722   td(thetav) =  0.4670
+    thetav = 84.433   td(thetav) =  0.4311
+    thetav = 88.144   td(thetav) =  0.3860
