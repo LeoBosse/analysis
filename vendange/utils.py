@@ -347,6 +347,7 @@ def GetSliddingAverage(values, times, smoothing_factor, unit):
 		# 			stop_down = True
 		# 		j += 1
 		# 	smooth_values[i] = smooth_values[i] / n
+		
 	return smooth_values
 
 def UnifyAngles(angles, manual_shift = -1):

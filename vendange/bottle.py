@@ -41,11 +41,9 @@ class Bottle:
             self.input_parameters = self.ReadInputFile(pwd_data + self.folder)
         except:
             try:  # If you only specify the folder, will look for a default input.in file
-                self.input_parameters = self.ReadInputFile(
-                    pwd_data + self.folder + "/input.in")
+                self.input_parameters = self.ReadInputFile(pwd_data + self.folder + "/input.in")
             except:  # Don't use it, or verify it works first.
-                self.input_parameters = self.ReadInputFile(
-                    pwd_src + "input_files/" + self.folder + ".in")
+                self.input_parameters = self.ReadInputFile(pwd_src + "input_files/" + self.folder + ".in")
 
         self.data_file_name = pwd_data + \
             self.input_parameters["data_files"].split(",")[0]
@@ -366,7 +364,9 @@ class Bottle:
 
         self.nb_smooth_rot = self.nb_rot
 
-        self.avg_dt = 1000 * np.average([self.all_times[i].total_seconds() - self.all_times[i - 1].total_seconds() for i in range(1, len(self.all_times))])  # in millisec
+        self.time_deltas = [self.all_times[i].total_seconds() - self.all_times[i - 1].total_seconds() for i in range(1, len(self.all_times))] # in seconds
+        self.avg_dt = 1000 * np.average(self.time_deltas)  # in millisec
+        self.time_deltas.append(self.avg_dt/1000)
 
         print("AVG DT (millisec)", self.avg_dt)
 
@@ -456,6 +456,11 @@ class Bottle:
         self.smooth_SN = SN(
             self.smooth_I0, self.smooth_DoLP / 100, smoothing_factor)
 
+        self.I0_diff = np.gradient(self.smooth_I0, self.avg_dt)
+        self.all_I0_diff = np.gradient(self.all_I0, self.avg_dt)
+
+        self.GetSliddingCorrCoef()
+
         self.SetUnifyAngles()
         # self.graph_angle_shift = 0
 
@@ -510,6 +515,78 @@ class Bottle:
 
         # for i, up in enumerate(self.smooth_AoLP_upper):
         #     if up < self.smooth_AoLP[i]:
+
+
+    def GetSliddingCorrCoef(self, window_size = 10, smooth = True):
+        window_size = int(window_size * 1000 / self.avg_dt)
+        if window_size % 2 == 1:
+            window_size -= 1
+
+        X_arr = self.smooth_I0
+        Y_arr = self.smooth_DoLP
+        if not smooth:
+            X_arr = self.all_I0
+            Y_arr = self.all_DoLP
+
+
+        corr = np.zeros_like(self.all_times)
+
+        for it in range(len(self.all_times)):
+            s = max(0, it - int(window_size / 2))
+            e = min(len(self.all_times), it + int(window_size / 2))
+            corr[it] = np.corrcoef([X_arr[s:e], Y_arr[s:e]])[0, 1]
+
+        return corr
+
+
+    def GetFourierTransform(self, var, threshold_freq = 0.016):
+        if var.lower() == "i0":
+            signal = self.all_I0
+        elif var.lower() == "dolp":
+            signal = self.all_DoLP
+        elif var.lower() == "aolp":
+            signal = self.all_AoLP
+
+        ### Code copied from https://www.earthinversion.com/techniques/signal-denoising-using-fast-fourier-transform/
+        delta = self.avg_dt/1000 #in sec
+        n = len(signal)
+        fhat = np.fft.fft(signal, n) #computes the fft
+        # psd = fhat * np.conj(fhat) / n
+        freq = (1/(delta*n)) * np.arange(n) #frequency array
+        # idxs_half = np.arange(1, np.floor(n/2), dtype=np.int32) #first half index
+        # psd_real = np.abs(psd[idxs_half]) #amplitude for first half
+
+
+        ## Filter out noise
+        # sort_psd = np.sort(psd_real)[::-1]
+        # print(len(sort_psd))
+        # threshold = sort_psd[threshold_freq]
+        # psd_idxs = psd > threshold #array of 0 and 1
+        # psd_clean = psd * psd_idxs #zero out all the unnecessary powers
+
+        if threshold_freq > 0:
+            psd_idxs = freq < threshold_freq #array of 0 and 1
+        else:
+            psd_idxs = np.ones_like(fhat)
+
+        print(threshold_freq)
+        print(freq)
+
+        # f = plt.figure()
+        # plt.plot(freq, psd)
+        # plt.plot(freq, psd_clean)
+        # plt.show()
+
+        # print(threshold)
+        # print(psd)
+        # print(psd_clean)
+
+        fhat_clean = psd_idxs * fhat #used to retrieve the signal
+
+        signal_filtered = np.fft.ifft(fhat_clean) #inverse fourier transform
+
+        return signal_filtered
+
 
     def GetGeometryAngles(self, obs, B_model=None):
         # print("DEBUG obs", obs)
@@ -754,6 +831,11 @@ class Bottle:
 
         window = np.ones(smoothing_factor) / smoothing_factor
         smooth_values = np.convolve(values, window, 'same')
+        ### Correct the edge cases where the window does not overlapp completely.
+        for i in range(int(smoothing_factor/2)):
+            smooth_values[i]      *=  smoothing_factor / (smoothing_factor/2 + i)
+            smooth_values[-1 - i] *=  smoothing_factor / (smoothing_factor/2 + i + 1) #Not sure why it needs a +1, but it works.
+
         return smooth_values
 
 

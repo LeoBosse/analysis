@@ -222,6 +222,12 @@ class Mixer:
 
 			self.MakeFigure()
 			self.MakePlots(bottle)
+
+			# self.MakeFFT(bottle)
+
+			self.MakeSmartCorrelationPlots(bottle, None, smooth=True)
+			self.MakeSmartCorrelationPlots(bottle, None, smooth=False)
+
 			# for m in self.J2RAYS1_models:
 			# 	self.SubtractModel(bottle, m)
 			# if self.show_RS_model:
@@ -448,12 +454,12 @@ class Mixer:
 		self.show_AoBapp 	= False # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
 		self.show_AoRD	 	= False # If True, show the AoLP produced by a point source defined in the input.in file.
 
-		self.show_currents	= True # If available, show the apparent angle of the equivalent currents from Magnar.
+		self.show_currents	= False # If available, show the apparent angle of the equivalent currents from Magnar.
 		self.compute_Jup	= "" #False, "para" or "perp". Will add a vertical component to the equivalent current so that it match the AoLP. If para: the AoLP is parallel to the current. If perp, the AoLP is perpendicular to the current.
 
 		self.show_grid_lines = True # Just to have a nicer grpah. self explainatory
 
-		self.make_optional_plots = 1 # If True, will plot a lots of optional plots showing all kind of things. See the end of the __init__() function where it is used.
+		self.make_optional_plots = 0 # If True, will plot a lots of optional plots showing all kind of things. See the end of the __init__() function where it is used.
 		self.show_SN = False # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
 
 		### The following paramters are used when comparing the data with the POMEROL model.
@@ -720,7 +726,7 @@ class Mixer:
 		self.smooth_ref_color = "xkcd:green"
 		self.AoBapp_color = "xkcd:turquoise"
 		self.AoRD_color = "xkcd:hot pink"
-		self.currents_color = "xkcd:lilac"
+		self.currents_color = "xkcd:mustard" #"xkcd:lilac"
 		if comp:
 			self.AoBapp_color = "xkcd:blue"
 			self.AoRD_color = "xkcd:salmon"
@@ -1061,12 +1067,12 @@ class Mixer:
 			AoJapp90 = SetAngleBounds(AoJapp+np.pi/2, -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift)
 			AoJappperp = SetAngleBounds(AoJappperp, -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift)
 
-			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
-			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp90 * RtoD, "+", color = "xkcd:pink", label="AoJapp")
+			# l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
+			# l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp90 * RtoD, "+", color = "xkcd:pink", label="AoJapp")
 
 			# l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJappperp * RtoD, "*", color = "red", label="AoJapp_perp")
 
-			self.ax3_lines.append([l_AoJapp, l_AoJapp.get_label()])
+			# self.ax3_lines.append([l_AoJapp, l_AoJapp.get_label()])
 
 		# self.ax3.set_ylim(45, 60)
 
@@ -1463,6 +1469,63 @@ class Mixer:
 		else:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_angles_comp.png', bbox_inches='tight')
 
+
+	def MakeSmartCorrelationPlots(self, bottle, diff_thresholds=None, smooth=True):
+		f2, (ax1, ax2, ax3, ax4) = plt.subplots(ncols=1, nrows=4, figsize=(20, 20), gridspec_kw={'height_ratios':[3, 1, 1, 1]})
+
+		colors = ["b", 'k', "r", 'y', 'g']
+		masks = []
+
+		mask_array = bottle.I0_diff
+		X_array = bottle.smooth_I0
+		Y_array = bottle.smooth_DoLP
+		if not smooth:
+			mask_array = bottle.all_I0_diff
+			X_array = bottle.all_I0
+			Y_array = bottle.all_DoLP
+
+		if not diff_thresholds:
+			diff_thresholds = np.percentile(mask_array, [33, 66])
+
+		diff_thresholds = np.sort(diff_thresholds)
+		# print(diff_thresholds)
+		masks.append(mask_array < diff_thresholds[0])
+		for id in range(1, len(diff_thresholds)):
+			masks.append((diff_thresholds[id-1] <= mask_array) * (mask_array < diff_thresholds[id]))
+		masks.append(mask_array >= diff_thresholds[-1])
+
+		for im, m in enumerate(masks):
+			X = np.ma.masked_equal(X_array * m, 0)
+			Y = np.ma.masked_equal(Y_array * m, 0)
+			ax1.plot(X, Y, "-.", color = colors[im], alpha = 1)
+		ax1.set_xlabel("Intensity (mV)")
+		ax1.set_ylabel("DoLP (%)")
+
+		# ax2.plot(self.x_axis_list, bottle.GetSliddingCorrCoef(window_size = 60, smooth = smooth), ".")
+		# ax2.set_ylabel("Corr")
+		ax2.plot(self.x_axis_list, mask_array, ".")
+
+		ax2.fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[0], diff_thresholds[0]], np.min(mask_array), color = colors[0], zorder=-100, alpha = 0.3)
+		for it in range(1, len(diff_thresholds)):
+			ax2.fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[it], diff_thresholds[it]], diff_thresholds[it-1], color = colors[it], zorder=-100, alpha = 0.3)
+
+		ax2.fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[-1], diff_thresholds[-1]], np.max(mask_array), color = colors[len(diff_thresholds)], zorder=-100, alpha = 0.3)
+		ax2.set_ylabel("dI0")
+
+		ax3.plot(self.x_axis_list, X_array, ".")
+		ax3.set_ylabel("I0")
+
+		ax4.plot(self.x_axis_list, Y_array, ".")
+		ax4.set_ylabel("DoLP")
+		ax4.set_xlabel(self.xlabel)
+
+		print("Saving correlation in", bottle.data_file_name + "/" + bottle.saving_name + '_smart_correlations.png')
+		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_S' + str(smooth) + '_smart_correlation.png', bbox_inches='tight')
+		else:
+			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + '_S' + str(smooth) + "/" + bottle.saving_name + '_smart_correlation.png', bbox_inches='tight')
+
+
 	def MakeCorrelationPlots(self, bottle):
 		f2, (ax1, ax2) = plt.subplots(2, figsize=(10, 20))
 
@@ -1540,26 +1603,33 @@ class Mixer:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + 'coherence.png', bbox_inches='tight')
 
 
+
 	def MakeFFT(self, bottle):
 		self.f1, (self.ax1, self.ax2, self.ax3) = plt.subplots(3, sharex=True, figsize=(16, 8))
-
-		self.ax1.set_ylabel("Intensity FFT")
-		self.ax2.set_ylabel("DoLP FFT")
-		self.ax3.set_ylabel("AoLP FFT")
-
-		xaxis = np.fft.fftfreq(self.x_axis_list.shape[-1], d = 1000/20.)
-
-		FFT_I0 = np.fft.fft(bottle.all_I0)
-		FFT_DoLP = np.fft.fft(bottle.all_DoLP)
-		FFT_AoLP = np.fft.fft(bottle.all_AoLP)
-
-		smooth_FFT_I0 = np.fft.fft(bottle.smooth_I0)
-		smooth_FFT_DoLP = np.fft.fft(bottle.smooth_DoLP)
-		smooth_FFT_AoLP = np.fft.fft(bottle.smooth_AoLP)
-
-		self.ax1.plot(xaxis, FFT_I0, xaxis, smooth_FFT_I0)
-		self.ax2.plot(xaxis, FFT_DoLP, xaxis, smooth_FFT_DoLP)
-		self.ax3.plot(xaxis, FFT_AoLP, xaxis, smooth_FFT_AoLP)
+		self.ax1.plot(self.x_axis_list, bottle.all_I0, "k.")
+		self.ax1.plot(self.x_axis_list, bottle.GetFourierTransform("I0"), "r.")
+		self.ax2.plot(self.x_axis_list, bottle.all_DoLP, "k.")
+		self.ax2.plot(self.x_axis_list, bottle.GetFourierTransform("DoLP"), "r.")
+		self.ax3.plot(self.x_axis_list, bottle.all_AoLP, "k.")
+		self.ax3.plot(self.x_axis_list, bottle.GetFourierTransform("AoLP"), "r.")
+		#
+		# self.ax1.set_ylabel("Intensity FFT")
+		# self.ax2.set_ylabel("DoLP FFT")
+		# self.ax3.set_ylabel("AoLP FFT")
+		#
+		# xaxis = np.fft.fftfreq(self.x_axis_list.shape[-1], d = 1000/20.)
+		#
+		# FFT_I0 = np.fft.fft(bottle.all_I0)
+		# FFT_DoLP = np.fft.fft(bottle.all_DoLP)
+		# FFT_AoLP = np.fft.fft(bottle.all_AoLP)
+		#
+		# smooth_FFT_I0 = np.fft.fft(bottle.smooth_I0)
+		# smooth_FFT_DoLP = np.fft.fft(bottle.smooth_DoLP)
+		# smooth_FFT_AoLP = np.fft.fft(bottle.smooth_AoLP)
+		#
+		# self.ax1.plot(xaxis, FFT_I0, xaxis, smooth_FFT_I0)
+		# self.ax2.plot(xaxis, FFT_DoLP, xaxis, smooth_FFT_DoLP)
+		# self.ax3.plot(xaxis, FFT_AoLP, xaxis, smooth_FFT_AoLP)
 
 	def CompareBottles(self, b1, b2):
 		f, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, figsize=(16, 8))

@@ -58,13 +58,13 @@ def GetNbLines(bottle_name):
 	"""Find the number of chanels of the instrument (the number of dataX.csv in the folder)"""
 	instrument_name = GetInstrumentName(bottle_name)
 	print(instrument_name, bottle_name)
-	if instrument_name != "spp":
+	if instrument_name not in ["spp", 'carmen']:
 		try:
 			print("TRY", os.listdir(data_path + bottle_name))
 			ls = [f for f in os.listdir(data_path + bottle_name) if "data" in f and ".csv" in f and len(f) in [9, 10]]
 		except:
 			print("EXCEPT", os.listdir(data_path + "/".join(bottle_name.split("/")[:-1])))
-			ls = [f for f in os.listdir(data_path + "/".join(bottle_name.split("/")[:-1])) if "data" in f]
+			ls = [f for f in os.listdir(data_path + "/".join(bottle_name.split("/")[:-1])) if "data" in f and ".csv" in f and len(f) in [9, 10]]
 		print("ls", ls)
 		nb_lines = len(ls)
 	else:
@@ -78,7 +78,7 @@ def GetNbLines(bottle_name):
 if instrument_name in ["ptcu", "gdcu", "ptcu_v2", "carmen", "corbel"]:
 	nb_lines = GetNbLines(bottle_name)
 	print("nb_lines", nb_lines)
-	# for l in [4]:
+	# for l in [3]:
 	for l in range(1, nb_lines+1):
 		print("##################################################################")
 		print("##################################################################")
