@@ -459,6 +459,13 @@ class Bottle:
         self.I0_diff = np.gradient(self.smooth_I0, self.avg_dt)
         self.all_I0_diff = np.gradient(self.all_I0, self.avg_dt)
 
+
+        # self.smooth_I0_mean = np.mean(self.smooth_I0)
+        # self.smooth_I0_var = np.var(self.smooth_I0)
+        #
+        # self.smooth_I0 = (self.smooth_I0 - self.smooth_I0_mean) / self.smooth_I0_var
+
+
         self.GetSliddingCorrCoef()
 
         self.SetUnifyAngles()
