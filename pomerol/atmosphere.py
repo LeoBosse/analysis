@@ -795,6 +795,7 @@ class Aerosol:
 		elif self.model != "default":
 			self.SetModel()
 			self.name = self.GetFileName()
+
 		else:
 			self.name = self.GetFileName()
 			#Colette example values

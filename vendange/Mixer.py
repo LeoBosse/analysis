@@ -59,20 +59,21 @@ class Mixer:
 
 			self.eq_currents = EqCurrent(bottle, file_type=None)
 			print("Equivalent current is valid? ", bool(self.eq_currents.valid))
-			self.eq_currents.GetApparentAngle(bottles[0].observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
-			self.eq_currents.Polarisation(bottles[0].observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
-
-			if self.eq_currents.valid and bottle.observation_type == "fixed":
-
-				if self.compute_Jup:
-					AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
-					self.eq_currents.FindJup(bottle.observation, AoLPs, mode = self.compute_Jup)
-
-					self.eq_currents.GetApparentAngle(bottle.observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
-
-					self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
-
-					self.eq_currents.SaveTXT()
+			# if self.eq_currents.valid:
+			# 	self.eq_currents.GetApparentAngle(bottles[0].observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
+			# 	self.eq_currents.Polarisation(bottles[0].observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
+			#
+			# if self.eq_currents.valid and bottle.observation_type == "fixed":
+			#
+			# 	if self.compute_Jup:
+			# 		AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
+			# 		self.eq_currents.FindJup(bottle.observation, AoLPs, mode = self.compute_Jup)
+			#
+			# 		self.eq_currents.GetApparentAngle(bottle.observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
+			#
+			# 		self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
+			#
+			# 		self.eq_currents.SaveTXT()
 
 			if self.show_RS_model and self.RS_model_files:
 				self.J2RAYS1_models = [Model.InitFromBottle(bottle, f, time_divisor = self.divisor, x_axis = self.x_axis_list, shift = self.shift_model) for i, f in enumerate(self.RS_model_files[bottle.line - 1])]
@@ -427,7 +428,7 @@ class Mixer:
 		self.use_24h_time_format = 0
 
 		self.show_raw_data = 1 # Show the data with no slidding average. All rotations of the polarizing filter. In black
-		self.show_smooth_data = True # Show smoothed data (averageed over the time window defined in the input file)
+		self.show_smooth_data = 1 # Show smoothed data (averageed over the time window defined in the input file)
 
 		self.show_error_bars 		= True # Show error bars for the raw cru data. in grey
 		self.show_smooth_error_bars = 0 # Show error bars for the raw cru data. in grey
@@ -1473,19 +1474,24 @@ class Mixer:
 	def MakeSmartCorrelationPlots(self, bottle, diff_thresholds=None, smooth=True):
 		f2, (ax1, ax2, ax3, ax4) = plt.subplots(ncols=1, nrows=4, figsize=(20, 20), gridspec_kw={'height_ratios':[3, 1, 1, 1]})
 
+		ax3.get_shared_x_axes().join(ax2, ax3)
+		ax4.get_shared_x_axes().join(ax2, ax4)
+
 		colors = ["b", 'k', "r", 'y', 'g']
 		masks = []
 
-		mask_array = bottle.I0_diff
-		X_array = bottle.smooth_I0
+		mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
+		X_array = bottle.I0_diff
 		Y_array = bottle.smooth_DoLP
 		if not smooth:
-			mask_array = bottle.all_I0_diff
-			X_array = bottle.all_I0
+			# mask_array = bottle.GetWaveletTransform(bottle.all_I0_diff, 12, unit = "seconds") #bottle.all_I0_diff
+			mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
+			X_array = bottle.all_I0_diff
 			Y_array = bottle.all_DoLP
 
 		if not diff_thresholds:
-			diff_thresholds = np.percentile(mask_array, [33, 66])
+			diff_thresholds = np.percentile(mask_array, [20, 80])
+
 
 		diff_thresholds = np.sort(diff_thresholds)
 		# print(diff_thresholds)
@@ -1495,28 +1501,37 @@ class Mixer:
 		masks.append(mask_array >= diff_thresholds[-1])
 
 		for im, m in enumerate(masks):
-			X = np.ma.masked_equal(X_array * m, 0)
-			Y = np.ma.masked_equal(Y_array * m, 0)
-			ax1.plot(X, Y, "-.", color = colors[im], alpha = 1)
-		ax1.set_xlabel("Intensity (mV)")
+			if im != 1:
+				X = np.ma.masked_equal(X_array * m, 0)
+				Y = np.ma.masked_equal(Y_array * m, 0)
+				ax1.plot(X, Y, ".", color = colors[im], alpha = 1)
+
+		# ax1.plot(mask_array, bottle.all_DoLP, ".")
+		ax1.set_xlabel("Dérivée Intensity")
 		ax1.set_ylabel("DoLP (%)")
 
-		# ax2.plot(self.x_axis_list, bottle.GetSliddingCorrCoef(window_size = 60, smooth = smooth), ".")
-		# ax2.set_ylabel("Corr")
-		ax2.plot(self.x_axis_list, mask_array, ".")
 
+		# ax2.plot(self.x_axis_list, bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth), "-")
+		ax2.plot(self.x_axis_list, mask_array, ".")
+		#
 		ax2.fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[0], diff_thresholds[0]], np.min(mask_array), color = colors[0], zorder=-100, alpha = 0.3)
 		for it in range(1, len(diff_thresholds)):
 			ax2.fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[it], diff_thresholds[it]], diff_thresholds[it-1], color = colors[it], zorder=-100, alpha = 0.3)
 
 		ax2.fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[-1], diff_thresholds[-1]], np.max(mask_array), color = colors[len(diff_thresholds)], zorder=-100, alpha = 0.3)
-		ax2.set_ylabel("dI0")
+		# ax2.set_ylabel("dI")
+		ax2.set_ylabel("Corr")
 
-		ax3.plot(self.x_axis_list, X_array, ".")
-		ax3.set_ylabel("I0")
 
-		ax4.plot(self.x_axis_list, Y_array, ".")
-		ax4.set_ylabel("DoLP")
+		ax33 = ax3.twinx()
+		ax3.plot(self.x_axis_list, Y_array, "r-")
+		ax33.plot(self.x_axis_list, bottle.all_I0, "b-")
+		ax3.set_ylabel("I,  DoLP")
+
+		ax44 = ax4.twinx()
+		ax4.plot(self.x_axis_list, Y_array, "r-")
+		ax44.plot(self.x_axis_list, X_array, "b-")
+		ax4.set_ylabel("dI, DoLP")
 		ax4.set_xlabel(self.xlabel)
 
 		print("Saving correlation in", bottle.data_file_name + "/" + bottle.saving_name + '_smart_correlations.png')

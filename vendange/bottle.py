@@ -148,22 +148,16 @@ class Bottle:
 
         # and self.jump_unit in ["seconds", "minutes", "hours"]:
         if self.jump_mode == "time":
-            self.head_jump = dt.timedelta(
-                seconds=float(self.input_parameters["head_jump"]))
-            self.tail_jump = dt.timedelta(
-                seconds=float(self.input_parameters["tail_jump"]))
+            self.head_jump = dt.timedelta(seconds=float(self.input_parameters["head_jump"]))
+            self.tail_jump = dt.timedelta(seconds=float(self.input_parameters["tail_jump"]))
             if "min" in self.jump_unit:
-                self.head_jump = dt.timedelta(
-                    minutes=float(self.input_parameters["head_jump"]))
-                self.tail_jump = dt.timedelta(
-                    minutes=float(self.input_parameters["tail_jump"]))
+                self.head_jump = dt.timedelta(minutes=float(self.input_parameters["head_jump"]))
+                self.tail_jump = dt.timedelta(minutes=float(self.input_parameters["tail_jump"]))
             elif "h" in self.jump_unit:
                 # print("DEBUG jumps", [r.time.total_seconds() for r in self.rotations[:10]])
                 # print(time.timedelta(hours=float(self.input_parameters["head_jump"])), time.timedelta(hours=float(self.input_parameters["tail_jump"])))
-                self.head_jump = dt.timedelta(
-                    hours=float(self.input_parameters["head_jump"]))
-                self.tail_jump = dt.timedelta(
-                    hours=float(self.input_parameters["tail_jump"]))
+                self.head_jump = dt.timedelta(hours=float(self.input_parameters["head_jump"]))
+                self.tail_jump = dt.timedelta(hours=float(self.input_parameters["tail_jump"]))
 
             if self.jump_mode == "length" or self.tail_jump.seconds == 0.:
                 try:
@@ -357,7 +351,7 @@ class Bottle:
         print("Set Smooth Lists")
         # Smoothing procedure. Can smooth for a given number of rotations (smoothing_unit==rotations) or a  given time period (smoothing_unit==seconds).
         # Average the data over smoothing_factor rotations
-        self.smoothing_factor = int(self.input_parameters["smoothing_factor"])
+        self.smoothing_factor = float(self.input_parameters["smoothing_factor"])
         self.smoothing_unit = self.input_parameters["smoothing_unit"].lower()
         self.smoothing_method = self.input_parameters["smoothing_method"].lower(
         )
@@ -524,15 +518,17 @@ class Bottle:
         #     if up < self.smooth_AoLP[i]:
 
 
-    def GetSliddingCorrCoef(self, window_size = 10, smooth = True):
+    def GetSliddingCorrCoef(self, window_size = 10, smooth = False):
+
         window_size = int(window_size * 1000 / self.avg_dt)
         if window_size % 2 == 1:
-            window_size -= 1
+            window_size += 1
 
-        X_arr = self.smooth_I0
+        X_arr = self.all_I0_diff
         Y_arr = self.smooth_DoLP
+
         if not smooth:
-            X_arr = self.all_I0
+            X_arr = self.all_I0_diff
             Y_arr = self.all_DoLP
 
 
@@ -821,6 +817,36 @@ class Bottle:
         new_bottle.Geometry(to_initiate=False)
 
         return new_bottle
+
+    def GetWaveletTransform(self, values, smoothing_factor, unit = "seconds"):
+        nb_values = len(values)
+        if unit != "rotations":
+            smoothing_factor *= 1000
+            if unit == "minutes":
+                smoothing_factor *= 60 #dt.timedelta(minutes = smoothing_factor)
+            elif unit == "hours":
+                smoothing_factor *= 3600 #dt.timedelta(hours = smoothing_factor)
+
+            smoothing_factor = int(smoothing_factor / self.avg_dt)
+
+        a = 0.75 # For a wavelet of around 12 seconds
+        t0 = 0
+        wave_fct = lambda t: -(t - t0) * np.exp(-(t-t0)**2 / (2*a)**2 / np.sqrt(2*np.pi) / a**3)
+
+        window = np.linspace(-smoothing_factor/2, smoothing_factor/2, smoothing_factor)
+        window = wave_fct(window)
+
+        # plt.plot(np.linspace(-smoothing_factor/2, smoothing_factor/2, smoothing_factor), window)
+        # plt.show()
+
+        smooth_values = np.convolve(values, window, 'same')
+        ### Correct the edge cases where the window does not overlapp completely.
+        for i in range(int(smoothing_factor/2)):
+            smooth_values[i]      *=  smoothing_factor / (smoothing_factor/2 + i)
+            smooth_values[-1 - i] *=  smoothing_factor / (smoothing_factor/2 + i + 1) #Not sure why it needs a +1, but it works.
+
+        return smooth_values
+
 
     def GetSliddingAverage(self, values, times, smoothing_factor, unit):
         """Given a list of values, a list of their associated times, the smoothing factor and its unit, return an array of smooth values. If unit==rotations each data is averaged with a window of smoothing_factor rotations centered on itself.
@@ -1160,10 +1186,8 @@ class PTCUBottle(Bottle):
         #         self.tail_jump = self.rotations[-1].time - self.tail_jump
 
             # Delete all rotations before the head and after the tail jump
-        self.rotations = [
-            r for r in self.rotations if self.head_jump <= r.time < self.tail_jump]
-        print(len(self.rotations), "good rotations in", self.nb_rot, ";",
-              self.nb_rot - len(self.rotations), "deleted because of time jumps.")
+        self.rotations = [r for r in self.rotations if self.head_jump <= r.time <= self.tail_jump]
+        print(len(self.rotations), "good rotations in", self.nb_rot, ";", self.nb_rot - len(self.rotations), "deleted because of time jumps.")
         self.nb_rot = len(self.rotations)
 
         # print(self.head_jump, self.tail_jump, self.rotations[0].time, self.rotations[-1].time)
