@@ -861,14 +861,21 @@ class Bottle:
                 smoothing_factor *= 3600 #dt.timedelta(hours = smoothing_factor)
 
             smoothing_factor = int(smoothing_factor / self.avg_dt)
+        if smoothing_factor % 2 == 1:
+            smoothing_factor += 1
 
+        print('smoothing_factor',smoothing_factor)
         window = np.ones(smoothing_factor) / smoothing_factor
+        print('smoothing_factor', window)
+        # smooth_values = signal.fftconvolve(values, window, 'same')
+        print(values[:3])
         smooth_values = np.convolve(values, window, 'same')
-        ### Correct the edge cases where the window does not overlapp completely.
-        for i in range(int(smoothing_factor/2)):
-            smooth_values[i]      *=  smoothing_factor / (smoothing_factor/2 + i)
-            smooth_values[-1 - i] *=  smoothing_factor / (smoothing_factor/2 + i + 1) #Not sure why it needs a +1, but it works.
-
+        print(smooth_values[:3], values[0]*window[0], values[0]*window[0] + values[1]*window[1])
+        ### Correct the edge cases where the window does not overlap completely.
+        for i in range(int(smoothing_factor / 2)):
+            smooth_values[i]      *=  smoothing_factor / (np.ceil(smoothing_factor / 2) + i)
+            smooth_values[-1 - i] *=  smoothing_factor / (np.ceil(smoothing_factor / 2) + i + 1) #Not sure why it needs a +1, but it works.
+            print(smooth_values[:3])
         return smooth_values
 
 

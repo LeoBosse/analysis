@@ -226,8 +226,10 @@ class Mixer:
 
 			# self.MakeFFT(bottle)
 
-			self.MakeSmartCorrelationPlots(bottle, None, smooth=True)
-			self.MakeSmartCorrelationPlots(bottle, None, smooth=False)
+			self.MakeSmartCorrelationPlots(bottle, None, smooth=True, COMP = "DoLP")
+			self.MakeSmartCorrelationPlots(bottle, None, smooth=True, COMP = "AoLP")
+			self.MakeSmartCorrelationPlots(bottle, None, smooth=False, COMP = "DoLP")
+			self.MakeSmartCorrelationPlots(bottle, None, smooth=False, COMP = "AoLP")
 
 			# for m in self.J2RAYS1_models:
 			# 	self.SubtractModel(bottle, m)
@@ -418,6 +420,8 @@ class Mixer:
 
 		self.marker_size = 5 # Size of the points ised for all plots
 		self.single_star_size = self.marker_size*5 # When plotting the apparent angle of B AoBapp or the light pollution Rayleighj angle AoRD, control the size of the ztar markers.
+		self.marker = "." #Linestyle of the polarisation parameters. "." or "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
+		self.linestyle = "" #Linestyle of the polarisation parameters. "." or "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
 
 		self.show_Ipola = False # Show the plot for I0 * DoLP, i.e. the flux of polarized light
 		self.show_Iref = False # For CarmenCru only. Show the reference channel with no polarizing lens
@@ -430,8 +434,8 @@ class Mixer:
 		self.show_raw_data = 1 # Show the data with no slidding average. All rotations of the polarizing filter. In black
 		self.show_smooth_data = 1 # Show smoothed data (averageed over the time window defined in the input file)
 
-		self.show_error_bars 		= True # Show error bars for the raw cru data. in grey
-		self.show_smooth_error_bars = 0 # Show error bars for the raw cru data. in grey
+		self.show_error_bars 		= 1 # Show error bars for the raw cru data. in grey
+		self.show_smooth_error_bars = 1 # Show error bars for the raw cru data. in grey
 		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
 
 
@@ -788,23 +792,23 @@ class Mixer:
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
-				l_all_I0, = self.ax1.plot(self.x_axis_list, bottle.all_I0, ".", color = self.all_I0_color, linestyle = 'none', markersize=self.marker_size, label="Intensity", zorder=0)
+				l_all_I0, = self.ax1.plot(self.x_axis_list, bottle.all_I0,  color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0)
 			else:
-				l_all_I0 = self.ax1.errorbar(self.x_axis_list, bottle.all_I0, yerr = bottle.std_I0, fmt=".", ecolor=self.raw_error_bars_color, color = self.all_I0_color , linestyle = 'none', markersize=self.marker_size, label="Intensity", zorder=0, errorevery=self.error_step)
+				l_all_I0 = self.ax1.errorbar(self.x_axis_list, bottle.all_I0, yerr = bottle.std_I0,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0, errorevery=self.error_step)
 
 
 		if self.show_smooth_data and not self.show_smooth_error_bars:
-			# l_smooth_I0, = self.ax1.plot(self.x_axis_list, bottle.smooth_I0, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			# l_smooth_I0, = self.ax1.plot(self.x_axis_list, bottle.smooth_I0, fmt=".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 			y = bottle.smooth_I0
 			if self.show_Ipola:
 				y *= bottle.smooth_DoLP / 100.
-			l_smooth_I0, = self.ax1.plot(self.x_axis_list, y, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			l_smooth_I0, = self.ax1.plot(self.x_axis_list, y, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 		elif self.show_smooth_data:
 			# l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, bottle.smooth_I0, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 			y = bottle.smooth_I0
 			if self.show_Ipola:
 				y *= bottle.smooth_DoLP / 100.
-			l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, y, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+			l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, y, yerr = bottle.std_smooth_I0,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
 
 		if self.show_avg_I0:
@@ -838,7 +842,7 @@ class Mixer:
 			# l_Iref, = self.ax13.plot(self.x_axis_list[1:], bottle.all_Iref[1:], ".", color = "black", linestyle = 'none', markersize=self.marker_size, label="Ref Intensity", zorder=2)
 			# self.ax1_lines.append([l_Iref, l_Iref.get_label()])
 
-			l_smooth_Iref, = self.ax13.plot(self.x_axis_list, bottle.smooth_Iref, ".", color = self.smooth_ref_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Ref Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=2)
+			l_smooth_Iref, = self.ax13.plot(self.x_axis_list, bottle.smooth_Iref, color = self.smooth_ref_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Ref Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=2)
 			self.ax1_lines.append([l_smooth_Iref, l_smooth_Iref.get_label()])
 
 			if self.show_avg_Iref:
@@ -874,15 +878,15 @@ class Mixer:
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
-				l_all_DoLP, = self.ax2.plot(self.x_axis_list, bottle.all_DoLP, ".", color = self.all_I0_color, linestyle = 'none', markersize=self.marker_size, label="DoLP", zorder=0)
+				l_all_DoLP, = self.ax2.plot(self.x_axis_list, bottle.all_DoLP, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0)
 				self.ax2_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
 			else:
-				(l_all_DoLP, _, _) = self.ax2.errorbar(self.x_axis_list, bottle.all_DoLP, yerr = bottle.std_DoLP, fmt=".", ecolor=self.raw_error_bars_color, color = self.all_I0_color, linestyle = 'none', markersize=self.marker_size, label="DoLP", zorder=0, errorevery=self.error_step)
+				(l_all_DoLP, _, _) = self.ax2.errorbar(self.x_axis_list, bottle.all_DoLP, yerr = bottle.std_DoLP,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0, errorevery=self.error_step)
 
 		if self.show_smooth_data and not self.show_smooth_error_bars:
-			l_smooth_DoLP, = self.ax2.plot(self.x_axis_list, bottle.smooth_DoLP, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			l_smooth_DoLP, = self.ax2.plot(self.x_axis_list, bottle.smooth_DoLP, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 		elif  self.show_smooth_data:
-			(l_smooth_DoLP, _, _) = self.ax2.errorbar(self.x_axis_list, bottle.smooth_DoLP, yerr = bottle.std_smooth_DoLP, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+			(l_smooth_DoLP, _, _) = self.ax2.errorbar(self.x_axis_list, bottle.smooth_DoLP, yerr = bottle.std_smooth_DoLP,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
 		self.ax2.set_ylim(bottom = 0)
 
@@ -980,10 +984,10 @@ class Mixer:
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
-				l_all_AoLP, = self.ax3.plot(self.x_axis_list, bottle.all_AoLP * RtoD, ".", color = self.all_I0_color, linestyle = 'none', markersize=self.marker_size, label="AoLP", zorder=0)
+				l_all_AoLP, = self.ax3.plot(self.x_axis_list, bottle.all_AoLP * RtoD, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0)
 
 		if self.show_smooth_data and not self.show_smooth_error_bars:
-			l_smooth_AoLP, = self.ax3.plot(self.x_axis_list, bottle.smooth_AoLP * RtoD, ".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth AoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			l_smooth_AoLP, = self.ax3.plot(self.x_axis_list, bottle.smooth_AoLP * RtoD, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth AoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 
 		if (self.show_error_bars and self.show_raw_data) or self.show_smooth_error_bars:
 			# self.ax3.fill_between(self.x_axis_list, bottle.all_AoLP * RtoD - bottle.std_AoLP, bottle.all_AoLP * RtoD + bottle.std_AoLP, color = "grey")
@@ -1015,12 +1019,12 @@ class Mixer:
 
 			self.ax3.set_ylim(min, max)
 			if (self.show_error_bars and self.show_raw_data):
-				l_all_AoLP = self.ax3.errorbar(self.x_axis_list, bottle.all_AoLP * RtoD, yerr = bottle.std_AoLP * RtoD, fmt=".", ecolor=self.raw_error_bars_color, color = self.all_I0_color, linestyle = 'none', markersize=self.marker_size, label="AoLP", zorder=0, errorevery=self.error_step)
+				l_all_AoLP = self.ax3.errorbar(self.x_axis_list, bottle.all_AoLP * RtoD, yerr = bottle.std_AoLP * RtoD,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0, errorevery=self.error_step)
 				for i, a in ls_all.items():
 					self.ax3.vlines(i, a[0], a[1], colors = self.raw_error_bars_color, zorder=0) #"green", linewidth=5)#
 
 			if self.show_smooth_data and self.show_smooth_error_bars:
-				l_smooth_AoLP = self.ax3.errorbar(self.x_axis_list, bottle.smooth_AoLP * RtoD, yerr = bottle.std_smooth_AoLP * RtoD, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="AoLP", zorder=1, errorevery=self.error_step)
+				l_smooth_AoLP = self.ax3.errorbar(self.x_axis_list, bottle.smooth_AoLP * RtoD, yerr = bottle.std_smooth_AoLP * RtoD,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=1, errorevery=self.error_step)
 				# plt.errorbar(list(ls.keys()), [-90, 90], yerr=list(ls.values()), fmt='C0 ')
 				for i, a in ls_smooth.items():
 					self.ax3.vlines(i, a[0], a[1], colors = self.smooth_I0_color, zorder=1) #"green", linewidth=5)#
@@ -1471,26 +1475,40 @@ class Mixer:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_angles_comp.png', bbox_inches='tight')
 
 
-	def MakeSmartCorrelationPlots(self, bottle, diff_thresholds=None, smooth=True):
-		f2, (ax1, ax2, ax3, ax4) = plt.subplots(ncols=1, nrows=4, figsize=(20, 20), gridspec_kw={'height_ratios':[3, 1, 1, 1]})
+	def MakeSmartCorrelationPlots(self, bottle, diff_thresholds=None, smooth=True, COMP = None):
 
-		ax3.get_shared_x_axes().join(ax2, ax3)
-		ax4.get_shared_x_axes().join(ax2, ax4)
+		nb_subplots = 3
+
+		gridspec = [nb_subplots - 1].extend([1]*(nb_subplots-1))
+
+		f2, axs = plt.subplots(ncols=1, nrows=nb_subplots, figsize=(20, 20), gridspec_kw = {'hspace':0, 'height_ratios':gridspec})
+
+		axs[2].get_shared_x_axes().join(axs[1], axs[2])
+		if nb_subplots > 3:
+			axs[3].get_shared_x_axes().join(axs[1], axs[3])
 
 		colors = ["b", 'k', "r", 'y', 'g']
 		masks = []
 
+		if not COMP:
+			COMP = "dolp"
+
 		mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
+
 		X_array = bottle.I0_diff
 		Y_array = bottle.smooth_DoLP
+		if COMP.lower() == "aolp":
+			Y_array = bottle.smooth_AoLP * RtoD
 		if not smooth:
 			# mask_array = bottle.GetWaveletTransform(bottle.all_I0_diff, 12, unit = "seconds") #bottle.all_I0_diff
-			mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
 			X_array = bottle.all_I0_diff
 			Y_array = bottle.all_DoLP
+			if COMP.lower() == "aolp":
+				Y_array = bottle.all_AoLP * RtoD
 
 		if not diff_thresholds:
-			diff_thresholds = np.percentile(mask_array, [20, 80])
+			# diff_thresholds = np.percentile(mask_array, [25, 75])
+			diff_thresholds = [-0.5, 0.5]
 
 
 		diff_thresholds = np.sort(diff_thresholds)
@@ -1500,43 +1518,73 @@ class Mixer:
 			masks.append((diff_thresholds[id-1] <= mask_array) * (mask_array < diff_thresholds[id]))
 		masks.append(mask_array >= diff_thresholds[-1])
 
+		subplots_counter = 0
+
 		for im, m in enumerate(masks):
-			if im != 1:
-				X = np.ma.masked_equal(X_array * m, 0)
-				Y = np.ma.masked_equal(Y_array * m, 0)
-				ax1.plot(X, Y, ".", color = colors[im], alpha = 1)
+			# if im != 1:
+			X = np.ma.masked_equal(X_array * m, 0)
+			Y = np.ma.masked_equal(Y_array * m, 0)
+			axs[subplots_counter].plot(X, Y, ".", color = colors[im], alpha = 1)
 
-		# ax1.plot(mask_array, bottle.all_DoLP, ".")
-		ax1.set_xlabel("Dérivée Intensity")
-		ax1.set_ylabel("DoLP (%)")
+		# axs[subplots_counter].plot(mask_array, bottle.all_DoLP, ".")
+
+		axs[subplots_counter].xaxis.tick_top()
+		axs[subplots_counter].set_xlabel("Dérivée Intensity")
+		axs[subplots_counter].xaxis.set_label_position('top')
+		if COMP.lower() == "aolp":
+			axs[subplots_counter].set_ylabel("AoLP (deg)")
+		else:
+			axs[subplots_counter].set_ylabel("DoLP (%)")
 
 
-		# ax2.plot(self.x_axis_list, bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth), "-")
-		ax2.plot(self.x_axis_list, mask_array, ".")
+
+		#Slidding correlation subplot
+		# subplots_counter += 1
 		#
-		ax2.fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[0], diff_thresholds[0]], np.min(mask_array), color = colors[0], zorder=-100, alpha = 0.3)
-		for it in range(1, len(diff_thresholds)):
-			ax2.fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[it], diff_thresholds[it]], diff_thresholds[it-1], color = colors[it], zorder=-100, alpha = 0.3)
+		# axs[subplots_counter].plot(self.x_axis_list, bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth), "-")
+		# axs[subplots_counter].plot(self.x_axis_list, mask_array, ".")
+		# #
+		# axs[subplots_counter].fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[0], diff_thresholds[0]], np.min(mask_array), color = colors[0], zorder=-100, alpha = 0.3)
+		# for it in range(1, len(diff_thresholds)):
+		# 	axs[subplots_counter].fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[it], diff_thresholds[it]], diff_thresholds[it-1], color = colors[it], zorder=-100, alpha = 0.3)
+		#
+		# axs[subplots_counter].fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[-1], diff_thresholds[-1]], np.max(mask_array), color = colors[len(diff_thresholds)], zorder=-100, alpha = 0.3)
+		# # axs[subplots_counter].set_ylabel("dI")
+		# axs[subplots_counter].set_ylabel("Corr")
 
-		ax2.fill_between([self.x_axis_list[0], self.x_axis_list[-1]], [diff_thresholds[-1], diff_thresholds[-1]], np.max(mask_array), color = colors[len(diff_thresholds)], zorder=-100, alpha = 0.3)
-		# ax2.set_ylabel("dI")
-		ax2.set_ylabel("Corr")
 
+		#Flux and DoLP subplot
+		subplots_counter += 1
 
-		ax33 = ax3.twinx()
-		ax3.plot(self.x_axis_list, Y_array, "r-")
-		ax33.plot(self.x_axis_list, bottle.all_I0, "b-")
-		ax3.set_ylabel("I,  DoLP")
+		ax33 = axs[subplots_counter].twinx()
+		axs[subplots_counter].plot(self.x_axis_list, Y_array, "r-")
+		if not smooth:
+			ax33.plot(self.x_axis_list, bottle.all_I0, "b-")
+		else:
+			ax33.plot(self.x_axis_list, bottle.smooth_I0, "b-")
+		if COMP.lower() == "aolp":
+			axs[subplots_counter].set_ylabel("I,  AoLP")
+		else:
+			axs[subplots_counter].set_ylabel("I,  DoLP")
 
-		ax44 = ax4.twinx()
-		ax4.plot(self.x_axis_list, Y_array, "r-")
+		#dFlux/dt and DoLP subplot
+		subplots_counter += 1
+
+		ax44 = axs[subplots_counter].twinx()
+		axs[subplots_counter].plot(self.x_axis_list, Y_array, "r-")
 		ax44.plot(self.x_axis_list, X_array, "b-")
-		ax4.set_ylabel("dI, DoLP")
-		ax4.set_xlabel(self.xlabel)
+		if COMP.lower() == "aolp":
+			axs[subplots_counter].set_ylabel("dI,  AoLP")
+		else:
+			axs[subplots_counter].set_ylabel("dI,  DoLP")
+		axs[subplots_counter].set_xlabel(self.xlabel)
+
+
+		# f2.suptitle(f"smooth:{smooth}; {COMP.upper()}")
 
 		print("Saving correlation in", bottle.data_file_name + "/" + bottle.saving_name + '_smart_correlations.png')
 		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_S' + str(smooth) + '_smart_correlation.png', bbox_inches='tight')
+			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_S' + str(smooth) + COMP.upper() + '_smart_correlation.png', bbox_inches='tight')
 		else:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + '_S' + str(smooth) + "/" + bottle.saving_name + '_smart_correlation.png', bbox_inches='tight')
 
