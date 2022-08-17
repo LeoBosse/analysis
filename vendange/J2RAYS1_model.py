@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-import pymc3 as pm
+# import pymc3 as pm
 import arviz as az
 import matplotlib as mpl
 import matplotlib.pyplot as plt

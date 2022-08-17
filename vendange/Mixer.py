@@ -895,8 +895,8 @@ class Mixer:
 		if  self.show_smooth_data:
 			self.ax2_lines.append([l_smooth_DoLP, l_smooth_DoLP.get_label()])
 
-		if bottle.location.lower() == "skibotn" and bottle.filters == "br" and bottle.DateTime().date() == dt.date(2019, 3, 7):
-			self.ax2.set_ylim((0, 5))
+		# if bottle.location.lower() == "skibotn" and bottle.filters == "br" and bottle.DateTime().date() == dt.date(2019, 3, 7):
+		# 	self.ax2.set_ylim((0, 5))
 
 		if self.show_avg_DoLP:
 			l_avg_DoLP, = self.ax2.plot(self.x_axis_list,[bottle.DoLP_average] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.DoLP_average)[:4])

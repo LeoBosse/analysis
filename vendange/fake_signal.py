@@ -166,7 +166,7 @@ def FillParameterSpace(param_name, param_space, function, function_keywords=None
 
 
 N_pts = 1000  #Number of points for one turn of the polarising filter
-N_rot = 600
+N_rot = 300
 filter_angles = np.linspace(0, N_rot * 2*np.pi, N_rot * N_pts) #List of angles (rad) for the polarising filter between 0 and 2π.
 
 x_axis = None
@@ -181,11 +181,11 @@ x_axis = None
 ##########
 
 ### NeonSignal
-fig_title = "Polarisation for a random neon signal in time"
+fig_title = "Polarisation for a perfect neon signal in time"
 x_axis_label = 'Time (Rotation nb of the pola filter)'
 x_axis = range(N_rot)
 # signal = NeonSignal(I = 1, D = 1, on_time = 9.67, off_time = 11.33, flash_time = 4.7, flash_width = 45*DtoR, flash_space = 130*DtoR, phase_time = 15)
-signal = NeonSignal(I = 1, D = 1, on_time = 10, off_time = 10, flash_time = 5, flash_width = 45*DtoR, flash_space = 150*DtoR, phase_time = 15)
+signal = NeonSignal(I = 1, D = 1, on_time = 10.25, off_time = 10.25, flash_time = 10, flash_width = 45*DtoR, flash_space = 180*DtoR, phase_time = 15.3)
 V, Vcos, Vsin = GetStokesTime(signal)
 I_list, DoLP_list, AoLP_list = GetPola(V, Vcos, Vsin)
 plt.plot(filter_angles/TAU, signal)
