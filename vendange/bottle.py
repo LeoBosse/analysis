@@ -10,13 +10,15 @@ import os
 from copy import deepcopy
 from subprocess import call
 import datetime as dt
-import chaosmagpy as chaos
 import h5py as h5
 
 import observation
 import geometry
 from utils import *
 from vendange_configuration import *
+
+import chaosmagpy as chaos
+
 
 # Bottle classes.
 
@@ -431,15 +433,16 @@ class Bottle:
         # print(self.std_I0)
         # print(self.std_smooth_I0)
 
-        self.std_DoLP = np.sqrt(
-            4 * (1 + ((self.all_DoLP / 100) ** 2 / 2)) / (self.all_I0 * self.avg_dt)) * 100
-        self.std_smooth_DoLP = np.sqrt(
-            4 * (1 + ((self.smooth_DoLP / 100) ** 2 / 2)) / (self.smooth_I0 * smoothing_factor)) * 100
+        self.std_DoLP = np.sqrt(4 * (1 + ((self.all_DoLP / 100) ** 2 / 2)) / (self.all_I0 * self.avg_dt)) * 100
+        self.std_smooth_DoLP = np.sqrt(4 * (1 + ((self.smooth_DoLP / 100) ** 2 / 2)) / (self.smooth_I0 * smoothing_factor)) * 100
 
-        self.std_AoLP = np.sqrt(
-            1 / ((self.all_DoLP / 100) ** 2 * self.all_I0 * self.avg_dt))
-        self.std_smooth_AoLP = np.sqrt(
-            1 / ((self.smooth_DoLP / 100) ** 2 * self.smooth_I0 * smoothing_factor))
+        self.std_AoLP = np.sqrt(1 / ((self.all_DoLP / 100) ** 2 * self.all_I0 * self.avg_dt))
+        self.std_smooth_AoLP = np.sqrt(1 / ((self.smooth_DoLP / 100) ** 2 * self.smooth_I0 * smoothing_factor))
+        for i in range(len(self.std_AoLP)):
+            self.std_AoLP[i] = min(np.pi, self.std_AoLP[i])
+            self.std_smooth_AoLP[i] = min(np.pi, self.std_smooth_AoLP[i])
+
+
         self.smooth_AoLP_upper = self.smooth_AoLP + self.std_smooth_AoLP
         self.smooth_AoLP_lower = self.smooth_AoLP - self.std_smooth_AoLP
         # print(self.smooth_DoLP.shape, self.sm ooth_AoLP.shape, self.var_DoLP.shape, self.var_AoLP.shape)
@@ -450,22 +453,47 @@ class Bottle:
         self.smooth_SN = SN(
             self.smooth_I0, self.smooth_DoLP / 100, smoothing_factor)
 
-        self.I0_diff = np.gradient(self.smooth_I0, self.avg_dt)
-        self.all_I0_diff = np.gradient(self.all_I0, self.avg_dt)
 
+        self.I0_diff = np.gradient(self.smooth_I0, self.avg_dt)
+        self.I0_diff_std = self.GetDiffErrors(smooth=True)
+        self.all_I0_diff = np.gradient(self.all_I0, self.avg_dt)
+        self.all_I0_diff_std = self.GetDiffErrors(smooth=False)
 
         # self.smooth_I0_mean = np.mean(self.smooth_I0)
         # self.smooth_I0_var = np.var(self.smooth_I0)
         #
         # self.smooth_I0 = (self.smooth_I0 - self.smooth_I0_mean) / self.smooth_I0_var
 
-
         self.GetSliddingCorrCoef()
 
-        self.SetUnifyAngles()
-        # self.graph_angle_shift = 0
+        # self.SetUnifyAngles()
+        self.graph_angle_shift = 0
 
         print("Get Smooth Lists: DONE")
+
+    def GetDiffErrors(self, smooth=True):
+        if smooth:
+            I = self.smooth_I0
+            I_err = self.std_smooth_I0
+            d = self.I0_diff
+        else:
+            I = self.all_I0
+            I_err = self.std_I0
+            d = self.all_I0_diff
+
+        print(I_err)
+
+        d_after = np.append(I_err[1:], I_err[-1])
+        d_before = np.append(I_err[0], I_err[:-1])
+        I_after = np.append(I[1:], I[-1])
+        I_before = np.append(I[0], I[:-1])
+
+        diff_errors = abs(d) * .5 * np.sqrt(d_after / I_after**2 + d_before / I_before**2)
+
+        print(diff_errors)
+
+        return diff_errors
+
 
     def SetUnifyAngles(self):
         print("Unifying AoLPs for least deviation")

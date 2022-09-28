@@ -4,6 +4,7 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+# plt.ion()
 from matplotlib import rc
 #matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
 rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
@@ -226,10 +227,10 @@ class Mixer:
 
 			# self.MakeFFT(bottle)
 
-			self.MakeSmartCorrelationPlots(bottle, None, smooth=True, COMP = "DoLP")
-			self.MakeSmartCorrelationPlots(bottle, None, smooth=True, COMP = "AoLP")
-			self.MakeSmartCorrelationPlots(bottle, None, smooth=False, COMP = "DoLP")
-			self.MakeSmartCorrelationPlots(bottle, None, smooth=False, COMP = "AoLP")
+			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "DoLP")
+			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "AoLP")
+			self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
+			self.MakeCleanCorrelationPlots(bottle, None, smooth=False)
 
 			# for m in self.J2RAYS1_models:
 			# 	self.SubtractModel(bottle, m)
@@ -420,8 +421,8 @@ class Mixer:
 
 		self.marker_size = 5 # Size of the points ised for all plots
 		self.single_star_size = self.marker_size*5 # When plotting the apparent angle of B AoBapp or the light pollution Rayleighj angle AoRD, control the size of the ztar markers.
-		self.marker = "." #Linestyle of the polarisation parameters. "." or "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
-		self.linestyle = "" #Linestyle of the polarisation parameters. "." or "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
+		self.marker = "" #Linestyle of the polarisation parameters. "." or "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
+		self.linestyle = "-" #Linestyle of the polarisation parameters. "." or "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
 
 		self.show_Ipola = False # Show the plot for I0 * DoLP, i.e. the flux of polarized light
 		self.show_Iref = False # For CarmenCru only. Show the reference channel with no polarizing lens
@@ -429,9 +430,9 @@ class Mixer:
 		self.show_time = not comp #Don't touch!
 		self.time_format = "LT" #LT or UT. Self explainatory. Control the time format of the x-axis
 		self.time_label = "LTC" # The title of the time x-axis
-		self.use_24h_time_format = 0
+		self.use_24h_time_format = 1
 
-		self.show_raw_data = 1 # Show the data with no slidding average. All rotations of the polarizing filter. In black
+		self.show_raw_data = 1 and not comp # Show the data with no slidding average. All rotations of the polarizing filter. In black
 		self.show_smooth_data = 1 # Show smoothed data (averageed over the time window defined in the input file)
 
 		self.show_error_bars 		= 1 # Show error bars for the raw cru data. in grey
@@ -746,7 +747,7 @@ class Mixer:
 		if bottle.filters:
 			self.pola_color = bottle.filters[0]
 			if comp:
-				self.smooth_I0_color = "xkcd:black"
+				self.smooth_I0_color = "xkcd:olive"
 			else:
 				if 	 self.pola_color == "r": self.smooth_I0_color = "xkcd:red"
 				elif self.pola_color == "v": self.smooth_I0_color = "xkcd:green"
@@ -778,225 +779,220 @@ class Mixer:
 		self.all_SN_color = "black"
 		self.smooth_SN_color = self.smooth_I0_color
 
-	def MakePlots(self, bottle):
-		#Plotting the mean intensity I0, DoLP, AoLP for each rotation and more!
 
-		# if self.show_error_bars:
-		# 	smooth_yerr = bottle.var_smooth_I0
-		# 	yerr = bottle.var_I0
-		# 	yerr = None
-		# else:
-		# 	smooth_yerr = None
-
-		print("START PLOTTING")
+	def PlotFlux(self, ax, bottle, ax_lines=[]):
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
-				l_all_I0, = self.ax1.plot(self.x_axis_list, bottle.all_I0,  color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0)
+				l_all_I0, = ax.plot(self.x_axis_list, bottle.all_I0,  color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0)
 			else:
-				l_all_I0 = self.ax1.errorbar(self.x_axis_list, bottle.all_I0, yerr = bottle.std_I0,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0, errorevery=self.error_step)
+				l_all_I0 = ax.errorbar(self.x_axis_list, bottle.all_I0, yerr = bottle.std_I0,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0, errorevery=self.error_step)
 
 
 		if self.show_smooth_data and not self.show_smooth_error_bars:
-			# l_smooth_I0, = self.ax1.plot(self.x_axis_list, bottle.smooth_I0, fmt=".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			# l_smooth_I0, = ax.plot(self.x_axis_list, bottle.smooth_I0, fmt=".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 			y = bottle.smooth_I0
 			if self.show_Ipola:
 				y *= bottle.smooth_DoLP / 100.
-			l_smooth_I0, = self.ax1.plot(self.x_axis_list, y, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			l_smooth_I0, = ax.plot(self.x_axis_list, y, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 		elif self.show_smooth_data:
-			# l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, bottle.smooth_I0, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+			# l_smooth_I0 = ax.errorbar(self.x_axis_list, bottle.smooth_I0, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 			y = bottle.smooth_I0
 			if self.show_Ipola:
 				y *= bottle.smooth_DoLP / 100.
-			l_smooth_I0 = self.ax1.errorbar(self.x_axis_list, y, yerr = bottle.std_smooth_I0,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+			l_smooth_I0 = ax.errorbar(self.x_axis_list, y, yerr = bottle.std_smooth_I0,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
 
 		if self.show_avg_I0:
-			l_avg_I0, = self.ax1.plot(self.x_axis_list,[bottle.I0_average] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.I0_average)[:4])
-			self.ax1_lines.append([l_avg_I0, l_avg_I0.get_label()])
+			l_avg_I0, = ax.plot(self.x_axis_list,[bottle.I0_average] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.I0_average)[:4])
+			ax_lines.append([l_avg_I0, l_avg_I0.get_label()])
 
 		if self.show_raw_data:
-			self.ax1_lines.append([l_all_I0, l_all_I0.get_label()])
+			ax_lines.append([l_all_I0, l_all_I0.get_label()])
 		if  self.show_smooth_data:
-			self.ax1_lines.append([l_smooth_I0, l_smooth_I0.get_label()])
+			ax_lines.append([l_smooth_I0, l_smooth_I0.get_label()])
+
 
 
 		# ### Graph the I0 * DoLP line on the first subplot
-		# self.ax14 = self.ax1.twinx()
-		# # l_all_IDoLP, = self.ax14.plot(self.x_axis_list, bottle.all_I0 * bottle.all_DoLP, "k.", linestyle = 'none', markersize=self.marker_size, label="All Intensity * DoLP", zorder=2)
-		# smooth_IDoLP, = self.ax14.plot(self.x_axis_list, bottle.smooth_I0 * bottle.smooth_DoLP / 100. * bottle.smooth_AoLP
+		# ax4 = ax.twinx()
+		# # l_all_IDoLP, = ax4.plot(self.x_axis_list, bottle.all_I0 * bottle.all_DoLP, "k.", linestyle = 'none', markersize=self.marker_size, label="All Intensity * DoLP", zorder=2)
+		# smooth_IDoLP, = ax4.plot(self.x_axis_list, bottle.smooth_I0 * bottle.smooth_DoLP / 100. * bottle.smooth_AoLP
 		#
 		# cd, ".", color = "xkcd:hot pink", linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity * DoLP", zorder=2)
 		#
-		# self.ax14.set_ylabel("Ref intensity")
+		# ax4.set_ylabel("Ref intensity")
 
 
 
 		if not bottle.NoVref and bottle.instrument_name == "carmen" and self.show_Iref:
-			self.ax13 = self.ax1.twinx()
+			ax3 = ax.twinx()
 			# ax13.set_xlim(ax1.get_xlim())
 			# xticks = plt.xticks()[0] * self.divisor
 			# xticks = [t + bottle.time + bottle.head_jump for t in xticks]
 			# ax12.set_xticklabels([dt.strftime("%H:%M:%S", dt.localtime(st)) for st in xticks])
 
-			# l_Iref, = self.ax13.plot(self.x_axis_list[1:], bottle.all_Iref[1:], ".", color = "black", linestyle = 'none', markersize=self.marker_size, label="Ref Intensity", zorder=2)
-			# self.ax1_lines.append([l_Iref, l_Iref.get_label()])
+			# l_Iref, = ax3.plot(self.x_axis_list[1:], bottle.all_Iref[1:], ".", color = "black", linestyle = 'none', markersize=self.marker_size, label="Ref Intensity", zorder=2)
+			# ax_lines.append([l_Iref, l_Iref.get_label()])
 
-			l_smooth_Iref, = self.ax13.plot(self.x_axis_list, bottle.smooth_Iref, color = self.smooth_ref_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Ref Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=2)
-			self.ax1_lines.append([l_smooth_Iref, l_smooth_Iref.get_label()])
+			l_smooth_Iref, = ax3.plot(self.x_axis_list, bottle.smooth_Iref, color = self.smooth_ref_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Ref Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=2)
+			ax_lines.append([l_smooth_Iref, l_smooth_Iref.get_label()])
 
 			if self.show_avg_Iref:
-				l_avg_Iref, = self.ax13.plot(self.x_axis_list, [bottle.Iref_average] * len(self.x_axis_list), color = self.smooth_ref_color, label="Avg Ref Intensity " + str(bottle.Iref_average)[:4], zorder=2)
-				self.ax1_lines.append([l_avg_Iref, l_avg_Iref.get_label()])
-			self.ax13.set_ylabel("Ref intensity")
+				l_avg_Iref, = ax3.plot(self.x_axis_list, [bottle.Iref_average] * len(self.x_axis_list), color = self.smooth_ref_color, label="Avg Ref Intensity " + str(bottle.Iref_average)[:4], zorder=2)
+				ax_lines.append([l_avg_Iref, l_avg_Iref.get_label()])
+			ax3.set_ylabel("Ref intensity")
 
 
-
-		if self.allsky_data_available and self.show_allsky:
-			self.ax14 = self.ax1.twinx()
-			offset = 10
-			# new_fixed_axis = self.ax14.get_grid_helper().new_fixed_axis
-			# self.ax14.axis["right"] = new_fixed_axis(loc="right", axes=par2, offset=(offset, 0))
-			#
-			# self.ax14.axis["right"].toggle(all=True)
-
-			l_ASI, = self.ax14.plot(self.allsky_data.GetNormTimes(bottle.DateTime("start", format=self.time_label), self.divisor), self.allsky_data.brightness, "*", color = "orange", linestyle = 'none', markersize=self.marker_size, label="AllSKy Imager", zorder=2)
-			self.ax1_lines.append([l_ASI, l_ASI.get_label()])
-			# print(self.ax14.get_yticklabels())
-			# self.ax14.set_yticklabels([l.get_text() for l in self.ax14.get_yticklabels()], horizontalalignment = "left")
-			# self.ax14.tick_params(direction='in', labelright=True, pad=-5)
-			self.ax14.set_ylabel("ASI Brightness")
-
-
-
-		# if self.show_error_bars:
-		# 	smooth_yerr = bottle.var_smooth_DoLP
-		# 	yerr = bottle.var_DoLP
-		# 	yerr = None
-		# else:
-		# 	smooth_yerr = None
+	def PlotDoLP(self, ax, bottle, ax_lines=[]):
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
-				l_all_DoLP, = self.ax2.plot(self.x_axis_list, bottle.all_DoLP, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0)
-				self.ax2_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
+				l_all_DoLP, = ax.plot(self.x_axis_list, bottle.all_DoLP, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0)
+				ax_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
 			else:
-				(l_all_DoLP, _, _) = self.ax2.errorbar(self.x_axis_list, bottle.all_DoLP, yerr = bottle.std_DoLP,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0, errorevery=self.error_step)
+				(l_all_DoLP, _, _) = ax.errorbar(self.x_axis_list, bottle.all_DoLP, yerr = bottle.std_DoLP,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0, errorevery=self.error_step)
 
 		if self.show_smooth_data and not self.show_smooth_error_bars:
-			l_smooth_DoLP, = self.ax2.plot(self.x_axis_list, bottle.smooth_DoLP, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			l_smooth_DoLP, = ax.plot(self.x_axis_list, bottle.smooth_DoLP, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 		elif  self.show_smooth_data:
-			(l_smooth_DoLP, _, _) = self.ax2.errorbar(self.x_axis_list, bottle.smooth_DoLP, yerr = bottle.std_smooth_DoLP,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+			(l_smooth_DoLP, _, _) = ax.errorbar(self.x_axis_list, bottle.smooth_DoLP, yerr = bottle.std_smooth_DoLP,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
-		self.ax2.set_ylim(bottom = 0)
+		ax.set_ylim(bottom = 0)
 
 		if self.show_raw_data:
-			self.ax2_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
+			ax_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
 		if  self.show_smooth_data:
-			self.ax2_lines.append([l_smooth_DoLP, l_smooth_DoLP.get_label()])
+			ax_lines.append([l_smooth_DoLP, l_smooth_DoLP.get_label()])
 
 		# if bottle.location.lower() == "skibotn" and bottle.filters == "br" and bottle.DateTime().date() == dt.date(2019, 3, 7):
-		# 	self.ax2.set_ylim((0, 5))
+		# 	ax.set_ylim((0, 5))
 
 		if self.show_avg_DoLP:
-			l_avg_DoLP, = self.ax2.plot(self.x_axis_list,[bottle.DoLP_average] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.DoLP_average)[:4])
-			self.ax2_lines.append([l_avg_DoLP, l_avg_DoLP.get_label()])
+			l_avg_DoLP, = ax.plot(self.x_axis_list,[bottle.DoLP_average] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.DoLP_average)[:4])
+			ax_lines.append([l_avg_DoLP, l_avg_DoLP.get_label()])
 
+
+
+	def PlotB(self, ax, bottle, ax_lines=[]):
 		if self.mag_data and self.show_mag_data:
-			self.ax21 = self.ax2.twinx()
+			ax1 = ax.twinx()
 
 			# print(self.mag_data.times[0], self.mag_data.times[-1])
 			# print(self.mag_data.GetNormTimes(self.divisor)[0], self.mag_data.GetNormTimes(self.divisor)[-1])
 			component = "Horiz"
 			t, d = self.mag_data.GetComponent(component, self.divisor)
 			# t, d = self.mag_data.GetDerivative(component, self.divisor)
-			l_mag_data, = self.ax21.plot(t, d, "orange", label="B (nT)")
-			# l_mag_data, = self.ax21.plot(t, d, self.mag_color, label="dB/dt (nT/s)", zorder=2, linewidth=2)
+			l_mag_data, = ax1.plot(t, d, "orange", label="B (nT)")
+			# l_mag_data, = ax1.plot(t, d, self.mag_color, label="dB/dt (nT/s)", zorder=2, linewidth=2)
 			# print(t, d)
 			# Md, md = max(d), min(d)
-			# self.ax21.set_ylim(min(-20, md, -abs(Md)), max(20, Md, abs(md)))
-			self.ax2_lines.append([l_mag_data, l_mag_data.get_label()])
-			self.ax21.set_ylabel("B (nT)")
-			# self.ax21.set_ylabel("dB/dt (nT/s)")
+			# ax1.set_ylim(min(-20, md, -abs(Md)), max(20, Md, abs(md)))
+			ax_lines.append([l_mag_data, l_mag_data.get_label()])
+			ax1.set_ylabel("B (nT)")
+			# ax1.set_ylabel("dB/dt (nT/s)")
 
 
-		if self.show_eiscat and self.eiscat_data.valid:
 
-			time_format = "delta"
-			time_delta = 0
-			if self.use_24h_time_format:
-				time_format = "datetime"
-				if self.time_format == "LT":
-					time_delta = dt.timedelta(hours=1)
+	def PlotAllSky(self, ax, bottle, ax_lines=[]):
 
-			### Plot a first eiscat parameter onto the top graph
-			# parameter = "v_i"
-			if self.eiscat_type != "uhf_v":
-				self.ax22 = self.ax1.twinx()
-				parameter = "ne"
-				altitude = bottle.GetAltitude()
+		if self.allsky_data_available and self.show_allsky:
+			ax4 = ax.twinx()
+			offset = 10
+			# new_fixed_axis = ax4.get_grid_helper().new_fixed_axis
+			# ax4.axis["right"] = new_fixed_axis(loc="right", axes=par2, offset=(offset, 0))
+			#
+			# ax4.axis["right"].toggle(all=True)
 
-				if self.langue == "en":
-					label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m$^{-3}$)"
-				else:
-					label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m$^{-3}$)"
-
-				t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
-				l_eiscat_data, capline, barlinecol = self.ax22.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
-				# Md, md = max(d), min(d)
-				if bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 7):
-					self.ax22.set_ylim((10**11, 4.1*10**11))
-				elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
-					self.ax22.set_ylim((-3*10**10, 5*10**10))
-				self.ax1_lines.append([l_eiscat_data, label])
-				self.ax22.set_ylabel(label)
+			l_ASI, = ax4.plot(self.allsky_data.GetNormTimes(bottle.DateTime("start", format=self.time_label), self.divisor), self.allsky_data.brightness, "*", color = "orange", linestyle = 'none', markersize=self.marker_size, label="AllSKy Imager", zorder=2)
+			ax_lines.append([l_ASI, l_ASI.get_label()])
+			# print(ax4.get_yticklabels())
+			# ax4.set_yticklabels([l.get_text() for l in ax4.get_yticklabels()], horizontalalignment = "left")
+			# ax4.tick_params(direction='in', labelright=True, pad=-5)
+			ax4.set_ylabel("ASI Brightness")
 
 
-			### Plot a second eiscat parameter onto the bottom graph
-			if self.eiscat_type != "uhf_v":
-				self.ax221 = self.ax3.twinx()
-				parameter = "vo"
-			else:
-				parameter = "AoVi"
+	def PlotEiscat(self, bottle):
 
+		if not self.eiscat_data.valid:
+			return
+
+		time_format = "delta"
+		time_delta = 0
+		if self.use_24h_time_format:
+			time_format = "datetime"
+			if self.time_format == "LT":
+				time_delta = dt.timedelta(hours=1)
+
+		### Plot a first eiscat parameter onto the top graph
+		# parameter = "v_i"
+		if self.eiscat_type != "uhf_v":
+			self.ax22 = self.ax1.twinx()
+			parameter = "ne"
 			altitude = bottle.GetAltitude()
+
 			if self.langue == "en":
-				label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m/s)"
+				label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m$^{-3}$)"
 			else:
-				label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m/s)"
+				label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m$^{-3}$)"
 
-			if self.eiscat_type != "uhf_v":
-				t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
-				l_eiscat_data, capline, barlinecol = self.ax221.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
-				# Md, md = max(d), min(d)
-				if bottle.location.lower() == "skibotn" and bottle.filters == "mr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
-					self.ax221.set_ylim((-180, 48))
-				# elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
-				# 	self.ax221.set_ylim((-3*10**10, 5*10**10))
-				self.ax221.set_ylabel(label)
-			else:
-				t, d, e = self.eiscat_data.GetUHFApparentAngle(bottle, time_divisor = self.divisor, time_format = time_format)
-				l_eiscat_data, capline, barlinecol = self.ax3.errorbar(t+time_delta, d*RtoD, color = self.EISCAT_color, fmt = ".", label = label, zorder=2, markersize=self.marker_size*2)
-
-			self.ax3_lines.append([l_eiscat_data, label])
+			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
+			l_eiscat_data, capline, barlinecol = self.ax22.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
+			# Md, md = max(d), min(d)
+			if bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 7):
+				self.ax22.set_ylim((10**11, 4.1*10**11))
+			elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+				self.ax22.set_ylim((-3*10**10, 5*10**10))
+			self.ax1_lines.append([l_eiscat_data, label])
+			self.ax22.set_ylabel(label)
 
 
+		### Plot a second eiscat parameter onto the bottom graph
+		if self.eiscat_type != "uhf_v":
+			self.ax221 = self.ax3.twinx()
+			parameter = "vo"
+		else:
+			parameter = "AoVi"
+
+		altitude = bottle.GetAltitude()
+		if self.langue == "en":
+			label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m/s)"
+		else:
+			label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m/s)"
+
+		if self.eiscat_type != "uhf_v":
+			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
+			l_eiscat_data, capline, barlinecol = self.ax221.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
+			# Md, md = max(d), min(d)
+			if bottle.location.lower() == "skibotn" and bottle.filters == "mr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+				self.ax221.set_ylim((-180, 48))
+			# elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+			# 	self.ax221.set_ylim((-3*10**10, 5*10**10))
+			self.ax221.set_ylabel(label)
+		else:
+			t, d, e = self.eiscat_data.GetUHFApparentAngle(bottle, time_divisor = self.divisor, time_format = time_format)
+			l_eiscat_data, capline, barlinecol = self.ax3.errorbar(t+time_delta, d*RtoD, color = self.EISCAT_color, fmt = ".", label = label, zorder=2, markersize=self.marker_size*2)
+
+		self.ax3_lines.append([l_eiscat_data, label])
+
+
+	def PlotAoLP(self, ax, bottle, ax_lines=[]):
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
-				l_all_AoLP, = self.ax3.plot(self.x_axis_list, bottle.all_AoLP * RtoD, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0)
+				l_all_AoLP, = ax.plot(self.x_axis_list, bottle.all_AoLP * RtoD, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0)
 
 		if self.show_smooth_data and not self.show_smooth_error_bars:
-			l_smooth_AoLP, = self.ax3.plot(self.x_axis_list, bottle.smooth_AoLP * RtoD, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth AoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			l_smooth_AoLP, = ax.plot(self.x_axis_list, bottle.smooth_AoLP * RtoD, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth AoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 
 		if (self.show_error_bars and self.show_raw_data) or self.show_smooth_error_bars:
-			# self.ax3.fill_between(self.x_axis_list, bottle.all_AoLP * RtoD - bottle.std_AoLP, bottle.all_AoLP * RtoD + bottle.std_AoLP, color = "grey")
-			# self.ax3.fill_between(self.x_axis_list, bottle.smooth_AoLP_lower * RtoD, bottle.smooth_AoLP_upper * RtoD, color = "yellow", alpha = 0.5)
+			# ax.fill_between(self.x_axis_list, bottle.all_AoLP * RtoD - bottle.std_AoLP, bottle.all_AoLP * RtoD + bottle.std_AoLP, color = "grey")
+			# ax.fill_between(self.x_axis_list, bottle.smooth_AoLP_lower * RtoD, bottle.smooth_AoLP_upper * RtoD, color = "yellow", alpha = 0.5)
 
 			ls_all = dict()
 			ls_smooth = dict()
 			if bottle.graph_angle_shift == 1:
-				min, mid, max = 0, 90, 180
+				min, mid, max = 90, 180, 270#0, 90, 180
 			elif bottle.graph_angle_shift == 0:
 				min, mid, max = -90, 0, 90
 
@@ -1017,28 +1013,31 @@ class Mixer:
 						temp = s_angle - s_error + 180
 						ls_smooth.update({x:[max, temp]})
 
-			self.ax3.set_ylim(min, max)
+			ax.set_ylim(min, max)
 			if (self.show_error_bars and self.show_raw_data):
-				l_all_AoLP = self.ax3.errorbar(self.x_axis_list, bottle.all_AoLP * RtoD, yerr = bottle.std_AoLP * RtoD,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0, errorevery=self.error_step)
+				l_all_AoLP = ax.errorbar(self.x_axis_list, bottle.all_AoLP * RtoD, yerr = bottle.std_AoLP * RtoD,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0, errorevery=self.error_step)
 				for i, a in ls_all.items():
-					self.ax3.vlines(i, a[0], a[1], colors = self.raw_error_bars_color, zorder=0) #"green", linewidth=5)#
+					ax.vlines(i, a[0], a[1], colors = self.raw_error_bars_color, zorder=0) #"green", linewidth=5)#
 
 			if self.show_smooth_data and self.show_smooth_error_bars:
-				l_smooth_AoLP = self.ax3.errorbar(self.x_axis_list, bottle.smooth_AoLP * RtoD, yerr = bottle.std_smooth_AoLP * RtoD,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=1, errorevery=self.error_step)
+				l_smooth_AoLP = ax.errorbar(self.x_axis_list, bottle.smooth_AoLP * RtoD, yerr = bottle.std_smooth_AoLP * RtoD,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=1, errorevery=self.error_step)
 				# plt.errorbar(list(ls.keys()), [-90, 90], yerr=list(ls.values()), fmt='C0 ')
 				for i, a in ls_smooth.items():
-					self.ax3.vlines(i, a[0], a[1], colors = self.smooth_I0_color, zorder=1) #"green", linewidth=5)#
+					ax.vlines(i, a[0], a[1], colors = self.smooth_I0_color, zorder=1) #"green", linewidth=5)#
 
 		if (self.show_error_bars and self.show_raw_data):
-			self.ax3_lines.append([l_all_AoLP, l_all_AoLP.get_label()])
+			ax_lines.append([l_all_AoLP, l_all_AoLP.get_label()])
 
 		if  self.show_smooth_data and self.show_smooth_error_bars:
-			self.ax3_lines.append([l_smooth_AoLP, l_smooth_AoLP.get_label()])
+			ax_lines.append([l_smooth_AoLP, l_smooth_AoLP.get_label()])
 
 		if self.show_avg_AoLP:
-			l_avg_AoLP, = self.ax3.plot(self.x_axis_list,[bottle.AoLP_average * RtoD] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.AoLP_average * RtoD)[:4])
-			self.ax3_lines.append([l_avg_AoLP, l_avg_AoLP.get_label()])
+			l_avg_AoLP, = ax.plot(self.x_axis_list,[bottle.AoLP_average * RtoD] * len(self.x_axis_list), color = self.smooth_I0_color, label="Avg: " + str(bottle.AoLP_average * RtoD)[:4])
+			ax_lines.append([l_avg_AoLP, l_avg_AoLP.get_label()])
 
+
+
+	def PlotCurrents(self, bottle):
 
 		if self.show_currents and self.eq_currents.valid:
 			time_format = "delta"
@@ -1081,66 +1080,154 @@ class Mixer:
 
 		# self.ax3.set_ylim(45, 60)
 
+
+
+	def PlotAoRD(self, ax, bottle, ax_lines=[]):
+
 		if bottle.observation_type == "fixed":
 			if bottle.AoRD is not False and self.show_AoRD:
 				if bottle.graph_angle_shift == 1:
 					AoRD = SetAngleBounds(bottle.AoRD, 0, np.pi)
 				elif bottle.graph_angle_shift == 0:
 					AoRD = SetAngleBounds(bottle.AoRD, -np.pi/2, np.pi/2)
-				l_AoRD, = self.ax3.plot(self.x_axis_list,[bottle.AoRD * RtoD] * len(self.x_axis_list), linewidth=3, color=self.AoRD_color, label="AoRD: " + str(bottle.AoRD*RtoD)[:5], zorder=2)
-				self.ax3_lines.append([l_AoRD, l_AoRD.get_label()])
-				# l54, = self.ax3.plot(self.x_axis_list,[bottle.AoRD_ortho * RtoD] * len(self.x_axis_list), ":g", linewidth=self.marker_size, label="AoRD ortho: " + str(bottle.AoRD_ortho*RtoD)[:5])
+				l_AoRD, = ax.plot(self.x_axis_list,[bottle.AoRD * RtoD] * len(self.x_axis_list), linewidth=3, color=self.AoRD_color, label="AoRD: " + str(bottle.AoRD*RtoD)[:5], zorder=2)
+				ax_lines.append([l_AoRD, l_AoRD.get_label()])
+				# l54, = ax.plot(self.x_axis_list,[bottle.AoRD_ortho * RtoD] * len(self.x_axis_list), ":g", linewidth=self.marker_size, label="AoRD ortho: " + str(bottle.AoRD_ortho*RtoD)[:5])
 			if (bottle.AoBapp and bottle.AoBlos) is not False and self.show_AoBapp:
 				if bottle.graph_angle_shift == 1:
 					AoBapp = SetAngleBounds(bottle.AoBapp, 0, np.pi)
 				elif bottle.graph_angle_shift == 0:
 					AoBapp = SetAngleBounds(bottle.AoBapp, -np.pi/2, np.pi/2)
-				l_AoBapp, = self.ax3.plot(self.x_axis_list, [AoBapp * RtoD] * len(self.x_axis_list), linewidth=3, color = self.AoBapp_color, label="AoBapp: " + str(bottle.AoBapp*RtoD)[:5], zorder=2)
-				self.ax3_lines.append([l_AoBapp, l_AoBapp.get_label()])
-				# l_AoBapp_ortho, = self.ax3.plot(self.x_axis_list,[bottle.AoBapp_ortho * RtoD] * len(self.x_axis_list), ":b", linewidth=self.marker_size, label="AoBapp ortho: " + str(bottle.AoBapp_ortho*RtoD)[:5])
-				# self.ax3_lines.append([l_AoBapp_ortho, l_AoBapp_ortho.get_label()])
+				l_AoBapp, = ax.plot(self.x_axis_list, [AoBapp * RtoD] * len(self.x_axis_list), linewidth=3, color = self.AoBapp_color, label="AoBapp: " + str(bottle.AoBapp*RtoD)[:5], zorder=2)
+				ax_lines.append([l_AoBapp, l_AoBapp.get_label()])
+				# l_AoBapp_ortho, = ax.plot(self.x_axis_list,[bottle.AoBapp_ortho * RtoD] * len(self.x_axis_list), ":b", linewidth=self.marker_size, label="AoBapp ortho: " + str(bottle.AoBapp_ortho*RtoD)[:5])
+				# ax_lines.append([l_AoBapp_ortho, l_AoBapp_ortho.get_label()])
 
-				# l_AoBlos, = self.ax3.plot(self.x_axis_list,[bottle.AoBlos * RtoD] * len(self.x_axis_list), "orange", label="AoBlos: " + str(bottle.AoBlos*RtoD)[:5])
-				# self.ax3_lines.append([l_AoBlos, l_AoBlos.get_label()])
+				# l_AoBlos, = ax.plot(self.x_axis_list,[bottle.AoBlos * RtoD] * len(self.x_axis_list), "orange", label="AoBlos: " + str(bottle.AoBlos*RtoD)[:5])
+				# ax_lines.append([l_AoBlos, l_AoBlos.get_label()])
 
 		elif self.xaxis_azimut and bottle.observation_type == "fixed_elevation_discrete_rotation":
 			# print("DEBUG plot discrete")
 			if self.show_AoRD:
-				l_AoRD, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "k*", markersize=self.single_star_size*1.5, label="AoRD", zorder=2)
-				l_AoRD, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.single_star_size, label="AoRD", zorder=3)
-				self.ax3_lines.append([l_AoRD, l_AoRD.get_label()])
+				l_AoRD, = ax.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "k*", markersize=self.single_star_size*1.5, label="AoRD", zorder=2)
+				l_AoRD, = ax.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.single_star_size, label="AoRD", zorder=3)
+				ax_lines.append([l_AoRD, l_AoRD.get_label()])
 			if self.show_AoBapp:
-				l_AoBapp, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "k*", markersize=self.single_star_size*1.5, label="AoBapp", zorder=2)
-				l_AoBapp, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "*", color = self.AoBapp_color, markersize=self.single_star_size, label="AoBapp", zorder=3)
-				self.ax3_lines.append([l_AoBapp, l_AoBapp.get_label()])
+				l_AoBapp, = ax.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "k*", markersize=self.single_star_size*1.5, label="AoBapp", zorder=2)
+				l_AoBapp, = ax.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "*", color = self.AoBapp_color, markersize=self.single_star_size, label="AoBapp", zorder=3)
+				ax_lines.append([l_AoBapp, l_AoBapp.get_label()])
 
 			rot = 0
 			if len(self.x_axis_ticks_pos) > 15:
 				rot = 60
 
-			self.ax3.set_xticks(self.x_axis_ticks_pos)
-			self.ax3.set_xticklabels(self.x_axis_ticks_label, rotation = rot)
-			# self.ax3.xticks(rotation = 30)
+			ax.set_xticks(self.x_axis_ticks_pos)
+			ax.set_xticklabels(self.x_axis_ticks_label, rotation = rot)
+			# ax.xticks(rotation = 30)
 
 		elif self.xaxis_azimut and bottle.observation_type == "fixed_azimut_discrete_rotation":
 			# print("DEBUG plot discrete")
 			if self.show_AoRD:
-				l_AoRD, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.marker_size*4, label="AoRD", zorder=2)
-				self.ax3_lines.append([l_AoRD, l_AoRD.get_label()])
+				l_AoRD, = ax.plot(bottle.discrete_rotation_times, bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.marker_size*4, label="AoRD", zorder=2)
+				ax_lines.append([l_AoRD, l_AoRD.get_label()])
 			if self.show_AoBapp:
-				l_AoBapp, = self.ax3.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "*", color = self.AoBapp_color, markersize=self.marker_size*4, label="AoBapp", zorder=2)
-				self.ax3_lines.append([l_AoBapp, l_AoBapp.get_label()])
+				l_AoBapp, = ax.plot(bottle.discrete_rotation_times, bottle.AoBapp * RtoD, "*", color = self.AoBapp_color, markersize=self.marker_size*4, label="AoBapp", zorder=2)
+				ax_lines.append([l_AoBapp, l_AoBapp.get_label()])
 
 		elif self.xaxis_azimut and bottle.observation_type == "fixed_elevation_continue_rotation":
 
 			ax1_lim = self.ax1.get_ylim()
 			self.ax1.set_ylim(ax1_lim)
 			ax2_lim = self.ax2.get_ylim()
-			ax3_lim = self.ax3.get_ylim()
+			ax3_lim = ax.get_ylim()
 			for i in range(bottle.nb_continue_rotation):
 				# print("DEBUG ROT TIMES", i * 360 + (bottle.source_azimut * RtoD)%360)
 
 				if not self.show_RS_model:
+					self.ax1.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax1_lim, "--k")
+					self.ax2.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax2_lim, "--k")
+					ax.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax3_lim, "--k")
+					if i != 0: # Draw red lines to delimit the rotations
+						# print(i * 360)
+						self.ax1.plot([i * 360, i * 360], ax1_lim, "r")
+						self.ax2.plot([i * 360, i * 360], ax2_lim, "r")
+						ax.plot([i * 360, i * 360], ax3_lim, "r")
+
+				if self.show_AoRD:
+					l_AoRD, = ax.plot(np.linspace(i * 360, (i+1) * 360, len(bottle.AoRD)), bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.marker_size, label="AoRD", zorder=2)
+					ax_lines.append([l_AoRD, l_AoRD.get_label()])
+				if self.show_AoBapp:
+					l_AoBapp, = ax.plot(np.linspace(i * 360, (i+1) * 360, len(bottle.AoBapp)), bottle.AoBapp * RtoD, "*", color = self.AoBapp_color, markersize=self.marker_size, label="AoBapp", zorder=2)
+					ax_lines.append([l_AoBapp, l_AoBapp.get_label()])
+
+
+			ax.set_xticks(self.x_axis_ticks_pos)
+			ax.set_xticklabels(self.x_axis_ticks_label)
+
+			# x_axis, RD_diff, Bapps_diff = self.CompareAngles()
+			# if ax3_lim[1] > 100:
+			# 	print("DEBUG!!!!!!")
+			# 	RD_diff, Bapps_diff  = UnifyAngles(RD_diff, 1)[0], UnifyAngles(Bapps_diff, 1)[0]
+			# ax.plot(x_axis, RD_diff * RtoD, "*", color = "xkcd:black", markersize=self.marker_size, label="AoRD")
+
+			# ax_lines.append([l_AoRD, l_AoRD.get_label()])
+
+
+	def PlotRSModel(self, bottle):
+
+		# self.ax11 = self.ax1.twinx()
+		# self.ax22 = self.ax2.twinx()
+
+		tmp_xshift = 0
+		maxDoLP = np.max(bottle.smooth_DoLP)
+
+		if self.show_model_list:
+			self.J2RAYS1_models = [self.J2RAYS1_models[i] for i in self.show_model_list]
+
+		for im, models in enumerate(self.J2RAYS1_models):
+			# print(self.J2RAYS1_model.x_axis)
+			# self.ax11.yaxis.set_visible(False)
+			self.ax1.plot(models.x_axis + tmp_xshift, models["I0"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
+			self.ax2.plot(models.x_axis + tmp_xshift, models["DoLP"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
+			# self.ax2.set_ylim((0, max(np.max(bottle.smooth_DoLP), np.max(models.data["DoLP"]))))
+			if np.max(models.data["DoLP"]) > maxDoLP:
+				maxDoLP = np.max(models.data["DoLP"])
+				self.ax2.set_ylim((0, 1.1 * maxDoLP))
+
+			self.ax3.plot(models.x_axis + tmp_xshift, RtoD * SetAngleBounds(DtoR * models.data["AoRD"], -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift), "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
+
+		if self.adapt_flux_scale:
+			border = 1.1
+			max_data, min_data = np.max(bottle.smooth_I0), np.min(bottle.smooth_I0)
+			ratio_data = max_data / min_data
+			print(f"Min data, Max Data, Ratio data: {min_data}, {max_data}, {ratio_data}")
+			nt, nb = [max_data], [min_data]
+			for models in self.J2RAYS1_models:
+				max_model, min_model = np.max(models.data["I0"]) , np.min(models.data["I0"])
+				ratio_model = max_model / min_model
+				shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
+				# shift = (ratio_model * min_data - max_data) / (1 - ratio_model)
+				print(f"Min model, Max model, Ratio model, Shift to match data (data unit): {min_model}, {max_model}, {ratio_model}, {shift}")
+				print(f"Min model, Max model, Ratio model, Shift to match data (model unit): {min_model / models.bottle_factor}, {max_model / models.bottle_factor}, {ratio_model}, {shift / models.bottle_factor}")
+				nt.append(max_model)
+				nb.append(min_model)
+
+			self.ax1.set_ylim(np.min(nb) / border, np.max(nt) * border)
+
+				# nt, nb = [np.max(bottle.smooth_DoLP)], [np.min(bottle.smooth_DoLP)]
+				# for models in self.J2RAYS1_models:
+				# 	nt.append(np.max(models.data["DoLP"]))
+				# 	nb.append(np.min(models.data["DoLP"]))
+				# self.ax2.set_ylim(np.min(nb) / border, np.max(nt) * border)
+
+			if bottle.observation_type == "fixed_elevation_continue_rotation":
+				ax1_lim = self.ax1.get_ylim()
+				self.ax1.set_ylim(ax1_lim)
+				ax2_lim = self.ax2.get_ylim()
+				ax3_lim = self.ax3.get_ylim()
+				for i in range(bottle.nb_continue_rotation):
+					# print("DEBUG ROT TIMES", i * 360 + (bottle.source_azimut * RtoD)%360)
+
 					self.ax1.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax1_lim, "--k")
 					self.ax2.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax2_lim, "--k")
 					self.ax3.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax3_lim, "--k")
@@ -1150,112 +1237,68 @@ class Mixer:
 						self.ax2.plot([i * 360, i * 360], ax2_lim, "r")
 						self.ax3.plot([i * 360, i * 360], ax3_lim, "r")
 
-				if self.show_AoRD:
-					l_AoRD, = self.ax3.plot(np.linspace(i * 360, (i+1) * 360, len(bottle.AoRD)), bottle.AoRD * RtoD, "*", color = self.AoRD_color, markersize=self.marker_size, label="AoRD", zorder=2)
-					self.ax3_lines.append([l_AoRD, l_AoRD.get_label()])
-				if self.show_AoBapp:
-					l_AoBapp, = self.ax3.plot(np.linspace(i * 360, (i+1) * 360, len(bottle.AoBapp)), bottle.AoBapp * RtoD, "*", color = self.AoBapp_color, markersize=self.marker_size, label="AoBapp", zorder=2)
-					self.ax3_lines.append([l_AoBapp, l_AoBapp.get_label()])
+				# if r1 >= r11:
+				# 	# self.ax1.set_ylim(0, top*border)
+				# 	# self.ax11.set_ylim(0, nb * r1*border)
+				# 	self.ax1.set_ylim(bot/border, top*border)
+				# 	self.ax11.set_ylim(nt / r1 /border, nt*border)
+				# 	# self.ax11.set_ylim(nb/border, nb * r1*border)
+				# 	print(f"NEW RATIO 2 {r1}, from {nb} to {nb * r1}")
+				# else:
+				# 	# self.ax1.set_ylim(0, top * 1.1)
+				# 	# self.ax11.set_ylim(0, nt * 1.1)
+				# 	# self.ax1.set_ylim(0, bot * r11*border)
+				# 	# self.ax11.set_ylim(0, nt*border)
+				# 	self.ax1.set_ylim(nt/r11/border, nt *border)
+				# 	# self.ax1.set_ylim(bot/border, bot * r11*border)
+				# 	self.ax11.set_ylim(nb/border, nt*border)
+				# 	print(f"NEW RATIO 1 {r11}, from {bot} to {bot * r11}")
+
+				# self.axs[11].xlim((0, ))
 
 
-			self.ax3.set_xticks(self.x_axis_ticks_pos)
-			self.ax3.set_xticklabels(self.x_axis_ticks_label)
+	def MakePlots(self, bottle):
+		#Plotting the mean intensity I0, DoLP, AoLP for each rotation and more!
 
-			# x_axis, RD_diff, Bapps_diff = self.CompareAngles()
-			# if ax3_lim[1] > 100:
-			# 	print("DEBUG!!!!!!")
-			# 	RD_diff, Bapps_diff  = UnifyAngles(RD_diff, 1)[0], UnifyAngles(Bapps_diff, 1)[0]
-			# self.ax3.plot(x_axis, RD_diff * RtoD, "*", color = "xkcd:black", markersize=self.marker_size, label="AoRD")
+		# if self.show_error_bars:
+		# 	smooth_yerr = bottle.var_smooth_I0
+		# 	yerr = bottle.var_I0
+		# 	yerr = None
+		# else:
+		# 	smooth_yerr = None
 
-			# self.ax3_lines.append([l_AoRD, l_AoRD.get_label()])
+		print("START PLOTTING")
+
+		self.PlotFlux(self.ax1, bottle, ax_lines=self.ax1_lines)
+		self.PlotAllSky(self.ax1, bottle, ax_lines=self.ax1_lines)
+
+		# if self.show_error_bars:
+		# 	smooth_yerr = bottle.var_smooth_DoLP
+		# 	yerr = bottle.var_DoLP
+		# 	yerr = None
+		# else:
+		# 	smooth_yerr = None
+
+		self.PlotDoLP(self.ax2, bottle, ax_lines=self.ax2_lines)
+		self.PlotB(self.ax2, bottle, ax_lines=self.ax2_lines)
+
+		if self.show_eiscat:
+			self.PlotEiscat(self.ax1, bottle, ax_lines=self.ax1_lines)
+
+		self.PlotAoLP(self.ax3, bottle, ax_lines=self.ax3_lines)
+
+		self.PlotCurrents(bottle)
+
+		self.PlotAoRD(self.ax3, bottle, ax_lines=self.ax3_lines)
+
+		if self.show_RS_model:
+			self.PlotRSModel(bottle)
 
 		# self.ax4.plot(self.x_axis_list, bottle.all_TempPM, "k.", linestyle = 'none', markersize=self.marker_size, label="PM")
 		# self.ax4.plot(self.x_axis_list, bottle.all_TempOptical, "r.", linestyle = 'none', markersize=self.marker_size, label="Optical")
 		# self.ax4.plot(self.x_axis_list, bottle.all_TempAmbiant, "b.", linestyle = 'none', markersize=self.marker_size, label="Ambiant")
 		# self.ax2.plot(self.x_axis_list,[DoLP_average] * nb_rot, "b", label="Avg: " + str(DoLP_average))
 
-
-		if self.show_RS_model:
-			# self.ax11 = self.ax1.twinx()
-			# self.ax22 = self.ax2.twinx()
-
-			tmp_xshift = 0
-			maxDoLP = np.max(bottle.smooth_DoLP)
-
-			if self.show_model_list:
-				self.J2RAYS1_models = [self.J2RAYS1_models[i] for i in self.show_model_list]
-
-			for im, models in enumerate(self.J2RAYS1_models):
-				# print(self.J2RAYS1_model.x_axis)
-				# self.ax11.yaxis.set_visible(False)
-				self.ax1.plot(models.x_axis + tmp_xshift, models["I0"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
-				self.ax2.plot(models.x_axis + tmp_xshift, models["DoLP"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
-				# self.ax2.set_ylim((0, max(np.max(bottle.smooth_DoLP), np.max(models.data["DoLP"]))))
-				if np.max(models.data["DoLP"]) > maxDoLP:
-					maxDoLP = np.max(models.data["DoLP"])
-					self.ax2.set_ylim((0, 1.1 * maxDoLP))
-
-				self.ax3.plot(models.x_axis + tmp_xshift, RtoD * SetAngleBounds(DtoR * models.data["AoRD"], -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift), "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
-
-			if self.adapt_flux_scale:
-				border = 1.1
-				max_data, min_data = np.max(bottle.smooth_I0), np.min(bottle.smooth_I0)
-				ratio_data = max_data / min_data
-				print(f"Min data, Max Data, Ratio data: {min_data}, {max_data}, {ratio_data}")
-				nt, nb = [max_data], [min_data]
-				for models in self.J2RAYS1_models:
-					max_model, min_model = np.max(models.data["I0"]) , np.min(models.data["I0"])
-					ratio_model = max_model / min_model
-					shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
-					# shift = (ratio_model * min_data - max_data) / (1 - ratio_model)
-					print(f"Min model, Max model, Ratio model, Shift to match data (data unit): {min_model}, {max_model}, {ratio_model}, {shift}")
-					print(f"Min model, Max model, Ratio model, Shift to match data (model unit): {min_model / models.bottle_factor}, {max_model / models.bottle_factor}, {ratio_model}, {shift / models.bottle_factor}")
-					nt.append(max_model)
-					nb.append(min_model)
-
-				self.ax1.set_ylim(np.min(nb) / border, np.max(nt) * border)
-
-					# nt, nb = [np.max(bottle.smooth_DoLP)], [np.min(bottle.smooth_DoLP)]
-					# for models in self.J2RAYS1_models:
-					# 	nt.append(np.max(models.data["DoLP"]))
-					# 	nb.append(np.min(models.data["DoLP"]))
-					# self.ax2.set_ylim(np.min(nb) / border, np.max(nt) * border)
-
-				if bottle.observation_type == "fixed_elevation_continue_rotation":
-					ax1_lim = self.ax1.get_ylim()
-					self.ax1.set_ylim(ax1_lim)
-					ax2_lim = self.ax2.get_ylim()
-					ax3_lim = self.ax3.get_ylim()
-					for i in range(bottle.nb_continue_rotation):
-						# print("DEBUG ROT TIMES", i * 360 + (bottle.source_azimut * RtoD)%360)
-
-						self.ax1.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax1_lim, "--k")
-						self.ax2.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax2_lim, "--k")
-						self.ax3.plot([i * 360 + (bottle.source_azimut * RtoD)%360, i * 360 + (bottle.source_azimut * RtoD)%360], ax3_lim, "--k")
-						if i != 0: # Draw red lines to delimit the rotations
-							# print(i * 360)
-							self.ax1.plot([i * 360, i * 360], ax1_lim, "r")
-							self.ax2.plot([i * 360, i * 360], ax2_lim, "r")
-							self.ax3.plot([i * 360, i * 360], ax3_lim, "r")
-
-					# if r1 >= r11:
-					# 	# self.ax1.set_ylim(0, top*border)
-					# 	# self.ax11.set_ylim(0, nb * r1*border)
-					# 	self.ax1.set_ylim(bot/border, top*border)
-					# 	self.ax11.set_ylim(nt / r1 /border, nt*border)
-					# 	# self.ax11.set_ylim(nb/border, nb * r1*border)
-					# 	print(f"NEW RATIO 2 {r1}, from {nb} to {nb * r1}")
-					# else:
-					# 	# self.ax1.set_ylim(0, top * 1.1)
-					# 	# self.ax11.set_ylim(0, nt * 1.1)
-					# 	# self.ax1.set_ylim(0, bot * r11*border)
-					# 	# self.ax11.set_ylim(0, nt*border)
-					# 	self.ax1.set_ylim(nt/r11/border, nt *border)
-					# 	# self.ax1.set_ylim(bot/border, bot * r11*border)
-					# 	self.ax11.set_ylim(nb/border, nt*border)
-					# 	print(f"NEW RATIO 1 {r11}, from {bot} to {bot * r11}")
-
-					# self.axs[11].xlim((0, ))
 
 		self.f1.subplots_adjust(hspace=0)
 
@@ -1493,7 +1536,6 @@ class Mixer:
 		if not COMP:
 			COMP = "dolp"
 
-		mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
 
 		X_array = bottle.I0_diff
 		Y_array = bottle.smooth_DoLP
@@ -1506,6 +1548,8 @@ class Mixer:
 			if COMP.lower() == "aolp":
 				Y_array = bottle.all_AoLP * RtoD
 
+		mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
+		# mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
 		if not diff_thresholds:
 			# diff_thresholds = np.percentile(mask_array, [25, 75])
 			diff_thresholds = [-0.5, 0.5]
@@ -1587,6 +1631,82 @@ class Mixer:
 			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_S' + str(smooth) + COMP.upper() + '_smart_correlation.png', bbox_inches='tight')
 		else:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + '_S' + str(smooth) + "/" + bottle.saving_name + '_smart_correlation.png', bbox_inches='tight')
+
+	def MakeCleanCorrelationPlots(self, bottle, diff_thresholds=None, smooth=True):
+
+			nb_subplots = 2
+
+			gridspec = [1, 1]
+
+			f2, axs = plt.subplots(ncols=1, nrows=nb_subplots, figsize=(20, 20), gridspec_kw = {'hspace':0, 'height_ratios':gridspec})
+			subplots_counter = 0
+
+			for ax in axs:
+				ax.set_axisbelow(True)
+				ax.grid(True, zorder=-10)
+
+			colors = ["b", 'k', "r", 'y', 'g']
+
+			for icomp, COMP in enumerate(['dolp', 'aolp']):
+				masks = []
+
+				if smooth:
+					X_array = bottle.I0_diff
+					X_error = bottle.I0_diff_std
+					Y_array = bottle.smooth_DoLP
+					Y_error = bottle.std_smooth_DoLP
+					if COMP.lower() == "aolp":
+						Y_array = bottle.smooth_AoLP * RtoD
+						Y_error = bottle.std_smooth_AoLP * RtoD
+				elif not smooth:
+					# mask_array = bottle.GetWaveletTransform(bottle.all_I0_diff, 12, unit = "seconds") #bottle.all_I0_diff
+					X_array = bottle.all_I0_diff
+					X_error = bottle.all_I0_diff_std
+					Y_array = bottle.all_DoLP
+					Y_error = bottle.std_DoLP
+					if COMP.lower() == "aolp":
+						Y_array = bottle.all_AoLP * RtoD
+						Y_error = bottle.std_AoLP * RtoD
+
+				mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
+				# mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
+				if diff_thresholds is None:
+					# diff_thresholds = np.percentile(mask_array, [25, 75])
+					diff_thresholds = [-0.5, 0.5]
+
+
+				diff_thresholds = np.sort(diff_thresholds)
+				# print(diff_thresholds)
+				masks.append(mask_array < diff_thresholds[0])
+				for id in range(1, len(diff_thresholds)):
+					masks.append((diff_thresholds[id-1] <= mask_array) * (mask_array < diff_thresholds[id]))
+				masks.append(mask_array >= diff_thresholds[-1])
+
+				for im, m in enumerate(masks):
+					# if im != 1:
+					X = np.ma.masked_equal(X_array * m, 0)
+					Y = np.ma.masked_equal(Y_array * m, 0)
+					Xerr = np.ma.masked_equal(X_error * m, 0)
+					Yerr = np.ma.masked_equal(Y_error * m, 0)
+					axs[subplots_counter].errorbar(X, Y, yerr = Yerr, xerr = Xerr, fmt=".", color = colors[im], alpha = 1)
+
+				if COMP.lower() == "aolp":
+					axs[subplots_counter].set_ylabel("AoLP (deg)")
+				else:
+					axs[subplots_counter].set_ylabel("DoLP (%)")
+
+				subplots_counter += 1
+
+			axs[0].xaxis.tick_top()
+			axs[1].set_xlabel("Radiance time derivative (AU)")
+			axs[1].set_ylim(-90, 90)
+
+
+			print("Saving correlation in", bottle.data_file_name + "/" + bottle.saving_name + '_clean_correlations.png')
+			if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+				plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_S' + str(smooth) + COMP.upper() + '_clean_correlation.png', bbox_inches='tight')
+			else:
+				plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + '_S' + str(smooth) + "/" + bottle.saving_name + '_clean_correlation.png', bbox_inches='tight')
 
 
 	def MakeCorrelationPlots(self, bottle):

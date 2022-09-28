@@ -23,9 +23,10 @@ instrument = arguments[1].lower()
 IDConfiguration = [int(arguments[2])]
 if nb_args == 4:
 	IDConfiguration = range(int(arguments[2]), int(arguments[3]) + 1)
+	print(f"4 arguments given. Will try to download all observations from ID {arguments[2]} to {arguments[3]}")
 elif nb_args > 4:
 	IDConfiguration = [int(arguments[i]) for i in range(2, nb_args)]
-
+	print(f"4 arguments given. Will try to download all observations ID: {IDConfiguration}")
 
 if instrument == "carmen":
 	db = mysql.connect(
@@ -169,13 +170,13 @@ for id in IDConfiguration:
 
 
 	### For saving nice titles.
-	# folder = "ptcu/" + date.strftime("%Y%m%d") + "_" + lieu + "/"
-	# # subfolder = "_".join(title[2+i:])
-	# subfolder = f"{filters}_a{int(az)}_e{int(el)}_{int(speed)}hz"
+	folder = "ptcu/" + date.strftime("%Y%m%d") + "_" + lieu + "/"
+	# subfolder = "_".join(title[2+i:])
+	subfolder = f"{filters}_{az}_{el}_{int(speed)}hz"
 
 	### For saving weird titles. Just save it as is, with the ID configuration
-	folder = "ptcu/"
-	subfolder = str(config[columns.index("IDConfiguration")]) + "_" + str(config[columns.index("CM_Comments")])
+	# folder = "ptcu/"
+	# subfolder = str(config[columns.index("IDConfiguration")]) + "_" + str(config[columns.index("CM_Comments")])
 
 	###Create saving data folder
 	os.makedirs(path + folder, exist_ok=True)
