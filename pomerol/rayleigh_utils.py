@@ -393,6 +393,12 @@ def GetPointingCoords(coords, type="az"):
         else:
             coords = np.geomspace(max(1, coords[0]), coords[1], int(coords[2]), endpoint=True)
 
+    elif coords == 'all':
+        if type=="az":
+            coords = np.arange(0, 360, 10)
+        else:
+            coords = np.geomspace(1, 90, 10, endpoint=True)
+
     else: # Single value
         coords = np.array([float(coords)])
 

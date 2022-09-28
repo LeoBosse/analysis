@@ -36,7 +36,7 @@ RD_src_elevation = None
 
 def GetLonLatFromName(name, unit="radians"):
 	name = name.lower()
-	print("DEBUG LOCATION", name)
+	# print("DEBUG LOCATION", name)
 	if name == "mens":
 		A_lon = 5.76
 		A_lat = 44.83

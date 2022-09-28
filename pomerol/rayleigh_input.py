@@ -6,6 +6,8 @@ import sys
 import os.path
 import numpy as np
 
+from pomerol_configuration import *
+
 class Input:
 	def __init__(self, template, input_file="", path = "./"):
 		self.template = template
@@ -61,7 +63,7 @@ class Input:
 class RayleighInput(Input):
 	def __init__(self, input_file = ""):
 		template = "RS_default.in"
-		path = "/home/bossel/These/Analysis/src/rayleigh/input_files/"
+		path = pomerol_configuration.input_path # "/home/bossel/These/Analysis/src/rayleigh/input_files/"
 
 		Input.__init__(self, template, input_file, path = path)
 

@@ -90,18 +90,19 @@ class Atmosphere:
 
 		self.LoadO3AbsorptionCS()
 
-		self.aer_complexity = int(in_dict['aer_complexity'])
-		if self.aer_complexity > 0:
-			self.aerosol = Aerosol(in_dict)
+		if self.use_aerosol:
+			self.aer_complexity = int(in_dict['aer_complexity'])
+			if self.aer_complexity > 0:
+				self.aerosol = Aerosol(in_dict)
 
-			self.profiles["aer_Phase_Fct"], self.profiles["aer_Phase_DoLP"]  = zip(*[self.AerosolPhaseFunction(t) for t in self.profiles["sca_angle"]])
-			self.profiles["aer_Phase_Fct"], self.profiles["aer_Phase_DoLP"] = np.array(self.profiles["aer_Phase_Fct"]), np.array(self.profiles["aer_Phase_DoLP"])
+				self.profiles["aer_Phase_Fct"], self.profiles["aer_Phase_DoLP"]  = zip(*[self.AerosolPhaseFunction(t) for t in self.profiles["sca_angle"]])
+				self.profiles["aer_Phase_Fct"], self.profiles["aer_Phase_DoLP"] = np.array(self.profiles["aer_Phase_Fct"]), np.array(self.profiles["aer_Phase_DoLP"])
 
-			# self.aerosol.PlotPhaseFunction(["1low", "2high"], [391.4, 557.7, 630.0])
-			# plt.show()
+				# self.aerosol.PlotPhaseFunction(["1low", "2high"], [391.4, 557.7, 630.0])
+				# plt.show()
 
-		self.GetAerosolProfil(in_dict)
-		self.profiles["beta_aer"] = np.array([self.AerosolCS(a) for a in self.profiles["HGT"]])
+			self.GetAerosolProfil(in_dict)
+			self.profiles["beta_aer"] = np.array([self.AerosolCS(a) for a in self.profiles["HGT"]])
 
 
 		if mpi_rank == 0:
@@ -217,10 +218,10 @@ class Atmosphere:
 		#array of range for each scattering points (distance along los from the instrument)
 
 		### Linear dlos (all bins along line of sight of equal length)
-		# self.range_list = np.linspace(self.range_min, self.range_max, self.Nlos + 1) #in km
+		self.range_list = np.linspace(self.range_min, self.range_max, self.Nlos + 1) #in km
 
 		### Quadratic dlos : Along the line of sight, bins close to the instrument smaller than bins away
-		self.range_list = np.array([x**2 for x in np.linspace(np.sqrt(self.range_min), np.sqrt(self.range_max), self.Nlos + 1)]) #in km
+		# self.range_list = np.array([x**2 for x in np.linspace(np.sqrt(self.range_min), np.sqrt(self.range_max), self.Nlos + 1)]) #in km
 
 
 		self.mid_range_list = np.array([(self.range_list[i+1] + self.range_list[i]) / 2. for i in range(0, self.Nlos)]) #in km

@@ -1,0 +1,2 @@
+0.6 1.45 -0.0035 ! lambda (micrometre), indice reel nr, complexe ni (<0)
+1 0.15 0.29 0.001 50 ! No,rmg,ln(sigmag),Rmin,Rmax: in micrometer

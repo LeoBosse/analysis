@@ -48,7 +48,7 @@ class World:
 	def __init__(self, in_dict):
 
 		self.in_dict = in_dict
-		
+
 		self.wavelength = float(in_dict["wavelength"])
 		self.src_path = in_dict["src_path"]
 
@@ -56,15 +56,7 @@ class World:
 		self.save_path = in_dict["save_path"]
 		self.save_name = self.save_path + in_dict["save_name"]
 
-		self.show_ground_albedo = False
-		self.show_sky_cube = False
-		self.show_altitude = False
-		if "show_ground_albedo" in in_dict:
-			self.show_ground_albedo = bool(int(in_dict["show_ground_albedo"]))
-		if "show_sky_cube" in in_dict:
-			self.show_sky_cube = bool(int(in_dict["show_sky_cube"]))
-		if "show_altitude" in in_dict:
-			self.show_altitude = bool(int(in_dict["show_altitude"]))
+
 
 		# Angle de demi-ouverture de l'instrument (1 deg pour les crus)
 		self.ouv_pc		= float(in_dict["instrument_opening_angle"]) * DtoR
@@ -200,6 +192,9 @@ class World:
 		if self.Nb_a_pc == self.Nb_e_pc == 1:
 			self.is_single_observation = True
 
+		self.show_sky_cube = False
+		if self.has_sky_emission and "show_sky_cube" in in_dict:
+			self.show_sky_cube = bool(int(in_dict["show_sky_cube"]))
 		if mpi_rank==0: print("Has_sky_emission:", self.has_sky_emission)
 		#Show the skymaps if they change in time or we move the instrument
 		# if self.has_sky_emission and (self.is_time_dependant or not self.is_single_observation):
@@ -215,12 +210,21 @@ class World:
 		### Initialize the atlitude maps
 		self.alt_map = ElevationMap(in_dict)
 		self.use_elevation_map = bool(int(in_dict["use_alt_map"]))
+		self.show_altitude = False
+		if "show_altitude" in in_dict:
+			self.show_altitude = bool(int(in_dict["show_altitude"]))
+
 		if self.show_altitude:
 			self.alt_map.PlotMap()
 
 		self.instrument_altitude = self.alt_map.GetAltitudeFromLonLat(self.ground_map.A_lon, self.ground_map.A_lat) / 1000. #In km
 
 		self.albedo_mode = in_dict["ground_albedo"].lower()
+		self.show_ground_albedo = False
+		if (self.has_ground_emission or self.albedo_mode != "none") and "show_ground_albedo" in in_dict:
+			self.show_ground_albedo = bool(int(in_dict["show_ground_albedo"]))
+
+
 		if mpi_rank == 0 and self.show_ground_albedo:
 			if "altitude" in self.albedo_mode:
 				layers = np.array([float(a)*1000 for a in self.albedo_mode.split("_")[2:-1:2]])
@@ -267,6 +271,7 @@ class World:
 
 
 		self.add_B_pola = bool(int(in_dict["add_B_pola"]))
+
 
 
 		# if mpi_rank == 0:

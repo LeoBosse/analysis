@@ -1,14 +1,14 @@
 This is a README file for the POMEROL simulation code.
 
 ################################################################################
-INSTALLATION
+**INSTALLATION**
 ################################################################################
 
 Download the sources files from https://gricad-gitlab.univ-grenoble-alpes.fr/bossel/analysis.
 Place them all in a directory, and change the "src_path" in the RS_default.in input file (and all input files you'll use).
 
 In a terminal, go to this folder and run the following command:
-$pip install -e .
+`$pip install -e .`
 This will install POMEROL on your computer, and take into account all changes you make on the code as you play with it.
 
 Do the same with the Geomagic package. It is a requirement for POMEROL.
@@ -18,19 +18,19 @@ Then downlaod the data you need. (ground emission maps, all sky camera pictures,
 They are not included in the package for size and legal reasons.
 
 You can find a list of all dependency required in the requirements.txt file. Install all of them running:
-pip3 install -r requirements.txt
+`pip3 install -r requirements.txt`
 
 You might also need to install GDAL using:
-sudo apt-get install gdal-bin libgdal-dev libgdal-doc python3-gdal
+`sudo apt-get install gdal-bin libgdal-dev libgdal-doc python3-gdal`
 
 And a mpi source code before being able to install mpi4py. See https://mpi4py.readthedocs.io/en/stable/install.html and https://mpi4py.readthedocs.io/en/stable/appendix.html#building-mpi for the manual.
 
 For latex (to use in plots), install latex:
-sudo apt-get install -y texlive texlive-latex-extra texlive-latex-recommended texlive-fonts-recommended
-sudo apt-get install cm-super
+`sudo apt-get install -y texlive texlive-latex-extra texlive-latex-recommended texlive-fonts-recommended`
+`sudo apt-get install cm-super`
 
 ################################################################################
-RUNNING YOUR FIRST MODEL
+**RUNNING YOUR FIRST MODEL**
 ################################################################################
 
 We will present a few steps to set up your first POMEROL model.
@@ -45,9 +45,9 @@ A description of the input parameters found in the input files can be found in t
 
 
 Once you have your input file ready, just run POMEROL in a terminal like this:
-./main <input file name>
+`./main <input file name>`
 or
-mpirun -n <Number of cores> <input file name>
+`mpirun -n <Number of cores> <input file name>`
 
 
 In all cases, only specify the name, without the extension or the path. For example, if your input_files folder look like this:
@@ -59,19 +59,19 @@ input_file:
 |		|		test2.in
 
 you can call:
-./main example_file_2
+`./main example_file_2`
 or:
-./main example_folder/test1
+`./main example_folder/test1`
 
 
 To run on multiple cores, POMEROL uses the mpi4py module (https://mpi4py.readthedocs.io/en/stable/).
 To use this functionnality, launch the code with the following command:
 
-mpirun -n <Number of cores> <input file name>
+`mpirun -n <Number of cores> <input file name>`
 
 
 ################################################################################
-RUNNING SYSTEMATIC PARAMETER STUDY
+**RUNNING SYSTEMATIC PARAMETER STUDY**
 ################################################################################
 
 A tool is created to help you run automatically POMEROL. This is helpfull if you want to test the influence of one or two parameters one your results.
@@ -88,15 +88,15 @@ The output_result_file will contain the results of all the runs you performed wi
 
 Once this is set, you can launch your automatic runs with:
 
-./systematic
+`./systematic`
 
 Once all your runs are done, a few basic tools are coded to plot the results.
 run the following in a terminal:
 
-./systematic -p <result_log_file>
+`./systematic -p <result_log_file>`
 
-the <result_log_file> argument is the file created when you launched your runs earlier and defined with the output_result_file variable.
-To choose which parameter you wwant to plot against which, go near the end of systematic.py, in the if __name__ == "__main__": condition.
+the `<result_log_file>` argument is the file created when you launched your runs earlier and defined with the output_result_file variable.
+To choose which parameter you want to plot against which, go near the end of systematic.py, in the `if __name__ == "__main__":` condition.
 There, edit the PlotData() function as follows.
 The second argument is the x-axis parameter, usually "azimuts", but can be anything existing in the RS_default.in file.
 The third argument is the parameter(s) on the y-axis.  Again, can be anything from RS_default.in, but can also be "all". The "all" option will produce 3 plots with the Flux, DoLP and AoLP. Multiple plots can be achieved by specifying a list of parameters as the third argument. Finally, you can also specify multiple parameters separated by ";" so that they appear on the same graph.
@@ -112,13 +112,13 @@ in_dict = {	"azimuts": ["all"],
 						"ground_mode": ["point_I100_a180_d5"]
 					}
 
-run ./systematic. This will create a file with all model results for all azimuts and all atospheric max altitudes.
+run `./systematic`. This will create a file with all model results for all azimuts and all atospheric max altitudes.
 It also prints a long string for each POMEROL run it launches. It allows to follow the progress and estimates the time it needs.
 It stores all the logs of each runs in a file build like this: log/<long printed string>.out so that you can check if there is an error somewhere.
 
 Then, to plot the results, set PlotData() like this:
 
-PlotData(data, "azimuts", "all", RS_max_altitude="*", wavelength=557.7)
+`PlotData(data, "azimuts", "all", RS_max_altitude="*", wavelength=557.7)`
 
 This will produce a plot of almucantars at 45° of elevation, for a point source on ground 5km south of the instrument.
 

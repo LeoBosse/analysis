@@ -1,3 +1,8 @@
+vendange/__pycache__/
+pomerol/__pycache__/
+geomagic/__pycache__/
+pomerol/log/
+pomerol/input_files/systematic
 atmosphere.cpython-38.pyc
 ground_map.cpython-38.pyc
 pomerol_configuration.cpython-38.pyc

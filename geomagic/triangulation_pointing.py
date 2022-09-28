@@ -9,6 +9,10 @@ DtoR = np.pi / 180.
 RtoD = 1. / DtoR
 RT = 6371 # #km
 
+##################################
+# From the position and pointing of one instrument, find the direction of a second instrument in a known location such that they point toward the same point in the ionosphere
+##################################
+
 def GetRotMatrixAO(lonA, latA):
 	"""Return a matrix 3x3. It is the rotation matrix to pass a vector expressed in the reference frame of a point A on the Earth (up-east-noth) to the reference frame of the Earth's center O. lonA latA are the longitude and latitude of the point A."""
 	Clon, Slon = np.cos(lonA), np.sin(lonA)

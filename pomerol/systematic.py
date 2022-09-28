@@ -26,7 +26,7 @@ def GetData(file = "./log/systematic_results.csv"):
 	data = pd.read_csv(file, sep = ",", index_col = False)
 
 	try:
-		wrong_items = list(data[data['path'] == "path"].index)
+		wrong_items = list(data[data['src_path'] == "src_path"].index)
 		data = pd.read_csv(file, sep = ",", index_col = False, skiprows = lambda x: x-1 in wrong_items)
 	except:
 		pass
@@ -271,7 +271,7 @@ def PlotFreeData(data, free_list, x_axis_name, y_axis_name, **kwargs):
 	############################################################################
 	### ONLY FOR POMEROL ARTICLE FIG 4 !!!!!!!! TO DECOMMENT !!!!!!
 	### WILL NOT PLOT THE LAST TWO FREE PARAMETER VALUES !!!!!
-	# free_value_list[0] = free_value_list[0][:-2]
+	free_value_list[0] = free_value_list[0][:-2]
 	############################################################################
 
 	# Number of possible combinaison between all free parameters (number of lines to plots)
@@ -393,15 +393,15 @@ def RunSystematicSimulation():
 	"""Automatically runs simulations for the given paramter space.
 	1: Define parameter space in in_dict dictionnary.
 	2: For every other parameters of the simulation, the default value is taken. default value is the value written in the input file: "RS_default.in"
+	3: Define the name of the file in wich to save the results. (just before the dictionnary output_result_file = <your_file_name>)
 	3: From the terminal run ./systematic.py
-	4: To plot parameter comparisons run ./systematic.py with the right keyword arguments.
+	4: To plot parameter comparisons run ./systematic.py -p <your_file_name>. Hardcoded in the PlotData() function at the end of this script are several other paramters to allow you to choose which paramter to let free in the plots. Some exemples are commented.
 	"""
 
-
-	output_result_file = "log/systematic_atm_max_height"
+	output_result_file = "log/systematic_zenith_wavelength"
 	### Define parameter space. All combinations of these parameters will be simulated.
-	in_dict = {	"azimuts": ["all"],
-				"elevations": [45],
+	in_dict = {	"azimuts": [0],
+				"elevations": [90],
 				# "use_analytic": ["false", "true"],
 				# "Nb_points_along_los": [2**i for i in range(1, 9)]
 				# "use_ozone": [0, 1],
@@ -419,14 +419,14 @@ def RunSystematicSimulation():
 				# "aer_nBK": [300],
 				# "Nb_points_along_los": [100],
 				# "RS_min_altitude": [0],# np.arange(0, 100, 1), #, 1, 5, 10, 25, 50, 100]
-				"RS_max_altitude": np.arange(1, 10, 1),
+				# "RS_max_altitude": np.arange(1, 10, 1),
 				# "use_analytic": ["true", "false"],
 				# "Atmospheric_profile": [f"atm_profiles/{p}.atm" for p in ["day", "equ", "ngt", "sum", "win"]],
-				"wavelength": [557.7, 630.0],
+				"wavelength": np.append(np.linspace(500, 600, 11), np.linspace(600, 900, 7)) # [540] 
 				# "emission_altitude": [110],
 				# "Nb_emission_points": [100, 500, 1000, 2000, 5000],
 				# "max_angle_discretization": [0], 	#[1, 2, 5, 10, 15, 20, 40, 50, 90, 180, 360],
-				"ground_mode": ["point_I100_a180_d5"],
+				# "ground_mode": ["point_I100_a180_d5"],
 				# "ground_mode": [f"point_I100_a180_d{i}" for i in np.arange(1, 100)],
 				# "shader_mode": [f"ring_{i}" for i in np.arange(0, 100)],
 				# "ground_emission_radius": [50],  # in km.,
@@ -455,7 +455,7 @@ def RunSystematicSimulation():
 		r_input.Update(perm)
 
 		#Write the input file and get its unique name (unique for this set of permutations, might be the same than older runs.)
-		file_name = r_input.WriteInputFile(file_name = "systemic/systemic", **perm)
+		file_name = r_input.WriteInputFile(file_name = "systematic/systematic", **perm)
 		# print("file_name", file_name)
 
 		if mpi_rank == 0: print(file_name)
@@ -464,7 +464,7 @@ def RunSystematicSimulation():
 		log_file_name = "./log/" + file_name + ".out"
 		log_file = open(log_file_name, "w")
 
-		#Shift output to th log file
+		#Shift output to the log file
 		terminal = sys.stdout
 		sys.stdout = log_file
 		sys.stderr = log_file
@@ -484,7 +484,7 @@ def RunSystematicSimulation():
 if __name__ == "__main__":
 	#Get the input file from the command arguments
 
-	### To lauch with:  mpiexec -n 4 python3 -m mpi4py.futures ./systematic.py
+	### To launch with:  mpiexec -n 4 python3 -m mpi4py.futures ./systematic.py
 
 	arguments = sys.argv
 	nb_args = len(arguments)
@@ -501,6 +501,6 @@ if __name__ == "__main__":
 		# PlotData(data, "azimuts", "all",  aer_model="*", use_aerosol = "*")
 		# PlotData(data, "azimuts", "all", use_analytic="*", Nb_points_along_los="*")
 		# PlotData(data, "azimuts", "all", ground_N_bins_max="*")
-		PlotData(data, "azimuts", "all", RS_max_altitude="*", wavelength=557.7)
+		PlotData(data, "wavelength", "all",  wavelength='*')
 		# PlotData(data, "azimuts", "all", elevations="*")
 		plt.show()
