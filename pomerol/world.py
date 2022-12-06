@@ -869,7 +869,14 @@ class World:
 
 		for a_A, e_A, r, AR, RE, RD_angle, alt, AoLP, dvol, dr in geo_list:
 
-			# print(a_A*RtoD, e_A*RtoD, r, AR, RE, RD_angle*RtoD, alt, AoLP*RtoD, da*RtoD, dr)
+			zenith_angle_moon = (90-36)*DtoR
+			Moon_AZ = 206*DtoR
+			zenith = 60*DtoR
+			azimuth = 268*DtoR
+			gael_sca_angle = np.arccos((np.cos(zenith_angle_moon)*np.cos(zenith) + np.sin(zenith_angle_moon)*np.sin(zenith)*np.cos(azimuth - Moon_AZ)))
+			DoLP = lambda a: 100*np.sin(a)**2 / (1+np.cos(a)**2)
+			print(RE, RD_angle*RtoD, AoLP*RtoD, gael_sca_angle*RtoD, DoLP(gael_sca_angle))
+			# print(a_A*RtoD, e_A*RtoD, r, AR, RE, RD_angle*RtoD, alt, AoLP*RtoD, dr)
 
 			I0 = self.sky_map.cube[time, ie_E, ia_E] # [nW / m2/ sr]
 
@@ -920,6 +927,8 @@ class World:
 			f = 1 #(1 + self.atmosphere.depola) / (1 - self.atmosphere.depola)
 			DoLP_rs = np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
 			# DoLP_aer = 0
+
+			print(RD_angle*RtoD, DoLP_rs*100, DoLP(RD_angle))
 
 			I0_aer *= self.atmosphere.los_transmittance[ialt]
 			I0_rs *= self.atmosphere.los_transmittance[ialt]
@@ -1203,7 +1212,7 @@ class World:
 
 		# if mpi_rank==0: print("AE", AE)
 
-		if v_pc_u is None:
+		if v_pc_u is None:  # Line of sight of the observer
 			v_pc_u = self.v_pc_u
 
 		RAE = GetAngle(v_pc_u, v_rd_u) # Angle between line of sight and emission

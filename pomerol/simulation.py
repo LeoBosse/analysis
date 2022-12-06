@@ -640,6 +640,99 @@ class Simulation:
 		# np.savetxt(self.path + self.save_name + "_total_scattering_map.cvs", self.total_scattering_map)
 		# np.savetxt(self.path + self.save_name + "_AoRD_map.cvs", self.AoRD_map)
 
+	def MakeMapPlots(self, f, axs):
+		# extent = RtoD * np.array([self.world.a_pc_list[0], self.world.a_pc_list[-1], self.world.e_pc_list[0], self.world.e_pc_list[-1]])
+		# a1 = axs[0].imshow(self.I_list[0,:,:], origin="lower", extent=extent)
+		# axs[0].get_xaxis().set_visible(False)
+		# cbar1 = f.colorbar(a1, extend='both', spacing='proportional', shrink=0.9, ax=axs[0])
+		# a2 = axs[2].imshow(self.DoLP_list[0,:,:], origin="lower", extent=extent, cmap=plt.get_cmap("YlOrRd"))
+		# axs[2].get_xaxis().set_visible(False)
+		# cbar1 = f.colorbar(a2, extend='both', spacing='proportional', shrink=0.9, ax=axs[2])
+		# a3 = axs[4].imshow(self.AoRD_list[0,:,:]*RtoD, origin="lower", extent=extent, cmap=plt.get_cmap("twilight"))
+		# #axs[4].get_xaxis().set_visible(False)
+		# cbar1 = f.colorbar(a3, extend='both', spacing='proportional', shrink=0.9, ax=axs[4])
+		# a4 = axs[1].imshow(self.DoLP_list[0,:,:] * np.cos(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
+		# axs[1].get_xaxis().set_visible(False)
+		# cbar1 = f.colorbar(a4, extend='both', spacing='proportional', shrink=0.9, ax=axs[1])
+		# a5 = axs[3].imshow(self.DoLP_list[0,:,:] * np.sin(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
+
+		# cbar1 = f.colorbar(a5, extend='both', spacing='proportional', shrink=0.9, ax=axs[3])
+
+		a1 = axs[0].pcolormesh(self.world.a_pc_list, 90 - (RtoD*self.world.e_pc_list), (self.I_list[0,:,:]))
+		cbar1 = f.colorbar(a1, extend='both', spacing='proportional', shrink=0.9, ax=axs[0])
+
+		a2 = axs[2].pcolormesh(self.world.a_pc_list, 90 - (RtoD*self.world.e_pc_list), (self.DoLP_list[0,:,:]))
+		cbar1 = f.colorbar(a2, extend='both', spacing='proportional', shrink=0.9, ax=axs[2])
+
+		a3 = axs[4].pcolormesh(self.world.a_pc_list, 90 - (RtoD*self.world.e_pc_list), (self.AoRD_list[0,:,:]))
+		cbar1 = f.colorbar(a3, extend='both', spacing='proportional', shrink=0.9, ax=axs[4])
+
+		a4 = axs[1].pcolormesh(self.world.a_pc_list, 90 - (RtoD*self.world.e_pc_list), (self.DoLP_list[0,:,:] * np.cos(2 * self.AoRD_list[0,:,:])/4))
+		cbar1 = f.colorbar(a4, extend='both', spacing='proportional', shrink=0.9, ax=axs[1])
+
+		a5 = axs[3].pcolormesh(self.world.a_pc_list, 90 - (RtoD*self.world.e_pc_list), (self.DoLP_list[0,:,:] * np.sin(2 * self.AoRD_list[0,:,:])/4))
+		cbar1 = f.colorbar(a4, extend='both', spacing='proportional', shrink=0.9, ax=axs[3])
+
+		for i in range(len(axs)):
+			axs[i].get_yaxis().set_visible(False)
+			axs[i].set_theta_zero_location("N")
+			axs[i].set_theta_direction(-1)
+			axs[i].set_ylim(0, None)
+
+
+	def MakeSingleParamterPlots(self, f, axs):
+		if self.world.Nb_e_pc == 1:
+			xaxis = self.world.a_pc_list*RtoD
+			I = self.I_list[0, 0, :]
+			Ierr = self.I_list_err[0, 0, :] / 2.
+			InonPola = self.InonPola_list[0, 0, :]
+			InonPolaerr = self.InonPola_list_err[0, 0, :] / 2.
+			IPola = self.IPola_list[0, 0, :]
+			IPolaerr = self.IPola_list_err[0, 0, :] / 2.
+			D = self.DoLP_list[0, 0, :]
+			Derr = self.DoLP_list_err[0, 0, :] / 2.
+			A = self.AoRD_list[0, 0, :] * RtoD
+			Aerr = self.AoRD_list_err[0, 0, :] / 2. * RtoD
+
+		elif self.world.Nb_a_pc == 1:
+			xaxis = self.world.e_pc_list*RtoD
+			I = self.I_list[0, :, 0]
+			Ierr = self.I_list_err[0, :, 0] / 2.
+			InonPola = self.InonPola_list[0, :, 0]
+			InonPolaerr = self.InonPola_list_err[0, :, 0] / 2.
+			IPola = self.IPola_list[0, :, 0]
+			IPolaerr = self.IPola_list_err[0, :, 0] / 2.
+			D = self.DoLP_list[0, :, 0]
+			Derr = self.DoLP_list_err[0, :, 0] / 2.
+			A = self.I_list[0, :, 0]
+			Aerr = self.I_list_err[0, :, 0] / 2.
+
+		axs[0].plot(xaxis, I, label = "Total")
+		axs[0].fill_between(xaxis, I - Ierr, I + Ierr, alpha = 0.2)
+
+		axs[0].plot(xaxis, InonPola, "r", label = "Non polarized")
+		axs[0].fill_between(xaxis, InonPola - InonPolaerr, InonPola + InonPolaerr, alpha = 0.2)
+
+		axs[0].plot(xaxis, IPola, "g", label = "Polarized")
+		axs[0].fill_between(xaxis, IPola - IPolaerr, IPola + IPolaerr, alpha = 0.2)
+
+		axs[2].plot(xaxis, D)
+		axs[2].fill_between(xaxis, D - Derr, D + Derr, alpha = 0.2)
+
+		axs[4].plot(xaxis, A)
+		axs[4].fill_between(xaxis, A - Aerr, A + Aerr, alpha = 0.2)
+
+
+	def MakeSummaryFigure(self, projection='cartesian'):
+		f, axs = plt.subplots(nrows=3, ncols=2, sharex = True, figsize=(16, 8), subplot_kw={'projection': projection})
+		axs = axs.flatten()
+		axs[0] = plt.subplot(321)
+		axs[1] = plt.subplot(322)
+		axs[2] = plt.subplot(323)
+		axs[3] = plt.subplot(324)
+		axs[4] = plt.subplot(325)
+
+		return f, axs
 
 	def MakeSummaryPlot(self):
 
@@ -665,72 +758,12 @@ class Simulation:
 				self.MakePlots()
 				# pass
 			else:
-				f, axs = plt.subplots(nrows=3, ncols=2, sharex = True, figsize=(16, 8))
-				axs = axs.flatten()
-				axs[0] = plt.subplot(321)
-				axs[1] = plt.subplot(322)
-				axs[2] = plt.subplot(323)
-				axs[3] = plt.subplot(324)
-				axs[4] = plt.subplot(325)
-
 				if self.world.Nb_e_pc > 1 and self.world.Nb_a_pc > 1:
-					extent = RtoD * np.array([self.world.a_pc_list[0], self.world.a_pc_list[-1], self.world.e_pc_list[0], self.world.e_pc_list[-1]])
-					a1 = axs[0].imshow(self.I_list[0,:,:], origin="lower", extent=extent)
-					axs[0].get_xaxis().set_visible(False)
-					cbar1 = f.colorbar(a1, extend='both', spacing='proportional', shrink=0.9, ax=axs[0])
-					a2 = axs[2].imshow(self.DoLP_list[0,:,:], origin="lower", extent=extent, cmap=plt.get_cmap("YlOrRd"))
-					axs[2].get_xaxis().set_visible(False)
-					cbar1 = f.colorbar(a2, extend='both', spacing='proportional', shrink=0.9, ax=axs[2])
-					a3 = axs[4].imshow(self.AoRD_list[0,:,:]*RtoD, origin="lower", extent=extent, cmap=plt.get_cmap("twilight"))
-					#axs[4].get_xaxis().set_visible(False)
-					cbar1 = f.colorbar(a3, extend='both', spacing='proportional', shrink=0.9, ax=axs[4])
-					a4 = axs[1].imshow(self.DoLP_list[0,:,:] * np.cos(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
-					axs[1].get_xaxis().set_visible(False)
-					cbar1 = f.colorbar(a4, extend='both', spacing='proportional', shrink=0.9, ax=axs[1])
-					a5 = axs[3].imshow(self.DoLP_list[0,:,:] * np.sin(2 * self.AoRD_list[0,:,:])/4, origin="lower", extent=extent, cmap=plt.get_cmap("bwr"))
-
-					cbar1 = f.colorbar(a5, extend='both', spacing='proportional', shrink=0.9, ax=axs[3])
+					f, axs = self.MakeSummaryFigure(projection='polar')
+					self.MakeMapPlots(f, axs)
 				else:
-					if self.world.Nb_e_pc == 1:
-						xaxis = self.world.a_pc_list*RtoD
-						I = self.I_list[0, 0, :]
-						Ierr = self.I_list_err[0, 0, :] / 2.
-						InonPola = self.InonPola_list[0, 0, :]
-						InonPolaerr = self.InonPola_list_err[0, 0, :] / 2.
-						IPola = self.IPola_list[0, 0, :]
-						IPolaerr = self.IPola_list_err[0, 0, :] / 2.
-						D = self.DoLP_list[0, 0, :]
-						Derr = self.DoLP_list_err[0, 0, :] / 2.
-						A = self.AoRD_list[0, 0, :] * RtoD
-						Aerr = self.AoRD_list_err[0, 0, :] / 2. * RtoD
-
-					elif self.world.Nb_a_pc == 1:
-						xaxis = self.world.e_pc_list*RtoD
-						I = self.I_list[0, :, 0]
-						Ierr = self.I_list_err[0, :, 0] / 2.
-						InonPola = self.InonPola_list[0, :, 0]
-						InonPolaerr = self.InonPola_list_err[0, :, 0] / 2.
-						IPola = self.IPola_list[0, :, 0]
-						IPolaerr = self.IPola_list_err[0, :, 0] / 2.
-						D = self.DoLP_list[0, :, 0]
-						Derr = self.DoLP_list_err[0, :, 0] / 2.
-						A = self.I_list[0, :, 0]
-						Aerr = self.I_list_err[0, :, 0] / 2.
-
-					axs[0].plot(xaxis, I, label = "Total")
-					axs[0].fill_between(xaxis, I - Ierr, I + Ierr, alpha = 0.2)
-
-					axs[0].plot(xaxis, InonPola, "r", label = "Non polarized")
-					axs[0].fill_between(xaxis, InonPola - InonPolaerr, InonPola + InonPolaerr, alpha = 0.2)
-
-					axs[0].plot(xaxis, IPola, "g", label = "Polarized")
-					axs[0].fill_between(xaxis, IPola - IPolaerr, IPola + IPolaerr, alpha = 0.2)
-
-					axs[1].plot(xaxis, D)
-					axs[1].fill_between(xaxis, D - Derr, D + Derr, alpha = 0.2)
-
-					axs[2].plot(xaxis, A)
-					axs[2].fill_between(xaxis, A - Aerr, A + Aerr, alpha = 0.2)
+					f, axs = self.MakeSummaryFigure()
+					self.MakeSingleParamterPlots(f, axs)
 
 				axs[0].set_ylabel("Intensity ({})".format(self.world.flux_unit))
 				# axs[0].legend()

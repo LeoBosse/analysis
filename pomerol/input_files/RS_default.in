@@ -31,8 +31,8 @@ use_analytic false # Should stay as "false". If "true", POMEROL will compute the
 ### All instrumental inputs
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";". If automatic spacing write the numpy.linspace(endpoint=False) (for azimuths or numpy.geomspace(endpoint=True) for elevations) parameters separated by "_".
 ### See the world.__init__() and rayleigh_utils.GetPointingCoords() for the code.
-azimuts 266  all  225_315_45
-elevations 35  all 10_50_20
+azimuts 268 0_360_100 all    225_315_45
+elevations 31 0_90_25 all    10_50_20
 
 location 	2.08552;45.79866 lagorge     #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens, finlande or LON;LAT in degrees
 
@@ -42,7 +42,7 @@ end_datetime   20190116-04:00:00
 instrument_opening_angle 	1	  		# Half opening angle of the instrument (degrees)
 instrument_area 		20 			# Area of Petit Cru in cm^2 (gets converted in km**2 in the code)
 
-wavelength 450 545 391.4  557.7 630  427.8 413                      #in nm
+wavelength 427.8 450 545 391.4  557.7 630  427.8 413                      #in nm
 
 # ###############################################################################
 ### Add a constant light with given polarisation parameters
@@ -58,8 +58,8 @@ add_B_pola 0 #Check if this is still working before use... Add polarisation foll
 # ###############################################################################
 ### Atmosphere parameters
 RS_min_altitude	 						0	 	    # Minimum altitude of the scattering layer
-RS_max_altitude	 						30 120 		# Maximum altitude of the scattering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
-Nb_points_along_los   			30 100		  # Number of bins along the line of sight between H_r_min and h_r_max
+RS_max_altitude	 						120 		# Maximum altitude of the scattering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
+Nb_points_along_los   			100		  # Number of bins along the line of sight between H_r_min and h_r_max
 
 max_angle_discretization		0				# In degrees. If scattering volume solid angle seen from E is larger than that, cut the volume in pieces.
 
@@ -71,7 +71,7 @@ use_ozone 1 # 0 or 1. Will compute absorption along the paths due to ozone.
 
 ### Aerosols
 use_aerosol 0			# 0 or 1. Main flag to decide wether to use aerosol scattering/absorption or not.
-aer_complexity 1		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
+aer_complexity 0		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
 
 ### Complex aerosol profile parameters: use if aer_complexity == 1
 aer_model 1low 		# manual: use the aerosols properties listed below. Or name of a pre configured model.  (preconfigured model are hard-coded in atmosphere.py, in Aerosol.SetModel() function)
@@ -124,7 +124,7 @@ MS_segment_bins_length 0.1  #km Bin length for each segment
 # "image"														use an all-sky camera picture defined by the sky_file parameters below
 # "movie"														use all-sky camera pictures defined by thesky_file and movie_file_numbers parameters below
 # "starlight_YYYYMMDD-HHMMSS"				verify if this is working...
-sky_mode spot_I1_a207_e36.5 image uniform_100 movie image uniform_100 1_band_e45 none      starlight_20190116-030000 uniform_0 1_moving_EW_band     movie 1_band_e45  spot_I100_a90_e90  image uniform_219
+sky_mode spot_I10000000000000000000_a207_e36 image uniform_100 movie image uniform_100 1_band_e45 none      starlight_20190116-030000 uniform_0 1_moving_EW_band     movie 1_band_e45  spot_I100_a90_e90  image uniform_219
 
 ### If you want to dissociate the direct and scattered light:
 # only: Don't compute diffusion (-> very fast), but only direct lights.
@@ -132,7 +132,7 @@ sky_mode spot_I1_a207_e36.5 image uniform_100 movie image uniform_100 1_band_e45
 # add : should be the DEFAULT. Compute everything (direct and scattered) and add everything together.
 direct_mode add
 
-emission_altitude	110			# Altitude of the emission in km.
+emission_altitude	150000000		# Altitude of the emission in km.
 
 Nb_emission_points 1000				 # Number of bins to compute. Will downgrade the initial picture to match this pixel count.
 Nb_emission_maps 1						 # Number of emission maps to compute. Use it for time changing synthetic emissions (sky_mode == X_moving_EW_band, but not for a movie). Should be put to 1 when not varying !

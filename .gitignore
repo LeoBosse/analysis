@@ -1,5 +1,8 @@
 vendange/__pycache__/
 pomerol/__pycache__/
+pomerol GPU/__pycache__/
+pomerol GPU/input_files/systematic/
+pomerol GPU/log/
 geomagic/__pycache__/
 pomerol/log/
 pomerol/input_files/systematic
