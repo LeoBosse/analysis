@@ -136,37 +136,48 @@ class Bottle:
 
     def SetJumps(self):
         self.jump_unit = self.input_parameters["jump_unit"].lower()
-        self.head_jump = float(self.input_parameters["head_jump"])
-        self.tail_jump = float(self.input_parameters["tail_jump"])
+        try:
+            self.head_jump = float(self.input_parameters["head_jump"].split(';')[self.line-1])
+        except:
+            self.head_jump = float(self.input_parameters["head_jump"])
+        try:
+            self.tail_jump = float(self.input_parameters["tail_jump"].split(';')[self.line-1])
+        except:
+            self.tail_jump = float(self.input_parameters["tail_jump"])
+
+
+
         try:
             self.jump_mode = self.input_parameters["jump_mode"]
         except:
             self.jump_mode = "lenght"
         # Until the bug at the begining of the observation is not fixed, delete head and tail after treatment. When fixed, we'll be able to do it before
         # if self.jump_unit in ("seconds", "minutes", "hours"):
-        if "sec" in self.jump_unit or "min" in self.jump_unit or "h" in self.jump_unit:
-            self.head_jump = dt.timedelta(0)
-            self.tail_jump = dt.timedelta(0)
+        # if "sec" in self.jump_unit or "min" in self.jump_unit or "h" in self.jump_unit:
+        #     self.head_jump = 0
+        #     self.tail_jump = 0
 
         # and self.jump_unit in ["seconds", "minutes", "hours"]:
         if self.jump_mode == "time":
-            self.head_jump = dt.timedelta(seconds=float(self.input_parameters["head_jump"]))
-            self.tail_jump = dt.timedelta(seconds=float(self.input_parameters["tail_jump"]))
-            if "min" in self.jump_unit:
-                self.head_jump = dt.timedelta(minutes=float(self.input_parameters["head_jump"]))
-                self.tail_jump = dt.timedelta(minutes=float(self.input_parameters["tail_jump"]))
+            if "sec" in self.jump_unit:
+                self.head_jump = dt.timedelta(seconds=self.head_jump)
+                self.tail_jump = dt.timedelta(seconds=self.tail_jump)
+            elif "min" in self.jump_unit:
+                self.head_jump = dt.timedelta(minutes=self.head_jump)
+                self.tail_jump = dt.timedelta(minutes=self.tail_jump)
             elif "h" in self.jump_unit:
                 # print("DEBUG jumps", [r.time.total_seconds() for r in self.rotations[:10]])
                 # print(time.timedelta(hours=float(self.input_parameters["head_jump"])), time.timedelta(hours=float(self.input_parameters["tail_jump"])))
-                self.head_jump = dt.timedelta(hours=float(self.input_parameters["head_jump"]))
-                self.tail_jump = dt.timedelta(hours=float(self.input_parameters["tail_jump"]))
+                self.head_jump = dt.timedelta(hours=self.head_jump)
+                self.tail_jump = dt.timedelta(hours=self.tail_jump)
 
-            if self.jump_mode == "length" or self.tail_jump.seconds == 0.:
-                try:
-                    self.tail_jump = self.all_times[-1] - self.tail_jump
-                except:
-                    self.tail_jump = self.rotations[-1].time - self.tail_jump
+        if self.jump_mode == "length" or self.tail_jump.total_seconds() == 0.:
+            try:
+                self.tail_jump = self.all_times[-1] - self.tail_jump
+            except:
+                self.tail_jump = self.rotations[-1].time - self.tail_jump
 
+        print('DEBUG JUMPS', self.head_jump, self.tail_jump)
 
     def CorrectDensity(self):
         try:
@@ -260,7 +271,7 @@ class Bottle:
 
         if not self.from_txt and self.instrument_name in ["corbel", "gdcu", "ptcu_v2"]:
             # if self.DateTime() < dt.datetime(year=2020, month=10, day=1):
-            # self.AoLP_correction = 0  # USE only for data downloaded from the database BEFORE October 2020!!!! For everything observed after that or downloaded via KVA20, you have to apply the correction below
+            # self.AoLP_correction = 0  # USE only for data downloaded from the database BEFORE October 2020!!!! For everything observed after that or downloaded via KVA20, you have to apply the first correction below
 
             self.AoLP_correction = -(self.config['IS_PolarizerOffset' + str(self.line)]) * DtoR #This is the norm now (for all data downloaded after oct 2020)
 
@@ -268,7 +279,7 @@ class Bottle:
 
             ##################################################
             ##################################################
-            # ATTENTION, A UTILISER UNIQUEMENT POURT DES CAS PARTICULIER. DANS LE DOUTE, ELLE DOIT TOUJOURS ETRE COMMENTEE
+            # ATTENTION, A UTILISER UNIQUEMENT POURT DES CAS PARTICULIER. DANS LE DOUTE, COMMENTEZ OU VERIFIER LE PARAMETRE 'AoLP_correction' DANS LE FICHIER D'INPUT.
             print("self.AoLP_correction", self.AoLP_correction*RtoD)
             self.AoLP_correction -= float(self.input_parameters["AoLP_correction"]) * DtoR
             # self.AoLP_correction -= float(self.input_parameters["AoLP_correction"].split(";")[self.line - 1]) * DtoR
@@ -438,10 +449,12 @@ class Bottle:
 
         self.std_AoLP = np.sqrt(1 / ((self.all_DoLP / 100) ** 2 * self.all_I0 * self.avg_dt))
         self.std_smooth_AoLP = np.sqrt(1 / ((self.smooth_DoLP / 100) ** 2 * self.smooth_I0 * smoothing_factor))
-        for i in range(len(self.std_AoLP)):
-            self.std_AoLP[i] = min(np.pi, self.std_AoLP[i])
-            self.std_smooth_AoLP[i] = min(np.pi, self.std_smooth_AoLP[i])
 
+        # for i in range(len(self.std_AoLP)):
+        #     self.std_AoLP[i] = min(np.pi, self.std_AoLP[i])
+        #     self.std_smooth_AoLP[i] = min(np.pi, self.std_smooth_AoLP[i])
+        self.std_AoLP = np.clip(self.std_AoLP, None, np.pi)
+        self.std_smooth_AoLP = np.clip(self.std_smooth_AoLP, None, np.pi)
 
         self.smooth_AoLP_upper = self.smooth_AoLP + self.std_smooth_AoLP
         self.smooth_AoLP_lower = self.smooth_AoLP - self.std_smooth_AoLP
@@ -450,8 +463,7 @@ class Bottle:
         def SN(I, D, T): return D * np.sqrt(I * T) / 2
 
         self.all_SN = SN(self.all_I0, self.all_DoLP / 100, self.avg_dt)
-        self.smooth_SN = SN(
-            self.smooth_I0, self.smooth_DoLP / 100, smoothing_factor)
+        self.smooth_SN = SN(self.smooth_I0, self.smooth_DoLP / 100, smoothing_factor)
 
 
         self.I0_diff = np.gradient(self.smooth_I0, self.avg_dt)
@@ -481,7 +493,7 @@ class Bottle:
             I_err = self.std_I0
             d = self.all_I0_diff
 
-        print(I_err)
+        # print(I_err)
 
         d_after = np.append(I_err[1:], I_err[-1])
         d_before = np.append(I_err[0], I_err[:-1])
@@ -490,7 +502,7 @@ class Bottle:
 
         diff_errors = abs(d) * .5 * np.sqrt(d_after / I_after**2 + d_before / I_before**2)
 
-        print(diff_errors)
+        # print(diff_errors)
 
         return diff_errors
 
@@ -548,9 +560,13 @@ class Bottle:
 
     def GetSliddingCorrCoef(self, window_size = 10, smooth = False):
 
+        # Get the window size in number of points from the length in seconds and the average delta t.
         window_size = int(window_size * 1000 / self.avg_dt)
         if window_size % 2 == 1:
             window_size += 1
+
+        # normalized numpy array of the window.
+        window = np.ones(window_size) / window_size
 
         X_arr = self.all_I0_diff
         Y_arr = self.smooth_DoLP
@@ -559,14 +575,24 @@ class Bottle:
             X_arr = self.all_I0_diff
             Y_arr = self.all_DoLP
 
+        data = pd.DataFrame({'X':X_arr,
+                             'Y':Y_arr})
 
-        corr = np.zeros_like(self.all_times)
+        corr = data['X'].rolling(window_size, center=True).corr(data['Y'],method='pearson')
 
-        for it in range(len(self.all_times)):
-            s = max(0, it - int(window_size / 2))
-            e = min(len(self.all_times), it + int(window_size / 2))
-            corr[it] = np.corrcoef([X_arr[s:e], Y_arr[s:e]])[0, 1]
-
+        # print('DEBUG ROLLING CORR', window_size)
+        # print(corr[window_size:window_size+100])
+        #
+        # corr = np.zeros_like(self.all_times)
+        # for it in range(len(self.all_times)):
+        #     start = max(0, it - int(window_size / 2))
+        #     end = min(len(self.all_times), it + int(window_size / 2))
+        #
+        #     corr[it] = np.corrcoef([X_arr[start:end], Y_arr[start:end]])[0, 1]
+        #
+        #     # print(corr[it] == data['X'][start:end].corr(data['Y'][start:end]))
+        #
+        # print(corr[window_size:window_size+100])
         return corr
 
 
@@ -1093,12 +1119,12 @@ class PTCUBottle(Bottle):
         # o: orange 620
         # X, Y: 620nm et 413nm
         filters_list = ["r", "v", "b", "m", "0", "o", "X", "Y", "t"]
-        nb_filters = 2
-        if self.instrument_name == "gdcu":
-            nb_filters = 4
+        # nb_filters = 2
+        # if self.instrument_name == "gdcu":
+        #     nb_filters = 4
 
         for r in rest:
-            if len(r) == nb_filters and np.all([a in filters_list for a in r]):
+            if np.all([a in filters_list for a in r]):
                 if self.instrument_name == "carmen" or self.instrument_name == "fake_ptcu":
                     self.filters = r
                     if self.filters[1] in [0, "0"]:
@@ -1369,6 +1395,7 @@ class PTCUBottle(Bottle):
         # configuration = np.genfromtxt(config_file, dtype=array_type, delimiter=",", skip_header=1)
         conf_df = pd.read_csv(config_file, sep=",")
         configuration = dict()
+        print('configuration', configuration)
         for n in conf_df.columns:
             configuration[n] = conf_df[n][0]
 

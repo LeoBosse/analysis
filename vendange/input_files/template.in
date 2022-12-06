@@ -37,10 +37,10 @@ jump_mode time   		#If "lenght" -> indicate the lenght of time to be jumped at s
 
 AoLP_correction 0 	# AoLP correction to be applied to all AoLP results. Angle in degrees, positive or negative
 
-Imin 0.1 			#All measurments with intensity (mV) below will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
-Imax 10000 		#All measurments with intensity (mV) above will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
-DoLPmin 0		 	#All measurments with DoLP (%) below will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
-DoLPmax 100 	#All measurments with DoLP (%) above will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
+Imin 1;1;1;1 			#All measurments with intensity (mV) below will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
+Imax 3000;3000;3000;3000 		#All measurments with intensity (mV) above will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
+DoLPmin 0;0;0;0		 	#All measurments with DoLP (%) below will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
+DoLPmax 100;100;100;100 	#All measurments with DoLP (%) above will be filtered out. If multiple channels (bottles), you can specify a value for each separated by ";" symbol.
 
 I_ref off 			#on or off. Only for Carmen when the reference channel is working. if off, the reference canal of carmen will not be displayed
 

@@ -4,6 +4,7 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 # plt.ion()
 from matplotlib import rc
 #matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
@@ -37,6 +38,7 @@ class Mixer:
 		self.bottles = bottles
 		self.comp_bottles = comp_bottles
 		self.mag_data = mag_data
+		self.pola_color = None
 
 		for ib, bottle in enumerate(self.bottles):
 
@@ -229,8 +231,8 @@ class Mixer:
 
 			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "DoLP")
 			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "AoLP")
-			self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
-			self.MakeCleanCorrelationPlots(bottle, None, smooth=False)
+			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
+			# self.MakeCleanCorrelationPlots(bottle, None, smooth=False)
 
 			# for m in self.J2RAYS1_models:
 			# 	self.SubtractModel(bottle, m)
@@ -245,17 +247,19 @@ class Mixer:
 					self.eq_currents.MakePlot(coords = "azel")
 
 			if self.comp_bottles:
-				self.SetGraphParameter(self.comp_bottles[ib], comp=True)
-				self.MakeXAxis(self.comp_bottles[ib])
-				self.MakePlots(self.comp_bottles[ib])
-				if self.make_optional_plots:
-					if self.show_SN:
-						self.MakeSNratio(self.comp_bottles[ib])
+				print('DEBUG COMP BOTTLES', self.comp_bottles)
+				for ibc in range(len(self.comp_bottles)):
+					self.SetGraphParameter(self.comp_bottles[ibc], comp=True)
+					self.MakeXAxis(self.comp_bottles[ibc])
+					self.MakePlots(self.comp_bottles[ibc], comp=True)
+					if self.make_optional_plots:
+						if self.show_SN:
+							self.MakeSNratio(self.comp_bottles[ibc])
 
-					self.SetGraphParameter(bottle)
-					self.MakeXAxis(bottle)
+						self.SetGraphParameter(bottle)
+						self.MakeXAxis(bottle)
 
-					self.CompareBottles(self.comp_bottles[ib], bottle)
+						self.CompareBottles(self.comp_bottles[ibc], bottle)
 
 			# if self.make_optional_plots:
 			# 	self.MakeFFT(bottle)
@@ -292,21 +296,21 @@ class Mixer:
 		delta = bottle.all_times[-1] - bottle.all_times[0]
 		if delta > dt.timedelta(hours=2):
 			self.divisor = 3600.
-			if self.langue == "en": self.xlabel = "Time (hours)"
-			else : 					self.xlabel = "Durée (heure)"
+			if   self.langue == "en" : self.xlabel = "Time (hours)"
+			elif self.langue == "fr" : self.xlabel = "Durée (heure)"
 		elif delta > dt.timedelta(minutes=2):
 			self.divisor = 60.
-			if self.langue == "en": self.xlabel = "Time (minutes)"
-			else : 					self.xlabel = "Durée (minutes)"
+			if   self.langue == "en" : self.xlabel = "Time (minutes)"
+			elif self.langue == "fr" : self.xlabel = "Durée (minutes)"
 		else:
-			if self.langue == "en": self.xlabel = "Time (seconds)"
-			else : 					self.xlabel = "Durée (secondes)"
+			if   self.langue == "en" : self.xlabel = "Time (seconds)"
+			elif self.langue == "fr" : self.xlabel = "Durée (secondes)"
 
 		# self.x_axis_list = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
 		norm = bottle.all_times[0].total_seconds()
 		self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
 
-		if self.use_24h_time_format: #Specifically for the current article where I needed to match Jean xaxis in format hour+24
+		if self.use_24h_time_format:
 			self.x_axis_list = bottle.DateTime("start", format="LT") + bottle.all_times
 			# day = self.x_axis_list[0].day
 			# GetHour = lambda t: t.hour + t.minute / 60. + t.second / 3600.
@@ -314,6 +318,12 @@ class Mixer:
 			# self.x_axis_list = np.where(np.vectorize(GetDay)(self.x_axis_list) > day, np.vectorize(GetHour)(self.x_axis_list)+24, np.vectorize(GetHour)(self.x_axis_list))
 			# self.x_axis_list = np.array([GetHour(t) for t in self.x_axis_list])
 			self.xlabel = "Local Time"
+
+			if self.divisor == 3600.:
+				self.xaxis_time_format = '%H:%M'
+			else:
+				self.xaxis_time_format = '%H:%M:%S'
+
 			# plt.rcParams['axes.xmargin'] = 0
 
 
@@ -432,7 +442,7 @@ class Mixer:
 		self.time_label = "LTC" # The title of the time x-axis
 		self.use_24h_time_format = 1
 
-		self.show_raw_data = 1 and not comp # Show the data with no slidding average. All rotations of the polarizing filter. In black
+		self.show_raw_data = 1 and len(self.comp_bottles) == 0 # Show the data with no slidding average. All rotations of the polarizing filter. In black
 		self.show_smooth_data = 1 # Show smoothed data (averageed over the time window defined in the input file)
 
 		self.show_error_bars 		= 1 # Show error bars for the raw cru data. in grey
@@ -742,38 +752,60 @@ class Mixer:
 
 		self.all_sky_color = "xkcd:orange"
 
+		pola_to_line_color = {	"r": ["xkcd:red","xkcd:orange"],
+								"v": ["xkcd:green","xkcd:lime green"],
+								"b": ["xkcd:blue","xkcd:bright"],
+								"m": ["xkcd:purple","xkcd:lavender"],
+								"o": ["xkcd:orange","xkcd:orange"],
+								"t": ["xkcd:turquoise", "xkcd:turquoise"],
+								"X": ["xkcd:orange","xkcd:orange"],
+								"Y": ["xkcd:turquoise", "xkcd:turquoise"]}
+
 		### xkcd color guide: https://xkcd.com/color/rgb/
 		print("MIXER FILTER:", bottle.filters)
 		if bottle.filters:
-			self.pola_color = bottle.filters[0]
-			if comp:
+
+			if comp and self.pola_color == bottle.filters[0]: #If the last bottle color is the same as the comp bottle, then use a weird color for the comp
 				self.smooth_I0_color = "xkcd:olive"
 			else:
-				if 	 self.pola_color == "r": self.smooth_I0_color = "xkcd:red"
-				elif self.pola_color == "v": self.smooth_I0_color = "xkcd:green"
-				elif self.pola_color == "b": self.smooth_I0_color = "xkcd:blue"
-				elif self.pola_color == "m": self.smooth_I0_color = "xkcd:purple"
-				elif self.pola_color == "o": self.smooth_I0_color = "xkcd:orange"
-				elif self.pola_color == "t": self.smooth_I0_color = "xkcd:turquoise"
-				elif self.pola_color == "X": self.smooth_I0_color = "xkcd:orange"
-				elif self.pola_color == "Y": self.smooth_I0_color = "xkcd:turquoise"
-				else: self.smooth_I0_color = "red"
+				self.pola_color = bottle.filters[0]
+				if self.pola_color not in pola_to_line_color:
+					self.smooth_I0_color = "xkcd:black"
+				else:
+					self.smooth_I0_color = pola_to_line_color[self.pola_color][0]
+
+				# if 	 self.pola_color == "r": self.smooth_I0_color = "xkcd:red"
+				# elif self.pola_color == "v": self.smooth_I0_color = "xkcd:green"
+				# elif self.pola_color == "b": self.smooth_I0_color = "xkcd:blue"
+				# elif self.pola_color == "m": self.smooth_I0_color = "xkcd:purple"
+				# elif self.pola_color == "o": self.smooth_I0_color = "xkcd:orange"
+				# elif self.pola_color == "t": self.smooth_I0_color = "xkcd:turquoise"
+				# elif self.pola_color == "X": self.smooth_I0_color = "xkcd:orange"
+				# elif self.pola_color == "Y": self.smooth_I0_color = "xkcd:turquoise"
+				# else: self.smooth_I0_color = "red"
 
 			self.smooth_error_bars_color = self.smooth_I0_color
 
-			if bottle.instrument_name == "carmen" and bottle.filters[1] != 0:
+			if bottle.instrument_name == "carmen" and bottle.filters[1] != 0 and not bottle.NoVref:
 				self.ref_color = bottle.filters[1]
-				if 	 self.ref_color == "r" and self.pola_color != "r": self.smooth_ref_color = "xkcd:red"
-				elif self.ref_color == "r" and self.pola_color == "r": self.smooth_ref_color = "xkcd:orange"
-				elif self.ref_color == "v" and self.pola_color != "v": self.smooth_ref_color = "xkcd:green"
-				elif self.ref_color == "v" and self.pola_color == "v": self.smooth_ref_color = "xkcd:lime green"
-				elif self.ref_color == "b" and self.pola_color != "b": self.smooth_ref_color = "xkcd:blue"
-				elif self.ref_color == "b" and self.pola_color == "b": self.smooth_ref_color = "xkcd:bright blue"
-				elif self.ref_color == "m" and self.pola_color != "m": self.smooth_ref_color = "xkcd:purple"
-				elif self.ref_color == "m" and self.pola_color == "m": self.smooth_ref_color = "xkcd:lavender"
-				elif self.ref_color == "o" and self.pola_color != "o": self.smooth_ref_color = "xkcd:orange"
-				elif self.ref_color == "o" and self.pola_color == "o": self.smooth_ref_color = "xkcd:orange"
-				else: self.smooth_ref_color = "green"
+				self.smooth_ref_color = 'black'
+				if self.ref_color in pola_to_line_color:
+					if self.ref_color == self.pola_color:
+						self.smooth_ref_color = pola_to_line_color[self.ref_color][1]
+					else:
+						self.smooth_ref_color = pola_to_line_color[self.ref_color][0]
+
+				# if 	 self.ref_color == "r" and self.pola_color != "r": self.smooth_ref_color = "xkcd:red"
+				# elif self.ref_color == "r" and self.pola_color == "r": self.smooth_ref_color = "xkcd:orange"
+				# elif self.ref_color == "v" and self.pola_color != "v": self.smooth_ref_color = "xkcd:green"
+				# elif self.ref_color == "v" and self.pola_color == "v": self.smooth_ref_color = "xkcd:lime green"
+				# elif self.ref_color == "b" and self.pola_color != "b": self.smooth_ref_color = "xkcd:blue"
+				# elif self.ref_color == "b" and self.pola_color == "b": self.smooth_ref_color = "xkcd:bright blue"
+				# elif self.ref_color == "m" and self.pola_color != "m": self.smooth_ref_color = "xkcd:purple"
+				# elif self.ref_color == "m" and self.pola_color == "m": self.smooth_ref_color = "xkcd:lavender"
+				# elif self.ref_color == "o" and self.pola_color != "o": self.smooth_ref_color = "xkcd:orange"
+				# elif self.ref_color == "o" and self.pola_color == "o": self.smooth_ref_color = "xkcd:orange"
+				# else: self.smooth_ref_color = "green"
 
 
 		self.all_SN_color = "black"
@@ -845,6 +877,13 @@ class Mixer:
 
 
 	def PlotDoLP(self, ax, bottle, ax_lines=[]):
+
+		# if self.show_error_bars:
+		# 	smooth_yerr = bottle.var_smooth_DoLP
+		# 	yerr = bottle.var_DoLP
+		# 	yerr = None
+		# else:
+		# 	smooth_yerr = None
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
@@ -1257,7 +1296,7 @@ class Mixer:
 				# self.axs[11].xlim((0, ))
 
 
-	def MakePlots(self, bottle):
+	def MakePlots(self, bottle, comp=False):
 		#Plotting the mean intensity I0, DoLP, AoLP for each rotation and more!
 
 		# if self.show_error_bars:
@@ -1269,17 +1308,18 @@ class Mixer:
 
 		print("START PLOTTING")
 
-		self.PlotFlux(self.ax1, bottle, ax_lines=self.ax1_lines)
+		###Flux
+		if not comp:
+			self.PlotFlux(self.ax1, bottle, ax_lines=self.ax1_lines)
+		else:
+			self.PlotFlux(self.ax1.twinx(), bottle, ax_lines=self.ax1_lines)
 		self.PlotAllSky(self.ax1, bottle, ax_lines=self.ax1_lines)
+		###DoLP
+		if not comp:
+			self.PlotDoLP(self.ax2, bottle, ax_lines=self.ax2_lines)
+		else:
+			self.PlotDoLP(self.ax2.twinx(), bottle, ax_lines=self.ax2_lines)
 
-		# if self.show_error_bars:
-		# 	smooth_yerr = bottle.var_smooth_DoLP
-		# 	yerr = bottle.var_DoLP
-		# 	yerr = None
-		# else:
-		# 	smooth_yerr = None
-
-		self.PlotDoLP(self.ax2, bottle, ax_lines=self.ax2_lines)
 		self.PlotB(self.ax2, bottle, ax_lines=self.ax2_lines)
 
 		if self.show_eiscat:
@@ -1302,12 +1342,18 @@ class Mixer:
 
 		self.f1.subplots_adjust(hspace=0)
 
+
 		###Set title
 		# self.f1.suptitle(bottle.saving_name.replace("_", " "))
 
 		# plt.setp([a.get_xticklabels() for a in f1.axes[:-1]], visible=False)
 		if bottle.observation_type == "fixed":
 			plt.minorticks_on()
+
+
+		if self.use_24h_time_format:
+
+			self.ax3.xaxis.set_major_formatter(mdates.DateFormatter(self.xaxis_time_format))
 
 		# if self.show_time:
 		#

@@ -21,7 +21,7 @@ image_folder = config.data_path + 'allsky_camera/KIL20200224/'  #plip/Temp"
 ap = argparse.ArgumentParser()
 ap.add_argument("-ext", "--extension", required=False, default='png', help="extension name. default is 'png'.")
 ap.add_argument("-o", "--output", required=False, default='output.mp4', help="output video file")
-ap.add_argument("-fps", "--framepersec", required=False, default=2, help="Number of frames per seconds for the output video.")
+ap.add_argument("-fps", "--framepersec", required=False, default=24, help="Number of frames per seconds for the output video.")
 args = vars(ap.parse_args())
 
 # Arguments
@@ -89,7 +89,7 @@ def ReadFrame(name):
 #List all image names to be used in the movie. You can hardcode conditions on the names here.
 images = []
 for f in os.listdir(dir_path):
-    if f.endswith(ext) and ('_00' in f or '_01' in f):
+    if f.endswith(ext) and ('_01' in f):
         images.append(f)
 
 images.sort()
