@@ -90,6 +90,9 @@ class Atmosphere:
 
 		self.LoadO3AbsorptionCS()
 
+		self.profiles["beta_aer"] = np.zeros_like(self.profiles['HGT'])
+		self.profiles["aer_Phase_Fct"] = np.zeros_like(self.profiles['sca_angle'])
+		self.profiles["aer_Phase_DoLP"] = np.zeros_like(self.profiles['sca_angle'])
 		if self.use_aerosol:
 			self.aer_complexity = int(in_dict['aer_complexity'])
 			if self.aer_complexity > 0:
@@ -103,6 +106,15 @@ class Atmosphere:
 
 			self.GetAerosolProfil(in_dict)
 			self.profiles["beta_aer"] = np.array([self.AerosolCS(a) for a in self.profiles["HGT"]])
+
+
+		self.profiles['total_absorption'] = np.zeros_like(self.profiles['HGT'])
+		self.profiles['total_absorption'] += self.profiles["beta_ray"]
+		if self.use_ozone:
+			self.profiles['total_absorption'] += self.tau_O3_list
+		if self.use_aerosol:
+			self.profiles['total_absorption'] += self.tau_aer_list
+
 
 
 		if mpi_rank == 0:

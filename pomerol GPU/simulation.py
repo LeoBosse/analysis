@@ -213,8 +213,8 @@ class Simulation:
 			print("Starting time: ", start_time.time().strftime("%H:%M:%S"))
 
 		if self.is_ground_emission == True:
-			# self.world.ComputeGroundMaps(self.time, self.ia_pc, self.ie_pc)
-			self.world.ComputeGroundMapsGPU(self.time, self.ia_pc, self.ie_pc)
+			self.world.ComputeGroundMaps(self.time, self.ia_pc, self.ie_pc)
+			# self.world.ComputeGroundMapsGPU(self.time, self.ia_pc, self.ie_pc)
 		else:
 
 			if self.add_B_pola:
@@ -724,7 +724,7 @@ class Simulation:
 		axs[4].fill_between(xaxis, A - Aerr, A + Aerr, alpha = 0.2)
 
 
-	def MakeSummaryFigure(self, projection='cartesian'):
+	def MakeSummaryFigure(self, projection=None):
 		f, axs = plt.subplots(nrows=3, ncols=2, sharex = True, figsize=(16, 8), subplot_kw={'projection': projection})
 		axs = axs.flatten()
 		axs[0] = plt.subplot(321)

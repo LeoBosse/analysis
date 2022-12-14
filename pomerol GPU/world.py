@@ -476,23 +476,61 @@ class World:
 
 
 	def ComputeGroundMapsGPU(self, time, ia_pc, ie_pc):
+
+
+
+		uniforms = {'instrument_azimut'		: float(self.a_pc_list[ia_pc]),
+					'instrument_elevation'	: float(self.e_pc_list[ie_pc]),
+					# 'instrument_lon'		: float(self.ground_map.A_lon),
+					# 'instrument_lat'		: float(self.ground_map.A_lat),
+					'instrument_altitude'	: float(self.instrument_altitude),
+					'instrument_area'		: float(self.PTCU_area),
+					# 'instrument_fov'		: float(self.ouv_pc),
+					# 'wavelength'			: float(self.atmosphere.wavelength),
+					# 'los_nb_points'			: int(self.atmosphere.Nlos),
+					'map_delta_az'			: float(self.ground_map.daz),
+					'is_point_source'		: bool(self.ground_map.is_point_source),
+					'atm_nb_altitudes'		: int(len(self.atmosphere.profiles['HGT'])),
+					'atm_nb_angles' 		: int(len(self.atmosphere.profiles['sca_angle'])),
+					'use_aerosols' 			: bool(self.atmosphere.use_aerosol),
+					'instrument_los'		: np.array(self.obs.los_uen.flatten(), dtype=np.float32)
+					}
+
 		emission_map = self.ground_map.cube[time, :, :]
+		emission_data = list(zip(np.array(emission_map.flatten(), dtype=np.float32),
+								 np.zeros_like(emission_map.flatten(), dtype=np.float32),
+								 np.zeros_like(emission_map.flatten(), dtype=np.float32)))
 
+		# print(emission_map.size * self.atmosphere.Nlos)
+		z = np.zeros(emission_map.size * self.atmosphere.Nlos, dtype=np.float32)
+		observation_data = list(zip(z,
+					    			z,
+					    			z))
 
-		uniforms = {'instrument_azimut': ia_pc,
-					'instrument_elevation': ie_pc,
-					'instrument_los': self.obs.los_uen,
-					'instrument_area': self.PTCU_area,
-					'instrument_fov': self.ouv_pc,
-					'wavelength': self.atmosphere.wavelength,
-					'los_nb_points': self.atmosphere.Nlos,
-					'los_altitudes': self.atmosphere.mid_altitudes_list,
-					'atm_altitudes': self.atmosphere.profiles["HGT"],
-					'atm_abs': self.atmosphere.profiles["beta_ray"],
-					'map_azimuts': self.ground_map.mid_azimuts,
-					'map_distances': self.ground_map.mid_distances}
+		dist_data = self.ground_map.mid_distances
+		az_data   = self.ground_map.mid_azimuts
 
-		shader = ShaderWrap('ground', emission_map, uniforms)
+		los_data = list(zip(self.atmosphere.mid_altitudes_list,
+							self.atmosphere.volumes,
+							self.atmosphere.los_transmittance))
+
+		atm_data = list(zip(self.atmosphere.profiles["HGT"],
+							self.atmosphere.profiles['total_absorption'],
+							self.atmosphere.profiles['beta_ray'],
+							self.atmosphere.profiles['beta_aer']))
+
+		sca_data = list(zip(self.atmosphere.profiles['sca_angle'],
+							self.atmosphere.profiles["aer_Phase_Fct"],
+							self.atmosphere.profiles["aer_Phase_DoLP"]))
+
+		# print([a.shape for a in sca_data])
+		buffer_list = [emission_data, observation_data, sca_data, atm_data, los_data, dist_data, az_data]
+		# print(uniforms)
+
+		# print(emission_data)
+		# print(observation_data)
+
+		shader = ShaderWrap('ground', emission_map, uniforms, buffers=buffer_list, local_size=(1, 1, self.atmosphere.Nlos))
 		shader.Run()
 
 		# results = np.array(shader.RunComputeShader())
@@ -503,7 +541,7 @@ class World:
 		self.ground_map.V_map[time, ie_pc, ia_pc] += shader.result[0, :, :]
 		self.ground_map.Vcos_map[time, ie_pc, ia_pc] += shader.result[1, :, :]
 		self.ground_map.Vsin_map[time, ie_pc, ia_pc] += shader.result[2, :, :]
-
+		# print(shader.result)
 		# print(self.ground_map.V_map[time, ie_pc, ia_pc])
 		# print(self.ground_map.Vcos_map[time, ie_pc, ia_pc])
 		# print(self.ground_map.Vsin_map[time, ie_pc, ia_pc])
@@ -1195,8 +1233,8 @@ class World:
 		# if show:
 		# 	plt.show()
 
-		if save:
-			plt.savefig(save + '_hist.png', bbox_inches='tight', metadata=metadata)
+		# if save:
+		# 	plt.savefig(save + '_hist.png', bbox_inches='tight', metadata=metadata)
 
 
 	def LockInAmplifier(self, hst, mid_bins, InonPola):
