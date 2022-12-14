@@ -451,11 +451,12 @@ class MagData:
 		# self.data_path = "/home/bossel/These/Analysis/data/magnetometer/"
 
 		self.file = self.data_path
-		if bottle.location.lower() in ["tromso", "skibotn", "skibotnsud", "skibotnnord", "kilpisjarvi"]:
+		if bottle.location.lower() in ["tromso", 'lacsud', "skibotn", "skibotnsud", "skibotnnord", "kilpisjarvi"]:
 			self.file += "Tromso"
 		elif bottle.location.lower() in ["nyalesund", "corbel"]:
 			self.file += "Nyalesund"
 		self.file += "/"
+
 
 		self.additional_files = []
 		if bottle.DateTime("start").day != bottle.DateTime("end").day:
@@ -466,15 +467,15 @@ class MagData:
 				start_date += one_day
 				self.additional_files.append(self.file + start_date.strftime("%Y%m%d"))
 
-		self.file += bottle.DateTime().strftime("%Y%m%d")
 
+		self.file += bottle.DateTime("start", format="UT").strftime("%Y%m%d")
 		self.exist = True
 		try:
 			self.GetDataFromFile()
 			print("INFO: Magnetic data available in file:", self.file)
 		except:
 			self.exist = False
-			print("WARNING: No magnetometer data found for this observation")
+			print(f"WARNING: No magnetometer data found for this observation ({self.file})")
 
 	def GetDataFromFile(self):
 		self.array_type = [('date','<U10'),('time','<U8'),('Dec',float),('Horiz',float),('Vert',float),('Incl',float),('Total',float)]
@@ -482,9 +483,9 @@ class MagData:
 		self.data = np.genfromtxt(self.file, dtype=self.array_type, delimiter = [12, 8, 11, 10, 10, 10, 10], skip_header=7, skip_footer=1, names=None)
 
 		for f in self.additional_files:
-			# print(f, len(self.data))
+			print(f, len(self.data))
 			self.data = np.concatenate((self.data, np.genfromtxt(f, dtype=self.array_type, delimiter = [12, 8, 11, 10, 10, 10, 10], skip_header=7, skip_footer=1, names=None)))
-			# print(f, len(self.data))
+			print(f, len(self.data))
 
 		self.datetime = ([dt.datetime.strptime(d + " " + t, "%d/%m/%Y %H:%M:%S") for d, t in zip(self.data["date"], self.data["time"])])
 
@@ -493,7 +494,7 @@ class MagData:
 		# self.times_sec = [t.total_seconds() for t in self.times]
 
 
-	def GetComponent(self, comp, divisor):
+	def GetComponent(self, comp, divisor, use_datetime=True):
 		# data = self.data["Dec"]
 		# deriv = [(data[i+1] - data[i])**2 for i in range(len(data)-1)]
 		# data = self.data["Horiz"]
@@ -503,11 +504,11 @@ class MagData:
 		# deriv = [np.sqrt(d) for d in deriv]
 
 		data = self.data[comp]
-		times = self.GetNormTimes(divisor)
+		times = self.GetNormTimes(divisor, use_datetime = use_datetime)
 
 		return times, data
 
-	def GetDerivative(self, comp, divisor):
+	def GetDerivative(self, comp, divisor, use_datetime=True):
 		# data = self.data["Dec"]
 		# deriv = [(data[i+1] - data[i])**2 for i in range(len(data)-1)]
 		# data = self.data["Horiz"]
@@ -527,7 +528,7 @@ class MagData:
 
 		# print([(data[i+1], data[i], self.times_sec[i+1], self.times_sec[i]) for i in range(len(data)-1) if deriv[i] > 100])
 
-		times = self.GetNormTimes(divisor)
+		times = self.GetNormTimes(divisor, use_datetime=use_datetime)
 		del times[-1]
 
 		return times, deriv
@@ -549,7 +550,10 @@ class MagData:
 		# print(len(self.data))
 
 
-	def GetNormTimes(self, divisor = 1):
+	def GetNormTimes(self, divisor = 1, use_datetime = True):
+		if use_datetime:
+			return self.datetime
+
 		try:
 			norm = self.times_sec[0]
 		except:

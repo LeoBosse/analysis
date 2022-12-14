@@ -41,8 +41,8 @@ print(arguments)
 
 show_plots, arguments 		= FindArgument("-s", arguments, default_value = True, getindex = 1)
 show_plots = bool(show_plots)
-mag_data_file, arguments 	= FindArgument("-m", arguments, default_value = False, getindex = 1)
-mag_data_file = bool(mag_data_file)
+# mag_data_file, arguments 	= FindArgument("-m", arguments, default_value = False, getindex = 1)
+# mag_data_file = bool(mag_data_file)
 comp_bottle, arguments 	= FindArgument("-b", arguments, default_value = False, getindex = 1)
 
 to_add_bottle, arguments 	= FindArgument("-a", arguments, default_value = None, getindex = 1)
@@ -78,7 +78,7 @@ def GetNbLines(bottle_name):
 if instrument_name in ["ptcu", "gdcu", "ptcu_v2", "carmen", "corbel"]:
 	nb_lines = GetNbLines(bottle_name)
 	print("nb_lines", nb_lines)
-	# for l in [4]:
+	# for l in [1, 2]:
 	for l in range(1, nb_lines+1):
 		print("##################################################################")
 		print("##################################################################")
@@ -119,15 +119,14 @@ if not from_txt:
 		b.SaveTXT()
 		b.SaveHDF5()
 
-if mag_data_file:
-	mag_data = MagData(bottles[0])
-	if not mag_data.exist:
-		mag_data = False
-else:
-	mag_data = False
-# mag_data = True
+# if True :#mag_data_file:
+# 	mag_data = MagData(bottles[0])
+# 	if not mag_data.exist:
+# 		mag_data = False
+# else:
+# 	mag_data = False
 
-Cru = Mixer(bottles, mag_data=mag_data, comp_bottles=comp_bottles)
+Cru = Mixer(bottles, comp_bottles=comp_bottles)
 
 if show_plots:
 	plt.show()

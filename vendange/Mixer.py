@@ -33,11 +33,11 @@ from J2RAYS1_model import *
 from vendange_configuration import *
 
 class Mixer:
-	def __init__(self, bottles, mag_data=False, comp_bottles=[], mode = "default"):
+	def __init__(self, bottles, comp_bottles=[], mode = "default"):
 
 		self.bottles = bottles
 		self.comp_bottles = comp_bottles
-		self.mag_data = mag_data
+		self.mag_data = None
 		self.pola_color = None
 
 		for ib, bottle in enumerate(self.bottles):
@@ -45,8 +45,15 @@ class Mixer:
 			self.SetGraphParameter(bottle)
 			self.MakeXAxis(bottle)
 
-			if self.mag_data is not False:
-				self.mag_data.StripTime(bottle.DateTime("start"), bottle.DateTime("end"))
+			if self.show_mag_data:
+				self.mag_data = MagData(bottles[0])
+				if not self.mag_data.exist:
+					self.mag_data = None
+				else:
+					self.mag_data.StripTime(bottle.DateTime("start"), bottle.DateTime("end"))
+
+			# if self.mag_data is not False:
+			# 	self.mag_data.StripTime(bottle.DateTime("start"), bottle.DateTime("end"))
 
 			self.allsky_data_available = False
 			if bottle.observation_type == "fixed":
@@ -463,10 +470,11 @@ class Mixer:
 
 		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
 
-		self.show_eiscat = 0 # If available, plot the eiscat Ne over the cru flux. Over things are possible if you want, just search for "show_eiscat" in the Mixer.MakePlot() function and have fun :)
-		self.eiscat_type = "tromso" #Initally for March 2022 data. Chose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
+		self.show_eiscat = 1 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
+		self.eiscat_type = "uhf" #Initally for March 2022 data. Chose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
 
 		self.show_mag_data 	= True # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
+		self.B_component	= 'Horiz' # B field component to plot (Dec, Horiz, Vert, 'Incl' or 'Total')
 		self.show_AoBapp 	= False # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
 		self.show_AoRD	 	= False # If True, show the AoLP produced by a point source defined in the input.in file.
 
@@ -913,23 +921,34 @@ class Mixer:
 
 
 
-	def PlotB(self, ax, bottle, ax_lines=[]):
-		if self.mag_data and self.show_mag_data:
-			ax1 = ax.twinx()
+	def PlotB(self, ax, bottle, component, ax_lines=[]):
+		if not self.mag_data:
+			return
+		# ax1 = ax.twinx()
 
-			# print(self.mag_data.times[0], self.mag_data.times[-1])
-			# print(self.mag_data.GetNormTimes(self.divisor)[0], self.mag_data.GetNormTimes(self.divisor)[-1])
-			component = "Horiz"
-			t, d = self.mag_data.GetComponent(component, self.divisor)
-			# t, d = self.mag_data.GetDerivative(component, self.divisor)
-			l_mag_data, = ax1.plot(t, d, "orange", label="B (nT)")
-			# l_mag_data, = ax1.plot(t, d, self.mag_color, label="dB/dt (nT/s)", zorder=2, linewidth=2)
-			# print(t, d)
-			# Md, md = max(d), min(d)
-			# ax1.set_ylim(min(-20, md, -abs(Md)), max(20, Md, abs(md)))
-			ax_lines.append([l_mag_data, l_mag_data.get_label()])
-			ax1.set_ylabel("B (nT)")
-			# ax1.set_ylabel("dB/dt (nT/s)")
+		# available compinents:
+		# "Dec"
+		# "Horiz"
+		# "Vert"
+
+		# print(self.mag_data.times[0], self.mag_data.times[-1])
+		# print(self.mag_data.GetNormTimes(self.divisor)[0], self.mag_data.GetNormTimes(self.divisor)[-1])
+		label = component
+		if component in ['Dec' or 'Incl']:
+			label += ' (deg)'
+		else:
+			label += ' (nT)'
+
+		t, d = self.mag_data.GetComponent(component, self.divisor, use_datetime = self.use_24h_time_format)
+		# t, d = self.mag_data.GetDerivative(component, self.divisor)
+		l_mag_data, = ax.plot(t, d, "orange", label=label)
+		# l_mag_data, = ax.plot(t, d, self.mag_color, label="dB/dt (nT/s)", zorder=2, linewidth=2)
+		# print(t, d)
+		# Md, md = max(d), min(d)
+		# ax.set_ylim(min(-20, md, -abs(Md)), max(20, Md, abs(md)))
+		ax_lines.append([l_mag_data, l_mag_data.get_label()])
+		ax.set_ylabel(label)
+		# ax.set_ylabel("dB/dt (nT/s)")
 
 
 
@@ -951,7 +970,16 @@ class Mixer:
 			ax4.set_ylabel("ASI Brightness")
 
 
-	def PlotEiscat(self, bottle):
+	def PlotEiscat(self, bottle, parameter, ax, ax_lines):
+
+		# Parameters for VHF MAD6400_beata_60 hdf5 files
+		# dtype=[('year', '<i8'), ('month', '<i8'), ('day', '<i8'), ('hour', '<i8'), ('min', '<i8'), ('sec', '<i8'), ('recno', '<i8'), ('kindat', '<i8'), ('kinst', '<i8'), ('ut1_unix', '<f8'), ('ut2_unix', '<f8'), ('azm', '<f8'), ('elm', '<f8'), ('hsa', '<f8'), ('tfreq', '<f8'), ('power', '<f8'), ('systmp', '<f8'), ('range', '<f8'), ('gdalt', '<f8'), ('ne', '<f8'), ('ti', '<f8'), ('tr', '<f8'), ('co', '<f8'), ('vo', '<f8'), ('pm', '<f8'), ('po+', '<f8'), ('dne', '<f8'), ('dti', '<f8'), ('dtr', '<f8'), ('dco', '<f8'), ('dvo', '<f8'), ('dpm', '<f8'), ('dpo+', '<f8'), ('dwn', '<f8'), ('ddc', '<f8'), ('gfit', '<f8'), ('chisq', '<f8')])
+
+		# Parameters for UHF MAD6502_beata_ant hdf5 files
+		# dtype=[('year', '<i8'), ('month', '<i8'), ('day', '<i8'), ('hour', '<i8'), ('min', '<i8'), ('sec', '<i8'), ('recno', '<i8'), ('kindat', '<i8'), ('kinst', '<i8'), ('ut1_unix', '<f8'), ('ut2_unix', '<f8'), ('hsa', '<f8'), ('tfreq', '<f8'), ('azm', '<f8'), ('elm', '<f8'), ('power', '<f8'), ('systmp', '<f8'), ('range', '<f8'), ('gdalt', '<f8'), ('ne', '<f8'), ('ti', '<f8'), ('tr', '<f8'), ('co', '<f8'), ('vo', '<f8'), ('pm', '<f8'), ('po+', '<f8'), ('dne', '<f8'), ('dti', '<f8'), ('dtr', '<f8'), ('dco', '<f8'), ('dvo', '<f8'), ('dpm', '<f8'), ('dpo+', '<f8'), ('dwn', '<f8'), ('ddc', '<f8'), ('gfit', '<f8'), ('chisq', '<f8')])
+
+		# Parameters for UHF MAD6502_beata_V225  hdf5 files
+		# dtype=[('year', '<i8'), ('month', '<i8'), ('day', '<i8'), ('hour', '<i8'), ('min', '<i8'), ('sec', '<i8'), ('recno', '<i8'), ('kindat', '<i8'), ('kinst', '<i8'), ('ut1_unix', '<f8'), ('ut2_unix', '<f8'), ('gdalt', '<f8'), ('gdlat', '<f8'), ('glon', '<f8'), ('vi1', '<f8'), ('vi2', '<f8'), ('vi3', '<f8'), ('dvi1', '<f8'), ('dvi2', '<f8'), ('dvi3', '<f8')])
 
 		if not self.eiscat_data.valid:
 			return
@@ -963,35 +991,8 @@ class Mixer:
 			if self.time_format == "LT":
 				time_delta = dt.timedelta(hours=1)
 
-		### Plot a first eiscat parameter onto the top graph
-		# parameter = "v_i"
-		if self.eiscat_type != "uhf_v":
-			self.ax22 = self.ax1.twinx()
-			parameter = "ne"
-			altitude = bottle.GetAltitude()
-
-			if self.langue == "en":
-				label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m$^{-3}$)"
-			else:
-				label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m$^{-3}$)"
-
-			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
-			l_eiscat_data, capline, barlinecol = self.ax22.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
-			# Md, md = max(d), min(d)
-			if bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 7):
-				self.ax22.set_ylim((10**11, 4.1*10**11))
-			elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
-				self.ax22.set_ylim((-3*10**10, 5*10**10))
-			self.ax1_lines.append([l_eiscat_data, label])
-			self.ax22.set_ylabel(label)
-
-
-		### Plot a second eiscat parameter onto the bottom graph
-		if self.eiscat_type != "uhf_v":
-			self.ax221 = self.ax3.twinx()
-			parameter = "vo"
-		else:
-			parameter = "AoVi"
+		# if self.eiscat_type == "uhf_v":
+		# 	parameter = "AoVi"
 
 		altitude = bottle.GetAltitude()
 		if self.langue == "en":
@@ -999,20 +1000,54 @@ class Mixer:
 		else:
 			label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m/s)"
 
-		if self.eiscat_type != "uhf_v":
-			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
-			l_eiscat_data, capline, barlinecol = self.ax221.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
-			# Md, md = max(d), min(d)
-			if bottle.location.lower() == "skibotn" and bottle.filters == "mr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
-				self.ax221.set_ylim((-180, 48))
-			# elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
-			# 	self.ax221.set_ylim((-3*10**10, 5*10**10))
-			self.ax221.set_ylabel(label)
-		else:
+		if self.eiscat_type == "uhf_v" and parameter.lower() == "aovi":
 			t, d, e = self.eiscat_data.GetUHFApparentAngle(bottle, time_divisor = self.divisor, time_format = time_format)
-			l_eiscat_data, capline, barlinecol = self.ax3.errorbar(t+time_delta, d*RtoD, color = self.EISCAT_color, fmt = ".", label = label, zorder=2, markersize=self.marker_size*2)
+			d *= RtoD
+			# l_eiscat_data, capline, barlinecol = ax.errorbar(t+time_delta, d*RtoD, color = self.EISCAT_color, fmt = ".", label = label, zorder=2, markersize=self.marker_size*2)
 
-		self.ax3_lines.append([l_eiscat_data, label])
+		else:
+			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
+
+		l_eiscat_data, capline, barlinecol = ax.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2, markersize=self.marker_size*2)
+
+		# Md, md = max(d), min(d)
+
+		if bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 7):
+			ax.set_ylim((10**11, 4.1*10**11))
+		elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+			ax.set_ylim((-3*10**10, 5*10**10))
+
+		ax_lines.append([l_eiscat_data, label])
+		ax.set_ylabel(label)
+
+
+	# ### Plot a second eiscat parameter onto the bottom graph
+	# if self.eiscat_type != "uhf_v":
+	# 	self.ax221 = self.ax3.twinx()
+	# 	parameter = "vo"
+	# else:
+	# 	parameter = "AoVi"
+	#
+	# altitude = bottle.GetAltitude()
+	# if self.langue == "en":
+	# 	label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m/s)"
+	# else:
+	# 	label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m/s)"
+	#
+	# if self.eiscat_type != "uhf_v":
+	# 	t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
+	# 	l_eiscat_data, capline, barlinecol = self.ax221.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2)
+	# 	# Md, md = max(d), min(d)
+	# 	if bottle.location.lower() == "skibotn" and bottle.filters == "mr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+	# 		self.ax221.set_ylim((-180, 48))
+	# 	# elif bottle.location.lower() == "skibotn" and bottle.filters == "vr" and bottle.DateTime().date() == dt.date(2019, 3, 8):
+	# 	# 	self.ax221.set_ylim((-3*10**10, 5*10**10))
+	# 	self.ax221.set_ylabel(label)
+	# else:
+	# 	t, d, e = self.eiscat_data.GetUHFApparentAngle(bottle, time_divisor = self.divisor, time_format = time_format)
+	# 	l_eiscat_data, capline, barlinecol = self.ax3.errorbar(t+time_delta, d*RtoD, color = self.EISCAT_color, fmt = ".", label = label, zorder=2, markersize=self.marker_size*2)
+	#
+	# 	self.ax3_lines.append([l_eiscat_data, label])
 
 
 	def PlotAoLP(self, ax, bottle, ax_lines=[]):
@@ -1320,10 +1355,17 @@ class Mixer:
 		else:
 			self.PlotDoLP(self.ax2.twinx(), bottle, ax_lines=self.ax2_lines)
 
-		self.PlotB(self.ax2, bottle, ax_lines=self.ax2_lines)
+		if self.show_mag_data:
+			self.PlotB(self.ax2.twinx(), bottle, component = self.B_component, ax_lines=self.ax2_lines)
+			# self.PlotB(self.ax2.twinx(), bottle, component = 'Horiz', ax_lines=self.ax2_lines)
+			# self.PlotB(self.ax3.twinx(), bottle, component = 'Vert', ax_lines=self.ax3_lines)
 
 		if self.show_eiscat:
-			self.PlotEiscat(self.ax1, bottle, ax_lines=self.ax1_lines)
+			print('plotting eiscat')
+			# self.PlotEiscat(bottle, 'AoVi', self.ax3, self.ax3_lines)
+			self.PlotEiscat(bottle, 'ne', self.ax1.twinx(), self.ax1_lines)
+			self.PlotEiscat(bottle, 'vo', self.ax3.twinx(), self.ax3_lines)
+			print('DONE plotting eiscat')
 
 		self.PlotAoLP(self.ax3, bottle, ax_lines=self.ax3_lines)
 
@@ -1750,7 +1792,7 @@ class Mixer:
 
 			print("Saving correlation in", bottle.data_file_name + "/" + bottle.saving_name + '_clean_correlations.png')
 			if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-				plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_S' + str(smooth) + COMP.upper() + '_clean_correlation.png', bbox_inches='tight')
+				plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_S' + str(smooth) + '_clean_correlation.png', bbox_inches='tight')
 			else:
 				plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + '_S' + str(smooth) + "/" + bottle.saving_name + '_clean_correlation.png', bbox_inches='tight')
 

@@ -134,49 +134,117 @@ class Bottle:
         # print(dict)
         return dict
 
-    def SetJumps(self):
-        self.jump_unit = self.input_parameters["jump_unit"].lower()
-        try:
-            self.head_jump = float(self.input_parameters["head_jump"].split(';')[self.line-1])
-        except:
-            self.head_jump = float(self.input_parameters["head_jump"])
-        try:
-            self.tail_jump = float(self.input_parameters["tail_jump"].split(';')[self.line-1])
-        except:
-            self.tail_jump = float(self.input_parameters["tail_jump"])
-
-
+    def SetJump(self, tail=False):
+        if not tail:
+            self.jump_unit = self.input_parameters["jump_unit"].lower()
 
         try:
             self.jump_mode = self.input_parameters["jump_mode"]
         except:
             self.jump_mode = "lenght"
-        # Until the bug at the begining of the observation is not fixed, delete head and tail after treatment. When fixed, we'll be able to do it before
-        # if self.jump_unit in ("seconds", "minutes", "hours"):
-        # if "sec" in self.jump_unit or "min" in self.jump_unit or "h" in self.jump_unit:
-        #     self.head_jump = 0
-        #     self.tail_jump = 0
 
-        # and self.jump_unit in ["seconds", "minutes", "hours"]:
-        if self.jump_mode == "time":
+
+        if not tail:
+            param = 'head_jump'
+        else:
+            param = 'tail_jump'
+
+
+        jump = self.input_parameters[param]
+
+        if ';' in jump:
+            jump = jump.split(';')[self.line-1]
+
+        if ':' in jump:
+            jump = dt.datetime.strptime(jump, '%Y%m%d-%H:%M:%S')
+            jump -= (self.datetime)
+        else:
+            jump = float(jump)
             if "sec" in self.jump_unit:
-                self.head_jump = dt.timedelta(seconds=self.head_jump)
-                self.tail_jump = dt.timedelta(seconds=self.tail_jump)
+                jump = dt.timedelta(seconds=jump)
             elif "min" in self.jump_unit:
-                self.head_jump = dt.timedelta(minutes=self.head_jump)
-                self.tail_jump = dt.timedelta(minutes=self.tail_jump)
+                jump = dt.timedelta(minutes=jump)
             elif "h" in self.jump_unit:
-                # print("DEBUG jumps", [r.time.total_seconds() for r in self.rotations[:10]])
-                # print(time.timedelta(hours=float(self.input_parameters["head_jump"])), time.timedelta(hours=float(self.input_parameters["tail_jump"])))
-                self.head_jump = dt.timedelta(hours=self.head_jump)
-                self.tail_jump = dt.timedelta(hours=self.tail_jump)
+                jump = dt.timedelta(hours=jump)
 
-        if self.jump_mode == "length" or self.tail_jump.total_seconds() == 0.:
+
+        if self.jump_mode == "length" or (tail and jump.total_seconds() == 0.):
             try:
-                self.tail_jump = self.all_times[-1] - self.tail_jump
+                jump = self.all_times[-1] - jump
             except:
-                self.tail_jump = self.rotations[-1].time - self.tail_jump
+                jump = self.rotations[-1].time - jump
 
+
+        return jump
+
+
+    def SetJumps(self):
+
+        self.head_jump = self.SetJump()
+        self.tail_jump = self.SetJump(tail = True)
+
+        # self.jump_unit = self.input_parameters["jump_unit"].lower()
+        #
+        # # try:
+        # #     self.head_jump = float(self.input_parameters["head_jump"].split(';')[self.line-1])
+        # # except:
+        # #     self.head_jump = float(self.input_parameters["head_jump"])
+        # # try:
+        # #     self.tail_jump = float(self.input_parameters["tail_jump"].split(';')[self.line-1])
+        # # except:
+        # #     self.tail_jump = float(self.input_parameters["tail_jump"])
+        #
+        # self.head_jump = self.input_parameters["head_jump"]
+        # if ';' in self.input_parameters["head_jump"]:
+        #     self.head_jump = self.head_jump.split(';')[self.line-1]
+        # if ':' in self.head_jump:
+        #     self.head_jump = dt.strptime(self.head_jump, '%y%m%d-%H:%M:%S')
+        #     self.head_jump -= self.rotations[0]
+        # else:
+        #     self.head_jump = float(self.input_parameters["head_jump"])
+        #
+        # self.tail_jump = self.input_parameters["tail_jump"]
+        # if ';' in self.input_parameters["tail_jump"]:
+        #     self.tail_jump = self.tail_jump.split(';')[self.line-1]
+        #
+        # if ':' in self.tail_jump:
+        #     self.tail_jump = dt.strptime(self.tail_jump, '%y%m%d-%H:%M:%S')
+        #     self.tail_jump -= self.rotations[0]
+        # else:
+        #     self.tail_jump = float(self.input_parameters["tail_jump"])
+        #
+        #
+        # try:
+        #     self.jump_mode = self.input_parameters["jump_mode"]
+        # except:
+        #     self.jump_mode = "lenght"
+        #
+        # # Until the bug at the begining of the observation is not fixed, delete head and tail after treatment. When fixed, we'll be able to do it before
+        # # if self.jump_unit in ("seconds", "minutes", "hours"):
+        # # if "sec" in self.jump_unit or "min" in self.jump_unit or "h" in self.jump_unit:
+        # #     self.head_jump = 0
+        # #     self.tail_jump = 0
+        #
+        # # and self.jump_unit in ["seconds", "minutes", "hours"]:
+        # if self.jump_mode == "time":
+        #     if "sec" in self.jump_unit:
+        #         self.head_jump = dt.timedelta(seconds=self.head_jump)
+        #         self.tail_jump = dt.timedelta(seconds=self.tail_jump)
+        #     elif "min" in self.jump_unit:
+        #         self.head_jump = dt.timedelta(minutes=self.head_jump)
+        #         self.tail_jump = dt.timedelta(minutes=self.tail_jump)
+        #     elif "h" in self.jump_unit:
+        #         # print("DEBUG jumps", [r.time.total_seconds() for r in self.rotations[:10]])
+        #         # print(time.timedelta(hours=float(self.input_parameters["head_jump"])), time.timedelta(hours=float(self.input_parameters["tail_jump"])))
+        #         self.head_jump = dt.timedelta(hours=self.head_jump)
+        #         self.tail_jump = dt.timedelta(hours=self.tail_jump)
+        #
+        # if self.jump_mode == "length" or self.tail_jump.total_seconds() == 0.:
+        #     try:
+        #         self.tail_jump = self.all_times[-1] - self.tail_jump
+        #     except:
+        #         self.tail_jump = self.rotations[-1].time - self.tail_jump
+        #
         print('DEBUG JUMPS', self.head_jump, self.tail_jump)
 
     def CorrectDensity(self):

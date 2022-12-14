@@ -64,7 +64,7 @@ class Eiscat:
 				folder += start_date.strftime("%Y-%m-%d")
 				folder += "_beata_10@uhfa/"
 				self.folders.append(folder)
-		print(self.folders)
+		# print(self.folders)
 		self.file_list = []
 		for f in self.folders:
 			try:
@@ -205,7 +205,7 @@ class EiscatHDF5(Eiscat):
 		# print(self.file_list)
 
 		if len(self.file_list) == 0:
-			print("WARNING: No eiscat data files for this date.")
+			print("WARNING: No eiscat data HDF5 files for this date.")
 			self.valid = False
 
 		if self.valid:
@@ -224,9 +224,7 @@ class EiscatHDF5(Eiscat):
 			except FileNotFoundError:
 				print(f"ERROR: EISCAT folder not found: {folder}")
 				print(f"Available folders: {'/'.join(folder.split('/')[:-1])}")
-
 			# self.valid = False
-
 			return None
 
 
@@ -238,6 +236,7 @@ class EiscatHDF5(Eiscat):
 			if self.start_datetime <= t <= self.end_datetime:
 				data.append(d[i])
 
+		# print('EISCAT DATA COLUMNS', d[0].columns)
 		return np.array(data)
 
 	def GetDataFromFiles(self):
@@ -245,11 +244,11 @@ class EiscatHDF5(Eiscat):
 		data_initialized = False
 
 		for f in self.files_list:
-			print(f)
+			# print(f)
 			data = self.GetDataFromFile(f)
-			if data is None:
+			if data is None or data.size == 0:
 				continue
-
+			# print(data)
 			if not data_initialized:
 				# print("Init eiscat data")
 				# print(self.data.shape)
@@ -290,10 +289,15 @@ class EiscatHDF5(Eiscat):
 			for d in self.data:
 				# print(altitude, d["gdalt"])
 
-				if altitude is not None and abs(d["gdalt"] - altitude) >= max_diff_altitude:
+				tmpdt = dt.datetime(d["year"], d["month"], d["day"],d["hour"], d["min"], d["sec"])
+				if (altitude is not None and abs(d["gdalt"] - altitude) >= max_diff_altitude) or (len(datetimes)>0 and tmpdt  == datetimes[-1]):
 					# print("NO DATA :(")
+					tmp = d["gdalt"]
+					# print(f"NOT Taking data at altitude {tmp} ({altitude}+/-{max_diff_altitude}) at {tmpdt}")
 					continue
 
+				# tmp = d["gdalt"]
+				# print(f"Taking data at altitude {tmp} (<{max_diff_altitude} of {altitude}) at {tmpdt}")
 				# print("DATA!!!")
 				datetimes.append(dt.datetime(d["year"], d["month"], d["day"],d["hour"], d["min"], d["sec"]))
 				if time_format == "delta":
@@ -307,10 +311,11 @@ class EiscatHDF5(Eiscat):
 				# if parameter == "T_e": #The value in the data correspond to T_e / T_i. Correcting for that
 				# 	values[-1] *= d["r_param"][alt_index][1]
 
-			if len(values) < 20:
+			# If no data are found, maybe its because the constraint on the altitude of the parameter is too tight. So increase it until its meaningless and then give up.
+			if len(values) < 1 and max_diff_altitude < altitude:
 				max_diff_altitude *= 1.05
 				continue
-			elif len(values) >= 20 or max_diff_altitude >= altitude:
+			elif len(values) >= 1 or max_diff_altitude >= altitude:
 				no_data = False
 
 		if not len(values):
@@ -351,7 +356,7 @@ class EiscatHDF5(Eiscat):
 
 		nb_points = len(ve)
 
-		print(nb_points, ve)
+		# print(nb_points, ve)
 
 		AoVi = np.zeros(nb_points)
 
