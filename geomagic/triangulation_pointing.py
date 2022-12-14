@@ -24,11 +24,11 @@ def GetRotMatrixAO(lonA, latA):
 
 
 ### Point 0 is the known instrument, defining where we observe
-name0 = "skibotnsud"
-lon0, lat0 = GetLonLatFromName(name0)
+name0 = 'eiscat_tromso' #"skibotnsud"
+lon0, lat0 =GetLonLatFromName(name0) # 19.2123*DtoR, 69.34808*DtoR #
 h = 110 #km
-a0 = -37 * DtoR
-e0 = 66 * DtoR
+a0 = -180 * DtoR
+e0 = 78 * DtoR
 obs0 = obs.ObservationPoint(lon0, lat0, h, a0, e0)
 
 ### Longitude and latitude of the observed point H
@@ -36,8 +36,8 @@ lonH, latH = obs0.P_lon, obs0.P_lat
 print("lonH, latH", lonH, latH)
 
 ### Lon, lat of the instrument 1 we want to know the direction
-name1 = "kilpisjarvi"
-# lat1, lon1 = 68.924606*DtoR, 20.935396*DtoR
+name1 =  "skibotn" #"kilpisjarvi"
+# lat1, lon1 =  69.12602264116852*DtoR, 19.058594352049994*DtoR   # 68.924606*DtoR, 20.935396*DtoR
 lon1, lat1 = GetLonLatFromName(name1) #19.21*DtoR, 70.5*DtoR
 
 ### vector from point 1 to point H in carthesian coord, then in up-east-north coordinate at point 1

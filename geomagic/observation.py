@@ -130,6 +130,8 @@ class ObservationPoint:
 
         return self.AoRD
 
+
+
     #@timer
     def GetOA(self, **kwargs):
         """Return the vector OA in the reference frame of O. O:Centre of the Earth to A:observer"""
