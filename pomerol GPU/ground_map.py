@@ -717,7 +717,9 @@ class GroundMap:
 	def GetArea(self, idist):
 		"""Return the area of a pixel on the map in m**2. If we use a point source, the area is set to one."""
 		if not self.is_point_source:
-			area = 0.5 * abs(self.daz) * (self.distances[idist+1]**2 - self.distances[idist]**2) * 1e6
+			area = 0.5 * abs(self.daz)
+			area *= (self.distances[idist+1]**2 - self.distances[idist]**2)
+			area *= 1e6
 			return area
 		else:
 			return 1

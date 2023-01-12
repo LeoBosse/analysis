@@ -2,27 +2,27 @@
 
 // Input uniforms go here if you need them.
 // Some examples:
-
 uniform float instrument_azimut;
 uniform float instrument_elevation;
-/* uniform float instrument_lon; */
-/* uniform float instrument_lat; */
 uniform float instrument_altitude;
+uniform int   atm_nb_altitudes;
+uniform int   atm_nb_angles;
+
 uniform float instrument_area;
+uniform float map_delta_az;
+uniform bool  is_point_source;
+uniform bool  use_aerosol;
+/* uniform vec3  instrument_los; */
+
 /* uniform float instrument_fov; */
 /* uniform float wavelength; */
 /* uniform int   los_nb_points; */
-uniform float map_delta_az;
-uniform bool  is_point_source;
-uniform int   atm_nb_altitudes;
-uniform int   atm_nb_angles;
-uniform bool  use_aerosol;
-uniform vec3  instrument_los;
+/* uniform float instrument_lon; */
+/* uniform float instrument_lat; */
 
 #define X %%local_sizeX%%
 #define Y %%local_sizeY%%
 #define Z %%local_sizeZ%%
-
 
 // Set up our compute groups
 layout(local_size_x = X, local_size_y = Y, local_size_z = Z) in;
@@ -129,7 +129,11 @@ float GetEmissionArea(int idist){
     return 1;
   }
 
-  return 0.5 * abs(map_delta_az) * (dist_data.data[idist+1]*dist_data.data[idist+1] - dist_data.data[idist]*dist_data.data[idist]) * 1000000;
+  float area = 0.5 * abs(map_delta_az);
+  area *= (dist_data.data[idist+1]*dist_data.data[idist+1] - dist_data.data[idist]*dist_data.data[idist]);
+  area *= 1000000;
+
+  return area;
 }
 
 int GetScaAngleIndex(float angle){
@@ -223,10 +227,10 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
  */
     // Setting and computing indices and correspoinding paramters
     int src_distance_index = int(gl_GlobalInvocationID.x);
-    float src_distance = dist_data.data[src_distance_index];
+    float src_distance = (dist_data.data[src_distance_index+1] + dist_data.data[src_distance_index])/2.;
 
     int src_azimut_index = int(gl_GlobalInvocationID.y);
-    float src_azimut = az_data.data[src_azimut_index];
+    float src_azimut = (az_data.data[src_azimut_index+1] + az_data.data[src_azimut_index])/2.;
     float src_altitude = 0.;
 
     float azimut_diff = src_azimut - instrument_azimut;
@@ -251,6 +255,7 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
 
 // Doing some geometry computations
     float SE_horiz_square = src_distance*src_distance + sca_range_horiz*sca_range_horiz - 2*src_distance*sca_range_horiz*cos(azimut_diff);
+    //SE is doesn't exactly match the CPU value for approx reasons in the geometry made here. Could be corrected.
     float SE = sqrt(SE_horiz_square + sca_altitude*sca_altitude);
     if(SE == 0){return;}
 
@@ -261,31 +266,32 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
     float SAE = (sca_range * sca_range + src_distance * src_distance - SE * SE) / (2 * src_distance * sca_range);
     SAE = acos(SAE);
 
-    vec3 sca_plane_normal = vec3( instrument_los[1] * sin(azimut_diff) - instrument_los[2] * cos(azimut_diff),
+    /* vec3 sca_plane_normal = vec3( instrument_los[1] * sin(azimut_diff) - instrument_los[2] * cos(azimut_diff),
     -instrument_los[0] * sin(azimut_diff),
-    instrument_los[0] * cos(azimut_diff));
+    instrument_los[0] * cos(azimut_diff)); */
 
 
-    ////////////// GOOD //////////////////
 
-
-// Get AoLP from previous geometry
+// Get AoLP from previous geometry.
+// WARNING: the AoLP is not exactly identical than with CPU function (<1deg difference). To solve, check geometry simplifications (flat earth,etc...)
     float AoLP = GetAoLP(src_azimut, 0., instrument_azimut, instrument_elevation);
 
 // Propagate light from emission to instrument
     // init the source radiance
     float I0 = emission_data.data[in_buffer_index]; //[nW/m2/sr]
 
+
     // Normalize by emission area
     I0 *= GetEmissionArea(src_distance_index); // [nW / m2 / sr * m2] = [nW / sr]
 
+
     // distance square law to scattering point
-    I0 /= (SE * SE); // [nW / m2 / sr * m2 / km2] = [nW / km2]
-		/* if (SE > 0){
+    if (SE > 0){
+      I0 /= (SE * SE); // [nW / m2 / sr * m2 / km2] = [nW / km2]
     }
 		else{
 			I0 = 0;
-    } */
+    }
 
     // Losses between emission and scattering
     float opt_depth = 0;
@@ -293,7 +299,12 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
       float delta_z = abs(src_altitude - sca_altitude);
       opt_depth = GetAtmosphereAbsorption(src_altitude, sca_altitude) * SE / delta_z;
     }
+
     I0 *= exp(- opt_depth); // [nW / km2]
+
+    if (sca_range != 0){
+      I0 *= sca_volume * instrument_area / (sca_range*sca_range) / 4 / PI;
+    }
 
 
     // Scattering parameters (phase function and cross section) for Rayleigh and aerosols
@@ -312,32 +323,36 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
 			DoLP_aer = sca_data.data[sca_angle_index].aer_Pfct_DoLP;
     }
 
-    if (sca_range != 0){
-      I0 *= sca_volume * instrument_area / (sca_range*sca_range) / 4 / PI;
-    }
-
 		float I0_rs  = I0 * Crs  * ray_Pfct;  // [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
 		float I0_aer = I0 * Caer * Paer;      // [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
 
     I0 = I0_rs + I0_aer;
 
+    I0 *= los_data.data[sca_index].transmittance;
+    ////////////// GOOD //////////////////
+
   	// Mix of flux and DoLP when using aerosols
     float DoLP = 0;
     if (I0 != 0){
-      DoLP = (I0_rs * ray_Pfct_DoLP + I0_aer * DoLP_aer) / I0;
+      DoLP = (I0_rs * ray_Pfct_DoLP + I0_aer * DoLP_aer) / (I0_rs + I0_aer);
     }
-    if (DoLP < 0){ // For Mie scattering, a DoLP < 0 = AoLP is parallel to scatering plane ! So 90 degrees from Rayleigh scattering.
+
+    // For Mie scattering, a DoLP < 0 = AoLP is parallel to scatering plane ! So 90 degrees from Rayleigh scattering.
+    if (DoLP < 0){
       AoLP += PI/2;
       DoLP *= -1;
     }
 
-    I0 *= los_data.data[sca_index].transmittance;
+    float debug1 = DoLP;
 
 		vec3 stokes_param = GetVParamFromLightParam(I0, DoLP, AoLP);
 
     observation_data.data[V_index]    = stokes_param.x;
     observation_data.data[Vcos_index] = stokes_param.y;
     observation_data.data[Vsin_index] = stokes_param.z;
+
+    /* observation_data.data[V_index]    = debug1; */
+    /* observation_data.data[Vcos_index] = debug2; */
 }
 
 

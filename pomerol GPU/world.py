@@ -475,9 +475,12 @@ class World:
 						# self.sky_map.AoRD_map[time, ie_pc, ia_pc, ie, ia] = AoLP
 
 
+	def CreateShaderWrap(self, emission_origin, emission_map):
+
+		self.shader = ShaderWrap(emission_origin, emission_map, local_size=(1, 1, self.atmosphere.Nlos))
+
+
 	def ComputeGroundMapsGPU(self, time, ia_pc, ie_pc):
-
-
 
 		uniforms = {'instrument_azimut'		: float(self.a_pc_list[ia_pc]),
 					'instrument_elevation'	: float(self.e_pc_list[ie_pc]),
@@ -492,8 +495,8 @@ class World:
 					'is_point_source'		: bool(self.ground_map.is_point_source),
 					'atm_nb_altitudes'		: int(len(self.atmosphere.profiles['HGT'])),
 					'atm_nb_angles' 		: int(len(self.atmosphere.profiles['sca_angle'])),
-					'use_aerosols' 			: bool(self.atmosphere.use_aerosol),
-					'instrument_los'		: np.array(self.obs.los_uen.flatten(), dtype=np.float32)
+					'use_aerosol' 			: bool(self.atmosphere.use_aerosol)
+					# 'instrument_los'		: np.array(self.obs.los_uen.flatten(), dtype=np.float32)
 					}
 
 		emission_map = self.ground_map.cube[time, :, :]
@@ -503,12 +506,10 @@ class World:
 
 		# print(emission_map.size * self.atmosphere.Nlos)
 		z = np.zeros(emission_map.size * self.atmosphere.Nlos, dtype=np.float32)
-		observation_data = list(zip(z,
-					    			z,
-					    			z))
+		observation_data = list(zip(z, z, z))
 
-		dist_data = self.ground_map.mid_distances
-		az_data   = self.ground_map.mid_azimuts
+		dist_data = self.ground_map.distances
+		az_data   = self.ground_map.azimuts
 
 		los_data = list(zip(self.atmosphere.mid_altitudes_list,
 							self.atmosphere.volumes,
@@ -525,22 +526,31 @@ class World:
 
 		# print([a.shape for a in sca_data])
 		buffer_list = [emission_data, observation_data, sca_data, atm_data, los_data, dist_data, az_data]
-		# print(uniforms)
+
+		print("Uniforms")
+		print(uniforms)
+		print("Buffers (los, dist, az)")
+		print(buffer_list[-3:])
 
 		# print(emission_data)
 		# print(observation_data)
 
-		shader = ShaderWrap('ground', emission_map, uniforms, buffers=buffer_list, local_size=(1, 1, self.atmosphere.Nlos))
-		shader.Run()
+		self.shader.Prepare(observation_data, uniforms, buffer_list)
+
+		self.shader.Run()
 
 		# results = np.array(shader.RunComputeShader())
 		# results.reshape(self.ground_map.Ndist, self.ground_map.Naz, self.atmosphere.Nlos, 3)
 		# results.sum(axis = 2)
 		# results.reshape(self.ground_map.Ndist, self.ground_map.Naz, 3)
 
-		self.ground_map.V_map[time, ie_pc, ia_pc] += shader.result[0, :, :]
-		self.ground_map.Vcos_map[time, ie_pc, ia_pc] += shader.result[1, :, :]
-		self.ground_map.Vsin_map[time, ie_pc, ia_pc] += shader.result[2, :, :]
+
+		# print( time, ia_pc, ie_pc, shader.result)
+
+		self.ground_map.V_map[time, ie_pc, ia_pc]    += self.shader.result[0, :, :]
+		self.ground_map.Vcos_map[time, ie_pc, ia_pc] += self.shader.result[1, :, :]
+		self.ground_map.Vsin_map[time, ie_pc, ia_pc] += self.shader.result[2, :, :]
+
 		# print(shader.result)
 		# print(self.ground_map.V_map[time, ie_pc, ia_pc])
 		# print(self.ground_map.Vcos_map[time, ie_pc, ia_pc])
@@ -752,6 +762,7 @@ class World:
 			# print("DEBUG I0 1:", I0, I0*self.ground_map.GetArea(ilat) / RE ** 2)
 			I0 = self.ground_map.cube[time, idist, iaz] #[nW/m2/sr]
 			# print(f"I0 {I0}")
+
 			I0 *= self.ground_map.GetArea(idist) # [nW / m2 / sr * m2] = [nW / sr]
 			# print(f"I0*A_E {I0}")
 
@@ -760,6 +771,7 @@ class World:
 				I0 /= RE ** 2 # [nW / m2 / sr * m2 / km2] = [nW / km2]
 			else:
 				I0 = 0
+
 
 			opt_depth = 0
 			O3_abs = 0
@@ -774,7 +786,12 @@ class World:
 				# print("DEBUG opt_depth: ER", opt_depth, 1-opt_depth, np.exp(-opt_depth))
 
 			# if mpi_rank == 0: print(O3_abs, np.exp(- O3_abs))
+			# print("OPT", - opt_depth - O3_abs - aer_abs)
+
 			I0 *= np.exp(- opt_depth - O3_abs - aer_abs) # [nW / km2]
+
+			if AR != 0:
+				I0 *=  dvol * self.PTCU_area / AR ** 2 / 4 / np.pi
 
 			# print("DEBUG I0 2:", I0)
 			# print("DEBUG scattered:", self.GetScattered(I0, AR, RE, RD_angle, alt)[0]/I0)
@@ -792,33 +809,37 @@ class World:
 
 			I0_rs = 0
 			I0_aer = 0
-			if AR != 0:
-				# if mpi_rank == 0:
-				# 	print(AR, dvol)
-				I0_aer = I0 * Caer * Paer * dvol * self.PTCU_area / AR ** 2 / 4 / np.pi # [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
-				I0_rs = I0 * Crs * P * dvol * self.PTCU_area / AR ** 2 / 4 / np.pi # [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
-				# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)
+			# if mpi_rank == 0:
+			# 	print(AR, dvol)
+			I0_aer = I0 * Caer * Paer    # [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
+			I0_rs  = I0 * Crs  * P		 # [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
+			# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)
+
+			I0 = I0_aer + I0_rs
 
 			# f = 1 #(1 + self.atmosphere.depola) / (1 - self.atmosphere.depola)
 			# DoLP_rs = np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2) # DoLP dependance on scattering angle for Rayleigh Scattering
 			DoLP_rs = self.atmosphere.GetRSPhaseFunctionDoLP(RD_angle)
 
 
-			I0_aer *= self.atmosphere.los_transmittance[ialt]
-			I0_rs *= self.atmosphere.los_transmittance[ialt]
-			# I0 *= self.atmosphere.los_transmittance[ialt]
+			# I0_aer *= self.atmosphere.los_transmittance[ialt]
+			# I0_rs *= self.atmosphere.los_transmittance[ialt]
+			I0 *= self.atmosphere.los_transmittance[ialt]
 
+			# print(f"I0: {I0}")
 
 			# Option 1: Mix of flux and DoLP when using aerosols
-			I0 = I0_rs + I0_aer
+			# I0 = I0_rs + I0_aer
 			if I0 != 0:
-				DoLP = (I0_rs * DoLP_rs + I0_aer * DoLP_aer) / I0
+				DoLP = (I0_rs * DoLP_rs + I0_aer * DoLP_aer) / (I0_rs + I0_aer)
 			else:
 				DoLP = 0
 
 			if DoLP < 0: # For Mie scattering, a DoLP < 0 = AoLP is parallel to scatering plane ! So 90 degrees from Rayleigh scattering.
 				AoLP += np.pi/2
 				DoLP *= -1
+
+			# print("DoLP", DoLP)
 
 
 			# Option 2: Mix of flux and DoLP when using aerosols

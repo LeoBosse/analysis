@@ -83,6 +83,7 @@ class Atmosphere:
 		self.tau_0 = self.GetSquareLawFit(self.wavelength, "Optical Depth")
 
 		self.profiles["beta_ray"] = np.array([self.RSVolumeCS(a) for a in self.profiles["HGT"]])
+		self.profiles["tau_ray"]  = np.array([self.GetRSAbsorptionCoeff(a) for a in self.profiles["HGT"]])
 
 		self.profiles["sca_angle"] 		= np.linspace(0, np.pi, 100)
 		self.profiles["ray_Phase_Fct"]  = np.array([self.RSPhaseFunction(self.wavelength, t) for t in self.profiles["sca_angle"]])
@@ -109,7 +110,7 @@ class Atmosphere:
 
 
 		self.profiles['total_absorption'] = np.zeros_like(self.profiles['HGT'])
-		self.profiles['total_absorption'] += self.profiles["beta_ray"]
+		self.profiles['total_absorption'] += self.profiles["tau_ray"]
 		if self.use_ozone:
 			self.profiles['total_absorption'] += self.tau_O3_list
 		if self.use_aerosol:
@@ -337,16 +338,23 @@ class Atmosphere:
 
 		return beta_z  # in km-1
 
+	def GetRSAbsorptionCoeff(self, alt):
+		P = self.GetProfileValue(alt, "PRE")
+		tau = self.tau_0 * (P / self.P0)
+		return tau
+
 	#@timer
 	def GetRSOpticalDepth(self, E_alt, R_alt):
 		"""Return VERTICAL optical depth between two altitudes as calculated in Bucholtz 95."""
 		# tau_E = self.GetSquareLawFit(wl, "Optical Depth")
-		P_E = self.GetProfileValue(E_alt, "PRE")
-		tau_E = self.tau_0 * (P_E / self.P0)
+		# P_E = self.GetProfileValue(E_alt, "PRE")
+		# tau_E = self.tau_0 * (P_E / self.P0)
+		tau_E = self.GetRSAbsorptionCoeff(E_alt)
 
 		# tau_R = self.GetSquareLawFit(wl, "Optical Depth")
-		P_R = self.GetProfileValue(R_alt, "PRE")
-		tau_R = self.tau_0 * (P_R / self.P0)
+		# P_R = self.GetProfileValue(R_alt, "PRE")
+		# tau_R = self.tau_0 * (P_R / self.P0)
+		tau_R = self.GetRSAbsorptionCoeff(R_alt)
 
 		tau_ER = abs(tau_E - tau_R)
 		return tau_ER
