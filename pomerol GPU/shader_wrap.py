@@ -158,9 +158,9 @@ class ShaderWrap:
         out_Vsin = np.frombuffer(self.buffer_list[1].read(), dtype=np.float32)[2::3].reshape(self.output_shape)
         #
         # print('-------------RESULT 000-------------')
-        # print(out_V)
-        # print(out_Vcos)
-        # print(out_Vsin)
+        print(out_V)
+        print(out_Vcos)
+        print(out_Vsin)
 
         out_V    = np.sum(np.nan_to_num(out_V,    nan=0), axis = 2)
         out_Vcos = np.sum(np.nan_to_num(out_Vcos, nan=0), axis = 2)

@@ -527,10 +527,15 @@ class World:
 		# print([a.shape for a in sca_data])
 		buffer_list = [emission_data, observation_data, sca_data, atm_data, los_data, dist_data, az_data]
 
-		print("Uniforms")
-		print(uniforms)
-		print("Buffers (los, dist, az)")
-		print(buffer_list[-3:])
+		# print("aer_Phase_Fct")
+		# print(self.atmosphere.profiles["sca_angle"])
+		# print(self.atmosphere.profiles["aer_Phase_Fct"])
+
+		# print("Uniforms")
+		# print(uniforms)
+		# print("Buffers (los, dist, az)")
+		# print(buffer_list[-3:])
+
 
 		# print(emission_data)
 		# print(observation_data)
@@ -805,9 +810,10 @@ class World:
 			if self.atmosphere.use_aerosol:
 				Caer = self.atmosphere.GetAerosolCS(alt) #in km-1
 				Paer, DoLP_aer = self.atmosphere.GetAerosolPhaseFunction(RD_angle) # Paer in sr. pi=FRONTscattering, 0=backscattring
-			# print("DEBUG V, Crs, P", V, Crs, P)
 
-			I0_rs = 0
+			# print("DEBUG Caer, P", RD_angle*RtoD, Paer)
+
+			I0_rs  = 0
 			I0_aer = 0
 			# if mpi_rank == 0:
 			# 	print(AR, dvol)

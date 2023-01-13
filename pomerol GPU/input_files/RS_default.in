@@ -70,8 +70,8 @@ use_ozone 0 # 0 or 1. Will compute absorption along the paths due to ozone.
 
 
 ### Aerosols
-use_aerosol 0			# 0 or 1. Main flag to decide wether to use aerosol scattering/absorption or not.
-aer_complexity 0		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
+use_aerosol 1			# 0 or 1. Main flag to decide wether to use aerosol scattering/absorption or not.
+aer_complexity 1		# 0: Use a simple C_ext(altitude) profile. 1: use a more complex model with tunable optical properties and density.
 
 ### Complex aerosol profile parameters: use if aer_complexity == 1
 aer_model 1low 		# manual: use the aerosols properties listed below. Or name of a pre configured model.  (preconfigured model are hard-coded in atmosphere.py, in Aerosol.SetModel() function)

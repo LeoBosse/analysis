@@ -754,7 +754,6 @@ class Atmosphere:
 			absorbtion = 0
 		return absorbtion
 
-
 	def GetAerosolPhaseFunctionDoLP(self, a):
 		dolp = np.interp(a, self.profiles["sca_angle"], self.profiles["aer_Phase_DoLP"])
 		return dolp
@@ -763,7 +762,6 @@ class Atmosphere:
 		pf   = np.interp(a, self.profiles["sca_angle"], self.profiles["aer_Phase_Fct"])
 		dolp = np.interp(a, self.profiles["sca_angle"], self.profiles["aer_Phase_DoLP"])
 		return pf, dolp
-
 
 	def AerosolPhaseFunction(self, a):
 		if self.aer_complexity == 0:

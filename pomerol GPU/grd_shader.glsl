@@ -41,7 +41,7 @@ const float RtoD = 1. / DtoR;
 struct ScatteringData
 {
     float angles;
-    float aer_Pfct;
+        float aer_Pfct;
     float aer_Pfct_DoLP;
 };
 
@@ -137,12 +137,14 @@ float GetEmissionArea(int idist){
 }
 
 int GetScaAngleIndex(float angle){
-  for(int i = 0; i < atm_nb_angles - 1; i++){
-    if (angle <= (sca_data.data[i].angles + sca_data.data[i+1].angles) / 2){
+  for(int i = 0; i < atm_nb_angles - 1; i+=1){
+    float mid_alt = (sca_data.data[i].angles + sca_data.data[i+1].angles) / 2;
+
+    if (angle <= mid_alt){
       return i;
     }
   }
-  return atm_nb_angles;
+  return atm_nb_angles - 1;
 }
 
 int GetAltitudeIndex(float alt){
@@ -153,7 +155,7 @@ int GetAltitudeIndex(float alt){
       return i;
     }
   }
-  return atm_nb_altitudes;
+  return atm_nb_altitudes - 1;
 }
 
 float GetAtmosphereAbsorption(float alt1, float alt2){
@@ -260,11 +262,12 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
     if(SE == 0){return;}
 
     float sca_angle = (sca_range * sca_range + SE * SE - src_distance * src_distance) / (2 * SE * sca_range);
-    sca_angle =  acos(sca_angle);
+    sca_angle = PI - acos(sca_angle);
 
     int sca_angle_index = GetScaAngleIndex(sca_angle);
     float SAE = (sca_range * sca_range + src_distance * src_distance - SE * SE) / (2 * src_distance * sca_range);
     SAE = acos(SAE);
+
 
     /* vec3 sca_plane_normal = vec3( instrument_los[1] * sin(azimut_diff) - instrument_los[2] * cos(azimut_diff),
     -instrument_los[0] * sin(azimut_diff),
@@ -314,14 +317,19 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
     /* float	ray_Pfct_DoLP = atm_ray_Pfct_DoLP[sca_angle_index]; */
     float	ray_Pfct_DoLP = RSPhaseFunctionDoLP(sca_angle);
 
+    ////////////// GOOD //////////////////
+
 		float Caer = 0;
     float Paer = 0;
     float DoLP_aer = 0;
 		if (use_aerosol){
-			Caer = atm_data.data[sca_altitude_index].aer_beta; //in km-1
-			Paer = sca_data.data[sca_angle_index].aer_Pfct;
+			Caer     = atm_data.data[sca_altitude_index].aer_beta; //in km-1
+			Paer     = sca_data.data[sca_angle_index].aer_Pfct;
 			DoLP_aer = sca_data.data[sca_angle_index].aer_Pfct_DoLP;
     }
+
+    /* float debug1 = sca_angle * RtoD;
+    float debug2 = Paer; */
 
 		float I0_rs  = I0 * Crs  * ray_Pfct;  // [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
 		float I0_aer = I0 * Caer * Paer;      // [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
@@ -329,7 +337,7 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
     I0 = I0_rs + I0_aer;
 
     I0 *= los_data.data[sca_index].transmittance;
-    ////////////// GOOD //////////////////
+
 
   	// Mix of flux and DoLP when using aerosols
     float DoLP = 0;
@@ -343,7 +351,7 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
       DoLP *= -1;
     }
 
-    float debug1 = DoLP;
+
 
 		vec3 stokes_param = GetVParamFromLightParam(I0, DoLP, AoLP);
 
@@ -351,8 +359,8 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
     observation_data.data[Vcos_index] = stokes_param.y;
     observation_data.data[Vsin_index] = stokes_param.z;
 
-    /* observation_data.data[V_index]    = debug1; */
-    /* observation_data.data[Vcos_index] = debug2; */
+    /* observation_data.data[V_index]    = debug1;
+    observation_data.data[Vcos_index] = debug2; */
 }
 
 
