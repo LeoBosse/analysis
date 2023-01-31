@@ -413,6 +413,76 @@ class World:
 	# 	# Print New Line on Complete
 	# 	if iteration == total:
 	# 		print("\n")
+	
+	def ComputeSkyMapsGPU(self, time, ia_pc, ie_pc):
+		uniforms = {'instrument_azimut'		: float(self.a_pc_list[ia_pc]),
+					'instrument_elevation'	: float(self.e_pc_list[ie_pc]),
+					# 'instrument_lon'		: float(self.ground_map.A_lon),
+					# 'instrument_lat'		: float(self.ground_map.A_lat),
+					'instrument_altitude'	: float(self.instrument_altitude),
+					'instrument_area'		: float(self.PTCU_area),
+					# 'instrument_fov'		: float(self.ouv_pc),
+					# 'wavelength'			: float(self.atmosphere.wavelength),
+					# 'los_nb_points'			: int(self.atmosphere.Nlos),
+					'map_delta_az'			: float(self.sky_map.da),
+					'is_point_source'		: bool(self.sky_map.is_point_src),
+					'atm_nb_altitudes'		: int(len(self.atmosphere.profiles['HGT'])),
+					'atm_nb_angles' 		: int(len(self.atmosphere.profiles['sca_angle'])),
+					'use_aerosol' 			: bool(self.atmosphere.use_aerosol),
+					'src_altitude'			: float(self.sky_map.h)
+					# 'instrument_los'		: np.array(self.obs.los_uen.flatten(), dtype=np.float32)
+					}
+
+		emission_map = self.sky_map.cube[time, :, :]
+		emission_data = list(zip(np.array(emission_map.flatten(), dtype=np.float32),
+								np.zeros_like(emission_map.flatten(), dtype=np.float32),
+								np.zeros_like(emission_map.flatten(), dtype=np.float32)))
+		
+		# print(emission_map.size * self.atmosphere.Nlos)
+		z = np.zeros(emission_map.size * self.atmosphere.Nlos, dtype=np.float32)
+		observation_data = list(zip(z, z, z))
+
+		elev_data = self.sky_map.elevations
+		az_data   = self.sky_map.azimuts
+
+		los_data = list(zip(self.atmosphere.mid_altitudes_list,
+							self.atmosphere.volumes,
+							self.atmosphere.los_transmittance))
+		atm_data = list(zip(self.atmosphere.profiles["HGT"],
+							self.atmosphere.profiles['total_absorption'],
+							self.atmosphere.profiles['beta_ray'],
+							self.atmosphere.profiles['beta_aer']))
+		sca_data = list(zip(self.atmosphere.profiles['sca_angle'],
+							self.atmosphere.profiles["aer_Phase_Fct"],
+							self.atmosphere.profiles["aer_Phase_DoLP"]))
+		# print([a.shape for a in sca_data])
+		in_buffer_list = [emission_data, sca_data, atm_data, los_data, elev_data, az_data]
+		out_buffer_list = [observation_data]
+		# print("aer_Phase_Fct")
+		# print(self.atmosphere.profiles["sca_angle"])
+		# print(self.atmosphere.profiles["aer_Phase_Fct"])
+		# print("world.atmosphere.profiles['total_absorption']", self.atmosphere.profiles['total_absorption'])
+		# print("Uniforms")
+		# print(uniforms)
+		# print("Buffers (los, dist, az)")
+		# print(buffer_list[-3:])
+		# print(emission_data)
+		# print(observation_data)
+		self.shader.Prepare(observation_data, uniforms, in_buffer_list, out_buffer_list)
+		self.shader.Run()
+		# results = np.array(shader.RunComputeShader())
+		# results.reshape(self.ground_map.Ndist, self.ground_map.Naz, self.atmosphere.Nlos, 3)
+		# results.sum(axis = 2)
+		# results.reshape(self.ground_map.Ndist, self.ground_map.Naz, 3)
+		# print( time, ia_pc, ie_pc, shader.result)
+		self.sky_map.V_map[time, ie_pc, ia_pc]    += self.shader.result[0, :, :]
+		self.sky_map.Vcos_map[time, ie_pc, ia_pc] += self.shader.result[1, :, :]
+		self.sky_map.Vsin_map[time, ie_pc, ia_pc] += self.shader.result[2, :, :]
+		# print(shader.result)
+		# print(self.ground_map.V_map[time, ie_pc, ia_pc])
+		# print(self.ground_map.Vcos_map[time, ie_pc, ia_pc])
+		# print(self.ground_map.Vsin_map[time, ie_pc, ia_pc])
+
 
 	def ComputeSkyMaps(self, time, ia_pc, ie_pc):
 		"""Compute the contribution of the sky map at the time set"""
@@ -476,7 +546,6 @@ class World:
 
 
 	def CreateShaderWrap(self, emission_origin, emission_map):
-
 		self.shader = ShaderWrap(emission_origin, emission_map, local_size=(1, 1, self.atmosphere.Nlos))
 
 
@@ -525,12 +594,13 @@ class World:
 							self.atmosphere.profiles["aer_Phase_DoLP"]))
 
 		# print([a.shape for a in sca_data])
-		buffer_list = [emission_data, observation_data, sca_data, atm_data, los_data, dist_data, az_data]
+		in_buffer_list = [emission_data, sca_data, atm_data, los_data, dist_data, az_data]
+		out_buffer_list = [observation_data]
 
 		# print("aer_Phase_Fct")
 		# print(self.atmosphere.profiles["sca_angle"])
 		# print(self.atmosphere.profiles["aer_Phase_Fct"])
-		print("world.atmosphere.profiles['total_absorption']", self.atmosphere.profiles['total_absorption'])
+		# print("world.atmosphere.profiles['total_absorption']", self.atmosphere.profiles['total_absorption'])
 
 		# print("Uniforms")
 		# print(uniforms)
@@ -540,7 +610,7 @@ class World:
 		# print(emission_data)
 		# print(observation_data)
 
-		self.shader.Prepare(observation_data, uniforms, buffer_list)
+		self.shader.Prepare(observation_data, uniforms, in_buffer_list, out_buffer_list)
 
 		self.shader.Run()
 
@@ -755,6 +825,7 @@ class World:
 		# file_object.close()
 		# file_object = open('/home/bossel/These/Analysis/results/rayleigh/Aerosols/ptsrc_L100_a180_d5_ptcu_a180_e45.txt', mode='a')
 
+
 		for a_A, e_A, r, AR, RE, RD_angle, alt, AoLP, dvol, dr in geo_list:
 
 			# print(AR, RD_angle*RtoD)
@@ -791,7 +862,7 @@ class World:
 				# print("DEBUG opt_depth: ER", opt_depth, 1-opt_depth, np.exp(-opt_depth))
 
 			# if mpi_rank == 0: print(O3_abs, np.exp(- O3_abs))
-			print("OPT", - opt_depth, - O3_abs, - aer_abs, - opt_depth - O3_abs - aer_abs)
+			# print("OPT", - opt_depth, - O3_abs, - aer_abs, - opt_depth - O3_abs - aer_abs)
 
 			I0 *= np.exp(- opt_depth - O3_abs - aer_abs) # [nW / km2]
 
@@ -976,6 +1047,8 @@ class World:
 
 		vol_T = 0
 
+		# print(a_E*RtoD, e_E*RtoD)
+
 		for a_A, e_A, r, AR, RE, RD_angle, alt, AoLP, dvol, dr in geo_list:
 
 			zenith_angle_moon = (90-36)*DtoR
@@ -984,7 +1057,7 @@ class World:
 			azimuth = 268*DtoR
 			gael_sca_angle = np.arccos((np.cos(zenith_angle_moon)*np.cos(zenith) + np.sin(zenith_angle_moon)*np.sin(zenith)*np.cos(azimuth - Moon_AZ)))
 			DoLP = lambda a: 100*np.sin(a)**2 / (1+np.cos(a)**2)
-			print(RE, RD_angle*RtoD, AoLP*RtoD, gael_sca_angle*RtoD, DoLP(gael_sca_angle))
+			# print(RE, RD_angle*RtoD, AoLP*RtoD, gael_sca_angle*RtoD, DoLP(gael_sca_angle))
 			# print(a_A*RtoD, e_A*RtoD, r, AR, RE, RD_angle*RtoD, alt, AoLP*RtoD, dr)
 
 			I0 = self.sky_map.cube[time, ie_E, ia_E] # [nW / m2/ sr]
@@ -1037,7 +1110,7 @@ class World:
 			DoLP_rs = np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
 			# DoLP_aer = 0
 
-			print(RD_angle*RtoD, DoLP_rs*100, DoLP(RD_angle))
+			# print(RD_angle*RtoD, DoLP_rs*100, DoLP(RD_angle))
 
 			I0_aer *= self.atmosphere.los_transmittance[ialt]
 			I0_rs *= self.atmosphere.los_transmittance[ialt]

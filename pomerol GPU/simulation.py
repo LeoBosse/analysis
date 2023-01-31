@@ -44,6 +44,8 @@ class Simulation:
 		self.save_path = in_dict["save_path"]
 		self.save_name = self.save_path + in_dict["save_name"]
 
+		self.use_GPU = in_dict["use_GPU"].lower() in ['true', '1', 'yes']
+
 		mpi_comm.Barrier()
 		# print(mpi_rank)
 		if mpi_rank == 0 and self.save_individual_plots:
@@ -118,6 +120,10 @@ class Simulation:
 			self.is_ground_emission = False
 			observations_number = self.world.sky_map.Nt * self.world.Nb_a_pc * self.world.Nb_e_pc
 			count = 0
+
+			if self.use_GPU:
+				self.world.CreateShaderWrap('sky', self.world.sky_map.cube[0, :, :])
+
 			for t in range(self.world.sky_map.Nt):
 				# self.SetIMap(time = t)
 				for ia_pc in range(self.world.Nb_a_pc):
@@ -132,6 +138,9 @@ class Simulation:
 						self.a_pc, self.e_pc = self.world.a_pc, self.world.e_pc
 						self.time = t
 						self.SingleComputation()
+			
+			if self.use_GPU:
+				self.world.shader.Release()
 
 			reciever_V = None
 			reciever_Vcos = None
@@ -156,7 +165,8 @@ class Simulation:
 			count = 0
 			self.is_ground_emission = True
 
-			self.world.CreateShaderWrap('ground', self.world.ground_map.cube[0, :, :])
+			if self.use_GPU:
+				self.world.CreateShaderWrap('ground', self.world.ground_map.cube[0, :, :])
 
 			for t in range(self.world.sky_map.Nt):
 				for ia_pc in range(self.world.Nb_a_pc):
@@ -172,8 +182,8 @@ class Simulation:
 						if t == 0 or (t > 0 and self.world.ground_map.Nt > 0):
 							self.time = t
 							self.SingleComputation()
-
-			self.world.shader.Release()
+			if self.use_GPU:
+				self.world.shader.Release()
 
 			reciever_V = None
 			reciever_Vcos = None
@@ -218,48 +228,49 @@ class Simulation:
 			print("Starting time: ", start_time.time().strftime("%H:%M:%S"))
 
 		if self.is_ground_emission == True:
-			print('Ground map commputation with CPU...')
-			self.world.ComputeGroundMaps(self.time, self.ia_pc, self.ie_pc)
-			# print(self.world.ground_map.V_map[self.time, self.ie_pc, self.ia_pc, 0, :])
-			# self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc, 0, :],
-			# self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc, 0, :])
 
-			test_V = self.world.ground_map.V_map[self.time, self.ie_pc, self.ia_pc].copy()
-			test_Vcos = self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc].copy()
-			test_Vsin = self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc].copy()
-			test_I, test_D, test_A = np.vectorize(self.GetIDAFromV)(test_V, test_Vcos, test_Vsin)
-			self.world.ground_map.V_map[self.time, self.ie_pc, self.ia_pc]    *= 0
-			self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc] *= 0
-			self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc] *= 0
+			if not self.use_GPU:
+				print('Ground map commputation with CPU...')
+				self.world.ComputeGroundMaps(self.time, self.ia_pc, self.ie_pc)
+				# print(self.world.ground_map.V_map[self.time, self.ie_pc, self.ia_pc, 0, :])
+				# self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc, 0, :],
+				# self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc, 0, :])
+				# test_V = self.world.ground_map.V_map[self.time, self.ie_pc, self.ia_pc].copy()
+				# test_Vcos = self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc].copy()
+				# test_Vsin = self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc].copy()
+				# test_I, test_D, test_A = np.vectorize(self.GetIDAFromV)(test_V, test_Vcos, test_Vsin)
+				# self.world.ground_map.V_map[self.time, self.ie_pc, self.ia_pc]    *= 0
+				# self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc] *= 0
+				# self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc] *= 0
 
-			print('Ground map computation with GPU...')
-			self.world.ComputeGroundMapsGPU(self.time, self.ia_pc, self.ie_pc)
-			print('GPU / CPU')
-			# print(self.world.ground_map.V_map[self.time, self.ie_pc, self.ia_pc], test_V)
-			# print(np.average(test_V),
-			# 	  np.average(test_Vcos),
-			# 	  np.average(test_Vsin))
-			print(np.average(self.world.ground_map.V_map[   self.time, self.ie_pc, self.ia_pc]),
-				  np.average(self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]),
-				  np.average(self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]))
-			print(np.average(test_V),
-				  np.average(test_Vcos),
-				  np.average(test_Vsin))
-			print(np.average(test_I),
-				  np.average(test_D),
-				  np.average(test_A)*RtoD)
-			# print(100*np.max(abs((self.world.ground_map.V_map[   self.time, self.ie_pc, self.ia_pc]) - test_V)),
-			# 	  100*np.max(abs((self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]) - test_Vcos)),
-			# 	  100*np.max(abs((self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]) - test_Vsin)))
-			I, D, A = np.vectorize(self.GetIDAFromV)(self.world.ground_map.V_map[   self.time, self.ie_pc, self.ia_pc], self.world.ground_map.Vcos_map[   self.time, self.ie_pc, self.ia_pc], self.world.ground_map.Vsin_map[   self.time, self.ie_pc, self.ia_pc])
-			print(np.average(I),
-				  np.average(D),
-				  np.average(A)*RtoD)
-			# print(100*np.max(abs((I) - test_I)),
-			# 	  100*np.max(abs((D) - test_D)),
-			# 	  100*np.max(abs((A) - test_A)))
+			else:
+				print('Ground map computation with GPU...')
+				self.world.ComputeGroundMapsGPU(self.time, self.ia_pc, self.ie_pc)
+				# print('GPU / CPU')
+				# print(self.world.ground_map.V_map[self.time, self.ie_pc, self.ia_pc], test_V)
+				# print(np.average(test_V),
+				# 	  np.average(test_Vcos),
+				# 	  np.average(test_Vsin))
+				# print(np.average(self.world.ground_map.V_map[   self.time, self.ie_pc, self.ia_pc]),
+					#   np.average(self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]),
+					#   np.average(self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]))
+				# print(np.average(test_V),
+					#   np.average(test_Vcos),
+					#   np.average(test_Vsin))
+				# print(np.average(test_I),
+					#   np.average(test_D),
+					#   np.average(test_A)*RtoD)
+				# print(100*np.max(abs((self.world.ground_map.V_map[   self.time, self.ie_pc, self.ia_pc]) - test_V)),
+					#   100*np.max(abs((self.world.ground_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]) - test_Vcos)),
+				#   100*np.max(abs((self.world.ground_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]) - test_Vsin)))
+				# I, D, A = np.vectorize(self.GetIDAFromV)(self.world.ground_map.V_map[   self.time, self.ie_pc, self.ia_pc], self.world.ground_map.Vcos_map[   self.time, self.ie_pc, self.ia_pc], self.world.ground_map.Vsin_map[   self.time, self.ie_pc, self.ia_pc])
+				# print(np.average(I),
+					#   np.average(D),
+					#   np.average(A)*RtoD)
+				# print(100*np.max(abs((I) - test_I)),
+				# 	  100*np.max(abs((D) - test_D)),
+				# 	  100*np.max(abs((A) - test_A)))
 		else:
-
 			if self.add_B_pola:
 				# print("DEBUG DIRECT ONLY")
 				B_DoLP, B_AoLP = self.world.GetPolaFromB(DoLP_max = 20)
@@ -269,7 +280,49 @@ class Simulation:
 				self.add_B_AoLP[self.time, self.ie_pc, self.ia_pc] = B_AoLP
 
 			if self.direct_light_mode not in ["only"]:
+				
+				# if not self.use_GPU:
+				print("Sky map CPU")
 				self.world.ComputeSkyMaps(self.time, self.ia_pc, self.ie_pc)
+				print(self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc, 0, :],
+					  self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc, 0, :],
+					  self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc, 0, :])
+				test_V = self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc].copy()
+				test_Vcos = self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc].copy()
+				test_Vsin = self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc].copy()
+				test_I, test_D, test_A = np.vectorize(self.GetIDAFromV)(test_V, test_Vcos, test_Vsin)
+				self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc]    *= 0
+				self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc] *= 0
+				self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc] *= 0
+				# else:
+
+
+				print("Sky map GPU")
+				self.world.ComputeSkyMapsGPU(self.time, self.ia_pc, self.ie_pc)
+				print('GPU / CPU')
+				print(self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc], test_V)
+				print(np.average(test_V),
+					  np.average(test_Vcos),
+					  np.average(test_Vsin))
+				print(np.average(self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]),
+					  np.average(self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]),
+					  np.average(self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]))
+				print(np.average(test_V),
+					  np.average(test_Vcos),
+					  np.average(test_Vsin))
+				print(np.average(test_I),
+					  np.average(test_D),
+					  np.average(test_A)*RtoD)
+				print(100*np.max(abs((self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]) - test_V)),
+					  100*np.max(abs((self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]) - test_Vcos)),
+				  100*np.max(abs((self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]) - test_Vsin)))
+				I, D, A = np.vectorize(self.GetIDAFromV)(self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc], self.world.sky_map.Vcos_map[   self.time, self.ie_pc, self.ia_pc], self.world.sky_map.Vsin_map[   self.time, self.ie_pc, self.ia_pc])
+				print(np.average(I),
+					  np.average(D),
+					  np.average(A)*RtoD)
+				print(100*np.max(abs((I) - test_I)),
+					  100*np.max(abs((D) - test_D)),
+					  100*np.max(abs((A) - test_A)))
 
 		if mpi_rank==0:
 			print("Computing DONE in: ", dt.datetime.now() - start_time)

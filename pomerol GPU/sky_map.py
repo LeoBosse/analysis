@@ -165,7 +165,7 @@ class SkyMap:
 		elif self.mode == "movie" or self.mode == "film":
 			self.LoadAllSkyMovie()
 
-		self.data_shape = (self.Nt, Nb_e_pc, Nb_a_pc, len(self.elevations), len(self.azimuts))
+		self.data_shape = (self.Nt, Nb_e_pc, Nb_a_pc, self.Ne, self.Na)
 
 		self.scattering_map 		= np.zeros(self.data_shape) # Polarized intensity from (e, a) reaching us
 		self.DoLP_map				= np.zeros(self.data_shape) # DoLP of scattered light from (e,a)

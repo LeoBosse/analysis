@@ -19,6 +19,8 @@ class ShaderWrap:
 
         if self.emission_origin in ['grd', 'ground']:
             self.shader_file = 'grd_shader.glsl'
+        elif self.emission_origin in ['sky']:
+            self.shader_file = 'sky_shader.glsl'
         else:
             raise('Shader type not recognize: use emission_origin=ground or sky.')
 
@@ -44,12 +46,14 @@ class ShaderWrap:
         self.CreateShader()
 
 
-    def Prepare(self, emission_map, uniforms, buffers):
+    def Prepare(self, emission_map, uniforms, in_buffers, out_buffers):
 
         self.emission_map = emission_map
         self.uniforms = uniforms
-        self.buffer_data_list = buffers
-
+        
+        self.nb_in_buffers = len(in_buffers)
+        self.buffer_data_list = in_buffers
+        self.buffer_data_list.extend(out_buffers)
 
         self.WriteUniforms()
 
@@ -132,8 +136,12 @@ class ShaderWrap:
         # self.Release()
 
 
-    def SaveBuffer(self):
+    def SaveBuffer(self, buffer_ID = None):
         """Save the output buffers to useable numpy arrays."""
+
+
+        if buffer_ID is None:
+            buffer_ID = self.nb_in_buffers
 
         # print('RESULT IN')
 
@@ -149,14 +157,13 @@ class ShaderWrap:
         #     test = test.reshape((data_shape[0], data_shape[1], 3))
         #     # print(test)
 
-
         self.output_shape = (self.global_sizeX, self.global_sizeY, self.local_sizeZ)
 
+        out_V    = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[0::3].reshape(self.output_shape)
+        out_Vcos = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[1::3].reshape(self.output_shape)
+        out_Vsin = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[2::3].reshape(self.output_shape)
 
-        out_V    = np.frombuffer(self.buffer_list[1].read(), dtype=np.float32)[0::3].reshape(self.output_shape)
-        out_Vcos = np.frombuffer(self.buffer_list[1].read(), dtype=np.float32)[1::3].reshape(self.output_shape)
-        out_Vsin = np.frombuffer(self.buffer_list[1].read(), dtype=np.float32)[2::3].reshape(self.output_shape)
-        #
+
         print('-------------RESULT 000-------------')
         print(out_V)
         print(out_Vcos)
