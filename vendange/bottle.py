@@ -1181,6 +1181,7 @@ class PTCUBottle(Bottle):
         print(self.folders[i + 1], date_location)
         self.date, self.location = date_location[0], date_location[1]
         rest = self.folders[i + 2].split("_")
+        # print(i, date_location, self.date, self.location, rest)
         # print(rest)
         # Filters: r,v,b,m pour rouge, vert, bleu, mauve
         # 0: no filters_list
@@ -1192,12 +1193,13 @@ class PTCUBottle(Bottle):
         #     nb_filters = 4
 
         for r in rest:
-            if np.all([a in filters_list for a in r]):
+            if np.all([a in filters_list for a in r]) and r != 'rot':
                 if self.instrument_name == "carmen" or self.instrument_name == "fake_ptcu":
                     self.filters = r
                     if self.filters[1] in [0, "0"]:
                         self.NoVref = True
                 elif self.instrument_name in ["corbel", "gdcu"]:
+                    print(rest, r, self.line)
                     self.filters = r[self.line - 1]
                 # print("FILTERS:", r, self.filters)
 
@@ -1280,6 +1282,8 @@ class PTCUBottle(Bottle):
 
     def CleanRotations(self):
         self.nb_rot = len(self.rotations)
+
+        print("Cleaning bad points...")
 
         # Put every rotation time in sec since first rotation
         norm = self.rotations[0].time
@@ -1463,6 +1467,7 @@ class PTCUBottle(Bottle):
         # configuration = np.genfromtxt(config_file, dtype=array_type, delimiter=",", skip_header=1)
         conf_df = pd.read_csv(config_file, sep=",")
         configuration = dict()
+        print(config_file)
         print('configuration', configuration)
         for n in conf_df.columns:
             configuration[n] = conf_df[n][0]

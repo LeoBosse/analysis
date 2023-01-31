@@ -157,7 +157,7 @@ class ShaderWrap:
         out_Vcos = np.frombuffer(self.buffer_list[1].read(), dtype=np.float32)[1::3].reshape(self.output_shape)
         out_Vsin = np.frombuffer(self.buffer_list[1].read(), dtype=np.float32)[2::3].reshape(self.output_shape)
         #
-        # print('-------------RESULT 000-------------')
+        print('-------------RESULT 000-------------')
         print(out_V)
         print(out_Vcos)
         print(out_Vsin)

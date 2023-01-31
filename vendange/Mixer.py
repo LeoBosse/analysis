@@ -67,8 +67,9 @@ class Mixer:
 					self.eiscat_data = EiscatHDF5(bottle, antenna = self.eiscat_type)
 					print("EISCAT data valid? ", self.eiscat_data.valid )
 
-			self.eq_currents = EqCurrent(bottle, file_type=None)
-			print("Equivalent current is valid? ", bool(self.eq_currents.valid))
+			if self.show_currents:
+				self.eq_currents = EqCurrent(bottle, file_type=None)
+				print("Equivalent current is valid? ", bool(self.eq_currents.valid))
 			# if self.eq_currents.valid:
 			# 	self.eq_currents.GetApparentAngle(bottles[0].observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
 			# 	self.eq_currents.Polarisation(bottles[0].observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
@@ -317,7 +318,7 @@ class Mixer:
 		norm = bottle.all_times[0].total_seconds()
 		self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
 
-		if self.use_24h_time_format:
+		if self.use_24h_time_format and bottle.observation_type == "fixed":
 			self.x_axis_list = bottle.DateTime("start", format="LT") + bottle.all_times
 			# day = self.x_axis_list[0].day
 			# GetHour = lambda t: t.hour + t.minute / 60. + t.second / 3600.
@@ -447,7 +448,7 @@ class Mixer:
 		self.show_time = not comp #Don't touch!
 		self.time_format = "LT" #LT or UT. Self explainatory. Control the time format of the x-axis
 		self.time_label = "LTC" # The title of the time x-axis
-		self.use_24h_time_format = 1
+		self.use_24h_time_format = 0
 
 		self.show_raw_data = 1 and len(self.comp_bottles) == 0 # Show the data with no slidding average. All rotations of the polarizing filter. In black
 		self.show_smooth_data = 1 # Show smoothed data (averageed over the time window defined in the input file)
@@ -470,10 +471,10 @@ class Mixer:
 
 		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
 
-		self.show_eiscat = 1 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
+		self.show_eiscat = 0 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
 		self.eiscat_type = "uhf" #Initally for March 2022 data. Chose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
 
-		self.show_mag_data 	= True # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
+		self.show_mag_data 	= 0 # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
 		self.B_component	= 'Horiz' # B field component to plot (Dec, Horiz, Vert, 'Incl' or 'Total')
 		self.show_AoBapp 	= False # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
 		self.show_AoRD	 	= False # If True, show the AoLP produced by a point source defined in the input.in file.

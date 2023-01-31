@@ -530,12 +530,12 @@ class World:
 		# print("aer_Phase_Fct")
 		# print(self.atmosphere.profiles["sca_angle"])
 		# print(self.atmosphere.profiles["aer_Phase_Fct"])
+		print("world.atmosphere.profiles['total_absorption']", self.atmosphere.profiles['total_absorption'])
 
 		# print("Uniforms")
 		# print(uniforms)
 		# print("Buffers (los, dist, az)")
 		# print(buffer_list[-3:])
-
 
 		# print(emission_data)
 		# print(observation_data)
@@ -791,7 +791,7 @@ class World:
 				# print("DEBUG opt_depth: ER", opt_depth, 1-opt_depth, np.exp(-opt_depth))
 
 			# if mpi_rank == 0: print(O3_abs, np.exp(- O3_abs))
-			# print("OPT", - opt_depth - O3_abs - aer_abs)
+			print("OPT", - opt_depth, - O3_abs, - aer_abs, - opt_depth - O3_abs - aer_abs)
 
 			I0 *= np.exp(- opt_depth - O3_abs - aer_abs) # [nW / km2]
 
@@ -811,7 +811,7 @@ class World:
 				Caer = self.atmosphere.GetAerosolCS(alt) #in km-1
 				Paer, DoLP_aer = self.atmosphere.GetAerosolPhaseFunction(RD_angle) # Paer in sr. pi=FRONTscattering, 0=backscattring
 
-			# print("DEBUG Caer, P", RD_angle*RtoD, Paer)
+			# print("DEBUG Caer, P", Caer, Paer)
 
 			I0_rs  = 0
 			I0_aer = 0
@@ -1362,6 +1362,7 @@ class World:
 
 		d = max(d, 10**(-30)) # Avoid weird behaviour and division by 0
 
+		#Get altitudes of instrument and source
 		alt_A = self.instrument_altitude
 		lon_E, lat_E = AzDistToLonLat(a_rd, d)
 		alt_E = self.alt_map.GetAltitudeFromLonLat(lon_E, lat_E)
@@ -1431,6 +1432,7 @@ class World:
 		if self.has_sky_emission and self.direct_light_mode != "none":
 			opt_depth  = self.atmosphere.GetRSOpticalDepth(self.sky_map.h, 0)
 			opt_depth += self.atmosphere.GetO3Absorbtion(0, self.sky_map.h)
+			opt_depth += self.atmosphere.GetAerosolsAbsorbtion(0, self.sky_map.h)
 			opt_depth /= np.sin(e)
 			direct = self.sky_map.GetFlux(a, e, self.ouv_pc, t = t) * self.PTCU_area * 1e6 * self.inst_solid_angle
 			print("opt_depth, direct:")
@@ -1438,7 +1440,6 @@ class World:
 			return direct * np.exp(-opt_depth)
 		else:
 			return 0
-
 
 
 	def MakeGroundMapPlot(self, iso = None):

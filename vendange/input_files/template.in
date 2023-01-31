@@ -14,7 +14,7 @@ observation_type fixed  #Default "fixed". Or "fixed_[elevation, azimut]_[discret
 
 #observation_type fixed_elevation_continue_rotation  #Default "fixed". Or "fixed_[elevation, azimut]_[discrete, continue]_rotation"
 #continue_rotation_elevation 0
-#continue_rotation_times 0 #in minutes
+#continue_rotation_times 0 #in minutes, Separated by "_".
 
 #observation_type fixed_elevation_discrete_rotation  #Default "fixed". Or "fixed_[elevation, azimut]_[discrete, continue]_rotation"
 #discrete_rotation_azimut 0

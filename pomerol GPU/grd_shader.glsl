@@ -148,21 +148,41 @@ int GetScaAngleIndex(float angle){
 }
 
 int GetAltitudeIndex(float alt){
+  //Returns the index of the altitude just below the input altitude
   for(int i = 0; i < atm_nb_altitudes - 1; i+=1){
-    float mid_alt = (atm_data.data[i].altitudes + atm_data.data[i+1].altitudes) / 2.;
+    // float mid_alt = (atm_data.data[i].altitudes + atm_data.data[i+1].altitudes) / 2.;
+    float mid_alt = atm_data.data[i].altitudes;
 
     if (alt <= mid_alt){
-      return i;
+      return i-1;
     }
   }
   return atm_nb_altitudes - 1;
 }
 
+
+float GetInterpolationCoeff(float value, float lim1, float lim2){
+  if(lim1 != lim2){
+    return  (value - lim1) / (lim2 - lim1);
+  }
+  else{
+    return 1.;
+  }
+}
+
 float GetAtmosphereAbsorption(float alt1, float alt2){
 
-  float abs1 = atm_data.data[GetAltitudeIndex(alt1)].total_abs;
-  float abs2 = atm_data.data[GetAltitudeIndex(alt2)].total_abs;
+  int ind1 = GetAltitudeIndex(alt1);
+  int ind2 = GetAltitudeIndex(alt2);
+  int ind11 = ind1+1;
+  int ind21 = ind2+1;
+  
+  if(ind1 == atm_nb_altitudes - 1){ind11 -= 1;}
+  if(ind2 == atm_nb_altitudes - 1){ind21 -= 1;}
 
+  float abs1 = mix(atm_data.data[ind1].total_abs, atm_data.data[ind11].total_abs, GetInterpolationCoeff(alt1, atm_data.data[ind1].altitudes, atm_data.data[ind11].altitudes));
+  float abs2 = mix(atm_data.data[ind2].total_abs, atm_data.data[ind21].total_abs, GetInterpolationCoeff(alt2, atm_data.data[ind2].altitudes, atm_data.data[ind21].altitudes));
+  
   return abs(abs1 - abs2);
 }
 
@@ -303,7 +323,9 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
       opt_depth = GetAtmosphereAbsorption(src_altitude, sca_altitude) * SE / delta_z;
     }
 
-    I0 *= exp(- opt_depth); // [nW / km2]
+    // float debug1 = -opt_depth;
+
+    I0 *= exp(-opt_depth); // [nW / km2]
 
     if (sca_range != 0){
       I0 *= sca_volume * instrument_area / (sca_range*sca_range) / 4 / PI;
@@ -328,8 +350,8 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
 			DoLP_aer = sca_data.data[sca_angle_index].aer_Pfct_DoLP;
     }
 
-    /* float debug1 = sca_angle * RtoD;
-    float debug2 = Paer; */
+    // float debug1 = Caer;
+    // float debug2 = Paer;
 
 		float I0_rs  = I0 * Crs  * ray_Pfct;  // [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
 		float I0_aer = I0 * Caer * Paer;      // [nW / km2] * [km-1 * km3 * km2 * km-2] = [nW]
@@ -359,11 +381,9 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_distances, N_azimuts). Ea
     observation_data.data[Vcos_index] = stokes_param.y;
     observation_data.data[Vsin_index] = stokes_param.z;
 
-    /* observation_data.data[V_index]    = debug1;
-    observation_data.data[Vcos_index] = debug2; */
+    // observation_data.data[V_index]    = debug1;
+    // observation_data.data[Vcos_index] = debug2;
 }
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////

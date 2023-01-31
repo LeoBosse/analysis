@@ -83,7 +83,7 @@ class Atmosphere:
 		self.tau_0 = self.GetSquareLawFit(self.wavelength, "Optical Depth")
 
 		self.profiles["beta_ray"] = np.array([self.RSVolumeCS(a) for a in self.profiles["HGT"]])
-		self.profiles["tau_ray"]  = np.array([self.GetRSAbsorptionCoeff(a) for a in self.profiles["HGT"]])
+		self.profiles["tau_ray"]  = np.array([self.GetRSOpticalDepth(0, a) for a in self.profiles["HGT"]])
 
 		self.profiles["sca_angle"] 		= np.linspace(0, np.pi, 100)
 		self.profiles["ray_Phase_Fct"]  = np.array([self.RSPhaseFunction(self.wavelength, t) for t in self.profiles["sca_angle"]])
@@ -109,13 +109,13 @@ class Atmosphere:
 			self.profiles["beta_aer"] = np.array([self.AerosolCS(a) for a in self.profiles["HGT"]])
 
 
-		self.profiles['total_absorption'] = np.zeros_like(self.profiles['HGT'])
-		self.profiles['total_absorption'] += self.profiles["tau_ray"]
-		if self.use_ozone:
-			self.profiles['total_absorption'] += self.tau_O3_list
-		if self.use_aerosol:
-			self.profiles['total_absorption'] += self.tau_aer_list
 
+		self.profiles['total_absorption'] = np.zeros_like(self.profiles['HGT'])
+		self.profiles['total_absorption'] += np.copy(self.profiles["tau_ray"])
+		if self.use_ozone:
+			self.profiles['total_absorption'] += np.copy(self.tau_O3_list)
+		if self.use_aerosol:
+			self.profiles['total_absorption'] += np.copy(self.tau_aer_list)
 
 
 		if mpi_rank == 0:
@@ -484,11 +484,12 @@ class Atmosphere:
 		# if z_min > z_max:
 		# 	z_min, z_max = z_max, z_min
 
-		if self.use_ozone:
-			absorbtion = np.interp(z_max, self.profiles["HGT"], self.tau_O3_list) - np.interp(z_min, self.profiles["HGT"], self.tau_O3_list)
-			absorbtion = abs(absorbtion)
-		else:
-			absorbtion = 0
+		if not self.use_ozone:
+			return 0
+
+		absorbtion = np.interp(z_max, self.profiles["HGT"], self.tau_O3_list) - np.interp(z_min, self.profiles["HGT"], self.tau_O3_list)
+		absorbtion = abs(absorbtion)
+
 		# # d = lambda i: self.profiles["O3"][i] * self.profiles["PRE"][i] / cst.Boltzmann / self.profiles["TEM"][i]
 		# d = lambda i: self.profiles["O3"][i] * self.profiles["DEN"][i] * self.profiles["delta_z"][i] #[%] * [km-3] * [km]
 		#
@@ -635,10 +636,10 @@ class Atmosphere:
 
 			self.profiles["AER"] = np.zeros_like(self.profiles["HGT"])
 			for i, alt in enumerate(self.profiles["HGT"]):
-				if alt <= self.aerosol.max_alt:
-					self.profiles["AER"][i] = p(alt) #in km-3
-				else:
+				if alt > self.aerosol.max_alt:
 					break
+				
+				self.profiles["AER"][i] = p(alt) #in km-3
 
 
 			# f = plt.figure()
@@ -723,10 +724,12 @@ class Atmosphere:
 		if mpi_rank == 0: print("DEBUG AEROSOL Optical Depth (0-120km)", self.GetAerosolsAbsorbtion(0, 120))
 
 		# f, ax = plt.subplots(1)
-		# # ax.plot(self.exctinction_profile, self.profiles["HGT"])
-		# # ax.plot(self.better_exctinction_profile, self.profiles["HGT"])
-		# # ax1 = ax.twiny()
+		# ax.plot(self.exctinction_profile, self.profiles["HGT"])
+		# ax.plot(self.better_exctinction_profile, self.profiles["HGT"])
+		# ax1 = ax.twiny()
 		# ax.plot(self.tau_aer_list, self.profiles["HGT"], "r")
+		# ax.plot(self.tau_O3_list, self.profiles["HGT"], "b")
+		# ax.plot(self.profiles["tau_ray"], self.profiles["HGT"], "k")
 		# plt.show()
 
 	def GetAerosolCS(self, alt):
@@ -747,11 +750,12 @@ class Atmosphere:
 	def GetAerosolsAbsorbtion(self, z_min, z_max):
 		"""Returns the vertical absorption due to aerosols between altitude zmin and zmax. """
 
-		if self.use_aerosol:
-			absorbtion = np.interp(z_max, self.profiles["HGT"], self.tau_aer_list) - np.interp(z_min, self.profiles["HGT"], self.tau_aer_list)
-			absorbtion = abs(absorbtion)
-		else:
-			absorbtion = 0
+		if not self.use_aerosol:
+			return 0
+
+		absorbtion = np.interp(z_max, self.profiles["HGT"], self.tau_aer_list) - np.interp(z_min, self.profiles["HGT"], self.tau_aer_list)
+		absorbtion = abs(absorbtion)
+
 		return absorbtion
 
 	def GetAerosolPhaseFunctionDoLP(self, a):

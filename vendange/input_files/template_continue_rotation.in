@@ -5,7 +5,7 @@ saving_name False 			#Base name for saving figures.
 observation_type fixed_elevation_continue_rotation  #Default "fixed". Or "fixed_[elevation, azimut]_[discrete, continue]_rotation"
 
 continue_rotation_elevation 45
-continue_rotation_times 2.417_4.833
+continue_rotation_times 2.417_4.833 #in minutes, Separated by "_".
 
 pollution_source_azimut 0
 

@@ -122,6 +122,7 @@ for id in IDConfiguration:
 
 	### Get saving folder names
 	title = config[columns.index("CM_Comments")].split("_")
+	# print(title)
 	date = config[columns.index("Timestamp")]
 	lieu = title[1].capitalize()
 	i = 0
