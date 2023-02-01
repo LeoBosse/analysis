@@ -33,7 +33,7 @@ use_GPU 1 # set to True or false (1 or 0) to turn on/off the GPU computation. Sp
 ### All instrumental inputs
 ### Where do you point the instrument. In degrees. If multiples observations, separate by ";". If automatic spacing write the numpy.linspace(endpoint=False) (for azimuths or numpy.geomspace(endpoint=True) for elevations) parameters separated by "_".
 ### See the world.__init__() and rayleigh_utils.GetPointingCoords() for the code.
-azimuts 0;45;90  0_360_2 all    225_315_45
+azimuts 0 ;45;90  0_360_2 all    225_315_45
 elevations 1;45;90 0_90_25 all    10_50_20
 
 location 	skibotn 2.08552;45.79866      #Accepted locations: lagorge, skibotn, stveran, nyalesund, vigan, mens, finlande or LON;LAT in degrees
@@ -59,9 +59,9 @@ add_B_pola 0 #Check if this is still working before use... Add polarisation foll
 
 # ###############################################################################
 ### Atmosphere parameters
-RS_min_altitude	 						0	 	    # Minimum altitude of the scattering layer
-RS_max_altitude	 						120 		# Maximum altitude of the scattering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
-Nb_points_along_los   			5		  # Number of bins along the line of sight between H_r_min and h_r_max
+RS_min_altitude	 				0	 	    # Minimum altitude of the scattering layer
+RS_max_altitude	 				120 		# Maximum altitude of the scattering layer (maximum 120km, because it's the maximum altitude of the atmospheric profiles)
+Nb_points_along_los   			100		  # Number of bins along the line of sight between H_r_min and h_r_max
 
 max_angle_discretization		0				# In degrees. If scattering volume solid angle seen from E is larger than that, cut the volume in pieces.
 
@@ -136,7 +136,7 @@ direct_mode add
 
 emission_altitude	110		# Altitude of the emission in km.
 
-Nb_emission_points 16		# Number of bins to compute. Will downgrade the initial picture to match this pixel count.
+Nb_emission_points 1000		# Number of bins to compute. Will downgrade the initial picture to match this pixel count.
 Nb_emission_maps 1		    # Number of emission maps to compute. Use it for time changing synthetic emissions (sky_mode == X_moving_EW_band, but not for a movie). Should be put to 1 when not varying !
 
 #If loading the sky from a picture: sky_mode == image or movie

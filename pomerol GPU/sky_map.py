@@ -409,7 +409,7 @@ class SkyMap:
 		# area = 2 * np.pi * (RT + h)**2 * (np.cos(teM) - np.cos(tem)) / Na
 		area = (RT + h)**2 * (np.cos(teM) - np.cos(tem)) * da
 
-		print("TRUE ELEV DEBUG", np.cos(tem), np.cos(teM))
+		# print("TRUE ELEV DEBUG", np.cos(tem), np.cos(teM))
 
 		return area * 1e6 #in m**2
 

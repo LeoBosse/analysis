@@ -1124,7 +1124,7 @@ class World:
 				DoLP = (I0_rs * DoLP_rs + I0_aer * DoLP_aer) / I0
 			else:
 				DoLP = 0
-			print(DoLP)
+			# print(DoLP)
 
 			if DoLP < 0: # For Mie scattering, a DoLP < 0 = AoLP is parallel to scatering plane ! So 90 degrees from Rayleigh scattering.
 				AoLP += np.pi/2
