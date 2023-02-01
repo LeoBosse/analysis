@@ -400,13 +400,16 @@ class SkyMap:
 		return GetPixelSolidAngleFromiEl(ie)
 
 	@staticmethod
-	def GetArea(em, eM, h, Na):
+	def GetArea(em, eM, h, da):
 		"""Returns the area in m**2"""
 		om, oM = ObservationPoint(0, 0, h, 0, em, init_full=False), ObservationPoint(0, 0, h, 0, eM, init_full=False)
 		true_el = lambda e, o: np.arcsin(o.AH_norm * np.cos(e) / (RT + h))
 		tem, teM = true_el(em, om), true_el(eM, oM)
 
-		area = 2 * np.pi * (RT + h)**2 * (np.cos(teM) - np.cos(tem)) / Na
+		# area = 2 * np.pi * (RT + h)**2 * (np.cos(teM) - np.cos(tem)) / Na
+		area = (RT + h)**2 * (np.cos(teM) - np.cos(tem)) * da
+
+		print("TRUE ELEV DEBUG", np.cos(tem), np.cos(teM))
 
 		return area * 1e6 #in m**2
 
@@ -435,7 +438,8 @@ class SkyMap:
 				e = self.mid_elevations[ie] #Get pixel mid elevation
 				em, eM = self.elevations[ie], self.elevations[ie + 1] #Get pixel min em and Max eM elevations
 
-				self.pix_areas[ie] = self.GetArea(em, eM, self.h, self.Na)
+				# self.pix_areas[ie] = self.GetArea(em, eM, self.h, self.Na)
+				self.pix_areas[ie] = self.GetArea(em, eM, self.h, self.da)
 		else:
 			self.pix_areas[0] = 1
 

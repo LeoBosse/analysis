@@ -1067,6 +1067,8 @@ class World:
 			else:
 				I0 = 0
 
+			# print(self.sky_map.GetPixelArea(ie_E))
+
 			opt_depth = 0
 			O3_abs = 0
 			aer_abs = 0
@@ -1106,11 +1108,7 @@ class World:
 				I0_rs = I0 * Crs * P * dvol * self.PTCU_area / AR ** 2 / 4 / np.pi # [nW / m2] * [km-1 * km3 * m2 * km-2] = [nW]
 				# print("alt, V, Crs, P, omega", alt, V, Crs, P, self.PTCU_area / (AR*1000) ** 2)
 
-			f = 1 #(1 + self.atmosphere.depola) / (1 - self.atmosphere.depola)
-			DoLP_rs = np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
-			# DoLP_aer = 0
-
-			# print(RD_angle*RtoD, DoLP_rs*100, DoLP(RD_angle))
+			# print(I0_rs + I0_aer)
 
 			I0_aer *= self.atmosphere.los_transmittance[ialt]
 			I0_rs *= self.atmosphere.los_transmittance[ialt]
@@ -1118,10 +1116,15 @@ class World:
 
 			# Option 1: Mix of flux and DoLP when using aerosols
 			I0 = I0_rs + I0_aer
+
+			f = 1 #(1 + self.atmosphere.depola) / (1 - self.atmosphere.depola)
+			DoLP_rs = np.sin(RD_angle)**2 / (f + np.cos(RD_angle)**2) # DoLP dependance on scattering angle
+			# DoLP_aer = 0
 			if I0 != 0:
 				DoLP = (I0_rs * DoLP_rs + I0_aer * DoLP_aer) / I0
 			else:
 				DoLP = 0
+			print(DoLP)
 
 			if DoLP < 0: # For Mie scattering, a DoLP < 0 = AoLP is parallel to scatering plane ! So 90 degrees from Rayleigh scattering.
 				AoLP += np.pi/2
@@ -1412,7 +1415,6 @@ class World:
 		RE = GenPythagore(AR, AE, RAE) # Distance between emission and scaterring point
 		ARE = np.arcsin(AE * np.sin(RAE) / RE) # Scattering angle
 
-
 		if RAE + AER < np.pi/2: #Check that the sum of the angles is 180 degrees! Mandatory if phase function is not symmetrical for back- and front- scattering. ARE = 0 -> BACK scattering. ARE=pi -> FRONT-scattring
 			ARE = np.pi - ARE
 		ARE = np.pi - ARE
@@ -1423,6 +1425,8 @@ class World:
 			return AR, RE, ARE, RAE
 		else:
 			return AR, RE, ARE #, e_E
+
+
 	# @timer
 	def GetGeometryFromAzDist(self, a_rd, d, h_r, v_pc_u=None, obs = None, ret_RAE=False):
 		"""From known geometry parameters : a, d, alt of emission and alt of scatering , return missing parameters: Distance between emission and scattering and angle of scattering.

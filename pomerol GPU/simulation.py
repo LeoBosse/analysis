@@ -301,28 +301,28 @@ class Simulation:
 				self.world.ComputeSkyMapsGPU(self.time, self.ia_pc, self.ie_pc)
 				print('GPU / CPU')
 				print(self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc], test_V)
-				print(np.average(test_V),
-					  np.average(test_Vcos),
-					  np.average(test_Vsin))
-				print(np.average(self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]),
-					  np.average(self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]),
-					  np.average(self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]))
-				print(np.average(test_V),
-					  np.average(test_Vcos),
-					  np.average(test_Vsin))
+				# print(np.average(test_V),
+					#   np.average(test_Vcos),
+					#   np.average(test_Vsin))
+				# print(np.average(self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]),
+					#   np.average(self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]),
+					#   np.average(self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]))
+				# print(np.average(test_V),
+					#   np.average(test_Vcos),
+					#   np.average(test_Vsin))
 				print(np.average(test_I),
 					  np.average(test_D),
 					  np.average(test_A)*RtoD)
-				print(100*np.max(abs((self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]) - test_V)),
-					  100*np.max(abs((self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]) - test_Vcos)),
-				  100*np.max(abs((self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]) - test_Vsin)))
+				# print(100*np.max(abs((self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]) - test_V)),
+					#   100*np.max(abs((self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]) - test_Vcos)),
+				#   100*np.max(abs((self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]) - test_Vsin)))
 				I, D, A = np.vectorize(self.GetIDAFromV)(self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc], self.world.sky_map.Vcos_map[   self.time, self.ie_pc, self.ia_pc], self.world.sky_map.Vsin_map[   self.time, self.ie_pc, self.ia_pc])
 				print(np.average(I),
 					  np.average(D),
 					  np.average(A)*RtoD)
-				print(100*np.max(abs((I) - test_I)),
-					  100*np.max(abs((D) - test_D)),
-					  100*np.max(abs((A) - test_A)))
+				print(100*np.max(abs((I) - test_I)/I),
+					  100*np.max(abs((D) - test_D)/D),
+					  np.max(abs((A) - test_A)))
 
 		if mpi_rank==0:
 			print("Computing DONE in: ", dt.datetime.now() - start_time)

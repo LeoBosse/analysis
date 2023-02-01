@@ -29,7 +29,7 @@ layout(local_size_x = X, local_size_y = Y, local_size_z = Z) in;
 
 // Define constant values
 const float EARTH_RADIUS = 6371.; //km
-const float PI = 3.14159;
+const float PI = 3.141592653589793;
 const float DtoR = PI / 180;
 const float RtoD = 1. / DtoR;
 

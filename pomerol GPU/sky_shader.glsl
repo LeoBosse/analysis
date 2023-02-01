@@ -34,7 +34,7 @@ layout(local_size_x = X, local_size_y = Y, local_size_z = Z) in;
 
 // Define constant values
 const float EARTH_RADIUS = 6371.; //km
-const float PI = 3.14159;
+const float PI = 3.141592653589793;
 const float DtoR = PI / 180;
 const float RtoD = 1. / DtoR;
 
@@ -73,7 +73,7 @@ struct MapData
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Buffers for input and output data. Bindings must match the order of the buffer list of the wraper.
+// Buffers for input and output data. Bindings must match the order of the buffer list of the wraper (all inputs first, then outputs).
 ////////////////////////////////////////////////////////////////////////////////
 
 layout(std430, binding=0) buffer V_data_in{
@@ -129,10 +129,20 @@ float GetAoLP(float src_a, float src_e, float i_a, float i_e){
   return atan(sin_AoRD, cos_AoRD);
 }
 
-float GetEmissionArea(int ielev, float AH){
+float GetSrcDistance(float src_elevation, float src_altitude, float instrument_altitude){
+  float dist = - (EARTH_RADIUS + instrument_altitude) * sin(src_elevation);
+  float square = - cos(src_elevation)*cos(src_elevation) * (EARTH_RADIUS + instrument_altitude)*(EARTH_RADIUS + instrument_altitude);
+  square += (EARTH_RADIUS + src_altitude) * (EARTH_RADIUS + src_altitude);
+  dist += sqrt(square);
+  return  dist;
+}
+
+
+float GetEmissionArea(int ielev, float src_alt, float instrument_altitude){
   //Return the area of a pixel on the sky emission map in m**2.
 
   if(is_point_source){
+    // return vec3(1, 1, 1);
     return 1;
   }
 
@@ -140,12 +150,13 @@ float GetEmissionArea(int ielev, float AH){
   float emax = elev_data.data[ielev + 1];
 
   // Get the angle at the earth center between the instrument position and the source.
-  float true_emin = asin(AH * cos(emin) / (EARTH_RADIUS + src_altitude));
-  float true_emax = asin(AH * cos(emax) / (EARTH_RADIUS + src_altitude));
+  // np.arcsin(o.AH_norm * np.cos(e) / (RT + h))
+  float true_emin = asin(GetSrcDistance(emin, src_alt, instrument_altitude) * cos(emin) / (EARTH_RADIUS + src_altitude));
+  float true_emax = asin(GetSrcDistance(emax, src_alt, instrument_altitude) * cos(emax) / (EARTH_RADIUS + src_altitude));
 
 	float area = (EARTH_RADIUS + src_altitude)*(EARTH_RADIUS + src_altitude) * (cos(true_emax) - cos(true_emin)) * map_delta_az;
 
-	return area * 1e6; //in m**2
+	return area * 1000000; //in m**2
 }
 
 int GetScaAngleIndex(float angle){
@@ -266,14 +277,14 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_elevations, N_azimuts). E
     int src_elevation_index = int(gl_GlobalInvocationID.x);
     float src_elevation = (elev_data.data[src_elevation_index+1] + elev_data.data[src_elevation_index])/2.;
 
-
-    float src_horiz_distance = src_altitude / tan(src_elevation);
-    float src_distance = src_altitude / sin(src_elevation);
-
     int src_azimut_index = int(gl_GlobalInvocationID.y);
     float src_azimut = (az_data.data[src_azimut_index+1] + az_data.data[src_azimut_index])/2.;
 
-    ////////////// GOOD //////////////////
+
+   float src_distance = GetSrcDistance(src_elevation, src_altitude, instrument_altitude);
+   float src_horiz_distance = sqrt(src_distance*src_distance - src_altitude*src_altitude);
+  //  float src_horiz_distance = src_altitude / tan(src_elevation);
+  //  float src_distance = src_altitude / sin(src_elevation);
 
     float azimut_diff = src_azimut - instrument_azimut;
     int sca_index = int(gl_LocalInvocationID.z);
@@ -301,35 +312,23 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_elevations, N_azimuts). E
     float SE = sqrt(SE_horiz_square + (src_altitude - sca_altitude)*(src_altitude - sca_altitude));
     if(SE == 0){return;}
 
-    // float debug1 = src_horiz_distance;
-    // float debug2 = src_distance;
-
     float sca_angle = (sca_range * sca_range + SE * SE - src_distance * src_distance) / (2 * SE * sca_range);
     sca_angle = PI - acos(sca_angle);
-
     int sca_angle_index = GetScaAngleIndex(sca_angle);
-    // float SAE = (sca_range * sca_range + src_elevation * src_elevation - SE * SE) / (2 * src_elevation * sca_range);
-    // SAE = acos(SAE);
-
-
-    /* vec3 sca_plane_normal = vec3( instrument_los[1] * sin(azimut_diff) - instrument_los[2] * cos(azimut_diff),
-    -instrument_los[0] * sin(azimut_diff),
-    instrument_los[0] * cos(azimut_diff)); */
-
-
 
 // Get AoLP from previous geometry.
 // WARNING: the AoLP is not exactly identical than with CPU function (<1deg difference). To solve, check geometry simplifications (flat earth,etc...)
     float AoLP = GetAoLP(src_azimut, src_elevation, instrument_azimut, instrument_elevation);
 
+    ////////////// GOOD //////////////////
+
+
 // Propagate light from emission to instrument
     // init the source radiance
     float I0 = emission_data.data[in_buffer_index]; //[nW/m2/sr]
 
-
     // Normalize by emission area
-    I0 *= GetEmissionArea(src_elevation_index, src_distance); // [nW / m2 / sr * m2] = [nW / sr]
-
+    I0 *= GetEmissionArea(src_elevation_index, src_altitude, instrument_altitude); // [nW / m2 / sr * m2] = [nW / sr]
 
     // elevation square law to scattering point
     if (SE > 0){
@@ -338,6 +337,8 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_elevations, N_azimuts). E
 		else{
 			I0 = 0;
     }
+
+    // float debug2 = GetEmissionArea(src_elevation_index, src_altitude, instrument_altitude).z;
 
     // Losses between emission and scattering
     float opt_depth = 0;
@@ -385,6 +386,7 @@ Shader wrap creates a 2d grid of WorkGroups of size (N_elevations, N_azimuts). E
       DoLP = (I0_rs * ray_Pfct_DoLP + I0_aer * DoLP_aer) / (I0_rs + I0_aer);
     }
 
+    // float debug1 = DoLP;
     // For Mie scattering, a DoLP < 0 = AoLP is parallel to scatering plane ! So 90 degrees from Rayleigh scattering.
     if (DoLP < 0){
       AoLP += PI/2;
