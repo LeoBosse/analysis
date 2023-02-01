@@ -416,7 +416,6 @@ class MultipleScattering:
 
             vec = np.vstack(self.los)
 
-
             invalid_ray = True
             while invalid_ray:
                 hist = np.array([[alt, vec, None, None, None, None]])
@@ -435,7 +434,6 @@ class MultipleScattering:
                     continue
 
                 invalid_ray = False
-
 
             nb_events = hist.shape[0] - 2 # Number of scattering events (not counting the start and end of the ray)
             # print("nb_events", nb_events)
