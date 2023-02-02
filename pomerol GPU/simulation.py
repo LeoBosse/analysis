@@ -182,8 +182,28 @@ class Simulation:
 						if t == 0 or (t > 0 and self.world.ground_map.Nt > 0):
 							self.time = t
 							self.SingleComputation()
+
+
 			if self.use_GPU:
 				self.world.shader.Release()
+			
+			if int(self.in_dict["use_MS"]):
+				N_rays = int(self.in_dict["MS_N_rays"])
+				sca_limit = int(self.in_dict["MS_max_events"])
+	
+				self.shader = ShaderWrapMS(N_rays, sca_limit)
+
+				for t in range(self.world.sky_map.Nt):
+					self.time = t
+					for ia_pc in range(self.world.Nb_a_pc):
+						self.ia_pc = ia_pc
+						for ie_pc in range(self.world.Nb_e_pc):
+							self.ie_pc = ie_pc
+							self.world.a_pc, self.world.e_pc = self.world.a_pc_list[ia_pc], self.world.e_pc_list[ie_pc]
+							self.a_pc, self.e_pc = self.world.a_pc, self.world.e_pc
+							
+							self.ComputeMultipleScatteringGPU()
+				self.shader.Release()
 
 			reciever_V = None
 			reciever_Vcos = None
@@ -281,51 +301,110 @@ class Simulation:
 
 			if self.direct_light_mode not in ["only"]:
 				
-				# if not self.use_GPU:
-				print("Sky map CPU")
-				self.world.ComputeSkyMaps(self.time, self.ia_pc, self.ie_pc)
-				print(self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc, 0, :],
-					  self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc, 0, :],
-					  self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc, 0, :])
-				test_V = self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc].copy()
-				test_Vcos = self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc].copy()
-				test_Vsin = self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc].copy()
-				test_I, test_D, test_A = np.vectorize(self.GetIDAFromV)(test_V, test_Vcos, test_Vsin)
-				self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc]    *= 0
-				self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc] *= 0
-				self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc] *= 0
-				# else:
-
-
-				print("Sky map GPU")
-				self.world.ComputeSkyMapsGPU(self.time, self.ia_pc, self.ie_pc)
-				print('GPU / CPU')
-				print(self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc], test_V)
-				# print(np.average(test_V),
-					#   np.average(test_Vcos),
-					#   np.average(test_Vsin))
-				# print(np.average(self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]),
-					#   np.average(self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]),
-					#   np.average(self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]))
-				# print(np.average(test_V),
-					#   np.average(test_Vcos),
-					#   np.average(test_Vsin))
-				print(np.average(test_I),
-					  np.average(test_D),
-					  np.average(test_A)*RtoD)
-				# print(100*np.max(abs((self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]) - test_V)),
-					#   100*np.max(abs((self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]) - test_Vcos)),
-				#   100*np.max(abs((self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]) - test_Vsin)))
-				I, D, A = np.vectorize(self.GetIDAFromV)(self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc], self.world.sky_map.Vcos_map[   self.time, self.ie_pc, self.ia_pc], self.world.sky_map.Vsin_map[   self.time, self.ie_pc, self.ia_pc])
-				print(np.average(I),
-					  np.average(D),
-					  np.average(A)*RtoD)
-				print(100*np.max(abs((I) - test_I)/I),
-					  100*np.max(abs((D) - test_D)/D),
-					  np.max(abs((A) - test_A)))
+				if not self.use_GPU:
+					print("Sky map CPU")
+					self.world.ComputeSkyMaps(self.time, self.ia_pc, self.ie_pc)
+					# print(self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc, 0, :],
+					# 	self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc, 0, :],
+					# 	self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc, 0, :])
+					# test_V = self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc].copy()
+					# test_Vcos = self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc].copy()
+					# test_Vsin = self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc].copy()
+					# test_I, test_D, test_A = np.vectorize(self.GetIDAFromV)(test_V, test_Vcos, test_Vsin)
+					# self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc]    *= 0
+					# self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc] *= 0
+					# self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc] *= 0
+				else:
+					print("Sky map GPU")
+					self.world.ComputeSkyMapsGPU(self.time, self.ia_pc, self.ie_pc)
+					# print('GPU / CPU')
+					# print(self.world.sky_map.V_map[self.time, self.ie_pc, self.ia_pc], test_V)
+					# # print(np.average(test_V),
+					# 	#   np.average(test_Vcos),
+					# 	#   np.average(test_Vsin))
+					# # print(np.average(self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]),
+					# 	#   np.average(self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]),
+					# 	#   np.average(self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]))
+					# # print(np.average(test_V),
+					# 	#   np.average(test_Vcos),
+					# 	#   np.average(test_Vsin))
+					# print(np.average(test_I),
+					# 	np.average(test_D),
+					# 	np.average(test_A)*RtoD)
+					# # print(100*np.max(abs((self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc]) - test_V)),
+					# 	#   100*np.max(abs((self.world.sky_map.Vcos_map[self.time, self.ie_pc, self.ia_pc]) - test_Vcos)),
+					# #   100*np.max(abs((self.world.sky_map.Vsin_map[self.time, self.ie_pc, self.ia_pc]) - test_Vsin)))
+					# I, D, A = np.vectorize(self.GetIDAFromV)(self.world.sky_map.V_map[   self.time, self.ie_pc, self.ia_pc], self.world.sky_map.Vcos_map[   self.time, self.ie_pc, self.ia_pc], self.world.sky_map.Vsin_map[   self.time, self.ie_pc, self.ia_pc])
+					# print(np.average(I),
+					# 	np.average(D),
+					# 	np.average(A)*RtoD)
+					# print(100*np.max(abs((I) - test_I)/I),
+					# 	100*np.max(abs((D) - test_D)/D),
+					# 	np.max(abs((A) - test_A)))
 
 		if mpi_rank==0:
 			print("Computing DONE in: ", dt.datetime.now() - start_time)
+
+
+	def ComputeMultipleScatteringGPU(self):
+		
+		N_rays = self.shader.N_rays
+
+		uniforms = {'instrument_azimut'		: float(self.world.a_pc_list[self.ia_pc]),
+					'instrument_elevation'	: float(self.world.e_pc_list[self.ie_pc]),
+					'instrument_altitude'	: float(self.world.instrument_altitude),
+					# 'instrument_area'		: float(self.world.PTCU_area),
+					'atm_nb_altitudes'		: int(len(self.world.atmosphere.profiles['HGT'])),	
+					# 'atm_nb_angles'			: int(len(self.world.atmosphere.profiles['sca_angle'])),
+					'min_altitude'			: float(self.in_dict["MS_min_altitude"]),
+					'max_altitude' 			: float(self.in_dict["MS_max_altitude"]),
+					# 'distance_limit' 		: float(self.in_dict["MS_max_distance"]),
+					'scattering_limit'		: int(self.in_dict["MS_max_events"]),
+					'increment_length'		: float(self.in_dict["MS_increment_length"])
+					}
+
+		emission_map = self.world.ground_map.cube[self.time, :, :]
+		emission_data = list(zip(np.array(emission_map.flatten(), dtype=np.float32),
+								np.zeros_like(emission_map.flatten(), dtype=np.float32),
+								np.zeros_like(emission_map.flatten(), dtype=np.float32)))
+		
+		observation_data = np.zeros(N_rays * 3)
+		# history_data = np.zeros(N_rays)
+
+		atm_data = list(zip(self.world.atmosphere.profiles["HGT"],
+							self.world.atmosphere.profiles['total_absorption'],
+							self.world.atmosphere.profiles['beta_ray'],
+							self.world.atmosphere.profiles['beta_aer']))
+		sca_data = list(zip(self.world.atmosphere.profiles['sca_angle'],
+							self.world.atmosphere.profiles["aer_Phase_Fct"],
+							self.world.atmosphere.profiles["aer_Phase_DoLP"]))
+		# print([a.shape for a in sca_data])
+		in_buffer_list = [emission_data, sca_data, atm_data]
+		out_buffer_list = [observation_data]
+		# print("aer_Phase_Fct")
+		# print(self.atmosphere.profiles["sca_angle"])
+		# print(self.atmosphere.profiles["aer_Phase_Fct"])
+		# print("world.atmosphere.profiles['total_absorption']", self.atmosphere.profiles['total_absorption'])
+		# print("Uniforms")
+		# print(uniforms)
+		# print("Buffers (los, dist, az)")
+		# print(buffer_list[-3:])
+		# print(emission_data)
+		# print(observation_data)
+		self.shader.Prepare(uniforms, in_buffer_list, out_buffer_list)
+		self.shader.Run()
+		# results = np.array(shader.RunComputeShader())
+		# results.reshape(self.ground_map.Ndist, self.ground_map.Naz, self.atmosphere.Nlos, 3)
+		# results.sum(axis = 2)
+		# results.reshape(self.ground_map.Ndist, self.ground_map.Naz, 3)
+		# print( time, ia_pc, ie_pc, shader.result)
+		# self.sky_map.V_map[time, ie_pc, ia_pc]    += self.shader.result[0, :, :]
+		# self.sky_map.Vcos_map[time, ie_pc, ia_pc] += self.shader.result[1, :, :]
+		# self.sky_map.Vsin_map[time, ie_pc, ia_pc] += self.shader.result[2, :, :]
+		# print(shader.result)
+		# print(self.ground_map.V_map[time, ie_pc, ia_pc])
+		# print(self.ground_map.Vcos_map[time, ie_pc, ia_pc])
+		# print(self.ground_map.Vsin_map[time, ie_pc, ia_pc])
 
 
 	def ComputeMultipleScattering(self):

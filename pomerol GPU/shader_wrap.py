@@ -46,9 +46,8 @@ class ShaderWrap:
         self.CreateShader()
 
 
-    def Prepare(self, emission_map, uniforms, in_buffers, out_buffers):
+    def Prepare(self, uniforms, in_buffers, out_buffers):
 
-        self.emission_map = emission_map
         self.uniforms = uniforms
         
         self.nb_in_buffers = len(in_buffers)
@@ -143,20 +142,6 @@ class ShaderWrap:
         if buffer_ID is None:
             buffer_ID = self.nb_in_buffers
 
-        # print('RESULT IN')
-
-        # for i in range(2):
-        #     buffer = self.buffer_list[i]
-        #     # print(buffer)
-        #     data_shape = self.emission_map.shape
-        #     test = np.frombuffer(buffer.read(), dtype=np.float32)
-        #     # print(test, test.size)
-        #     # print(test[::3].reshape(data_shape))
-        #     # print(test[1::3].reshape(data_shape))
-        #     # print(test[2::3].reshape(data_shape))
-        #     test = test.reshape((data_shape[0], data_shape[1], 3))
-        #     # print(test)
-
         self.output_shape = (self.global_sizeX, self.global_sizeY, self.local_sizeZ)
 
         out_V    = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[0::3].reshape(self.output_shape)
@@ -179,12 +164,66 @@ class ShaderWrap:
         # self.result = np.frombuffer(self.buffer_list[1].read(), dtype=np.float32).reshape((3, data_shape[0], data_shape[1]))
         # print("DEBUG results shape", self.result.shape)
 
-
+    def Release(self):
+        """Release the context. Mandatory to use matplotlib afterwards."""
+        self.context.release()
     # def OrphanBuffers(self):
     #     for i in range(len(self.buffer_list)):
     #         self.buffer_list[i].orphan()
 
-    def Release(self):
-        """Release the context. Mandatory to use matplotlib afterwards."""
-        self.context.release()
         del self.context
+
+
+
+class ShaderWrapMS(ShaderWrap):
+
+    def __init__(self, N_rays, sca_limit):
+        self.shader_file = 'MS_shader.glsl'
+
+        self.size =  int(N_rays ** (1/6.)) + 1
+
+        self.N_rays = self.size ** 6
+
+        self.global_sizeX = self.size # Number of emission map pixels in distances
+        self.global_sizeY = self.size # Number of emission map pixels in azimuths
+        self.global_sizeZ = self.size  # Number of line of sight pixels in range
+        # print(self.global_sizeX, self.global_sizeY, self.global_sizeZ)
+
+        # Make sure these values are the same as in the shader .glsl code
+        self.local_sizeX = self.size
+        self.local_sizeY = self.size
+        self.local_sizeZ = self.size
+
+        self.consts = {'local_sizeX': self.local_sizeX,
+                       'local_sizeY': self.local_sizeY,
+                       'local_sizeZ': self.local_sizeZ,
+                       'scattering_limit': sca_limit
+        }
+
+        self.buffer_list = []
+
+        self.CreateContext()
+        self.LoadSource()
+        self.CreateShader()
+
+
+    def SaveBuffer(self, buffer_ID = None):
+        """Save the output buffers to useable numpy arrays."""
+        if buffer_ID is None:
+            buffer_ID = self.nb_in_buffers
+
+        out_V    = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[0::3]
+        out_Vcos = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[1::3]
+        out_Vsin = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[2::3]
+
+        # print('-------------RESULT 000-------------')
+        # print(out_V)
+        # print(out_Vcos)
+        # print(out_Vsin)
+
+        sum_out_V    = np.sum(np.nan_to_num(out_V,    nan=0))
+        sum_out_Vcos = np.sum(np.nan_to_num(out_Vcos, nan=0))
+        sum_out_Vsin = np.sum(np.nan_to_num(out_Vsin, nan=0))
+
+        self.result = np.array([out_V, out_Vcos, out_Vsin])
+        # print(self.result)

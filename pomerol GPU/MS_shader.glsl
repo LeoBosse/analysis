@@ -5,33 +5,25 @@
 uniform float instrument_azimut;
 uniform float instrument_elevation;
 uniform float instrument_altitude;
-uniform float instrument_area;
+// uniform float instrument_area;
+
+uniform int   atm_nb_altitudes;
+// uniform int   atm_nb_angles;
 
 uniform float min_altitude;
 uniform float max_altitude;
-uniform float distance_limit;
+// uniform float distance_limit;
 uniform int   scattering_limit;
 
 uniform float increment_length;
 
 uniform int total_ray_number;
 
-vec3 initial_vec = vec3(sin(instrument_elevation), 
-                        cos(instrument_elevation) * sin(instrument_azimut), 
-                        cos(instrument_elevation) * cos(instrument_azimut));
-
-
-// uniform vec3 instrument_los;
-
-/* uniform float instrument_fov; */
-/* uniform float wavelength; */
-/* uniform int   los_nb_points; */
-/* uniform float instrument_lon; */
-/* uniform float instrument_lat; */
-
 #define X %%local_sizeX%%
 #define Y %%local_sizeY%%
 #define Z %%local_sizeZ%%
+
+#define HISTORY_MAX_SIZE %%scattering_limit%%
 
 // Set up our compute groups
 layout(local_size_x = X, local_size_y = Y, local_size_z = Z) in;
@@ -44,7 +36,15 @@ const float RtoD = 1. / DtoR;
 
 const int ESCAPE_IN_SPACE   = 0;
 const int TOUCH_GROUND      = 1;
+const int VALID             = 2;
+const int INVALID           = 3;
 
+
+vec3 initial_vec = vec3(sin(instrument_elevation), 
+                        cos(instrument_elevation) * sin(instrument_azimut), 
+                        cos(instrument_elevation) * cos(instrument_azimut));
+
+uint ray_index = gl_LocalInvocationIndex;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ struct RayHistoryData{
     float cs_ray;
     float cs_aer;
     float segment_length;
-} history[scattering_limit];
+} history[HISTORY_MAX_SIZE];
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,16 +88,40 @@ layout(std430, binding=1) buffer atm_data_in{
     AtmosphereData data[];
 } atm_data;
 
-
 layout(std430, binding=2) buffer V_data_out{
     float data[];
 } observation_data;
+
+// layout(std430, binding=3) buffer history_data_out{
+//     RayHistoryData data[];
+// } history;
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Function definitions
 ////////////////////////////////////////////////////////////////////////////////
 
+uint _pcg(uint seed){
+  uint state = seed * 747796405u + 2891336453u;
+  uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+  return (word >> 22u) ^ word;
+}
+
+float RandomNumber(uint p){
+	return float(_pcg(int(p))) / float(uint(0xffffffff));
+}
+
+float RandomNumber(vec2 p){
+	return float(_pcg(_pcg(uint(p.x)) + uint(p.y))) / float(uint(0xffffffff));
+}
+
+vec3 MatrixProduct(mat3 M, vec3 v){
+  M[0] *= v.x;
+  M[1] *= v.y;
+  M[2] *= v.z;
+  return vec3(M[0].x+M[1].x+M[2].x , M[0].y+M[1].y+M[2].y , M[0].z+M[1].z+M[2].z);
+}
 
 float GetAoLP(float src_a, float src_e, float i_a, float i_e){
   // Compute the AoLP of rayleigh scattering for a source at azimut src_a and elevation src_e as seen form the instrument. And an instrument pointing in the direction i_a, i_e
@@ -114,16 +138,16 @@ float GetAoLP(float src_a, float src_e, float i_a, float i_e){
   return atan(sin_AoRD, cos_AoRD);
 }
 
-int GetScaAngleIndex(float angle){
-  for(int i = 0; i < atm_nb_angles - 1; i+=1){
-    float mid_alt = (sca_data.data[i].angles + sca_data.data[i+1].angles) / 2;
+// int GetScaAngleIndex(float angle){
+//   for(int i = 0; i < atm_nb_angles - 1; i+=1){
+//     float mid_alt = (sca_data.data[i].angles + sca_data.data[i+1].angles) / 2;
 
-    if (angle <= mid_alt){
-      return i;
-    }
-  }
-  return atm_nb_angles - 1;
-}
+//     if (angle <= mid_alt){
+//       return i;
+//     }
+//   }
+//   return atm_nb_angles - 1;
+// }
 
 int GetAltitudeIndex(float alt){
   //Returns the index of the altitude just below the input altitude
@@ -163,6 +187,19 @@ float GetAtmosphereAbsorption(float alt1, float alt2){
   return abs(abs1 - abs2);
 }
 
+vec2 GetAtmosphereCrossSection(float alt){
+
+  int ind = GetAltitudeIndex(alt);
+  int ind1 = ind + 1;
+  
+  if(ind1 == atm_nb_altitudes - 1){ind1 -= 1;}
+
+  float ray_cs = mix(atm_data.data[ind].ray_beta, atm_data.data[ind1].ray_beta, GetInterpolationCoeff(alt, atm_data.data[ind].altitudes, atm_data.data[ind1].altitudes));
+  float aer_cs = mix(atm_data.data[ind].aer_beta, atm_data.data[ind1].aer_beta, GetInterpolationCoeff(alt, atm_data.data[ind].altitudes, atm_data.data[ind1].altitudes));
+  
+  return vec2(ray_cs, aer_cs);
+}
+
 vec3 GetVParamFromLightParam(float I0, float DoLP, float AoLP){
   // Returns  the V parameters for a given radiant flux (any unit), a DoLP (between 0 and 1) and an AoLP in radians
   float V = I0 / 2.;
@@ -197,7 +234,7 @@ float RSPhaseFunction(float theta){
   return A * B;
 }
 
-vec4 GetScatteringPlane(int rayID){
+vec4 GetScatteringPlane(){
     // Rotation matrix from instrument ref frame to UpEastNorth
     float ca = cos(instrument_azimut);
     float sa = sin(instrument_azimut);
@@ -213,70 +250,94 @@ vec4 GetScatteringPlane(int rayID){
 
 
     // Plane angle
-    float plane_angle =  2 * PI * (0.5 - rayID / total_ray_number);
+    float plane_angle =  2 * PI * (0.5 - ray_index / total_ray_number);
     // Normal vector to plane in ref frame of instrument (==AoLP)
-    float Pxi = 0;
-    float Pyi = sin(plane_angle);
-    float Pzi = cos(plane_angle);
+    vec3 normal = vec3(0, sin(plane_angle), cos(plane_angle));
+    // float Pxi = 0;
+    // float Pyi = sin(plane_angle);
+    // float Pzi = cos(plane_angle);
     // Normal vector to plane in UpEastNorth coord.
-    float P_normal = np.dot(Ria, (Pxi, Pyi, Pzi));
+    vec3 P_normal = MatrixProduct(Ria, normal);
 
     return vec4(P_normal, plane_angle);
 }
 
+void WriteHistory(int index, float altitude, vec3 vec, float sca_angle, float cs_ray, float cs_aer, float segment_length){
+  history[index].altitude       = altitude;
+  history[index].vec            = vec;
+  history[index].sca_angle      = sca_angle;
+  history[index].cs_ray         = cs_ray;
+  history[index].cs_aer         = cs_aer;
+  history[index].segment_length = segment_length;
+}
+
 void InitializeHistory(){
-    for(int sca_ID; sca_ID < scattering_limit; sca_ID+=1){
-        history[sca_ID].altitude = instrument_altitude;
-        history[sca_ID].vec = initial_vec;
-        history[sca_ID].sca_angle = -1;
-        history[sca_ID].cs_ray = -1;
-        history[sca_ID].cs_aer = -1;
-        history[sca_ID].segment_length = -1;
+    for(int sca_ID=0; sca_ID < HISTORY_MAX_SIZE; sca_ID+=1){
+      WriteHistory(sca_ID, instrument_altitude, initial_vec, -1, -1, -1, 0);
     }
 }
 
-bool IsScattered(altitude){
-    return 1;
+bool IsScattered(float cross_section, int sca_ID){
+   return RandomNumber(vec2(ray_index, sca_ID)) < cross_section;
+
 }
 
-int Propagate(int sca_ID, float altitude, vec3 vec, vec3 scattering_plane, float segment_length){
+float GetScatteringAngle(float cs_ray, float cs_aer){
+    // float phase_function = cs_ray * self.atmosphere.profiles["ray_Phase_Fct"] + cs_aer * self.atmosphere.profiles["aer_Phase_Fct"];
+
+    // phase_function /= (cs_ray + cs_aer)
+
+    // proba = phase_function / sum(phase_function);
+
+    // random_angle = np.random.choice([-1, 1]) * np.random.choice(self.atmosphere.profiles["sca_angle"], p = proba)
+    return 0;
+}
+
+int Propagate(vec3 scattering_plane){
     
-    bool is_scattered = 0;
+    bool is_scattered = false;
+    vec2 cross_sections;
 
-    // While the ray is not scattered == while the ray goes in a straight line == while we are on the same path segment
-    while (!is_scattered){
+    int ray_state = VALID;
 
-        altitude += (vec.x * increment_length)  //Increment the altitude
-        segment_length += increment_length      //Increment the segment length
+    int sca_ID = 0;
+    float altitude  = history[0].altitude;
+    vec3 vec        = history[0].vec;
+    float segment_length = history[0].segment_length;
 
-        if (altitude < min_altitude){
-            hist[sca_ID] = RayHistoryData(altitude, vec, -1, -1, -1, segment_length);
-            return TOUCH_GROUND
+    // while the ray is valid == dont touch the ground or escape in the sky.
+    while(ray_state == VALID && sca_ID < scattering_limit){
+        // While the ray is not scattered == while the ray goes in a straight line == while we are on the same path segment
+        while (ray_state == VALID && !is_scattered){
+
+            altitude += (vec.x * increment_length);  //Increment the altitude
+            segment_length += increment_length;      //Increment the segment length
+
+            if (altitude < min_altitude){
+                history[sca_ID] = RayHistoryData(altitude, vec, -1, -1, -1, segment_length);
+                ray_state = TOUCH_GROUND;
+            }
+            if(altitude > max_altitude){
+                ray_state = ESCAPE_IN_SPACE;
+            }
+
+            cross_sections = GetAtmosphereCrossSection(altitude) * increment_length;
+            float total_cross_section = cross_sections.x + cross_sections.y;
+
+            is_scattered = IsScattered(total_cross_section, sca_ID);
         }
-        if(altitude > max_altitude){
-            return ESCAPE_IN_SPACE
-        }
 
-        is_scattered = IsScattered(alt)
+        sca_ID += 1;
+        float sca_angle = GetScatteringAngle(cross_sections.x, cross_sections.y);
+        // vec3 vec = self.RotateAboutPlane(vec, scattering_plane, sca_angle)
+
+        WriteHistory(sca_ID, altitude, vec, sca_angle, cross_sections.x, cross_sections.y, segment_length);
+        
+        segment_length = 0;
+
     }
+    return ray_state;
 
-    _, cs_ray, cs_aer = is_scattered
-    sca_angle = self.GetScatteringAngle(cs_ray, cs_aer)
-    # print(vec, sca_angle*RtoD)
-    vec = self.RotateAboutPlane(vec, scattering_plane, sca_angle)
-    # print(vec)
-
-    hist = np.append(hist, [[alt, vec, sca_angle, cs_ray, cs_aer, segment_length]], axis = 0)
-
-    # print(hist)
-
-    segment_length = 0
-
-    return self.Propagate(alt, vec, scattering_plane, id_ray=id_ray, hist = hist, segment_length=segment_length)
-
-
-
-    return 0
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -307,25 +368,20 @@ gl_LocalInvocationIndex
 Shader wrap creates a 2d grid of WorkGroups of size (N_elevations, N_azimuts). Each work group contains as many invocation as there are points along the line of sight of the instrument.
  */
 
-    int ray_index = gl_LocalInvocationIndex;
-    int V_index    = ray_index;
-    int Vcos_index = ray_index + 1;
-    int Vsin_index = ray_index + 2;
+    
+    uint V_index    = ray_index;
+    uint Vcos_index = ray_index + 1;
+    uint Vsin_index = ray_index + 2;
 
-
-    vec4 scattering_plane = GetScatteringPlane(ray_index);
+    vec4 scattering_plane = GetScatteringPlane();
     vec3 scattering_plane_normal = scattering_plane.xyz;
     float AoLP = scattering_plane.w;
 
-    bool invalid_ray = 1;
+    bool invalid_ray = true;
     while (invalid_ray){
-
         InitializeHistory();
-        history = Propagate(scattering_plane_normal);
-
-
+        Propagate(scattering_plane_normal);
     }
-
 
     vec3 stokes_param = vec3(1, 0, 0);
 

@@ -468,7 +468,7 @@ class World:
 		# print(buffer_list[-3:])
 		# print(emission_data)
 		# print(observation_data)
-		self.shader.Prepare(observation_data, uniforms, in_buffer_list, out_buffer_list)
+		self.shader.Prepare(uniforms, in_buffer_list, out_buffer_list)
 		self.shader.Run()
 		# results = np.array(shader.RunComputeShader())
 		# results.reshape(self.ground_map.Ndist, self.ground_map.Naz, self.atmosphere.Nlos, 3)
@@ -610,7 +610,7 @@ class World:
 		# print(emission_data)
 		# print(observation_data)
 
-		self.shader.Prepare(observation_data, uniforms, in_buffer_list, out_buffer_list)
+		self.shader.Prepare(uniforms, in_buffer_list, out_buffer_list)
 
 		self.shader.Run()
 
