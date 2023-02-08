@@ -41,7 +41,7 @@ const float RtoD = 1. / DtoR;
 struct ScatteringData
 {
     float angles;
-        float aer_Pfct;
+    float aer_Pfct;
     float aer_Pfct_DoLP;
 };
 
@@ -160,7 +160,6 @@ int GetAltitudeIndex(float alt){
   }
   return atm_nb_altitudes - 1;
 }
-
 
 float GetInterpolationCoeff(float value, float lim1, float lim2){
   if(lim1 != lim2){

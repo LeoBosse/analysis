@@ -109,7 +109,7 @@ MS_max_altitude	 						100 		# Maximum altitude of the MS scattering layer (maxi
 
 use_MS 1
 
-MS_N_rays 100
+MS_N_rays 10
 MS_max_events 100 #Maximum number of scattering events
 MS_max_distance   500 #km Maximum distances for each segment
 MS_increment_length 0.1  #km Bin length for each segment
@@ -219,10 +219,10 @@ ground_file nighttime_light_files/SVDNB_npp_20160101-20161231_75N060W_vcm-orm-nt
 ### Following parameters help the user that want to select the optional plots produced by POMEROL.
 
 show_ground_albedo 	 1 # Produce a map of the ground emissions with the albedo layers as contour plots (only if ground_albedo is set to altitude_...).
-show_sky_cube				 0 # Produce a plot with all sky maps used in the simulation. Useful for time-evolving setups and movie sky mode.
+show_sky_cube		 0 # Produce a plot with all sky maps used in the simulation. Useful for time-evolving setups and movie sky mode.
 
-show_altitude				 0 # Produce an altitude map around the instrument, in meters.
+show_altitude		 0 # Produce an altitude map around the instrument, in meters.
 
 show_cross_section	 0 # Produce a plot of aerosol cross sections.
-show_aer_size	 			 0 # Produce a plot of aerosol size distribution
-show_atmosphere		   0 # Produce a plot of temperature, pression, and O3 profile of the atmosphere
+show_aer_size	 	 0 # Produce a plot of aerosol size distribution
+show_atmosphere		 0 # Produce a plot of temperature, pression, and O3 profile of the atmosphere

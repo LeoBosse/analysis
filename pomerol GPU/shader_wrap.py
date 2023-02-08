@@ -149,6 +149,7 @@ class ShaderWrap:
         out_Vsin = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[2::3].reshape(self.output_shape)
 
 
+
         # print('-------------RESULT 000-------------')
         # print(out_V)
         # print(out_Vcos)
@@ -212,18 +213,27 @@ class ShaderWrapMS(ShaderWrap):
         if buffer_ID is None:
             buffer_ID = self.nb_in_buffers
 
-        out_V    = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[0::3]
-        out_Vcos = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[1::3]
-        out_Vsin = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[2::3]
+        # out_V    = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[0::3]
+        # out_Vcos = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[1::3]
+        # out_Vsin = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[2::3]
 
-        # print('-------------RESULT 000-------------')
-        # print(out_V)
+        self.result = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32).reshape((3, self.N_rays), order='F')
+
+        debug = np.frombuffer(self.buffer_list[buffer_ID+1].read(), dtype=np.float32).reshape((5, self.N_rays), order='F')
+
+        print(f'-------------DEBUG SHADER {buffer_ID+1}-------------')
+        print(debug.shape)
+        print(debug)
+
+        print(f'-------------RESULT 000 {buffer_ID}-------------')
+        print(self.result)
         # print(out_Vcos)
         # print(out_Vsin)
 
-        sum_out_V    = np.sum(np.nan_to_num(out_V,    nan=0))
-        sum_out_Vcos = np.sum(np.nan_to_num(out_Vcos, nan=0))
-        sum_out_Vsin = np.sum(np.nan_to_num(out_Vsin, nan=0))
+        # sum_out_V    = np.sum(np.nan_to_num(out_V,    nan=0))
+        # sum_out_Vcos = np.sum(np.nan_to_num(out_Vcos, nan=0))
+        # sum_out_Vsin = np.sum(np.nan_to_num(out_Vsin, nan=0))
+        self.result = np.sum(np.nan_to_num(self.result, nan=0))
 
-        self.result = np.array([out_V, out_Vcos, out_Vsin])
+        # self.result = np.array([out_V, out_Vcos, out_Vsin])
         # print(self.result)

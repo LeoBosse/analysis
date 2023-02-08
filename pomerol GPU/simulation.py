@@ -348,27 +348,32 @@ class Simulation:
 
 	def ComputeMultipleScatteringGPU(self):
 		
+
 		N_rays = self.shader.N_rays
+		print(f"Computing multiple scattering on {N_rays} rays...")
+
 
 		uniforms = {'instrument_azimut'		: float(self.world.a_pc_list[self.ia_pc]),
 					'instrument_elevation'	: float(self.world.e_pc_list[self.ie_pc]),
 					'instrument_altitude'	: float(self.world.instrument_altitude),
+					'wavelength'			: float(self.world.atmosphere.wavelength),
 					# 'instrument_area'		: float(self.world.PTCU_area),
 					'atm_nb_altitudes'		: int(len(self.world.atmosphere.profiles['HGT'])),	
 					# 'atm_nb_angles'			: int(len(self.world.atmosphere.profiles['sca_angle'])),
 					'min_altitude'			: float(self.in_dict["MS_min_altitude"]),
 					'max_altitude' 			: float(self.in_dict["MS_max_altitude"]),
-					# 'distance_limit' 		: float(self.in_dict["MS_max_distance"]),
+					'distance_limit' 		: float(self.in_dict["MS_max_distance"]),
 					'scattering_limit'		: int(self.in_dict["MS_max_events"]),
 					'increment_length'		: float(self.in_dict["MS_increment_length"])
 					}
 
-		emission_map = self.world.ground_map.cube[self.time, :, :]
-		emission_data = list(zip(np.array(emission_map.flatten(), dtype=np.float32),
-								np.zeros_like(emission_map.flatten(), dtype=np.float32),
-								np.zeros_like(emission_map.flatten(), dtype=np.float32)))
+		# emission_map = self.world.ground_map.cube[self.time, :, :]
+		# emission_data = list(zip(np.array(emission_map.flatten(), dtype=np.float32),
+		# 						np.zeros_like(emission_map.flatten(), dtype=np.float32),
+		# 						np.zeros_like(emission_map.flatten(), dtype=np.float32)))
 		
-		observation_data = np.zeros(N_rays * 3)
+		observation_data 	= np.zeros(N_rays * 3)
+		debug_data 			= np.zeros(N_rays * 5)
 		# history_data = np.zeros(N_rays)
 
 		atm_data = list(zip(self.world.atmosphere.profiles["HGT"],
@@ -378,9 +383,10 @@ class Simulation:
 		sca_data = list(zip(self.world.atmosphere.profiles['sca_angle'],
 							self.world.atmosphere.profiles["aer_Phase_Fct"],
 							self.world.atmosphere.profiles["aer_Phase_DoLP"]))
+
 		# print([a.shape for a in sca_data])
-		in_buffer_list = [emission_data, sca_data, atm_data]
-		out_buffer_list = [observation_data]
+		in_buffer_list = [sca_data, atm_data]
+		out_buffer_list = [observation_data, debug_data]
 		# print("aer_Phase_Fct")
 		# print(self.atmosphere.profiles["sca_angle"])
 		# print(self.atmosphere.profiles["aer_Phase_Fct"])
