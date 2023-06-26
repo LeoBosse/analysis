@@ -262,7 +262,6 @@ class MultipleScattering:
         return R @ incident_vec
 
 
-
     # @timer
     def Propagate_old(self, id_ray = 0):
         N = self.max_events

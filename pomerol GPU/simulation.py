@@ -204,6 +204,7 @@ class Simulation:
 							
 							self.ComputeMultipleScatteringGPU()
 				self.shader.Release()
+				self.shader.PlotDebug()
 
 			reciever_V = None
 			reciever_Vcos = None
@@ -374,7 +375,7 @@ class Simulation:
 		
 		observation_data 	= np.zeros(N_rays * 3)
 		debug_data 			= np.zeros(N_rays * 5)
-		# history_data = np.zeros(N_rays)
+		final_pos_data 		= np.zeros(N_rays * 3)
 
 		atm_data = list(zip(self.world.atmosphere.profiles["HGT"],
 							self.world.atmosphere.profiles['total_absorption'],
@@ -386,7 +387,7 @@ class Simulation:
 
 		# print([a.shape for a in sca_data])
 		in_buffer_list = [sca_data, atm_data]
-		out_buffer_list = [observation_data, debug_data]
+		out_buffer_list = [observation_data, debug_data, final_pos_data]
 		# print("aer_Phase_Fct")
 		# print(self.atmosphere.profiles["sca_angle"])
 		# print(self.atmosphere.profiles["aer_Phase_Fct"])

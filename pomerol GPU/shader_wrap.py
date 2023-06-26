@@ -149,7 +149,6 @@ class ShaderWrap:
         out_Vsin = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32)[2::3].reshape(self.output_shape)
 
 
-
         # print('-------------RESULT 000-------------')
         # print(out_V)
         # print(out_Vcos)
@@ -183,7 +182,7 @@ class ShaderWrapMS(ShaderWrap):
 
         self.size =  int(N_rays ** (1/6.)) + 1
 
-        self.N_rays = self.size ** 6
+        self.N_rays = int(self.size ** 6)
 
         self.global_sizeX = self.size # Number of emission map pixels in distances
         self.global_sizeY = self.size # Number of emission map pixels in azimuths
@@ -219,11 +218,19 @@ class ShaderWrapMS(ShaderWrap):
 
         self.result = np.frombuffer(self.buffer_list[buffer_ID].read(), dtype=np.float32).reshape((3, self.N_rays), order='F')
 
-        debug = np.frombuffer(self.buffer_list[buffer_ID+1].read(), dtype=np.float32).reshape((5, self.N_rays), order='F')
+        self.debug = np.frombuffer(self.buffer_list[buffer_ID+1].read(), dtype=np.float32).reshape((5, self.N_rays), order='F')
+
+        self.final_pos = np.frombuffer(self.buffer_list[buffer_ID+2].read(), dtype=np.float32).reshape((3, self.N_rays), order='F')
+
+        print(f'-------------FINAL POS SHADER {buffer_ID+2}-------------')
+        print(self.final_pos.shape)
+        print(np.average(self.final_pos, axis=1))
+        print(self.final_pos)
 
         print(f'-------------DEBUG SHADER {buffer_ID+1}-------------')
-        print(debug.shape)
-        print(debug)
+        print(self.debug.shape)
+        print(np.average(self.debug, axis=1))
+        print(self.debug)
 
         print(f'-------------RESULT 000 {buffer_ID}-------------')
         print(self.result)
@@ -237,3 +244,19 @@ class ShaderWrapMS(ShaderWrap):
 
         # self.result = np.array([out_V, out_Vcos, out_Vsin])
         # print(self.result)
+
+
+
+    def PlotDebug(self):
+        f, axs = plt.subplots(2)
+
+        axs[0].hist(self.debug[1], alpha=.5, color='blue', width=0.5)
+        axs[0].hist(self.debug[2], alpha=.5, color='red', width=0.5)
+
+        axs[1].hist(self.debug[3], alpha=.5, color='blue', width=0.5)
+        axs[1].hist(self.debug[4], alpha=.5, color='red', width=0.5)
+
+        # axs[0].plot(self.debug[3], self.debug[1], 'k*')
+        # axs[1].plot(self.debug[4], self.debug[2], 'r*')
+
+        plt.show()

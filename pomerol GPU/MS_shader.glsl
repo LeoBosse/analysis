@@ -37,7 +37,7 @@ const float RtoD = 1. / DtoR;
 
 const int INVALID           = -1;
 const int VALID             = 1;
-const int ESCAPE_IN_SPACE   = 100;
+const int ESCAPE_IN_SPACE   = 10;
 const int TOUCH_GROUND      = 0;
 
 
@@ -45,7 +45,7 @@ vec3 initial_vec = vec3(sin(instrument_elevation),
                         cos(instrument_elevation) * sin(instrument_azimut), 
                         cos(instrument_elevation) * cos(instrument_azimut));
 
-int nb_scattering_events = 0;
+int nb_scattering_events = 0; //count all scattering events + 1 final event. Doesn't count the initial state in the instrument.
 
 /*
 gl_NumWorkGroups
@@ -73,28 +73,30 @@ uint GlobalInvocationIndex = gl_WorkGroupID.z * gl_NumWorkGroups.x * gl_NumWorkG
                              gl_WorkGroupID.x;
 uint ray_index =  GlobalInvocationIndex * rays_per_work_group + gl_LocalInvocationIndex;
 
+uint V_index    = 3 * ray_index;
+uint Vcos_index = V_index + 1;
+uint Vsin_index = V_index + 2;
+
+uint debug_index = 5 * ray_index;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Structures of the input buffers. On for each array length.
 ////////////////////////////////////////////////////////////////////////////////
 
-struct ScatteringData
-{
+struct ScatteringData{
     float angles;
     float aer_Pfct;
     float aer_Pfct_DoLP;
 };
 
-struct AtmosphereData
-{
+struct AtmosphereData{
     float altitudes;
     float total_abs;
     float ray_beta;
     float aer_beta;
 };
 
-struct MapData
-{
+struct MapData{
     float azimuts;
     float distances;
 };
@@ -112,10 +114,10 @@ struct RayHistoryData{
 } history[HISTORY_MAX_SIZE];
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Buffers for input and output data. Bindings must match the order of the buffer list of the wraper (all inputs first, then outputs, in orders).
 ////////////////////////////////////////////////////////////////////////////////
+
 
 layout(std430, binding=0) buffer sca_data_in{
     ScatteringData data[];
@@ -133,6 +135,9 @@ layout(std430, binding=3) buffer debug_data_out{
     float data[];
 } debug_data;
 
+layout(std430, binding=4) buffer final_pos_data_out{
+    float data[];
+} final_pos_data;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Function definitions
@@ -150,7 +155,7 @@ float RandomNumber(uint p){
 }
 
 float RandomNumber(vec2 p){
-	return float(_pcg(_pcg(uint(p.x)) + uint(p.y))) / float(uint(0xffffffff));
+	return float(_pcg(_pcg(uint(p.x)) + _pcg(uint(p.y)))) / float(uint(0xffffffff));
 }
 
 float GetAoLP(float src_a, float src_e, float i_a, float i_e){
@@ -308,12 +313,23 @@ void WriteHistory(int index, float altitude, vec3 vec, float sca_angle, float cs
 
 void InitializeHistory(){
     for(int sca_ID=0; sca_ID < HISTORY_MAX_SIZE; sca_ID+=1){
-      WriteHistory(sca_ID, instrument_altitude, initial_vec, -1, -1, -1, 0, vec3(0, 0, 0), VALID, 0);
+    
+      WriteHistory( sca_ID,     // index
+                    instrument_altitude, // altitude
+                    initial_vec,    // vec
+                    -10,     // sca_angle
+                    -1,     // cs_ray
+                    -1,     // cs_aer
+                    0,    // segment_length
+                    vec3(0, -initial_vec.z, initial_vec.y),    // sca_plane
+                    VALID,    // ray_state
+                    0);   // plane_rotation_angle
     }
 }
 
 bool IsScattered(float cross_section, int sca_ID){
-   return RandomNumber(vec2(ray_index, sca_ID)) < cross_section;
+  //  return RandomNumber(vec2(ray_index, sca_ID)) < cross_section;
+   return RandomNumber(vec2(ray_index, sca_ID)) < 0.9;
 
 }
 
@@ -349,7 +365,7 @@ vec3 RotateAboutAxis(vec3 vec, vec3 axis, float angle){
 }
 
 float GetScatteringAngle(int sca_id){
-    return acos(1 - 2 * RandomNumber(vec2(ray_index, sca_id)));
+    return acos(1 - 2 * RandomNumber(vec2((ray_index+27839147) * 112358, (sca_id+27839147) * 112358)));
 }
 
 float GetPlaneRotationAngle(int sca_id){
@@ -363,86 +379,98 @@ vec4 BackwardPropagate(){
 
     int ray_state = VALID;
 
-    int sca_ID = 0;
+    int sca_ID = 1;
     float altitude  = history[0].altitude;
-    vec3 vec        = history[0].vec;
+    vec3 ray_direction = history[0].vec;
     float segment_length = history[0].segment_length;
     float sca_angle = history[0].sca_angle;
     float plane_rotation_angle = history[0].plane_rotation_angle;
+    vec3 scattering_plane_normal;
 
     vec3 total_vec = vec3(0, 0, 0);
 
     // while the ray is valid == dont touch the ground or escape in the sky.
-    while(ray_state == VALID && sca_ID < scattering_limit){
+    while(ray_state == VALID){
+        is_scattered = false;
+        segment_length = 0;
+
         // While the ray is not scattered == while the ray goes in a straight line == while we are on the same path segment
         while (ray_state == VALID && !is_scattered){
 
-            altitude += (vec.x * increment_length);  //Increment the altitude
+            altitude += (ray_direction.x * increment_length);  //Increment the altitude
             segment_length += increment_length;      //Increment the segment length
 
-            if (altitude < min_altitude){
+            if (altitude <= min_altitude){
                 ray_state = TOUCH_GROUND;
-                WriteHistory(sca_ID, altitude, vec, -1, -1, -1, segment_length, vec3(0,0,0), ray_state, 0);
+                WriteHistory(sca_ID, altitude, ray_direction, -20, -1, -1, segment_length, vec3(0,0,0), ray_state, 0);
             }
-
-            if(altitude > max_altitude){
+            else{if(altitude >= max_altitude){
                 ray_state = ESCAPE_IN_SPACE;
-                WriteHistory(sca_ID, altitude, vec, -1, -1, -1, segment_length, vec3(0,0,0), ray_state, 0);
-            }
+                WriteHistory(sca_ID, altitude, ray_direction, -30, -1, -1, segment_length, vec3(0,0,0), ray_state, 0);
+            }}
 
             cross_sections = GetAtmosphereCrossSection(altitude) * increment_length;
             float total_cross_section = cross_sections.x + cross_sections.y;
 
             is_scattered = IsScattered(total_cross_section, sca_ID);
-        }
+        }//Exiting the loop: the ray is either scattered, escaped or touching ground
 
         // Increment the position of the ray with respect to the instrument (origin)
-        total_vec += vec * segment_length;
+        total_vec += ray_direction * segment_length;
 
-        // Check if the ray is below the max distance limit. If not, return an INVALID ray.
+        // Check if the ray is below the max horizontal distance limit. If not, return an INVALID ray.
         if (sqrt(total_vec.z*total_vec.z + total_vec.y*total_vec.y) > distance_limit){
           ray_state = INVALID;
+          WriteHistory(sca_ID, altitude, ray_direction, -40, -1, -1, segment_length, vec3(0,0,0), ray_state, 0);
+        }
+        // Check the number of scattering events. Set the ray to INVALID to avoid writing outside of the buffers.
+        if (sca_ID >= scattering_limit){
+          ray_state = INVALID;
+          WriteHistory(sca_ID, altitude, ray_direction, -50, -1, -1, segment_length, vec3(0,0,0), ray_state, 0);
         }
 
         // Compute the scattering angle and change in direction vector of the ray if it has been scattered.
         if (ray_state == VALID){
             sca_angle = GetScatteringAngle(sca_ID);
             plane_rotation_angle = GetPlaneRotationAngle(sca_ID);
-            vec3 scattering_plane_normal = GetScatteringPlane(vec, plane_rotation_angle);
-            vec3 vec = RotateAboutAxis(vec, scattering_plane_normal, sca_angle);
+            scattering_plane_normal = GetScatteringPlane(ray_direction, plane_rotation_angle);
+            ray_direction = RotateAboutAxis(ray_direction, scattering_plane_normal, sca_angle);
+            // ray_direction = vec3(-1, 0, 0);
+
             //Save the ray history for the given scattering (or end point)
-            sca_ID += 1;
-            WriteHistory(sca_ID, altitude, vec, sca_angle, cross_sections.x, cross_sections.y, segment_length, scattering_plane_normal, ray_state, plane_rotation_angle);
-            segment_length = 0;
+            
+            WriteHistory(sca_ID, altitude, ray_direction, sca_angle, cross_sections.x, cross_sections.y, segment_length, scattering_plane_normal, ray_state, plane_rotation_angle);
         }
 
+        sca_ID += 1;
+
     }
-    nb_scattering_events = sca_ID;
+    nb_scattering_events = sca_ID-1;
     return vec4(total_vec, ray_state);
 
 }
 
 mat4 GetScatteringMatrix(float angle){
 
-  float a = 2.118 * 1e-29;  //polarizability in m3. Isotropic.
+  float a = 2.118 * 1e-2;  //polarizability in nm3. Isotropic.
 
-  float A = a*a; // 5*A and B as defined in de Hulst 1981 p79. isotropic polarizability -> A == B.
+  float A = a * a; // 5*A and B as defined in de Hulst 1981 p79. isotropic polarizability -> A == B.
   float ca = cos(angle);
   float sa2 = pow(sin(angle), 2);
 
   float m1 = A - 0.5 * A * sa2;
-  float m2 =   - 0.5 * A * sa2;
+  float m2 = m1 - A; //  - 0.5 * A * sa2;
   float m3 = A * (1 - 0.5 * sa2);
   float m4 = A * ca;
 
-  float Cst = pow(2 * PI * 1e-9 / wavelength, 4);
+  float Cst = pow(2 * PI * 1e9 / wavelength, 4);
 
   mat4 M = mat4(m1, m2, 0,  0,      // 1 col
-                m2, m3, 0,  0,      // 2 col
-                0,  0,  m4, 0,      // 3 col
-                0,  0,  0,  m4);    // 4 col
+                      m2, m3, 0,  0,      // 2 col
+                      0,  0,  m4, 0,      // 3 col
+                      0,  0,  0,  m4);    // 4 col
 
-  return M * Cst;
+  return Cst * M;
 }
 
 mat4 GetPlaneRotationMatrix(float angle){
@@ -461,6 +489,7 @@ float GetPlaneRotationAngle(vec3 P1, vec3 P2){
 }
 
 vec4 ForwardPropagate(){
+
   vec4 stokes_param = vec4(1, 0, 0, 0);
 
   int ray_state = VALID;
@@ -488,6 +517,7 @@ vec4 ForwardPropagate(){
   return stokes_param;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // Main function
 ////////////////////////////////////////////////////////////////////////////////
@@ -495,12 +525,6 @@ vec4 ForwardPropagate(){
 
 void main()
 {
-
-    uint V_index    = 3 * ray_index;
-    uint Vcos_index = V_index + 1;
-    uint Vsin_index = V_index + 2;
-
-    uint debug_index = 5 * ray_index;
 
     int ray_state = INVALID;
     vec4 result;
@@ -519,7 +543,6 @@ void main()
     // stokes_param *= wavelength;
     // stokes_param *= distance_limit;
 
-
     // Registering output buffers.
     // One mandatory for the stokes paramters of the ray. Similar to the ground and sky scattering shaders. Size 3 * N_rays of floats. Or N_rays of vec4 (with one useless param).
     // If possible, one for the history of each ray to ease the debug, analysis and validation, comparison procedure. Size N_rays * max_sca_events of RayHistoryData if possible.
@@ -527,16 +550,19 @@ void main()
     observation_data.data[Vcos_index] = stokes_param.y;
     observation_data.data[Vsin_index] = stokes_param.z;
 
+    final_pos_data.data[V_index]    = final_position.x;
+    final_pos_data.data[Vcos_index] = final_position.y;
+    final_pos_data.data[Vsin_index] = final_position.z;
 
-    // 5 debug paramters can be saved here for analysis.
+    // 5 debug parameters can be saved here for analysis.
     // If you want more debug slots, you must change: 
-    //    - "debug_index" at the start of this main function, 
-    //    - at the initialization of "debug_data" in simulation.ComputeMultipleScatteringGPU() 
+    //    - "debug_index" at the start of this file,
+    //    - at the initialization of "debug_data" in simulation.ComputeMultipleScatteringGPU(),
     //    - in the ShaderWrapMS.SaveResults() at the reshape method.
-    debug_data.data[debug_index]   = ray_index; 
-    debug_data.data[debug_index+1] = ray_state; 
-    debug_data.data[debug_index+2] = 0; 
-    debug_data.data[debug_index+3] = 0; 
-    debug_data.data[debug_index+4] = stokes_param.z; 
+    debug_data.data[debug_index]   = nb_scattering_events; 
+    debug_data.data[debug_index+1] = history[nb_scattering_events-1].altitude; 
+    debug_data.data[debug_index+2] = history[nb_scattering_events-0].altitude; 
+    debug_data.data[debug_index+3] = history[nb_scattering_events+1].altitude; 
+    debug_data.data[debug_index+4] = history[nb_scattering_events].state; 
 
 }

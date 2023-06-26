@@ -626,6 +626,7 @@ class World:
 		self.ground_map.Vcos_map[time, ie_pc, ia_pc] += self.shader.result[1, :, :]
 		self.ground_map.Vsin_map[time, ie_pc, ia_pc] += self.shader.result[2, :, :]
 
+
 		# print(shader.result)
 		# print(self.ground_map.V_map[time, ie_pc, ia_pc])
 		# print(self.ground_map.Vcos_map[time, ie_pc, ia_pc])
