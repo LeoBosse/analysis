@@ -155,9 +155,10 @@ class Bottle:
         if ';' in jump:
             jump = jump.split(';')[self.line-1]
 
+
         if ':' in jump:
             jump = dt.datetime.strptime(jump, '%Y%m%d-%H:%M:%S')
-            jump -= (self.datetime)
+            jump -= self.datetime
         else:
             jump = float(jump)
             if "sec" in self.jump_unit:
@@ -179,7 +180,6 @@ class Bottle:
 
 
     def SetJumps(self):
-
         self.head_jump = self.SetJump()
         self.tail_jump = self.SetJump(tail = True)
 
@@ -1313,7 +1313,7 @@ class PTCUBottle(Bottle):
         #     if self.jump_mode == "length" or self.tail_jump.seconds == 0.:
         #         self.tail_jump = self.rotations[-1].time - self.tail_jump
 
-            # Delete all rotations before the head and after the tail jump
+        # Delete all rotations before the head and after the tail jump
         self.rotations = [r for r in self.rotations if self.head_jump <= r.time <= self.tail_jump]
         print(len(self.rotations), "good rotations in", self.nb_rot, ";", self.nb_rot - len(self.rotations), "deleted because of time jumps.")
         self.nb_rot = len(self.rotations)

@@ -362,14 +362,13 @@ class EqCurrent:
 	def GetNormTimes(self, divisor = 1, format = "delta"):
 		if format == "delta":
 			norm = self.data["seconds"][0]
-			self.x_axis = [(t - norm) / divisor for t in self.data["seconds"]]
+			self.x_axis = np.array([(t - norm) / divisor for t in self.data["seconds"]])
 		else:
 			self.x_axis = self.data["datetime"]
 
-		return np.array(self.x_axis)
+		return self.x_axis
 
 	def GetInterpolation(self, new_time, obs, divisor=1, shift=0):
-
 
 		new_data = pd.DataFrame()
 

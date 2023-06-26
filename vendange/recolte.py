@@ -170,7 +170,7 @@ for id in IDConfiguration:
 			# continue
 
 
-	### For saving nice titles.
+	# ### For saving nice titles.
 	folder = "ptcu/" + date.strftime("%Y%m%d") + "_" + lieu + "/"
 	# subfolder = "_".join(title[2+i:])
 	subfolder = f"{filters}_{az}_{el}_{int(speed)}hz"
@@ -191,7 +191,7 @@ for id in IDConfiguration:
 
 	##Make input file:
 	input_file = input.VendangeInput()
-	input_file.SetPollutionSource(lieu = lieu)
+	# input_file.SetPollutionSource(lieu = lieu)
 	input_file.SetObservationType(observation_type, el = el)
 	input_file.Update({	"instrument_name": instrument,
 					"data_files": folder + subfolder,

@@ -17,6 +17,7 @@ mpl.rcParams['svg.fonttype'] = 'none'
 import datetime as dt
 
 import chaosmagpy as chaos
+import scipy as sci
 from scipy import signal
 import sys
 import os
@@ -70,21 +71,21 @@ class Mixer:
 			if self.show_currents:
 				self.eq_currents = EqCurrent(bottle, file_type=None)
 				print("Equivalent current is valid? ", bool(self.eq_currents.valid))
-			# if self.eq_currents.valid:
-			# 	self.eq_currents.GetApparentAngle(bottles[0].observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
-			# 	self.eq_currents.Polarisation(bottles[0].observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
-			#
-			# if self.eq_currents.valid and bottle.observation_type == "fixed":
-			#
-			# 	if self.compute_Jup:
-			# 		AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
-			# 		self.eq_currents.FindJup(bottle.observation, AoLPs, mode = self.compute_Jup)
-			#
-			# 		self.eq_currents.GetApparentAngle(bottle.observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
-			#
-			# 		self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
-			#
-			# 		self.eq_currents.SaveTXT()
+				if self.eq_currents.valid:
+					self.eq_currents.GetApparentAngle(bottles[0].observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
+					self.eq_currents.Polarisation(bottles[0].observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
+				
+				if self.eq_currents.valid and bottle.observation_type == "fixed":
+				
+					if self.compute_Jup:
+						AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
+						self.eq_currents.FindJup(bottle.observation, AoLPs, mode = self.compute_Jup)
+				
+						self.eq_currents.GetApparentAngle(bottle.observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
+				
+						self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
+				
+						self.eq_currents.SaveTXT()
 
 			if self.show_RS_model and self.RS_model_files:
 				self.J2RAYS1_models = [Model.InitFromBottle(bottle, f, time_divisor = self.divisor, x_axis = self.x_axis_list, shift = self.shift_model) for i, f in enumerate(self.RS_model_files[bottle.line - 1])]
@@ -239,18 +240,18 @@ class Mixer:
 
 			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "DoLP")
 			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "AoLP")
-			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
+			self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
 			# self.MakeCleanCorrelationPlots(bottle, None, smooth=False)
 
 			# for m in self.J2RAYS1_models:
 			# 	self.SubtractModel(bottle, m)
 			# if self.show_RS_model:
 			# 	self.CompareRayleigh(bottle, self.J2RAYS1_model)
+			if self.show_SN:
+				self.MakeI0SNratio(bottle)
+				self.MakeSNratio(bottle)
 			if self.make_optional_plots:
-				if self.show_SN:
-					self.MakeI0SNratio(bottle)
-					self.MakeSNratio(bottle)
-				if self.eq_currents.valid and ib == 0:
+				if self.show_currents and self.eq_currents.valid and ib == 0:
 					self.eq_currents.MakePlot(coords = "uen")
 					self.eq_currents.MakePlot(coords = "azel")
 
@@ -260,6 +261,7 @@ class Mixer:
 					self.SetGraphParameter(self.comp_bottles[ibc], comp=True)
 					self.MakeXAxis(self.comp_bottles[ibc])
 					self.MakePlots(self.comp_bottles[ibc], comp=True)
+					
 					if self.make_optional_plots:
 						if self.show_SN:
 							self.MakeSNratio(self.comp_bottles[ibc])
@@ -448,16 +450,14 @@ class Mixer:
 		self.show_time = not comp #Don't touch!
 		self.time_format = "LT" #LT or UT. Self explainatory. Control the time format of the x-axis
 		self.time_label = "LTC" # The title of the time x-axis
-		self.use_24h_time_format = 0
+		self.use_24h_time_format = 1
 
 		self.show_raw_data = 1 and len(self.comp_bottles) == 0 # Show the data with no slidding average. All rotations of the polarizing filter. In black
-		self.show_smooth_data = 1 # Show smoothed data (averageed over the time window defined in the input file)
+		self.show_smooth_data = 1 # Show smoothed data (averaged over the time window defined in the input file)
 
 		self.show_error_bars 		= 1 # Show error bars for the raw cru data. in grey
 		self.show_smooth_error_bars = 1 # Show error bars for the raw cru data. in grey
 		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
-
-
 
 		self.show_avg_I0 = False #Show the flux average over the whole observation
 		self.show_avg_Iref = False #Only for Carmen Cru. Show the reference flux average over the whole observation
@@ -471,7 +471,7 @@ class Mixer:
 
 		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
 
-		self.show_eiscat = 0 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
+		self.show_eiscat = 1 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
 		self.eiscat_type = "uhf" #Initally for March 2022 data. Chose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
 
 		self.show_mag_data 	= 0 # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
@@ -479,13 +479,13 @@ class Mixer:
 		self.show_AoBapp 	= False # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
 		self.show_AoRD	 	= False # If True, show the AoLP produced by a point source defined in the input.in file.
 
-		self.show_currents	= False # If available, show the apparent angle of the equivalent currents from Magnar.
+		self.show_currents	= True # If available, show the apparent angle of the equivalent currents from Magnar.
 		self.compute_Jup	= "" #False, "para" or "perp". Will add a vertical component to the equivalent current so that it match the AoLP. If para: the AoLP is parallel to the current. If perp, the AoLP is perpendicular to the current.
 
 		self.show_grid_lines = True # Just to have a nicer grpah. self explainatory
 
 		self.make_optional_plots = 0 # If True, will plot a lots of optional plots showing all kind of things. See the end of the __init__() function where it is used.
-		self.show_SN = False # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
+		self.show_SN = 1 # If make_optional_plots is True, plot the graph of the signal to noise equivalent defined in appendix of (Bosse et al. 2020) or in bottle.GetSmoothLists() as SN(I, DoLP, Period): DoLP * np.sqrt(I * Period) / 2. where I is the flux, DoLP the DoLP and Period the time of the averaging window.
 
 		### The following paramters are used when comparing the data with the POMEROL model.
 		self.show_RS_model		= False #Show or not the POMEROL model graphs.
@@ -838,7 +838,7 @@ class Mixer:
 			l_smooth_I0, = ax.plot(self.x_axis_list, y, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 		elif self.show_smooth_data:
 			# l_smooth_I0 = ax.errorbar(self.x_axis_list, bottle.smooth_I0, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
-			y = bottle.smooth_I0
+			y = bottle.smooth_I0 
 			if self.show_Ipola:
 				y *= bottle.smooth_DoLP / 100.
 			l_smooth_I0 = ax.errorbar(self.x_axis_list, y, yerr = bottle.std_smooth_I0,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
@@ -922,7 +922,7 @@ class Mixer:
 
 
 
-	def PlotB(self, ax, bottle, component, ax_lines=[]):
+	def PlotB(self, ax, bottle, component, ax_lines=[], derivative=False):
 		if not self.mag_data:
 			return
 		# ax1 = ax.twinx()
@@ -940,8 +940,10 @@ class Mixer:
 		else:
 			label += ' (nT)'
 
-		t, d = self.mag_data.GetComponent(component, self.divisor, use_datetime = self.use_24h_time_format)
-		# t, d = self.mag_data.GetDerivative(component, self.divisor)
+		if not derivative:
+			t, d = self.mag_data.GetComponent(component, self.divisor, use_datetime = self.use_24h_time_format)
+		else:
+			t, d = self.mag_data.GetDerivative(component, self.divisor, use_datetime = self.use_24h_time_format)
 		l_mag_data, = ax.plot(t, d, "orange", label=label)
 		# l_mag_data, = ax.plot(t, d, self.mag_color, label="dB/dt (nT/s)", zorder=2, linewidth=2)
 		# print(t, d)
@@ -995,11 +997,17 @@ class Mixer:
 		# if self.eiscat_type == "uhf_v":
 		# 	parameter = "AoVi"
 
-		altitude = bottle.GetAltitude()
+		unit = r"m$^{-3}$"
+		if 'v' in parameter:
+			unit = r'm/s'
+		elif parameter == "AoVi":
+			unit = r'deg'
+
+		altitude = 110 # bottle.GetAltitude()
 		if self.langue == "en":
-			label = parameter.replace("_", "") + " at " + str(altitude) + r" km (m/s)"
+			label = parameter.replace("_", "").capitalize() + " at " + str(altitude) + f" km ({unit})"
 		else:
-			label = parameter.replace("_", "") + " à " + str(altitude) + r" km (m/s)"
+			label = parameter.replace("_", "").capitalize() + " à " + str(altitude) + f" km ({unit})"
 
 		if self.eiscat_type == "uhf_v" and parameter.lower() == "aovi":
 			t, d, e = self.eiscat_data.GetUHFApparentAngle(bottle, time_divisor = self.divisor, time_format = time_format)
@@ -1008,7 +1016,7 @@ class Mixer:
 
 		else:
 			t, d, e = self.eiscat_data.GetParameter(parameter, altitude, time_divisor = self.divisor, time_format = time_format)
-
+		
 		l_eiscat_data, capline, barlinecol = ax.errorbar(t+time_delta, d, yerr = e, color = self.EISCAT_color, fmt = ".", label = label, zorder=2, markersize=self.marker_size*2)
 
 		# Md, md = max(d), min(d)
@@ -1126,6 +1134,9 @@ class Mixer:
 			if self.show_eiscat and self.eiscat_data.valid: # Shift the y axis to not overlap with eiscat plot
 				self.ax12.spines["right"].set_position(("axes", 1.075))
 
+			# print(self.divisor, time_format,  time_delta)
+			# print(type(self.eq_currents.GetNormTimes(self.divisor, format=time_format)[0]))
+			# print(type(time_delta))
 			l_AoJnorm, = self.ax12.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, self.eq_currents.data["J_norm"], "*", color = self.currents_color, label="J_norm")
 
 			self.ax12.set_ylabel(r"J (A/m)")
@@ -1146,10 +1157,10 @@ class Mixer:
 			AoJapp90 = SetAngleBounds(AoJapp+np.pi/2, -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift)
 			AoJappperp = SetAngleBounds(AoJappperp, -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift)
 
-			# l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
-			# l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp90 * RtoD, "+", color = "xkcd:pink", label="AoJapp")
+			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
+			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp90 * RtoD, "+", color = "xkcd:pink", label="AoJapp")
 
-			# l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJappperp * RtoD, "*", color = "red", label="AoJapp_perp")
+			l_AoJapp, = self.ax3.plot(self.eq_currents.GetNormTimes(self.divisor), AoJappperp * RtoD, "*", color = "red", label="AoJapp_perp")
 
 			# self.ax3_lines.append([l_AoJapp, l_AoJapp.get_label()])
 
@@ -1358,6 +1369,7 @@ class Mixer:
 
 		if self.show_mag_data:
 			self.PlotB(self.ax2.twinx(), bottle, component = self.B_component, ax_lines=self.ax2_lines)
+			# self.PlotB(self.ax2.twinx(), bottle, component = self.B_component, ax_lines=self.ax2_lines, derivative = True)
 			# self.PlotB(self.ax2.twinx(), bottle, component = 'Horiz', ax_lines=self.ax2_lines)
 			# self.PlotB(self.ax3.twinx(), bottle, component = 'Vert', ax_lines=self.ax3_lines)
 
@@ -1365,7 +1377,7 @@ class Mixer:
 			print('plotting eiscat')
 			# self.PlotEiscat(bottle, 'AoVi', self.ax3, self.ax3_lines)
 			self.PlotEiscat(bottle, 'ne', self.ax1.twinx(), self.ax1_lines)
-			self.PlotEiscat(bottle, 'vo', self.ax3.twinx(), self.ax3_lines)
+			# self.PlotEiscat(bottle, 'vo', self.ax3.twinx(), self.ax3_lines)
 			print('DONE plotting eiscat')
 
 		self.PlotAoLP(self.ax3, bottle, ax_lines=self.ax3_lines)
@@ -1394,8 +1406,7 @@ class Mixer:
 			plt.minorticks_on()
 
 
-		if self.use_24h_time_format:
-
+		if self.use_24h_time_format and bottle.observation_type == "fixed":
 			self.ax3.xaxis.set_major_formatter(mdates.DateFormatter(self.xaxis_time_format))
 
 		# if self.show_time:
