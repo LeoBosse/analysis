@@ -110,11 +110,11 @@ def GetLonLatFromName(name, unit="radians"):
 		A_lat *= DtoR
 
 	return A_lon, A_lat
-###	Managing the input from the command lineself. Of the form:
+###	Managing the input from the command lines. Of the form:
 #	python3 geometry.py <position> <altitude> [<azimuth> <elevation>]
 #	position: "mens", "skibotn", or any two number for longitude, latitude in degrees
 #	altitude: Altitude of the observed point H in kilometer
-#	azimuth elevation: Optionals. Will output all the attribut of one observation.
+#	azimuth elevation: Optionals. Will output all the attribute of one observation.
 # Pour le lancer, place-toi dans le dossier src/ puis lance geometry.py dans le terminal avec les arguments suivants :
 # python3 geometry.py position altitude (azimut elevation)
 # position : "mens", "skibotn" ou "lon lat" en degrés
