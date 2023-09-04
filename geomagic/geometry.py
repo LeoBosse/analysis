@@ -82,6 +82,9 @@ def GetLonLatFromName(name, unit="radians"):
 	elif name == "finland":
 		A_lon = 20.935396
 		A_lat = 68.924606
+	elif name == "lacsud":
+		A_lon = 19.05496
+		A_lat = 69.13801
 	# elif name == "helligskogen":
 	# 	A_lon = 20.699313
 	# 	A_lat = 69.206369

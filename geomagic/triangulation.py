@@ -18,19 +18,19 @@ RT = 6371 # #km
 
 # Fill in a list of dictionnaries with the AoLP and instrumental setup for each observations used in this triangulation
 gdcu = {
-'name': "skibotn",
+'name': "lacsud",
 'h': 110, #km
-'a': -37 * DtoR,
-'e': 65 * DtoR,
+'a': 12 * DtoR,
+'e': 75 * DtoR,
 'AoLP': 90 * DtoR #90
 }
 
 corbel = {
 'name': "skibotn",
 'h': 110, #km
-'a': 24 * DtoR,
-'e': 45 * DtoR,
-'AoLP': -8  * DtoR #-8
+'a': 282 * DtoR,
+'e': 44 * DtoR,
+'AoLP': 0  * DtoR #-8
 }
 
 carmen = {
@@ -42,7 +42,7 @@ carmen = {
 }
 
 #List of the dictionnaries to use
-instruments = [gdcu, corbel, carmen]
+instruments = [gdcu, corbel]
 
 
 #Complete the dictionnaries with the observation objects and perp and para planes
