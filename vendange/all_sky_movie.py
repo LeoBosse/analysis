@@ -12,6 +12,7 @@ import argparse
 import os
 from vendange_configuration import Config
 import numpy as np
+import datetime as dt
 
 config = Config()
 
@@ -30,15 +31,16 @@ ext = args['extension']
 output = image_folder + args['output']
 fps = float(args['framepersec'])
 
+start = dt.time(hour=0, minute=45, second=0)
+end   = dt.time(hour=1, minute=20, second=0)
 
-
-def TransformFrame(frame):
+def TransformFrame(frame, time = None):
     '''Transform a frame to fit the desired appearence of the video.
     '''
-    ###Transform the black-and white to blue, and draw a red cross where ptcu was looking.
+    ###Transform the black-and white to blue
     frame = np.interp(frame, (1, 3), (0, 255))
-    frame[:, :, 1] = 0
-    frame[:, :, 2] = 0
+    frame[:, :, 1] = frame[:, :, 0] / 2.
+    frame[:, :, 2] = frame[:, :, 0] / 2.
 
     ### For fits images
     # frame = np.interp(frame, np.percentile(frame, (10, 90)), (0, 255))
@@ -46,6 +48,11 @@ def TransformFrame(frame):
     ### For Kilpisjarvi all sky images. Find the pixel corresponding to the obs direction and draw a red cross
     x, y = GetPixelFromAzEl(-45.412617, 52.50683357, frame.shape)
     frame = DrawCross(x, y, frame)
+
+    ### Add the text label to the image
+    if time is not None:
+        cv2.putText(frame, 'UT ' + time.strftime("%H:%M"), (int(frame.shape[0]*0.5), int(frame.shape[1]*0.9)), cv2.FONT_HERSHEY_SIMPLEX, 1., (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.putText(frame, '427.8 nm', (int(frame.shape[0]*0.05), int(frame.shape[1]*0.9)), cv2.FONT_HERSHEY_SIMPLEX, 1., (255, 255, 255), 2, cv2.LINE_AA)
 
     frame = frame.astype('uint8')
     return frame
@@ -63,12 +70,13 @@ def GetPixelFromAzEl(az, el, frame_shape):
 
     return x, y
 
-def DrawCross(center_x, center_y, frame):
-    for i in range(10):
-        frame[center_y, center_x + i + 10] = 0, 0, 255
-        frame[center_y, center_x - i - 10] = 0, 0, 255
-        frame[center_y + i + 10, center_x] = 0, 0, 255
-        frame[center_y - i - 10, center_x] = 0, 0, 255
+def DrawCross(center_x, center_y, frame, in_rad = 10, out_rad = 20):
+    
+    cv2.line(frame, (center_y, center_x + in_rad), (center_y, center_x + out_rad), (0, 0, 255), 3) 
+    cv2.line(frame, (center_y, center_x - in_rad), (center_y, center_x - out_rad), (0, 0, 255), 3) 
+    cv2.line(frame, (center_y + in_rad, center_x), (center_y + out_rad, center_x), (0, 0, 255), 3) 
+    cv2.line(frame, (center_y - in_rad, center_x), (center_y - out_rad, center_x), (0, 0, 255), 3) 
+    
     return frame
 
 
@@ -88,11 +96,17 @@ def ReadFrame(name):
 
 #List all image names to be used in the movie. You can hardcode conditions on the names here.
 images = []
+times  = []
 for f in os.listdir(dir_path):
-    if f.endswith(ext) and ('_01' in f):
-        images.append(f)
+    if f.endswith(ext) : #and ('_01' in f):
+        time = dt.datetime.strptime(f.split('_')[1][:6], "%H%M%S").time()
+        if start <= time <= end:
+            times.append(time)
+            images.append(f)
 
 images.sort()
+times.sort()
+
 #Sort images. Hard code the sort function depending on the name formats.
 # images.sort(key = lambda s: s.split('_')[2][:15]) #For PLIP fits
 
@@ -112,12 +126,12 @@ fourcc = cv2.VideoWriter_fourcc(*'mp4v') # For .mp4 format. Be sure to use lower
 out = cv2.VideoWriter(output, fourcc, fps, (width, height))
 
 
-for image in images:
+for image, time in zip(images, times):
     image_path = os.path.join(dir_path, image)
     frame = ReadFrame(image_path)
 
     # Transform each frame as defined in the function
-    frame = TransformFrame(frame)
+    frame = TransformFrame(frame, time = time)
 
     out.write(frame) # Write out frame to video
 

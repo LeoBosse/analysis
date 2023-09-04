@@ -203,6 +203,7 @@ class PTCURotation(Rotation):
 		self.V = np.absolute(self.V)
 		self.I0, self.DoLP,	self.AoLP = self.GetLightParameters(self.V, self.Vcos, self.Vsin)
 		self.Iref = 2 * self.Vref
+		
 		### Check if 'good'
 		self.is_good = self.IsGood()
 

@@ -458,7 +458,7 @@ class MagData:
 
 
 		self.additional_files = []
-		if bottle.DateTime("start").day != bottle.DateTime("end").day:
+		if bottle.DateTime("start", format="UT").day != bottle.DateTime("end", format="UT").day:
 			one_day = dt.timedelta(days=1)
 			start_date = bottle.DateTime("start", format="UT")
 			end_date = bottle.DateTime("end", format="UT")

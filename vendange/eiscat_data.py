@@ -34,9 +34,8 @@ class Eiscat:
 			self.GetDataFromFiles()
 
 		if self.valid:
-			print("EISCAT data exist! Number of points:", len(self.data))
-			print(bottle.DateTime(format="UT").strftime("%Y-%m-%d"))
-			# print(self.data)
+			print(self)
+			
 		else:
 			self.valid = False
 			print("No EISCAT data available.")
@@ -180,29 +179,33 @@ class EiscatHDF5(Eiscat):
 			file_date = start_date.strftime("%Y-%m-%d")
 			if   self.antenna == "tristatic":
 				self.file_list.append(folder + f"MAD6529_{file_date}_beata_V139@kst.hdf5")
+				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_V139@kst.hdf5")
 
 			elif self.antenna == "tromso":
 				self.file_list.append(folder + f"MAD6400_{file_date}_beata_60@vhf.hdf5")
+				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_60@vhf.hdf5")
 
 			elif self.antenna == "kiruna":
 				self.file_list.append(folder + f"MAD6400_{file_date}_beata_V120@krva.hdf5")
+				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_V120@krva.hdf5")
 
 			elif self.antenna == "sodankyla":
 				self.file_list.append(folder + f"MAD6400_{file_date}_beata_V120@sdva.hdf5")
+				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_V120@sdva.hdf5")
 
 			elif self.antenna == "uhf_v":
 				self.file_list.append(folder + f"MAD6502_{file_date}_beata_V225@uhf.hdf5")
+				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_V225@uhf.hdf5")
 
 			elif self.antenna == "uhf":
 				self.file_list.append(folder + f"MAD6400_{file_date}_beata_ant@uhfa.hdf5")
+				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_ant@uhfa.hdf5")
 
 			else:
 				raise Exception("EISCAT antenna is incorrect. Please change it to one of the following: tristatic, tromso, kiruna, sodankila, uhf_v, uhf")
 
 			start_date += one_day
 
-
-		# print(self.file_list)
 
 		if len(self.file_list) == 0:
 			print("WARNING: No eiscat data HDF5 files for this date.")
@@ -227,8 +230,14 @@ class EiscatHDF5(Eiscat):
 			# self.valid = False
 			return None
 
+# b'YEAR'	b'MONTH'	b'DAY'	b'HOUR'	b'MIN'	b'SEC'	b'RECNO'	b'KINDAT'	b'KINST'	b'UT1_UNIX'	b'UT2_UNIX'	b'HSA'	b'TFREQ'	b'AZM'	b'ELM'	b'POWER'	b'SYSTMP'	b'RANGE'	b'GDALT'	b'NE'	b'TI'	b'TR'	b'CO'	b'VO'	b'PM'	b'PO+'	b'DNE'	b'DTI'	b'DTR'	b'DCO'	b'DVO'	b'DPM'	b'DPO+'	b'DWN'	b'DDC'	b'GFIT'	b'CHISQ'
+		# print(np.array(f["metadata/names"]))
 
+		self.columns = f["Metadata/Data Parameters"]["mnemonic"] #f.keys()
+		self.units = f["Metadata/Data Parameters"]["units"] #f.keys()
+		# print(self.columns)
 		d = np.array(f["Data/Table Layout"])
+		
 
 		data = []
 		for i in range(len(d)):
@@ -237,6 +246,7 @@ class EiscatHDF5(Eiscat):
 				data.append(d[i])
 
 		# print('EISCAT DATA COLUMNS', d[0].columns)
+		
 		return np.array(data)
 
 	def GetDataFromFiles(self):
@@ -266,6 +276,7 @@ class EiscatHDF5(Eiscat):
 			self.valid = False
 		elif len(self.data) == 0:
 			self.valid = False
+		
 		# print(self.data[0]["hour"], self.data[0]["min"], self.data[0]["gdalt"])
 		# print(self.data[-1]["hour"], self.data[-1]["min"], self.data[-1]["gdalt"])
 		# for i in range(len(self.data)):
@@ -370,3 +381,18 @@ class EiscatHDF5(Eiscat):
 		print(f"Apparent angle of UHF Vi: {AoVi * RtoD}")
 
 		return t, AoVi, None
+
+
+	def __repr__(self):
+		s = ""
+		s += f"EISCAT data exist! Number of points: {len(self.data)} \n"
+		
+		s += f"Begining {dt.datetime(self.data[0]['year'], self.data[0]['month'], self.data[0]['day'],self.data[0]['hour'], self.data[0]['min'], self.data[0]['sec'])}\n"
+		s += f"Ending {dt.datetime(self.data[-1]['year'], self.data[-1]['month'], self.data[-1]['day'],self.data[-1]['hour'], self.data[-1]['min'], self.data[-1]['sec'])}\n"
+		
+		print(self.columns)
+		print(self.units)
+		if b'AZM' in self.columns:
+			s += f"Starting Azimuth, Elevation: {self.data[0]['azm']%360}, {self.data[0]['elm']}\n"
+
+		return s

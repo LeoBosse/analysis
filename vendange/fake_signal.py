@@ -58,9 +58,11 @@ def GetStokesTime(signal):
 
     return V, Vcos, Vsin
 
-def FlatSignal(I = 1):
+def FlatSignal(I = 1, slope = 0.):
     """Returns a flat signal of intensity I. Numpy array of the shape of the polarising filter angle array."""
-    return I * np.ones_like(filter_angles)
+
+    # return I * np.ones_like(filter_angles)
+    return np.linspace(I, I + slope*500, len(filter_angles), endpoint=True)
 
 def CosSignal(I = 1, D = 1, freq = 2, phase = 0, filter_rot = 0):
     """Returns a cos signal of average intensity I.
@@ -187,7 +189,7 @@ def FillParameterSpace(param_name, param_space, function, function_keywords=None
 
 
 N_pts = 1000  #Number of points for one turn of the polarising filter
-N_rot = 38
+N_rot = 1
 filter_angles = np.linspace(0, N_rot * 2*np.pi, N_rot * N_pts) #List of angles (rad) for the polarising filter between 0 and 2π.
 
 x_axis = None
@@ -204,20 +206,27 @@ x_axis = None
 ##########
 
 ### NeonSignal
-fig_title = "Polarisation for a perfect neon signal in time"
-x_axis_label = 'Time'
-x_axis = range(N_rot)
-# signal = NeonSignal(I = 1, D = 1, on_time = 9.67, off_time = 11.33, flash_time = 4.7, flash_width = 45*DtoR, flash_space = 130*DtoR, phase_time = 15)
-signal =  NeonSignal(I = 1, D = 1, on_time = 10, off_time = 10, flash_time = 5, flash_width = 90*DtoR, flash_space = 180*DtoR, phase_time = 19)
-signal2 = NeonSignal(I = 1, D = .8, on_time = 10.13, off_time = 9.82, flash_time = 5., flash_width = 90*DtoR, flash_space = 178*DtoR, phase_time = 19)
-signal3 = NeonSignal(I = 1, D = .6, on_time = 10.01, off_time = 10.18, flash_time = 5., flash_width = 90*DtoR, flash_space = 187*DtoR, phase_time = 19)
-V, Vcos, Vsin = GetStokesTime(signal)
-V2, Vcos2, Vsin2 = GetStokesTime(signal2)
-V3, Vcos3, Vsin3 = GetStokesTime(signal3)
-I_list, DoLP_list, AoLP_list = GetPola(V, Vcos, Vsin)
-I_list2, DoLP_list2, AoLP_list2 = GetPola(V2, Vcos2, Vsin2)
-I_list3, DoLP_list3, AoLP_list3 = GetPola(V3, Vcos3, Vsin3)
-plt.plot(filter_angles/TAU, signal)
+# fig_title = "Polarisation for a perfect neon signal in time"
+# x_axis_label = 'Time'
+# x_axis = range(N_rot)
+# # signal = NeonSignal(I = 1, D = 1, on_time = 9.67, off_time = 11.33, flash_time = 4.7, flash_width = 45*DtoR, flash_space = 130*DtoR, phase_time = 15)
+# signal =  NeonSignal(I = 1, D = 1, on_time = 10, off_time = 10, flash_time = 5, flash_width = 90*DtoR, flash_space = 180*DtoR, phase_time = 19)
+# signal2 = NeonSignal(I = 1, D = .8, on_time = 10.13, off_time = 9.82, flash_time = 5., flash_width = 90*DtoR, flash_space = 178*DtoR, phase_time = 19)
+# signal3 = NeonSignal(I = 1, D = .6, on_time = 10.01, off_time = 10.18, flash_time = 5., flash_width = 90*DtoR, flash_space = 187*DtoR, phase_time = 19)
+# V, Vcos, Vsin = GetStokesTime(signal)
+# V2, Vcos2, Vsin2 = GetStokesTime(signal2)
+# V3, Vcos3, Vsin3 = GetStokesTime(signal3)
+# I_list, DoLP_list, AoLP_list = GetPola(V, Vcos, Vsin)
+# I_list2, DoLP_list2, AoLP_list2 = GetPola(V2, Vcos2, Vsin2)
+# I_list3, DoLP_list3, AoLP_list3 = GetPola(V3, Vcos3, Vsin3)
+# plt.plot(filter_angles/TAU, signal)
+
+
+### Slope variations
+fig_title = "Polarisation for a linear signal of varying slope"
+x_axis_label = 'Slope'
+parameter_space, I_list, DoLP_list, AoLP_list = FillParameterSpace('slope', np.linspace(-1.1, 1.1, 1000, endpoint=True), FlatSignal, {'I':1000})
+
 
 ### Cos frequency variations
 # fig_title = "Polarisation for a cos signal of varying frequency with 100% DoLP"
@@ -255,7 +264,7 @@ plt.plot(filter_angles/TAU, signal)
 ##########
 
 
-n_plots = 4
+n_plots = 3
 f, axs = plt.subplots(n_plots, gridspec_kw = {'hspace':0}, sharex = True)
 # axs.plot(filter_angles*RtoD, signal)
 
@@ -266,24 +275,24 @@ if x_axis is None:
 
 ip = 0
 
-axs[ip].plot(filter_angles*RtoD/360, signal, "k")
-axs[ip].plot(filter_angles*RtoD/360, signal2, "g")
-axs[ip].plot(filter_angles*RtoD/360, signal3, "r")
-axs[ip].set_ylabel("Signal")
-ip += 1
+# axs[ip].plot(filter_angles*RtoD/360, signal, "k")
+# # axs[ip].plot(filter_angles*RtoD/360, signal2, "g")
+# # axs[ip].plot(filter_angles*RtoD/360, signal3, "r")
+# axs[ip].set_ylabel("Signal")
+# ip += 1
 axs[ip].plot(x_axis, I_list, "k")
-axs[ip].plot(x_axis, I_list2, "g")
-axs[ip].plot(x_axis, I_list3, "r")
+# axs[ip].plot(x_axis, I_list2, "g")
+# axs[ip].plot(x_axis, I_list3, "r")
 axs[ip].set_ylabel("Intensity (AU)")
 ip += 1
 axs[ip].plot(x_axis, DoLP_list, "k")
-axs[ip].plot(x_axis, DoLP_list2, "g")
-axs[ip].plot(x_axis, DoLP_list3, "r")
+# axs[ip].plot(x_axis, DoLP_list2, "g")
+# axs[ip].plot(x_axis, DoLP_list3, "r")
 axs[ip].set_ylabel("DoLP (%)")
 ip += 1
 axs[ip].plot(x_axis, AoLP_list*RtoD, "k")
-axs[ip].plot(x_axis, AoLP_list2*RtoD, "g")
-axs[ip].plot(x_axis, AoLP_list3*RtoD, "r")
+# axs[ip].plot(x_axis, AoLP_list2*RtoD, "g")
+# axs[ip].plot(x_axis, AoLP_list3*RtoD, "r")
 axs[ip].set_ylabel("AoLP (deg)")
 
 axs[ip].set_xlabel(x_axis_label)

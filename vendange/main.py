@@ -15,6 +15,12 @@ import sys
 import os
 import subprocess as subp
 
+import argparse
+
+from tkinter import Tk
+from tkinter.filedialog import askdirectory
+from tkinter import filedialog 
+
 from utils import *
 from rotation import *
 from bottle import *
@@ -78,7 +84,8 @@ def GetNbLines(bottle_name):
 if instrument_name in ["ptcu", "gdcu", "ptcu_v2", "carmen", "corbel"]:
 	nb_lines = GetNbLines(bottle_name)
 	print("nb_lines", nb_lines)
-	# for l in [3, 4]:
+	# for l in [2]:
+	# for l in [2, 1]:
 	for l in range(1, nb_lines+1):
 		print("##################################################################")
 		print("##################################################################")
@@ -105,13 +112,13 @@ elif instrument_name == "spp":
 
 if comp_bottle:
 	nb_lines = GetNbLines(comp_bottle)
-	# for l in [4]:
-	for l in range(1, len(bottles) + 1):
+	for l in [4, 3]:
+	# for l in range(1, len(bottles) + 1):
 		print("##################################################################")
 		print("##################################################################")
 		print(comp_bottle)
 		comp_bottles.append(PTCUBottle(comp_bottle, line = l, from_txt = from_txt))
-		comp_bottles[-1].SetTimeFromDateTime(bottles[0].DateTime(moment="start"))
+		# comp_bottles[-1].SetTimeFromDateTime(bottles[0].DateTime(moment="start"))
 
 if not from_txt:
 	for b in bottles:

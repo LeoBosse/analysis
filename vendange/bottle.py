@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal
+import scipy as sci
 import sys as sys
 import os
 from copy import deepcopy
@@ -348,10 +349,10 @@ class Bottle:
             ##################################################
             ##################################################
             # ATTENTION, A UTILISER UNIQUEMENT POURT DES CAS PARTICULIER. DANS LE DOUTE, COMMENTEZ OU VERIFIER LE PARAMETRE 'AoLP_correction' DANS LE FICHIER D'INPUT.
-            print("self.AoLP_correction", self.AoLP_correction*RtoD)
-            self.AoLP_correction -= float(self.input_parameters["AoLP_correction"]) * DtoR
+            # print("self.AoLP_correction", self.AoLP_correction*RtoD)
+            # self.AoLP_correction -= float(self.input_parameters["AoLP_correction"]) * DtoR
             # self.AoLP_correction -= float(self.input_parameters["AoLP_correction"].split(";")[self.line - 1]) * DtoR
-            print("self.AoLP_correction", self.AoLP_correction*RtoD)
+            # print("self.AoLP_correction", self.AoLP_correction*RtoD)
             ##################################################
             ##################################################
 
@@ -534,7 +535,7 @@ class Bottle:
         self.smooth_SN = SN(self.smooth_I0, self.smooth_DoLP / 100, smoothing_factor)
 
 
-        self.I0_diff = np.gradient(self.smooth_I0, self.avg_dt)
+        self.I0_diff = np.gradient(self.smooth_I0, 1.) #self.avg_dt)
         self.I0_diff_std = self.GetDiffErrors(smooth=True)
         self.all_I0_diff = np.gradient(self.all_I0, self.avg_dt)
         self.all_I0_diff_std = self.GetDiffErrors(smooth=False)
@@ -1159,6 +1160,99 @@ class Bottle:
         return altitude
 
 
+
+
+    def TestResample(self):
+        f, axs = plt.subplots(3, sharex=True)
+        
+        N_pts = int(self.avg_dt)
+        N_rot = len(self.all_I0)
+        filter_angles = np.linspace(0, N_rot * 2*np.pi, N_rot * N_pts) #List of angles (rad) for the polarising filter between 0 and 2π.
+
+        resamp_signal, resampled_t = sci.signal.resample(self.all_I0, N_rot * N_pts, t = self.all_times)
+        resamp_signal /= 2.
+
+
+        def GetPola(V, Vcos, Vsin):
+            """Given V, Vcos, Vsin, returns the initial intensity, DoLP and AoLP. This method is shared for spp and ptcu. It is also a static method, that can be called outside of the object. This way it can be used everywhere, each time you need I0, DoLP, AoLP to decrease the chances of making a mistake."""
+            I0 = 2 * V
+            DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V * 100
+            AoLP = np.arctan2(Vsin, Vcos) / 2
+            return abs(I0), abs(DoLP), AoLP
+
+        def GetV(fake_signal):
+            """return the average of a signal over 1 rotation"""
+            integral = sum(fake_signal)
+            return integral / N_pts
+
+        def GetVcos(fake_signal):
+            """Return the average of V*cos(2*theta) over 1 rotation"""
+            x = fake_signal * np.cos(2 * filter_angles)
+            return sum(x) / N_pts
+
+        def GetVsin(fake_signal):
+            """Return the average value of -V*sin(2*theta) over 1 rotation"""
+            y = - fake_signal * np.sin(2 * filter_angles)
+            return sum(y) / N_pts
+
+
+        def GetStokesTime(fake_signal):
+            """return the stokes parameters of a signal over N_rot rotation"""
+            V = np.zeros(N_rot)
+            Vcos = np.zeros(N_rot)
+            Vsin = np.zeros(N_rot)
+            for ir in range(N_rot):
+                start_rot = ir * N_pts
+                end_rot = start_rot + N_pts
+                tmp_signal = fake_signal[start_rot:end_rot]
+
+                V[ir] = sum(tmp_signal) / N_pts
+                Vcos[ir] = sum(tmp_signal * np.cos(2 * filter_angles[start_rot:end_rot])) / N_pts
+                Vsin[ir] = sum(tmp_signal * np.sin(2 * filter_angles[start_rot:end_rot])) / N_pts
+
+            return V, Vcos, Vsin
+
+
+        V, Vcos, Vsin = GetStokesTime(resamp_signal)
+        I_list, DoLP_list, AoLP_list = GetPola(V, Vcos, Vsin)
+
+
+        self.all_Vcos -= Vcos
+        self.all_Vsin -= Vsin
+        self.all_I0, self.all_DoLP, self.all_AoLP = GetPola(self.all_V, self.all_Vcos, self.all_Vsin)
+        self.all_AoLP += self.AoLP_correction
+        self.all_AoLP = SetAngleBounds(
+            self.all_AoLP, -np.pi / 2, np.pi / 2)
+
+        self.smooth_V = self.GetSliddingAverage(
+            self.all_V,    self.all_times, self.smoothing_factor, self.smoothing_unit)
+        self.smooth_Vcos = self.GetSliddingAverage(
+            self.all_Vcos, self.all_times, self.smoothing_factor, self.smoothing_unit)
+        self.smooth_Vsin = self.GetSliddingAverage(
+            self.all_Vsin, self.all_times, self.smoothing_factor, self.smoothing_unit)
+        
+        # Calculate the smooth I0, DoLP and AoLP
+        for i in range(self.nb_smooth_rot):
+            self.smooth_I0[i], self.smooth_DoLP[i], self.smooth_AoLP[i] = Rotation.GetLightParameters(
+                self.smooth_V[i], self.smooth_Vcos[i], self.smooth_Vsin[i])
+
+        self.smooth_AoLP = self.smooth_AoLP + self.AoLP_correction
+
+        self.smooth_AoLP = SetAngleBounds(
+            self.smooth_AoLP, -np.pi / 2, np.pi / 2)
+
+
+        # axs[0].plot(np.linspace(0, len(self.all_I0), len(resamp_signal)), resamp_signal*2, ".")
+        # axs[0].plot(self.all_I0, ".")
+        # axs[0].plot(I_list, ".")
+        # # axs[0].plot(dI)
+        # axs[1].plot(self.all_DoLP, ".")
+        # axs[1].plot(DoLP_list, ".")
+        # # axs[1].plot(dD, ".")
+        # axs[2].plot(self.all_AoLP*RtoD, ".")
+        # axs[2].plot(AoLP_list*RtoD, ".")
+        # # axs[2].plot(dA*RtoD)
+
 #####################################################################################
 ###                                    Petit Cru                                      ###
 #####################################################################################
@@ -1222,6 +1316,8 @@ class PTCUBottle(Bottle):
             # self.nb_data_per_rot = len(self.raw_data[0])
             # if self.jump_mode == "length" or self.tail_jump == 0:
             #     self.tail_jump = len(self.raw_data) - self.tail_jump
+            
+            # self.data = self.raw_data.copy()
 
             for r in self.raw_data[:]:
                 self.rotations.append(PTCURotation(r))
@@ -1457,6 +1553,8 @@ class PTCUBottle(Bottle):
             d = ""
 
         raw_data = np.genfromtxt(data_file, delimiter=d, skip_header=1)
+        # raw_data = pd.read_csv(data_file, sep=",", )
+        # print(raw_data)
 
         # if self.instrument_name in ["corbel", "ptcu_v2", "gdcu"]:
         #     array_type = [('IDConfiguration',float),('Timestamp','S100'), ('CM_ID', 'S100'),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),('IS_ConverterGain1',float),('IS_ConverterGain2',float),('IS_ConverterGain3',float),('IS_ConverterGain4',float),("IS_ConverterOffset1", float),("IS_ConverterOffset2", float),("IS_ConverterOffset3", float),("IS_ConverterOffset4", float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float), ('IS_IpAddress',float)]
@@ -1465,6 +1563,7 @@ class PTCUBottle(Bottle):
         #
         # print("DEBUG", config_file, len(array_type))
         # configuration = np.genfromtxt(config_file, dtype=array_type, delimiter=",", skip_header=1)
+
         conf_df = pd.read_csv(config_file, sep=",")
         configuration = dict()
         print(config_file)
