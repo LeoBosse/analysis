@@ -199,16 +199,16 @@ class Mixer:
 				if self.fit_RS_model_to_flux and len(self.J2RAYS1_models) >= 2:
 					print("Fitting J2RAYS-1 models to data...")
 					if self.fit_func == "GS":
-						best_model = Model.FitModelToFlux(self.x_axis_list, bottle.smooth_I0, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
+						best_model = Model.FitModelToFlux(self.x_axis_list, bottle.data['smooth_I0'], self.J2RAYS1_models[0], self.J2RAYS1_models[1])
 					elif self.fit_func == "GSK":
-						best_model = Model.FitModelToFluxPlusIso(self.x_axis_list, bottle.smooth_I0, self.J2RAYS1_models[0], self.J2RAYS1_models[1])
+						best_model = Model.FitModelToFluxPlusIso(self.x_axis_list, bottle.data['smooth_I0'], self.J2RAYS1_models[0], self.J2RAYS1_models[1])
 
 					best_model.SetMandatoryColumns()
 					best_model.SetArbitraryUnits(bottle = bottle)
 					self.J2RAYS1_models.append(best_model)
 
 				if self.addFDA_to_model != []:
-					max_data, min_data = np.max(bottle.smooth_I0), np.min(bottle.smooth_I0)
+					max_data, min_data = np.max(bottle.data['smooth_I0']), np.min(bottle.data['smooth_I0'])
 					ratio_data = max_data / min_data
 					for i, m in enumerate(self.J2RAYS1_models):
 						try:
@@ -328,7 +328,7 @@ class Mixer:
 	def MakeXAxis(self, bottle):
 
 		self.divisor = 1.
-		delta = bottle.all_times[-1] - bottle.all_times[0]
+		delta = bottle.data['Times'].iloc[-1] - bottle.data['Times'].iloc[0]
 		if delta > dt.timedelta(hours=2):
 			self.divisor = 3600.
 			if   self.langue == "en" : self.xlabel = "Time (hours)"
@@ -342,11 +342,11 @@ class Mixer:
 			elif self.langue == "fr" : self.xlabel = "Durée (secondes)"
 
 		# self.x_axis_list = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
-		norm = bottle.all_times[0].total_seconds()
-		self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
+		norm = bottle.data['Times'].iloc[0].total_seconds()
+		self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.data['Times']]) / self.divisor
 
 		if self.use_24h_time_format and bottle.observation_type == "fixed":
-			self.x_axis_list = bottle.DateTime("start", format=self.time_format) + bottle.all_times
+			self.x_axis_list = bottle.DateTime("start", format=self.time_format) + bottle.data['Times']
 			# day = self.x_axis_list[0].day
 			# GetHour = lambda t: t.hour + t.minute / 60. + t.second / 3600.
 			# GetDay = lambda d: d.day
@@ -372,7 +372,7 @@ class Mixer:
 			for ir in range(bottle.nb_continue_rotation):
 				start 	= dt.timedelta(minutes=bottle.continue_rotation_times[ir])
 				end 	= dt.timedelta(minutes=bottle.continue_rotation_times[ir+1])
-				nb_points = len([t for t in bottle.all_times if start <= t <= end ])
+				nb_points = len([t for t in bottle.data['Times'] if start <= t <= end ])
 
 				self.x_axis_list = np.append(self.x_axis_list, np.linspace(360 * ir, 360 * (ir+1), nb_points))
 
@@ -382,7 +382,7 @@ class Mixer:
 
 			self.x_time_ticks_label = [x.strftime("%H:%M:%S") for x in self.x_time_ticks_label]
 
-			# print(len(self.x_axis_list), len(bottle.all_times))
+			# print(len(self.x_axis_list), len(bottle.data['Times']))
 			self.xlabel = "Azimuth"
 
 			if bottle.nb_continue_rotation <= 2:
@@ -394,7 +394,7 @@ class Mixer:
 
 
 		else:
-			# delta = bottle.all_times[-1] - bottle.all_times[0]
+			# delta = bottle.data['Times'].iloc[-1] - bottle.data['Times'].iloc[0]
 			# if delta > dt.timedelta(hours=2):
 			# 	self.divisor = 3600.
 			# 	self.xlabel = "Time (hours)"
@@ -405,9 +405,9 @@ class Mixer:
 			# 	self.xlabel = "Time (seconds)"
 			#
 			# # self.x_axis_list 	   = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
-			# norm = bottle.all_times[0].total_seconds()
-			# # self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
-			# self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.all_times]) / self.divisor
+			# norm = bottle.data['Times'].iloc[0].total_seconds()
+			# # self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.data['Times']]) / self.divisor
+			# self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.data['Times']]) / self.divisor
 
 			if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_discrete_rotation":
 				self.xlabel = "Azimuth (°)"
@@ -852,23 +852,23 @@ class Mixer:
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
-				l_all_I0, = ax.plot(self.x_axis_list, bottle.all_I0,  color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0)
+				l_all_I0, = ax.plot(self.x_axis_list, bottle.data['I0'],  color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0)
 			else:
-				l_all_I0 = ax.errorbar(self.x_axis_list, bottle.all_I0, yerr = bottle.std_I0,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0, errorevery=self.error_step)
+				l_all_I0 = ax.errorbar(self.x_axis_list, bottle.data['I0'], yerr = bottle.data['std_I0'],  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Intensity", zorder=0, errorevery=self.error_step)
 
 
 		if self.show_smooth_data and not self.show_smooth_error_bars:
-			# l_smooth_I0, = ax.plot(self.x_axis_list, bottle.smooth_I0, fmt=".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
-			y = bottle.smooth_I0
+			# l_smooth_I0, = ax.plot(self.x_axis_list, bottle.data['smooth_I0'], fmt=".", color = self.smooth_I0_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			y = bottle.data['smooth_I0']
 			if self.show_Ipola:
-				y *= bottle.smooth_DoLP / 100.
+				y *= bottle.data['smooth_DoLP'] / 100.
 			l_smooth_I0, = ax.plot(self.x_axis_list, y, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 		elif self.show_smooth_data:
-			# l_smooth_I0 = ax.errorbar(self.x_axis_list, bottle.smooth_I0, yerr = bottle.std_smooth_I0, fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
-			y = bottle.smooth_I0 
+			# l_smooth_I0 = ax.errorbar(self.x_axis_list, bottle.data['smooth_I0'], yerr = bottle.data['std_smooth_I0'], fmt=".", color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+			y = bottle.data['smooth_I0'] 
 			if self.show_Ipola:
-				y *= bottle.smooth_DoLP / 100.
-			l_smooth_I0 = ax.errorbar(self.x_axis_list, y, yerr = bottle.std_smooth_I0,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+				y *= bottle.data['smooth_DoLP'] / 100.
+			l_smooth_I0 = ax.errorbar(self.x_axis_list, y, yerr = bottle.data['std_smooth_I0'],  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth Intensity (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
 
 		if self.show_avg_I0:
@@ -884,8 +884,8 @@ class Mixer:
 
 		# ### Graph the I0 * DoLP line on the first subplot
 		# ax4 = ax.twinx()
-		# # l_all_IDoLP, = ax4.plot(self.x_axis_list, bottle.all_I0 * bottle.all_DoLP, "k.", linestyle = 'none', markersize=self.marker_size, label="All Intensity * DoLP", zorder=2)
-		# smooth_IDoLP, = ax4.plot(self.x_axis_list, bottle.smooth_I0 * bottle.smooth_DoLP / 100. * bottle.smooth_AoLP
+		# # l_all_IDoLP, = ax4.plot(self.x_axis_list, bottle.data['I0'] * bottle.data['DoLP'], "k.", linestyle = 'none', markersize=self.marker_size, label="All Intensity * DoLP", zorder=2)
+		# smooth_IDoLP, = ax4.plot(self.x_axis_list, bottle.data['smooth_I0'] * bottle.data['smooth_DoLP'] / 100. * bottle.data['smooth_AoLP']
 		#
 		# cd, ".", color = "xkcd:hot pink", linestyle = 'none', markersize=self.marker_size, label="Smooth Intensity * DoLP", zorder=2)
 		#
@@ -927,15 +927,15 @@ class Mixer:
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
-				l_all_DoLP, = ax.plot(self.x_axis_list, bottle.all_DoLP, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0)
+				l_all_DoLP, = ax.plot(self.x_axis_list, bottle.data['DoLP'], color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0)
 				ax_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
 			else:
-				(l_all_DoLP, _, _) = ax.errorbar(self.x_axis_list, bottle.all_DoLP, yerr = bottle.std_DoLP,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0, errorevery=self.error_step)
+				(l_all_DoLP, _, _) = ax.errorbar(self.x_axis_list, bottle.data['DoLP'], yerr = bottle.data['std_DoLP'],  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="DoLP", zorder=0, errorevery=self.error_step)
 
 		if self.show_smooth_data and not self.show_smooth_error_bars:
-			l_smooth_DoLP, = ax.plot(self.x_axis_list, bottle.smooth_DoLP, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			l_smooth_DoLP, = ax.plot(self.x_axis_list, bottle.data['smooth_DoLP'], color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 		elif  self.show_smooth_data:
-			(l_smooth_DoLP, _, _) = ax.errorbar(self.x_axis_list, bottle.smooth_DoLP, yerr = bottle.std_smooth_DoLP,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
+			(l_smooth_DoLP, _, _) = ax.errorbar(self.x_axis_list, bottle.data['smooth_DoLP'], yerr = bottle.data['std_smooth_DoLP'],  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
 		ax.set_ylim(bottom = 0)
 
@@ -1094,13 +1094,13 @@ class Mixer:
 
 		if self.show_raw_data:
 			if not self.show_error_bars:
-				l_all_AoLP, = ax.plot(self.x_axis_list, bottle.all_AoLP * RtoD, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0)
+				l_all_AoLP, = ax.plot(self.x_axis_list, bottle.data['AoLP'] * RtoD, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0)
 
 		if self.show_smooth_data and not self.show_smooth_error_bars:
-			l_smooth_AoLP, = ax.plot(self.x_axis_list, bottle.smooth_AoLP * RtoD, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth AoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
+			l_smooth_AoLP, = ax.plot(self.x_axis_list, bottle.data['smooth_AoLP'] * RtoD, color = self.smooth_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="Smooth AoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1)
 
 		if (self.show_error_bars and self.show_raw_data) or self.show_smooth_error_bars:
-			# ax.fill_between(self.x_axis_list, bottle.all_AoLP * RtoD - bottle.std_AoLP, bottle.all_AoLP * RtoD + bottle.std_AoLP, color = "grey")
+			# ax.fill_between(self.x_axis_list, bottle.data['AoLP'] * RtoD - bottle.data['std_AoLP'], bottle.data['AoLP'] * RtoD + bottle.data['std_AoLP'], color = "grey")
 			# ax.fill_between(self.x_axis_list, bottle.smooth_AoLP_lower * RtoD, bottle.smooth_AoLP_upper * RtoD, color = "yellow", alpha = 0.5)
 
 			ls_all = dict()
@@ -1110,7 +1110,7 @@ class Mixer:
 			elif bottle.graph_angle_shift == 0:
 				min, mid, max = -90, 0, 90
 
-			for x, s_error, s_angle, error, angle in zip(self.x_axis_list[::self.error_step], bottle.std_smooth_AoLP[::self.error_step]*RtoD, bottle.smooth_AoLP[::self.error_step]*RtoD, bottle.std_AoLP[::self.error_step]*RtoD, bottle.all_AoLP[::self.error_step]*RtoD):
+			for x, s_error, s_angle, error, angle in zip(self.x_axis_list[::self.error_step], bottle.data['std_smooth_AoLP'].iloc[::self.error_step]*RtoD, bottle.data['smooth_AoLP'].iloc[::self.error_step]*RtoD, bottle.data['std_AoLP'].iloc[::self.error_step]*RtoD, bottle.data['AoLP'].iloc[::self.error_step]*RtoD):
 
 				if (self.show_error_bars and self.show_raw_data):
 					if angle > mid and angle + error > max:
@@ -1129,12 +1129,12 @@ class Mixer:
 
 			ax.set_ylim(min, max)
 			if (self.show_error_bars and self.show_raw_data):
-				l_all_AoLP = ax.errorbar(self.x_axis_list, bottle.all_AoLP * RtoD, yerr = bottle.std_AoLP * RtoD,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0, errorevery=self.error_step)
+				l_all_AoLP = ax.errorbar(self.x_axis_list, bottle.data['AoLP'] * RtoD, yerr = bottle.data['std_AoLP'] * RtoD,  ecolor=self.raw_error_bars_color, color = self.all_I0_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=0, errorevery=self.error_step)
 				for i, a in ls_all.items():
 					ax.vlines(i, a[0], a[1], colors = self.raw_error_bars_color, zorder=0) #"green", linewidth=5)#
 
 			if self.show_smooth_data and self.show_smooth_error_bars:
-				l_smooth_AoLP = ax.errorbar(self.x_axis_list, bottle.smooth_AoLP * RtoD, yerr = bottle.std_smooth_AoLP * RtoD,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=1, errorevery=self.error_step)
+				l_smooth_AoLP = ax.errorbar(self.x_axis_list, bottle.data['smooth_AoLP'] * RtoD, yerr = bottle.data['std_smooth_AoLP'] * RtoD,  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.marker, linestyle = self.linestyle, markersize=self.marker_size, label="AoLP", zorder=1, errorevery=self.error_step)
 				# plt.errorbar(list(ls.keys()), [-90, 90], yerr=list(ls.values()), fmt='C0 ')
 				for i, a in ls_smooth.items():
 					ax.vlines(i, a[0], a[1], colors = self.smooth_I0_color, zorder=1) #"green", linewidth=5)#
@@ -1294,7 +1294,7 @@ class Mixer:
 		# self.ax22 = self.ax2.twinx()
 
 		tmp_xshift = 0
-		maxDoLP = np.max(bottle.smooth_DoLP)
+		maxDoLP = np.max(bottle.data['smooth_DoLP'])
 
 		if self.show_model_list:
 			self.J2RAYS1_models = [self.J2RAYS1_models[i] for i in self.show_model_list]
@@ -1304,7 +1304,7 @@ class Mixer:
 			# self.ax11.yaxis.set_visible(False)
 			self.ax1.plot(models.x_axis + tmp_xshift, models["I0"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
 			self.ax2.plot(models.x_axis + tmp_xshift, models["DoLP"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
-			# self.ax2.set_ylim((0, max(np.max(bottle.smooth_DoLP), np.max(models.data["DoLP"]))))
+			# self.ax2.set_ylim((0, max(np.max(bottle.data['smooth_DoLP']), np.max(models.data["DoLP"]))))
 			if np.max(models.data["DoLP"]) > maxDoLP:
 				maxDoLP = np.max(models.data["DoLP"])
 				self.ax2.set_ylim((0, 1.1 * maxDoLP))
@@ -1313,7 +1313,7 @@ class Mixer:
 
 		if self.adapt_flux_scale:
 			border = 1.1
-			max_data, min_data = np.max(bottle.smooth_I0), np.min(bottle.smooth_I0)
+			max_data, min_data = np.max(bottle.data['smooth_I0']), np.min(bottle.data['smooth_I0'])
 			ratio_data = max_data / min_data
 			print(f"Min data, Max Data, Ratio data: {min_data}, {max_data}, {ratio_data}")
 			nt, nb = [max_data], [min_data]
@@ -1329,7 +1329,7 @@ class Mixer:
 
 			self.ax1.set_ylim(np.min(nb) / border, np.max(nt) * border)
 
-				# nt, nb = [np.max(bottle.smooth_DoLP)], [np.min(bottle.smooth_DoLP)]
+				# nt, nb = [np.max(bottle.data['smooth_DoLP'])], [np.min(bottle.data['smooth_DoLP'])]
 				# for models in self.J2RAYS1_models:
 				# 	nt.append(np.max(models.data["DoLP"]))
 				# 	nb.append(np.min(models.data["DoLP"]))
@@ -1489,9 +1489,9 @@ class Mixer:
 
 	def CompareRayleigh(self, bottle, model):
 
-		data_I = np.interp(model.x_axis, self.x_axis_list, bottle.smooth_I0)
-		data_D = np.interp(model.x_axis, self.x_axis_list, bottle.smooth_DoLP)
-		data_A = np.interp(model.x_axis, self.x_axis_list, bottle.smooth_AoLP)
+		data_I = np.interp(model.x_axis, self.x_axis_list, bottle.data['smooth_I0'])
+		data_D = np.interp(model.x_axis, self.x_axis_list, bottle.data['smooth_DoLP'])
+		data_A = np.interp(model.x_axis, self.x_axis_list, bottle.data['smooth_AoLP'])
 
 		ratio = lambda x, y: x / y
 		diff = lambda x, y: x - y
@@ -1543,10 +1543,10 @@ class Mixer:
 		f, axs = plt.subplots(3, sharex=True)
 		
 		N_pts = int(bottle.avg_dt)
-		N_rot = len(bottle.all_I0)
+		N_rot = len(bottle.data['I0'])
 		filter_angles = np.linspace(0, N_rot * 2*np.pi, N_rot * N_pts) #List of angles (rad) for the polarising filter between 0 and 2π.
 
-		resamp_signal, resampled_t = sci.signal.resample(bottle.all_I0, N_rot * N_pts, t = self.x_axis_list)
+		resamp_signal, resampled_t = sci.signal.resample(bottle.data['I0'], N_rot * N_pts, t = self.x_axis_list)
 		resamp_signal /= 2.
 
 
@@ -1596,13 +1596,13 @@ class Mixer:
 		dV, dVcos, dVsin = bottle.all_V, bottle.all_Vcos - Vcos, bottle.all_Vsin - Vsin
 		dI, dD, dA =  GetPola(dV, dVcos, dVsin)
 
-		axs[0].plot(self.x_axis_list, bottle.all_I0)
+		axs[0].plot(self.x_axis_list, bottle.data['I0'])
 		axs[0].plot(self.x_axis_list, I_list)
 		# axs[0].plot(self.x_axis_list, dI)
-		axs[1].plot(self.x_axis_list, bottle.all_DoLP)
+		axs[1].plot(self.x_axis_list, bottle.data['DoLP'])
 		axs[1].plot(self.x_axis_list, DoLP_list)
 		# axs[1].plot(self.x_axis_list, dD)
-		axs[2].plot(self.x_axis_list, bottle.all_AoLP*RtoD)
+		axs[2].plot(self.x_axis_list, bottle.data['AoLP']*RtoD)
 		axs[2].plot(self.x_axis_list, AoLP_list*RtoD)
 		# axs[2].plot(self.x_axis_list, dA*RtoD)
 
@@ -1611,13 +1611,13 @@ class Mixer:
 	def MakeI0SNratio(self, bottle):
 		f6, ax = plt.subplots(1, figsize=(10, 20))
 
-		# print(bottle.all_I0,  bottle.std_I0, bottle.all_I0 / bottle.std_I0)
-		# print(bottle.smooth_I0, bottle.std_smooth_I0, bottle.smooth_I0 / bottle.std_smooth_I0)
+		# print(bottle.data['I0'],  bottle.data['std_I0'], bottle.data['I0'] / bottle.data['std_I0'])
+		# print(bottle.data['smooth_I0'], bottle.data['std_smooth_I0'], bottle.data['smooth_I0'] / bottle.data['std_smooth_I0'])
 
-		ax.plot(self.x_axis_list, bottle.all_I0 / bottle.std_I0, "--", color = self.all_SN_color, label="I0 SN")
+		ax.plot(self.x_axis_list, bottle.data['I0'] / bottle.data['std_I0'], "--", color = self.all_SN_color, label="I0 SN")
 		ax.set_ylabel("Raw")
 		ax1 = plt.twinx(ax)
-		ax1.plot(self.x_axis_list, bottle.smooth_I0 / bottle.std_smooth_I0, "--", color = self.smooth_SN_color, label="smooth I0 SN")
+		ax1.plot(self.x_axis_list, bottle.data['smooth_I0'] / bottle.data['std_smooth_I0'], "--", color = self.smooth_SN_color, label="smooth I0 SN")
 		ax1.set_ylabel("Smooth")
 
 		ax.set_title("Intensity SN ratio")
@@ -1690,20 +1690,20 @@ class Mixer:
 				AoRDs = np.append(AoRDs, bottle.AoRD)
 				AoBapps = np.append(AoBapps, bottle.AoBapp)
 
-			nb_AoLP = len(bottle.smooth_AoLP)
+			nb_AoLP = len(bottle.data['smooth_AoLP'])
 			nb_AoRD = len(AoRDs)
 			nb_AoBapp = len(AoBapps)
 			if nb_AoLP > nb_AoRD:
 				x_axis = ReduceList(self.x_axis_list, nb_AoRD)
-				AoLPs = ReduceList(bottle.smooth_AoLP, nb_AoRD)
+				AoLPs = ReduceList(bottle.data['smooth_AoLP'], nb_AoRD)
 			elif nb_AoLP < nb_AoRD:
 				x_axis = self.x_axis_list
-				AoLPs = bottle.smooth_AoLP
+				AoLPs = bottle.data['smooth_AoLP']
 				AoRDs = ReduceList(AoRDs, nb_AoLP)
 				AoBapps = ReduceList(AoBapps, nb_AoLP)
 			else:
 				x_axis = self.x_axis_list
-				AoLPs = bottle.smooth_AoLP
+				AoLPs = bottle.data['smooth_AoLP']
 
 			RD_diff = GetAnglesDifference(AoLPs, AoRDs)
 			Bapps_diff = GetAnglesDifference(AoLPs, AoBapps)
@@ -1746,15 +1746,15 @@ class Mixer:
 
 
 		X_array = bottle.I0_diff
-		Y_array = bottle.smooth_DoLP
+		Y_array = bottle.data['smooth_DoLP']
 		if COMP.lower() == "aolp":
-			Y_array = bottle.smooth_AoLP * RtoD
+			Y_array = bottle.data['smooth_AoLP'] * RtoD
 		if not smooth:
 			# mask_array = bottle.GetWaveletTransform(bottle.all_I0_diff, 12, unit = "seconds") #bottle.all_I0_diff
 			X_array = bottle.all_I0_diff
-			Y_array = bottle.all_DoLP
+			Y_array = bottle.data['DoLP']
 			if COMP.lower() == "aolp":
-				Y_array = bottle.all_AoLP * RtoD
+				Y_array = bottle.data['AoLP'] * RtoD
 
 		mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
 		# mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
@@ -1778,7 +1778,7 @@ class Mixer:
 			Y = np.ma.masked_equal(Y_array * m, 0)
 			axs[subplots_counter].plot(X, Y, ".", color = colors[im], alpha = 1)
 
-		# axs[subplots_counter].plot(mask_array, bottle.all_DoLP, ".")
+		# axs[subplots_counter].plot(mask_array, bottle.data['DoLP'], ".")
 
 		axs[subplots_counter].xaxis.tick_top()
 		axs[subplots_counter].set_xlabel("Dérivée Intensity")
@@ -1811,9 +1811,9 @@ class Mixer:
 		ax33 = axs[subplots_counter].twinx()
 		axs[subplots_counter].plot(self.x_axis_list, Y_array, "r-")
 		if not smooth:
-			ax33.plot(self.x_axis_list, bottle.all_I0, "b-")
+			ax33.plot(self.x_axis_list, bottle.data['I0'], "b-")
 		else:
-			ax33.plot(self.x_axis_list, bottle.smooth_I0, "b-")
+			ax33.plot(self.x_axis_list, bottle.data['smooth_I0'], "b-")
 		if COMP.lower() == "aolp":
 			axs[subplots_counter].set_ylabel("I,  AoLP")
 		else:
@@ -1861,20 +1861,20 @@ class Mixer:
 				if smooth:
 					X_array = bottle.I0_diff
 					X_error = bottle.I0_diff_std
-					Y_array = bottle.smooth_DoLP
-					Y_error = bottle.std_smooth_DoLP
+					Y_array = bottle.data['smooth_DoLP']
+					Y_error = bottle.data['std_smooth_DoLP']
 					if COMP.lower() == "aolp":
-						Y_array = bottle.smooth_AoLP * RtoD
-						Y_error = bottle.std_smooth_AoLP * RtoD
+						Y_array = bottle.data['smooth_AoLP'] * RtoD
+						Y_error = bottle.data['std_smooth_AoLP'] * RtoD
 				elif not smooth:
 					# mask_array = bottle.GetWaveletTransform(bottle.all_I0_diff, 12, unit = "seconds") #bottle.all_I0_diff
 					X_array = bottle.all_I0_diff
 					X_error = bottle.all_I0_diff_std
-					Y_array = bottle.all_DoLP
-					Y_error = bottle.std_DoLP
+					Y_array = bottle.data['DoLP']
+					Y_error = bottle.data['std_DoLP']
 					if COMP.lower() == "aolp":
-						Y_array = bottle.all_AoLP * RtoD
-						Y_error = bottle.std_AoLP * RtoD
+						Y_array = bottle.data['AoLP'] * RtoD
+						Y_error = bottle.data['std_AoLP'] * RtoD
 
 				mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
 				# mask_array = bottle.GetSliddingCorrCoef(window_size = 2, smooth = smooth) #bottle.all_I0_diff
@@ -1920,15 +1920,15 @@ class Mixer:
 	def MakeCorrelationPlots(self, bottle):
 		f2, (ax1, ax2) = plt.subplots(2, figsize=(10, 20))
 
-		ax1.plot(bottle.all_I0, bottle.all_DoLP, "k+", label="Raw")
-		ax1.plot(bottle.smooth_I0, bottle.smooth_DoLP, "r+", label="Smoothed (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")")
+		ax1.plot(bottle.data['I0'], bottle.data['DoLP'], "k+", label="Raw")
+		ax1.plot(bottle.data['smooth_I0'], bottle.data['smooth_DoLP'], "r+", label="Smoothed (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")")
 		ax1.set_xlabel("Intensity (mV)")
 		ax1.set_ylabel("DoLP (%)")
 		ax1.legend()
 
 		if not bottle.NoVref and bottle.instrument_name=="carmen":
-			ax2.plot(bottle.all_I0, bottle.all_Iref, "k+", label="Raw")
-			ax2.plot(bottle.smooth_I0, bottle.smooth_Iref, "r+", label="Smoothed (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")")
+			ax2.plot(bottle.data['I0'], bottle.all_Iref, "k+", label="Raw")
+			ax2.plot(bottle.data['smooth_I0'], bottle.smooth_Iref, "r+", label="Smoothed (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")")
 			ax2.set_xlabel("Ref Intensity (mV)")
 			ax2.set_ylabel("Pola Intensity (mV)")
 
@@ -1962,15 +1962,15 @@ class Mixer:
 		ax_coherence = axs[0]
 		ax_angle = axs[1]
 
-		f, C, A = self.GetCoherence(bottle.smooth_I0, bottle.smooth_DoLP, bottle.GetRotationFrequency())
+		f, C, A = self.GetCoherence(bottle.data['smooth_I0'], bottle.data['smooth_DoLP'], bottle.GetRotationFrequency())
 		ax_coherence.semilogx( (1./f), C, "k", label="Intensity-DoLP")
 		ax_angle.semilogx( (1./f), A * RtoD, "k", label="Intensity-DoLP")
 
-		f, C, A= self.GetCoherence(bottle.smooth_I0, bottle.smooth_AoLP, bottle.GetRotationFrequency())
+		f, C, A= self.GetCoherence(bottle.data['smooth_I0'], bottle.data['smooth_AoLP'], bottle.GetRotationFrequency())
 		ax_coherence.semilogx( (1./f), C, "r", label="Intensity-AoLP")
 		ax_angle.semilogx( (1./f), A * RtoD, "r", label="Intensity-AoLP")
 
-		f, C, A = self.GetCoherence(bottle.smooth_DoLP, bottle.smooth_AoLP, bottle.GetRotationFrequency())
+		f, C, A = self.GetCoherence(bottle.data['smooth_DoLP'], bottle.data['smooth_AoLP'], bottle.GetRotationFrequency())
 		ax_coherence.semilogx( (1./f), C, "b", label="DoLP-AoLP")
 		ax_angle.semilogx( (1./f), A * RtoD, "b", label="DoLP-AoLP")
 
@@ -1997,11 +1997,11 @@ class Mixer:
 
 	def MakeFFT(self, bottle):
 		self.f1, (self.ax1, self.ax2, self.ax3) = plt.subplots(3, sharex=True, figsize=(16, 8))
-		self.ax1.plot(self.x_axis_list, bottle.all_I0, "k.")
+		self.ax1.plot(self.x_axis_list, bottle.data['I0'], "k.")
 		self.ax1.plot(self.x_axis_list, bottle.GetFourierTransform("I0"), "r.")
-		self.ax2.plot(self.x_axis_list, bottle.all_DoLP, "k.")
+		self.ax2.plot(self.x_axis_list, bottle.data['DoLP'], "k.")
 		self.ax2.plot(self.x_axis_list, bottle.GetFourierTransform("DoLP"), "r.")
-		self.ax3.plot(self.x_axis_list, bottle.all_AoLP, "k.")
+		self.ax3.plot(self.x_axis_list, bottle.data['AoLP'], "k.")
 		self.ax3.plot(self.x_axis_list, bottle.GetFourierTransform("AoLP"), "r.")
 		#
 		# self.ax1.set_ylabel("Intensity FFT")
@@ -2010,13 +2010,13 @@ class Mixer:
 		#
 		# xaxis = np.fft.fftfreq(self.x_axis_list.shape[-1], d = 1000/20.)
 		#
-		# FFT_I0 = np.fft.fft(bottle.all_I0)
-		# FFT_DoLP = np.fft.fft(bottle.all_DoLP)
-		# FFT_AoLP = np.fft.fft(bottle.all_AoLP)
+		# FFT_I0 = np.fft.fft(bottle.data['I0'])
+		# FFT_DoLP = np.fft.fft(bottle.data['DoLP'])
+		# FFT_AoLP = np.fft.fft(bottle.data['AoLP'])
 		#
-		# smooth_FFT_I0 = np.fft.fft(bottle.smooth_I0)
-		# smooth_FFT_DoLP = np.fft.fft(bottle.smooth_DoLP)
-		# smooth_FFT_AoLP = np.fft.fft(bottle.smooth_AoLP)
+		# smooth_FFT_I0 = np.fft.fft(bottle.data['data['smooth_I0']'])
+		# smooth_FFT_DoLP = np.fft.fft(bottle.data['smooth_DoLP'])
+		# smooth_FFT_AoLP = np.fft.fft(bottle.data['smooth_AoLP'])
 		#
 		# self.ax1.plot(xaxis, FFT_I0, xaxis, smooth_FFT_I0)
 		# self.ax2.plot(xaxis, FFT_DoLP, xaxis, smooth_FFT_DoLP)
@@ -2026,15 +2026,15 @@ class Mixer:
 		f, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, figsize=(16, 8))
 
 		if b1.nb_rot > b2.nb_rot:
-			all_times = list(map(lambda x: x.total_seconds(), b2.all_times))
+			all_times = list(map(lambda x: x.total_seconds(), b2.data['Times']))
 			# print("DEBUG all_times", len(all_times), all_times[0])
 			I0_1, DoLP_1, AoLP_1 = b1.GetInterpolation(all_times)
-			I0_2, DoLP_2, AoLP_2 = b2.smooth_I0, b2.smooth_DoLP, b2.smooth_AoLP
+			I0_2, DoLP_2, AoLP_2 = b2.data['smooth_I0'], b2.data['smooth_DoLP'], b2.data['smooth_AoLP']
 		else:
-			all_times = list(map(lambda x: x.total_seconds(), b1.all_times))
+			all_times = list(map(lambda x: x.total_seconds(), b1.data['Times']))
 			# print("DEBUG all_times", len(all_times), all_times[0])
 			I0_2, DoLP_2, AoLP_2 = b2.GetInterpolation(all_times)
-			I0_1, DoLP_1, AoLP_1 = b1.smooth_I0, b1.smooth_DoLP, b1.smooth_AoLP
+			I0_1, DoLP_1, AoLP_1 = b1.data['smooth_I0'], b1.data['smooth_DoLP'], b1.data['smooth_AoLP']
 
 		delta = lambda a, b: (b-a) / a * 100
 		ax1.plot(self.x_axis_list, delta(I0_1, I0_2))
