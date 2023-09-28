@@ -118,6 +118,7 @@ class Bottle:
             # Now that we have all our rotations, creating lists of usefull data for easier smoothing
                 self.CreateLists()
                 self.GetSmoothLists()
+                self.TestResample()
         else:
             self.LoadFromTxt()
 
@@ -781,12 +782,9 @@ class Bottle:
 
         elif self.observation_type == "fixed_elevation_discrete_rotation":
             if to_initiate:
-                self.discrete_rotation_elevation = float(
-                    self.input_parameters["discrete_rotation_elevation"]) * DtoR
-                self.discrete_rotation_times = np.array(
-                    [float(t) for t in self.input_parameters["discrete_rotation_times"].split("_")])
-                self.discrete_rotation_azimuts = np.array([float(
-                    a) * DtoR for a in self.input_parameters["discrete_rotation_azimuts"].split("_")])
+                self.discrete_rotation_elevation = float(self.input_parameters["discrete_rotation_elevation"]) * DtoR
+                self.discrete_rotation_times = np.array([float(t) for t in self.input_parameters["discrete_rotation_times"].split("_")])
+                self.discrete_rotation_azimuts = np.array([float(a) * DtoR for a in self.input_parameters["discrete_rotation_azimuts"].split("_")])
 
             ang_list = []
             for a in self.discrete_rotation_azimuts:
@@ -1164,10 +1162,8 @@ class Bottle:
         return altitude
 
 
-
-
     def TestResample(self):
-        f, axs = plt.subplots(3, sharex=True)
+        # f, axs = plt.subplots(3, sharex=True)
         
         N_pts = int(self.avg_dt)
         N_rot = len(self.data['I0'])
@@ -1225,15 +1221,11 @@ class Bottle:
         self.data['Vsin'] -= Vsin
         self.data['I0'], self.data['DoLP'], self.data['AoLP'] = GetPola(self.data['V'], self.data['Vcos'], self.data['Vsin'])
         self.data['AoLP'] += self.AoLP_correction
-        self.data['AoLP'] = SetAngleBounds(
-            self.data['AoLP'], -np.pi / 2, np.pi / 2)
+        self.data['AoLP']  = SetAngleBounds(self.data['AoLP'], -np.pi / 2, np.pi / 2)
 
-        self.data['smooth_V'] = self.GetSliddingAverage(
-            self.data['V'],    self.data['Times'], self.smoothing_factor, self.smoothing_unit)
-        self.data['smooth_Vcos'] = self.GetSliddingAverage(
-            self.data['Vcos'], self.data['Times'], self.smoothing_factor, self.smoothing_unit)
-        self.data['smooth_Vsin'] = self.GetSliddingAverage(
-            self.data['Vsin'], self.data['Times'], self.smoothing_factor, self.smoothing_unit)
+        self.data['smooth_V']    = self.GetSliddingAverage(self.data['V'],    self.data['Times'], self.smoothing_factor, self.smoothing_unit)
+        self.data['smooth_Vcos'] = self.GetSliddingAverage(self.data['Vcos'], self.data['Times'], self.smoothing_factor, self.smoothing_unit)
+        self.data['smooth_Vsin'] = self.GetSliddingAverage(self.data['Vsin'], self.data['Times'], self.smoothing_factor, self.smoothing_unit)
         
         # Calculate the smooth I0, DoLP and AoLP
         # for i in range(self.nb_smooth_rot):
@@ -1310,7 +1302,7 @@ class PTCUBottle(Bottle):
         print(self.folders[i + 1], date_location)
         self.date, self.location = date_location[0], date_location[1]
         rest = self.folders[i + 2].split("_")
-        # print(i, date_location, self.date, self.location, rest)
+        print(i, date_location, self.date, self.location, rest)
         # print(rest)
         # Filters: r,v,b,m pour rouge, vert, bleu, mauve
         # 0: no filters_list
@@ -1363,8 +1355,12 @@ class PTCUBottle(Bottle):
 
             self.data['V'] = np.absolute(self.data['V'])
             self.data['I0'], self.data['DoLP'], self.data['AoLP'] = self.GetLightParameters(self.data['V'], self.data['Vcos'], self.data['Vsin'])
-            self.data['Iref'] = 2 * self.data['Vref']
-            print(self.data.columns)
+            if 'Vref' in self.data.columns:
+                self.data['Iref'] = 2 * self.data['Vref']
+
+
+            # print(self.data)
+            # print(self.data.columns)
             
             # for r in self.raw_data[:]:
             #     self.rotations.append(PTCURotation(r))
@@ -1541,16 +1537,19 @@ class PTCUBottle(Bottle):
         # columns = ["time", "V", "Vcos", "Vsin", "I0", "DoLP", "AoLP", "SV", "SVcos", "SVsin", "SI0",
         #            "SDoLP", "SAoLP", "errI0", "errDoLP", "errAoLP", "errSI0", "errSDoLP", "errSAoLP", "SN", "SSN"]
 
+        # print(self.data)
         with h5.File(self.data_file_name + "/" + self.saving_name + '_results.hdf5', 'w') as f:
 
             f.create_group("/data")
-            print(self.data.columns)
+            # print(self.data.columns)
             for ic, c in enumerate(self.data.columns):
                 # print(ic, c)
                 if c in ['time_deltas', 'Times']:
                     f.create_dataset("/data/" + c,  data=self.data[c].dt.total_seconds())
+                elif c == 'Comment':
+                    pass
                 else:
-                    print(c, type(self.data[c].iloc[0]))
+                    # print(c, type(self.data[c].iloc[0]))
                     f.create_dataset("/data/" + c,  data=self.data[c])
 
             # print(self.config)
@@ -1608,7 +1607,7 @@ class PTCUBottle(Bottle):
         data_file = data_path + "/data" + str(line) + ".csv"
         config_file = data_path + "/config.csv"
 
-        print(data_file, config_file)
+        # print(data_file, config_file)
 
         try:
             with open(data_file, "r") as f:
@@ -1619,8 +1618,8 @@ class PTCUBottle(Bottle):
 
         # raw_data = np.genfromtxt(data_file, delimiter=d, skip_header=1)
         
-        raw_data = pd.read_csv(data_file, sep=",", )
-        print(raw_data)
+        raw_data = pd.read_csv(data_file, sep=",", na_values=['None'])
+        # print(raw_data)
 
         # if self.instrument_name in ["corbel", "ptcu_v2", "gdcu"]:
         #     array_type = [('IDConfiguration',float),('Timestamp','S100'), ('CM_ID', 'S100'),('CM_Latitude',float),('CM_Longitude',float),('CM_Elevation',float),('CM_Azimuth',float),('CM_PolarizerSpeed',float),('CM_Tilt',float),('CM_Usage','S100'),('CM_Comments','S100'),('IS_PolarizerOffset1',float),('IS_PolarizerOffset2',float),('IS_PolarizerOffset3',float),('IS_PolarizerOffset4',float),('IS_ConverterGain1',float),('IS_ConverterGain2',float),('IS_ConverterGain3',float),('IS_ConverterGain4',float),("IS_ConverterOffset1", float),("IS_ConverterOffset2", float),("IS_ConverterOffset3", float),("IS_ConverterOffset4", float),('IS_MotorGearedRatio',float),('IS_QuantumEfficiency',float), ('IS_IpAddress',float)]
@@ -1632,7 +1631,7 @@ class PTCUBottle(Bottle):
 
         conf_df = pd.read_csv(config_file, sep=",")
         configuration = dict()
-        print(config_file)
+        # print(config_file)
         print('configuration', configuration)
         for n in conf_df.columns:
             configuration[n] = conf_df[n][0]

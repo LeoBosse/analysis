@@ -29,8 +29,9 @@ from bottle import *
 from AllSkyData import *
 from eiscat_data import *
 from MagData import *
-from J2RAYS1_model import *
-
+from plip import *
+from pomerol_model import *
+from taster import *
 
 from vendange_configuration import *
 
@@ -41,289 +42,317 @@ class Mixer:
 		self.comp_bottles = comp_bottles
 		self.mag_data = None
 		self.pola_color = None
+		
+		self.mode = mode
 
 		for ib, bottle in enumerate(self.bottles):
 
 			self.SetGraphParameter(bottle)
-			self.MakeXAxis(bottle)
-
+			# self.MakeXAxis(bottle)
 			
+			
+			self.LoadExternData(bottle)
 
-			if self.show_mag_data:
-				self.mag_data = MagData(bottles[0])
-				if not self.mag_data.exist:
-					self.mag_data = None
-				else:
-					self.mag_data.StripTime(bottle.DateTime("start", format = 'UT'), bottle.DateTime("end", format = 'UT'))
-
-			# if self.mag_data is not False:
-			# 	self.mag_data.StripTime(bottle.DateTime("start"), bottle.DateTime("end"))
-
-			self.allsky_data_available = False
-			if bottle.observation_type == "fixed":
-				self.allsky_data = AllSkyData(bottle)
-				self.allsky_data_available = bool(self.allsky_data.all_datetimes)
-
-			if self.show_eiscat:
-				self.eiscat_data = Eiscat(bottle)
-				if not self.eiscat_data.valid:
-					# print("EISCAT HDF5")
-					self.eiscat_data = EiscatHDF5(bottle, antenna = self.eiscat_type)
-					print("EISCAT data valid? ", self.eiscat_data.valid)
-
-			if self.show_currents:
-				self.eq_currents = EqCurrent(bottle, file_type=None)
-				print("Equivalent current is valid? ", bool(self.eq_currents.valid))
-				if self.eq_currents.valid:
-					self.eq_currents.GetApparentAngle(bottles[0].observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
-					self.eq_currents.Polarisation(bottles[0].observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
-				
-				if self.eq_currents.valid and bottle.observation_type == "fixed":
-				
-					if self.compute_Jup:
-						AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
-						self.eq_currents.FindJup(bottle.observation, AoLPs, mode = self.compute_Jup)
-				
-						self.eq_currents.GetApparentAngle(bottle.observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
-				
-						self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
-				
-						self.eq_currents.SaveTXT()
-
-			if self.show_RS_model and self.RS_model_files:
-				self.J2RAYS1_models = [Model.InitFromBottle(bottle, f, time_divisor = self.divisor, x_axis = self.x_axis_list, shift = self.shift_model) for i, f in enumerate(self.RS_model_files[bottle.line - 1])]
-				# print(self.J2RAYS1_models[1].data.index)
-				if bottle.observation_type == "fixed": #fixed obs -> set the xaxis of the ground (should be at index 0) model to the sky model (should be at index 1)
-					self.J2RAYS1_models[0].SetXAxisAndLength(self.J2RAYS1_models[1].x_axis)
-
-
-				# self.J2RAYS1_models[0]["DoLP"] = self.J2RAYS1_models[0]["DoLP"]  / 10.
-				# self.J2RAYS1_models[0].SetVParam()
-				# self.J2RAYS1_models[1]["DoLP"] = self.J2RAYS1_models[1]["DoLP"]  * 2
-				# self.J2RAYS1_models[1].SetVParam()
-
-
-				####Find the best model with equivalent current object
-				# best_model, best_param = Model.FindBestDirectPola(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=True, least_square_factors = [1, 1, 1], eq_current = self.eq_currents.GetInterpolation(self.J2RAYS1_models[0].x_axis, bottle.observation, divisor=self.divisor))
-				# self.J2RAYS1_models.append(best_model)
-				####Find the best model with a constant and uniform current
-				# best_model, best_param = Model.FindBestDirectPola(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False, least_square_factors = [1, 1, 1], eq_current = None)
-				# self.J2RAYS1_models.append(best_model)
-
-				### Buikd a model ans compute its square difference
-				# model = Model.BuildCompleteModel((0, 0, 0, 30), bottle, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp")
-				# least_square = model.GetBottleLeastSquare(bottle, self.x_axis_list)
-				# self.J2RAYS1_models.append(model)
-				# print("least square 20%", least_square, np.sum(least_square))
-
-
-				### For 20200224 ski sud green best model
-				# best_param = (120*DtoR, 0*DtoR, 1, 0)
-
-				### For 20200227 green best model
-				# best_param = (230*DtoR, 25*DtoR, 5, 20)
-				# best_param = (50*DtoR, -20*DtoR, 5, 20)
-
-				### For 20200227 purple best model
-				# best_param = (230*DtoR, 20*DtoR, 11.1, 10.7, 6.24, 0.35)
-
-				### For 20190307 green best model
-				# best_param = (244*DtoR, 5*DtoR, 1.3, 7.1)#, 6.24, 0.35) ### rotation e45
-				# best_param = (4.49678563, 0.37226045, 0.        , 9.13981123) # a164e45 with free current
-				# best_param = (0.3388598, 8.3487529) # with Equivalent current
-				### For 20190307 purple best model
-				# best_param = (249*DtoR, 2.3*DtoR, 3, 10, 0.00093955034896, 1.) ### rotation e45
-				# best_param = (4.29988166e+00, 3.44626175e-01, 6.36127072e+00, 1.72867582e+01, 8.01634464e-04, 9.99956375e-01)  # with free current direction
-				# best_param = (4.89073016, 21.40499469, 74.189954  ,  1.) # with Equivalent current
-				### For 20190307 blue best model
-				# best_param = (232*DtoR, 0*DtoR, 5.9, 26, 4.27494363, 0.98) ### rotation e45
-				# best_param = (50*DtoR, 10*DtoR, 6, 25, 20, 0.98)
-				# best_param = (3.89422949e+00, 3.81413283e-01, 4.09738726e+00, 1.29324498e+01, 8.13699802e-09, 9.90971225e-01)  # with free current
-				# best_param = (2.90791549e+00, 1.97557372e+01, 9.26151992e-15, 1.00000000e+00)  # with Equivalent current
-
-
-				# Model.MakeParamSpacePlot(best_param, (0,1), bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False, least_square_factors = [1, 1, 1])#, eq_current = self.eq_currents.GetInterpolation(self.J2RAYS1_models[0].x_axis, bottle.observation, divisor=self.divisor))
-
-
-				#Build a model with equivalent current object
-				# self.J2RAYS1_models.append(Model.BuildCompleteModel(best_param, bottle, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", eq_current = self.eq_currents.GetInterpolation(self.J2RAYS1_models[0].x_axis, bottle.observation, divisor=self.divisor)))
-				# #Build a model with a constant and uniform current
-				# best_param = (3.89422949e+00, 3.81413283e-01, 4.09738726e+00, 1.29324498e+01, 8.13699802e-09, 9.90971225e-01)  # with free current
-				# self.J2RAYS1_models.append(Model.BuildCompleteModel(best_param, bottle, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", eq_current = None))
-
-				# print(self.J2RAYS1_models[-1].data)
-
-				# for m in self.J2RAYS1_models:
-				# 	print(m.x_axis)
-
-
-
-				# Model.MCMC(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode="rayleigh", AoLP_mode="para", ISO=False, least_square_factors = [1, 1, 1])
-
-
-				# best_total_model, total_diff, min_total_diff, best_total_param, best_total_index = Model.ManuallyFindBestDirectPola(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode="rayleigh", AoLP_mode="para", ISO=False, least_square_factors = [1, 1, 1])
-
-
-				# best_total_model, total_diff, min_total_diff, best_total_param = Model.ManuallyFindBestDirectPola(bottle, self.x_axis_list, self.J2RAYS1_models[0], self.J2RAYS1_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False)
-				# self.J2RAYS1_models.append(best_total_model)
-
-
-				# if self.AddDirectPola and len(self.J2RAYS1_models) >= 2:
-				# 	print("Adding direct polarisation to model...")
-				# 	if self.fit_RS_model_to_flux: # Model 0 and 1 are grd and sky. 2 is the direct light only and 3 is the Linear Comb of 0 and 1
-				# 		direct_model = self.J2RAYS1_models[2]
-				# 		base_model = self.J2RAYS1_models[3]
-				# 	else: # Model 0 is the diffusion model. 1 is the direct only model
-				# 		base_model = self.J2RAYS1_models[1]
-				# 		direct_model = self.J2RAYS1_models[2]
-				#
-				# 	for dolp_factor in self.AddDirectPola:
-				# 		self.J2RAYS1_models.append(base_model.AddDirectPola(direct_model["DDoLP"] * dolp_factor, direct_model["DAoLP"]))
-				# 		self.J2RAYS1_models[-1].SetMandatoryColumns()
-				# 		self.J2RAYS1_models[-1].SetArbitraryUnits(bottle = bottle)
-				#
-				#
-				#
-				if self.add_model and len(self.J2RAYS1_models) >= 2:
-					m1, m2 = self.J2RAYS1_models[0], self.J2RAYS1_models[1]
-					print("Adding model together:", np.average(m1["I0"]), np.average(m2["I0"]))
-					for a in self.add_model:
-					# for a, b in self.add_model:
-
-						sum = a * m1 + (1-a) * m2
-						sum.SetMandatoryColumns()
-						sum.SetArbitraryUnits(bottle = bottle)
-						sum.x_axis = m1.x_axis
-						self.J2RAYS1_models.append(sum)
-
-				if self.fit_RS_model_to_flux and len(self.J2RAYS1_models) >= 2:
-					print("Fitting J2RAYS-1 models to data...")
-					if self.fit_func == "GS":
-						best_model = Model.FitModelToFlux(self.x_axis_list, bottle.data['smooth_I0'], self.J2RAYS1_models[0], self.J2RAYS1_models[1])
-					elif self.fit_func == "GSK":
-						best_model = Model.FitModelToFluxPlusIso(self.x_axis_list, bottle.data['smooth_I0'], self.J2RAYS1_models[0], self.J2RAYS1_models[1])
-
-					best_model.SetMandatoryColumns()
-					best_model.SetArbitraryUnits(bottle = bottle)
-					self.J2RAYS1_models.append(best_model)
-
-				if self.addFDA_to_model != []:
-					max_data, min_data = np.max(bottle.data['smooth_I0']), np.min(bottle.data['smooth_I0'])
-					ratio_data = max_data / min_data
-					for i, m in enumerate(self.J2RAYS1_models):
-						try:
-							addF, addD, addA = self.addFDA_to_model[bottle.line - 1][i]
-
-							max_model, min_model = np.max(m["I0"]) , np.min(m["I0"])
-							ratio_model = max_model / min_model
-							shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
-
-							print(f"Adding constant background to model...: {addF} (old data unit), {addF / m.bottle_factor}, {addD}, {addA}")
-							print(f"OLD: Min model, Max model, Ratio model, Shift to match data (model unit): {min_model / m.bottle_factor}, {max_model / m.bottle_factor}, {ratio_model}, {shift / m.bottle_factor}")
-
-							m.AddFDA(addF, addD, addA)
-
-							max_model, min_model = np.max(m["I0"]) , np.min(m["I0"])
-							ratio_model = max_model / min_model
-							shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
-							print(f"NEW: Min model, Max model, Ratio model, Shift to match data (model unit): {min_model / m.bottle_factor}, {max_model / m.bottle_factor}, {ratio_model}, {shift / m.bottle_factor}")
-
-
-						except:
-							print("WARNING: DID NOT add FDA to model number:", bottle.line - 1, i)
-							pass
-							# addF, addD, addA = 0, 0, 0
-
-			self.mode = mode
 
 			# self.MakeFigure()
 			# self.MakePlots(bottle)
 			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
 
-			# self.TestResample(bottle)
-			bottle.TestResample()
+			# self.MakeFigure()
+			# self.MakePlots(bottle)
+			# # self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
 
-			self.MakeFigure()
-			self.MakePlots(bottle)
-			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
+			# # self.MakeFFT(bottle)
 
+			# if self.show_correlations:
+			# 	# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "DoLP")
+			# 	# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "AoLP")
+			# 	self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
+			# 	# self.MakeCleanCorrelationPlots(bottle, None, smooth=False)
 
-
-			# self.MakeFFT(bottle)
-
-			if self.show_correlations:
-				# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "DoLP")
-				# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "AoLP")
-				self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
-				# self.MakeCleanCorrelationPlots(bottle, None, smooth=False)
-
-			# for m in self.J2RAYS1_models:
-			# 	self.SubtractModel(bottle, m)
-			# if self.show_RS_model:
-			# 	self.CompareRayleigh(bottle, self.J2RAYS1_model)
-			if self.show_SN:
-				self.MakeI0SNratio(bottle)
-				self.MakeSNratio(bottle)
-			if self.make_optional_plots:
-				if self.show_currents and self.eq_currents.valid and ib == 0:
-					self.eq_currents.MakePlot(coords = "uen")
-					self.eq_currents.MakePlot(coords = "azel")
-
-			if self.comp_bottles:
-				print('DEBUG COMP BOTTLES', self.comp_bottles)
-
-				for b in self.comp_bottles:
-					b.TestResample()
-				
-				### If the same number of channels in bottles and comp_bottles, plot them one for one
-				### If not, then plot all comp_bottles on top of of every bottle.
-				comp_bottles_to_show = [ib]
-				if len(self.comp_bottles) != len(self.bottles):
-					comp_bottles_to_show = range(len(self.comp_bottles))
-				
-				for ibc in comp_bottles_to_show:
-
-					self.SetGraphParameter(self.comp_bottles[ibc], comp=True)
-					self.MakeXAxis(self.comp_bottles[ibc])
-					self.MakePlots(self.comp_bottles[ibc], comp=True)
-					
-					if self.make_optional_plots:
-						if self.show_SN:
-							self.MakeSNratio(self.comp_bottles[ibc])
-
-						self.SetGraphParameter(bottle)
-						self.MakeXAxis(bottle)
-
-						self.CompareBottles(self.comp_bottles[ibc], bottle)
-
+			# # for m in self.pomerol_models:
+			# # 	self.SubtractModel(bottle, m)
+			# # if self.show_RS_model:
+			# # 	self.CompareRayleigh(bottle, self.pomerol_model)
+			# if self.show_SN:
+			# 	self.MakeI0SNratio(bottle)
+			# 	self.MakeSNratio(bottle)
 			# if self.make_optional_plots:
-			# 	self.MakeFFT(bottle)
+			# 	if self.show_currents and self.eq_currents.valid and ib == 0:
+			# 		self.eq_currents.MakePlot(coords = "uen")
+			# 		self.eq_currents.MakePlot(coords = "azel")
 
-			if self.make_optional_plots and self.mag_data is not False:
-				if ib == 0:
-					self.MakeMagDataPlots(bottle)
-				self.MakeCorrelationPlots(bottle)
+			# if self.comp_bottles:
+			# 	print('DEBUG COMP BOTTLES', self.comp_bottles)
 
-			if self.show_eiscat and self.make_optional_plots and self.eiscat_data.valid:
-				self.MakeEiscatDataPlot(bottle)
+			# 	# for b in self.comp_bottles:
+			# 	# 	b.TestResample()
+				
+			# 	### If the same number of channels in bottles and comp_bottles, plot them one for one
+			# 	### If not, then plot all comp_bottles on top of of every bottle.
+			# 	comp_bottles_to_show = [ib]
+			# 	if len(self.comp_bottles) != len(self.bottles):
+			# 		comp_bottles_to_show = range(len(self.comp_bottles))
+				
+			# 	for ibc in comp_bottles_to_show:
 
-			if self.make_optional_plots and bottle.observation_type == "fixed_elevation_continue_rotation":
-				self.CompareAnglesPlots(bottle)
+			# 		self.SetGraphParameter(self.comp_bottles[ibc], comp=True)
+			# 		self.MakeXAxis(self.comp_bottles[ibc])
+			# 		self.MakePlots(self.comp_bottles[ibc], comp=True)
+					
+			# 		if self.make_optional_plots:
+			# 			if self.show_SN:
+			# 				self.MakeSNratio(self.comp_bottles[ibc])
 
-				if len(bottle.continue_rotation_times) > 2:
-					print("AVERAGE ROTATIONS")
-					bottle = bottle.GetAverageContinueRotations()
-					self.SetGraphParameter(bottle)
-					self.MakeXAxis(bottle)
-					self.MakeFigure()
-					self.MakePlots(bottle)
-					self.MakeSNratio(bottle)
-					self.CompareAnglesPlots(bottle)
+			# 			self.SetGraphParameter(bottle)
+			# 			self.MakeXAxis(bottle)
+
+			# 			self.CompareBottles(self.comp_bottles[ibc], bottle)
+
+			# # if self.make_optional_plots:
+			# # 	self.MakeFFT(bottle)
+
+			# if self.make_optional_plots and self.mag_data is not False:
+			# 	if ib == 0:
+			# 		self.MakeMagDataPlots(bottle)
+			# 	self.MakeCorrelationPlots(bottle)
+
+			# if self.show_eiscat and self.make_optional_plots and self.eiscat_data.valid:
+			# 	self.MakeEiscatDataPlot(bottle)
+
+			# if self.make_optional_plots and bottle.observation_type == "fixed_elevation_continue_rotation":
+			# 	self.CompareAnglesPlots(bottle)
+
+			# 	if len(bottle.continue_rotation_times) > 2:
+			# 		print("AVERAGE ROTATIONS")
+			# 		bottle = bottle.GetAverageContinueRotations()
+			# 		self.SetGraphParameter(bottle)
+			# 		self.MakeXAxis(bottle)
+			# 		self.MakeFigure()
+			# 		self.MakePlots(bottle)
+			# 		self.MakeSNratio(bottle)
+			# 		self.CompareAnglesPlots(bottle)
 
 
 
 			# self.MakeCoherencePLots()
+	def LoadExternData(self, bottle):
 
+		if self.show_mag_data:
+			# self.LoadMagData(bottles[0])
+			self.LoadMagData(bottle)
+
+		if self.show_eiscat:
+			self.LoadEiscatData(bottle)
+		
+		if self.show_allsky:
+			self.LoadASCData(bottle)
+
+		if self.show_currents:
+			self.LoadCurrentData(bottle)
+		
+		if self.show_RS_model and self.RS_model_files:
+			self.LoadPOMEROLModel(bottle)
+
+		self.LoadPLIPData(bottle)
+
+
+	def LoadPLIPData(self, bottle):
+		self.plip_data = PLIP(bottle, "data_NOT_ROT.h5")
+
+
+	def LoadMagData(self, bottle):
+		self.mag_data = MagData(bottle)
+		if not self.mag_data.exist:
+			self.mag_data = None
+		else:
+			self.mag_data.StripTime(bottle.DateTime("start", format = 'UT'), bottle.DateTime("end", format = 'UT'))
+
+		# if self.mag_data is not False:
+		# 	self.mag_data.StripTime(bottle.DateTime("start"), bottle.DateTime("end"))
+
+	def LoadASCData(self, bottle):
+		self.allsky_data_available = False
+		if not bottle.observation_type == "fixed":
+			return 
+		self.allsky_data = AllSkyData(bottle)
+		self.allsky_data_available = bool(self.allsky_data.all_datetimes)
+
+	def LoadEiscatData(self, bottle):
+		self.eiscat_data = Eiscat(bottle)
+		if not self.eiscat_data.valid:
+			# print("EISCAT HDF5")
+			self.eiscat_data = EiscatHDF5(bottle, antenna = self.eiscat_type)
+			print("EISCAT data valid? ", self.eiscat_data.valid)
+
+
+	def LoadCurrentData(self, bottle):
+		self.eq_currents = EqCurrent(bottle, file_type=None)
+		print("Equivalent current is valid? ", bool(self.eq_currents.valid))
+		
+		if not self.eq_currents.valid:
+			return
+
+		self.eq_currents.GetApparentAngle(bottles[0].observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
+		self.eq_currents.Polarisation(bottles[0].observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
+		
+		if not self.eq_currents.valid:
+			return
+
+		if self.compute_Jup and bottle.observation_type == "fixed":
+			AoLPs = [bottle.GetInterpolation(t)[2] for t in self.eq_currents.GetNormTimes()]
+			self.eq_currents.FindJup(bottle.observation, AoLPs, mode = self.compute_Jup)
+	
+			self.eq_currents.GetApparentAngle(bottle.observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
+	
+			self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
+	
+			self.eq_currents.SaveTXT()
+
+
+	def LoadPOMEROLModel(self, bottle):
+		
+		self.pomerol_models = [Model.InitFromBottle(bottle, f, time_divisor = self.divisor, x_axis = self.x_axis_list, shift = self.shift_model) for i, f in enumerate(self.RS_model_files[bottle.line - 1])]
+		# print(self.pomerol_models[1].data.index)
+		if bottle.observation_type == "fixed": #fixed obs -> set the xaxis of the ground (should be at index 0) model to the sky model (should be at index 1)
+			self.pomerol_models[0].SetXAxisAndLength(self.pomerol_models[1].x_axis)
+
+
+		# self.pomerol_models[0]["DoLP"] = self.pomerol_models[0]["DoLP"]  / 10.
+		# self.pomerol_models[0].SetVParam()
+		# self.pomerol_models[1]["DoLP"] = self.pomerol_models[1]["DoLP"]  * 2
+		# self.pomerol_models[1].SetVParam()
+
+
+		####Find the best model with equivalent current object
+		# best_model, best_param = Model.FindBestDirectPola(bottle, self.x_axis_list, self.pomerol_models[0], self.pomerol_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=True, least_square_factors = [1, 1, 1], eq_current = self.eq_currents.GetInterpolation(self.pomerol_models[0].x_axis, bottle.observation, divisor=self.divisor))
+		# self.pomerol_models.append(best_model)
+		####Find the best model with a constant and uniform current
+		# best_model, best_param = Model.FindBestDirectPola(bottle, self.x_axis_list, self.pomerol_models[0], self.pomerol_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False, least_square_factors = [1, 1, 1], eq_current = None)
+		# self.pomerol_models.append(best_model)
+
+		### Buikd a model ans compute its square difference
+		# model = Model.BuildCompleteModel((0, 0, 0, 30), bottle, self.pomerol_models[0], self.pomerol_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp")
+		# least_square = model.GetBottleLeastSquare(bottle, self.x_axis_list)
+		# self.pomerol_models.append(model)
+		# print("least square 20%", least_square, np.sum(least_square))
+
+
+		### For 20200224 ski sud green best model
+		# best_param = (120*DtoR, 0*DtoR, 1, 0)
+
+		### For 20200227 green best model
+		# best_param = (230*DtoR, 25*DtoR, 5, 20)
+		# best_param = (50*DtoR, -20*DtoR, 5, 20)
+
+		### For 20200227 purple best model
+		# best_param = (230*DtoR, 20*DtoR, 11.1, 10.7, 6.24, 0.35)
+
+		### For 20190307 green best model
+		# best_param = (244*DtoR, 5*DtoR, 1.3, 7.1)#, 6.24, 0.35) ### rotation e45
+		# best_param = (4.49678563, 0.37226045, 0.        , 9.13981123) # a164e45 with free current
+		# best_param = (0.3388598, 8.3487529) # with Equivalent current
+		### For 20190307 purple best model
+		# best_param = (249*DtoR, 2.3*DtoR, 3, 10, 0.00093955034896, 1.) ### rotation e45
+		# best_param = (4.29988166e+00, 3.44626175e-01, 6.36127072e+00, 1.72867582e+01, 8.01634464e-04, 9.99956375e-01)  # with free current direction
+		# best_param = (4.89073016, 21.40499469, 74.189954  ,  1.) # with Equivalent current
+		### For 20190307 blue best model
+		# best_param = (232*DtoR, 0*DtoR, 5.9, 26, 4.27494363, 0.98) ### rotation e45
+		# best_param = (50*DtoR, 10*DtoR, 6, 25, 20, 0.98)
+		# best_param = (3.89422949e+00, 3.81413283e-01, 4.09738726e+00, 1.29324498e+01, 8.13699802e-09, 9.90971225e-01)  # with free current
+		# best_param = (2.90791549e+00, 1.97557372e+01, 9.26151992e-15, 1.00000000e+00)  # with Equivalent current
+
+
+		# Model.MakeParamSpacePlot(best_param, (0,1), bottle, self.x_axis_list, self.pomerol_models[0], self.pomerol_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False, least_square_factors = [1, 1, 1])#, eq_current = self.eq_currents.GetInterpolation(self.pomerol_models[0].x_axis, bottle.observation, divisor=self.divisor))
+
+
+		#Build a model with equivalent current object
+		# self.pomerol_models.append(Model.BuildCompleteModel(best_param, bottle, self.pomerol_models[0], self.pomerol_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", eq_current = self.eq_currents.GetInterpolation(self.pomerol_models[0].x_axis, bottle.observation, divisor=self.divisor)))
+		# #Build a model with a constant and uniform current
+		# best_param = (3.89422949e+00, 3.81413283e-01, 4.09738726e+00, 1.29324498e+01, 8.13699802e-09, 9.90971225e-01)  # with free current
+		# self.pomerol_models.append(Model.BuildCompleteModel(best_param, bottle, self.pomerol_models[0], self.pomerol_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", eq_current = None))
+
+		# print(self.pomerol_models[-1].data)
+
+		# for m in self.pomerol_models:
+		# 	print(m.x_axis)
+
+
+
+		# Model.MCMC(bottle, self.x_axis_list, self.pomerol_models[0], self.pomerol_models[1], DoLP_mode="rayleigh", AoLP_mode="para", ISO=False, least_square_factors = [1, 1, 1])
+
+
+		# best_total_model, total_diff, min_total_diff, best_total_param, best_total_index = Model.ManuallyFindBestDirectPola(bottle, self.x_axis_list, self.pomerol_models[0], self.pomerol_models[1], DoLP_mode="rayleigh", AoLP_mode="para", ISO=False, least_square_factors = [1, 1, 1])
+
+
+		# best_total_model, total_diff, min_total_diff, best_total_param = Model.ManuallyFindBestDirectPola(bottle, self.x_axis_list, self.pomerol_models[0], self.pomerol_models[1], DoLP_mode = "rayleigh", AoLP_mode = "perp", ISO=False)
+		# self.pomerol_models.append(best_total_model)
+
+
+		# if self.AddDirectPola and len(self.pomerol_models) >= 2:
+		# 	print("Adding direct polarisation to model...")
+		# 	if self.fit_RS_model_to_flux: # Model 0 and 1 are grd and sky. 2 is the direct light only and 3 is the Linear Comb of 0 and 1
+		# 		direct_model = self.pomerol_models[2]
+		# 		base_model = self.pomerol_models[3]
+		# 	else: # Model 0 is the diffusion model. 1 is the direct only model
+		# 		base_model = self.pomerol_models[1]
+		# 		direct_model = self.pomerol_models[2]
+		#
+		# 	for dolp_factor in self.AddDirectPola:
+		# 		self.pomerol_models.append(base_model.AddDirectPola(direct_model["DDoLP"] * dolp_factor, direct_model["DAoLP"]))
+		# 		self.pomerol_models[-1].SetMandatoryColumns()
+		# 		self.pomerol_models[-1].SetArbitraryUnits(bottle = bottle)
+		
+		
+		if self.add_model and len(self.pomerol_models) >= 2:
+			m1, m2 = self.pomerol_models[0], self.pomerol_models[1]
+			print("Adding model together:", np.average(m1["I0"]), np.average(m2["I0"]))
+			for a in self.add_model:
+			# for a, b in self.add_model:
+
+				sum = a * m1 + (1-a) * m2
+				sum.SetMandatoryColumns()
+				sum.SetArbitraryUnits(bottle = bottle)
+				sum.x_axis = m1.x_axis
+				self.pomerol_models.append(sum)
+
+		if self.fit_RS_model_to_flux and len(self.pomerol_models) >= 2:
+			print("Fitting J2RAYS-1 models to data...")
+			if self.fit_func == "GS":
+				best_model = Model.FitModelToFlux(self.x_axis_list, bottle.data['smooth_I0'], self.pomerol_models[0], self.pomerol_models[1])
+			elif self.fit_func == "GSK":
+				best_model = Model.FitModelToFluxPlusIso(self.x_axis_list, bottle.data['smooth_I0'], self.pomerol_models[0], self.pomerol_models[1])
+
+			best_model.SetMandatoryColumns()
+			best_model.SetArbitraryUnits(bottle = bottle)
+			self.pomerol_models.append(best_model)
+
+		if self.addFDA_to_model != []:
+			max_data, min_data = np.max(bottle.data['smooth_I0']), np.min(bottle.data['smooth_I0'])
+			ratio_data = max_data / min_data
+			for i, m in enumerate(self.pomerol_models):
+				try:
+					addF, addD, addA = self.addFDA_to_model[bottle.line - 1][i]
+
+					max_model, min_model = np.max(m["I0"]) , np.min(m["I0"])
+					ratio_model = max_model / min_model
+					shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
+
+					print(f"Adding constant background to model...: {addF} (old data unit), {addF / m.bottle_factor}, {addD}, {addA}")
+					print(f"OLD: Min model, Max model, Ratio model, Shift to match data (model unit): {min_model / m.bottle_factor}, {max_model / m.bottle_factor}, {ratio_model}, {shift / m.bottle_factor}")
+
+					m.AddFDA(addF, addD, addA)
+
+					max_model, min_model = np.max(m["I0"]) , np.min(m["I0"])
+					ratio_model = max_model / min_model
+					shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
+					print(f"NEW: Min model, Max model, Ratio model, Shift to match data (model unit): {min_model / m.bottle_factor}, {max_model / m.bottle_factor}, {ratio_model}, {shift / m.bottle_factor}")
+
+
+				except:
+					print("WARNING: DID NOT add FDA to model number:", bottle.line - 1, i)
+					pass
+					# addF, addD, addA = 0, 0, 0
 
 	def MakeXAxis(self, bottle):
 
@@ -477,7 +506,7 @@ class Mixer:
 		self.time_label = "UTC" # The title of the time x-axis
 		self.use_24h_time_format = 1
 
-		self.show_raw_data = 0 and len(self.comp_bottles) == 0 # Show the data with no slidding average. All rotations of the polarizing filter. In black
+		self.show_raw_data = 1 and len(self.comp_bottles) == 0 # Show the data with no slidding average. All rotations of the polarizing filter. In black
 		self.show_smooth_data = 1 # Show smoothed data (averaged over the time window defined in the input file)
 
 		self.show_error_bars 		= 1 # Show error bars for the raw cru data. in grey
@@ -489,7 +518,6 @@ class Mixer:
 		self.show_avg_DoLP = False #Show the DoLP for a smoothed data point obtained by averaging all data over the whle observation. It is different from the DoLP average because it is done on the V, Vcos and Vsin values.
 		self.show_avg_AoLP = False #Show the AoLP for a smoothed data point obtained by averaging all data over the whle observation. It is different from the AoLP average because it is done on the V, Vcos and Vsin values.
 
-
 		self.xaxis_azimut = True #only for almucantars. If True will show the azimut on the xaxis instead of time .
 
 		self.show_legend = False #Show the legend bow over the plots
@@ -498,10 +526,10 @@ class Mixer:
 
 		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
 
-		self.show_eiscat = 1 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
+		self.show_eiscat = 0 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
 		self.eiscat_type = "uhf" #Initally for March 2022 data. Choose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
 
-		self.show_mag_data 	= 1 # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
+		self.show_mag_data 	= 0 # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
 		self.B_component	= 'Horiz' # B field component to plot (Dec, Horiz, Vert, 'Incl' or 'Total')
 		self.show_AoBapp 	= 0 # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
 		self.show_AoRD	 	= 0 # If True, show the AoLP produced by a point source defined in the input.in file.
@@ -1297,10 +1325,10 @@ class Mixer:
 		maxDoLP = np.max(bottle.data['smooth_DoLP'])
 
 		if self.show_model_list:
-			self.J2RAYS1_models = [self.J2RAYS1_models[i] for i in self.show_model_list]
+			self.pomerol_models = [self.pomerol_models[i] for i in self.show_model_list]
 
-		for im, models in enumerate(self.J2RAYS1_models):
-			# print(self.J2RAYS1_model.x_axis)
+		for im, models in enumerate(self.pomerol_models):
+			# print(self.pomerol_model.x_axis)
 			# self.ax11.yaxis.set_visible(False)
 			self.ax1.plot(models.x_axis + tmp_xshift, models["I0"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
 			self.ax2.plot(models.x_axis + tmp_xshift, models["DoLP"], "*", color = self.model_colors[im], marker = self.model_symbols[im], markersize=self.marker_size)
@@ -1317,7 +1345,7 @@ class Mixer:
 			ratio_data = max_data / min_data
 			print(f"Min data, Max Data, Ratio data: {min_data}, {max_data}, {ratio_data}")
 			nt, nb = [max_data], [min_data]
-			for models in self.J2RAYS1_models:
+			for models in self.pomerol_models:
 				max_model, min_model = np.max(models.data["I0"]) , np.min(models.data["I0"])
 				ratio_model = max_model / min_model
 				shift = (ratio_data * min_model - max_model) / (1 - ratio_data)
@@ -1330,7 +1358,7 @@ class Mixer:
 			self.ax1.set_ylim(np.min(nb) / border, np.max(nt) * border)
 
 				# nt, nb = [np.max(bottle.data['smooth_DoLP'])], [np.min(bottle.data['smooth_DoLP'])]
-				# for models in self.J2RAYS1_models:
+				# for models in self.pomerol_models:
 				# 	nt.append(np.max(models.data["DoLP"]))
 				# 	nb.append(np.min(models.data["DoLP"]))
 				# self.ax2.set_ylim(np.min(nb) / border, np.max(nt) * border)

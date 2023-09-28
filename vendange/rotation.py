@@ -94,118 +94,118 @@ class Rotation:
 		return self.WriteTimeStamp()
 
 
-class PTCURotation(Rotation):
-	def __init__(self, data):
-		"""Initialise the PTCURotation class. Load important data from the input and calculate I0, DoLP, AoLP, then check if 'good'."""
-		Rotation.__init__(self, data, instrument="PTCU" )
-		###DATA INDICES
-		# 0: 	IDConfiguration,
-		# 1: 	Time,
-		# 2: 	IDProcessedData,
-		# 3:	PMAvg,
-		# 4:	PMCosAvg,
-		# 5:	PMSinAvg
+# class PTCURotation(Rotation):
+# 	def __init__(self, data):
+# 		"""Initialise the PTCURotation class. Load important data from the input and calculate I0, DoLP, AoLP, then check if 'good'."""
+# 		Rotation.__init__(self, data, instrument="PTCU" )
+# 		###DATA INDICES
+# 		# 0: 	IDConfiguration,
+# 		# 1: 	Time,
+# 		# 2: 	IDProcessedData,
+# 		# 3:	PMAvg,
+# 		# 4:	PMCosAvg,
+# 		# 5:	PMSinAvg
 
-		# self.config = config
-		# ###CONFIG INDICES
-		# # 0:		IDConfiguration,
-		# # 1:		Timestamp,
-		# # 2-3:		CM_Latitude, CM_Longitude,
-		# # 4-5:		CM_Elevation, CM_Azimuth,
-		# # 6:		CM_PolarizerSpeed,
-		# # 7:		CM_Tilt,
-		# # 8:		CM_Usage,
-		# # 9:		CM_Comments,
-		# # 10:		IS_PolarizerOffset1,
-		# # 11:		IS_PolarizerOffset2,
-		# # 12:		IS_PolarizerOffset3,
-		# # 13:		IS_PolarizerOffset4,
-		# # 14:		IS_ConverterOffset4,
-		# # 15:		IS_ConverterOffset3,
-		# # 16:		IS_ConverterOffset2,
-		# # 17:		IS_ConverterOffset1,
-		# # 18:		IS_EngineTicksPerTour,
-		# # 19:		IS_MotorGearedRatio,
-		# # 20:		IS_QuantumEfficiency,
-		# # 21:		IS_IpAddress
+# 		# self.config = config
+# 		# ###CONFIG INDICES
+# 		# # 0:		IDConfiguration,
+# 		# # 1:		Timestamp,
+# 		# # 2-3:		CM_Latitude, CM_Longitude,
+# 		# # 4-5:		CM_Elevation, CM_Azimuth,
+# 		# # 6:		CM_PolarizerSpeed,
+# 		# # 7:		CM_Tilt,
+# 		# # 8:		CM_Usage,
+# 		# # 9:		CM_Comments,
+# 		# # 10:		IS_PolarizerOffset1,
+# 		# # 11:		IS_PolarizerOffset2,
+# 		# # 12:		IS_PolarizerOffset3,
+# 		# # 13:		IS_PolarizerOffset4,
+# 		# # 14:		IS_ConverterOffset4,
+# 		# # 15:		IS_ConverterOffset3,
+# 		# # 16:		IS_ConverterOffset2,
+# 		# # 17:		IS_ConverterOffset1,
+# 		# # 18:		IS_EngineTicksPerTour,
+# 		# # 19:		IS_MotorGearedRatio,
+# 		# # 20:		IS_QuantumEfficiency,
+# 		# # 21:		IS_IpAddress
 
-		### Time since the begining of the observation (in time stamp) given in milliseconds, but stored in seconds, as all other times
+# 		### Time since the begining of the observation (in time stamp) given in milliseconds, but stored in seconds, as all other times
 
-		self.nb_data_per_rot = len(self.raw_data)
-		# self.time				= time.timedelta(milliseconds = float(self.raw_data[1]))
-		# print(self.nb_data_per_rot)
-		# print(self.raw_data)
-		if self.nb_data_per_rot == 10:
-			self.time				= dt.timedelta(milliseconds = float(self.raw_data[1]))
-			self.V					= self.raw_data[2]
-			self.Vcos				= self.raw_data[3]
-			self.Vsin				= self.raw_data[4]
-			self.Vref				= self.raw_data[5]
-			self.Comment 			= self.raw_data[6]
-			self.TempPM 			= self.raw_data[7]
-			self.TempOptical 		= self.raw_data[8]
-			self.TempAmbiant 		= self.raw_data[9]
-		elif self.nb_data_per_rot == 9:
-			self.time				= dt.timedelta(milliseconds = float(self.raw_data[1]))
-			self.V					= self.raw_data[2]
-			self.Vcos				= self.raw_data[3]
-			self.Vsin				= self.raw_data[4]
-			self.Vref				= False
-			self.Comment 			= self.raw_data[5]
-			self.TempPM 			= self.raw_data[6]
-			self.TempOptical 		= self.raw_data[7]
-			self.TempAmbiant 		= self.raw_data[8]
-		elif self.nb_data_per_rot == 13:
-			self.time				= dt.timedelta(milliseconds = float(self.raw_data[1]))
-			self.V					= self.raw_data[3]
-			self.Vcos				= self.raw_data[4]
-			self.Vsin				= self.raw_data[5]
-			self.Vref				= False
-			self.IDTemperature		= self.raw_data[6]
-			self.TempPM 			= self.raw_data[7]
-			self.TempOptical 		= self.raw_data[8]
-			self.TempAmbiant 		= self.raw_data[9]
-			self.IDLiveComment 		= self.raw_data[10]
-			self.Comment 			= self.raw_data[11]
-			self.live_Commentscol 	= self.raw_data[12]
-		elif self.nb_data_per_rot == 6:
-			self.time				= dt.timedelta(milliseconds = float(self.raw_data[2]))
-			self.V					= self.raw_data[3]
-			self.Vcos				= self.raw_data[4]
-			self.Vsin				= self.raw_data[5]
-			self.Vref				= False
-			self.IDTemperature		= False
-			self.TempPM 			= False
-			self.TempOptical 		= False
-			self.TempAmbiant 		= False
-			self.IDLiveComment 		= False
-			self.Comment 			= False
-			self.live_Commentscol 	= False
-		elif self.nb_data_per_rot == 4:
-			self.time				= dt.timedelta(milliseconds = float(self.raw_data[0]))
-			self.V					= self.raw_data[1]
-			self.Vcos				= self.raw_data[2]
-			self.Vsin				= self.raw_data[3]
-			self.Vref				= False
-			self.IDTemperature		= False
-			self.TempPM 			= False
-			self.TempOptical 		= False
-			self.TempAmbiant 		= False
-			self.IDLiveComment 		= False
-			self.Comment 			= False
-			self.live_Commentscol 	= False
-		# self.Vcos	= self.raw_data[4]
-		# self.Vsin	= self.raw_data[5]
+# 		self.nb_data_per_rot = len(self.raw_data)
+# 		# self.time				= time.timedelta(milliseconds = float(self.raw_data[1]))
+# 		# print(self.nb_data_per_rot)
+# 		# print(self.raw_data)
+# 		if self.nb_data_per_rot == 10:
+# 			self.time				= dt.timedelta(milliseconds = float(self.raw_data[1]))
+# 			self.V					= self.raw_data[2]
+# 			self.Vcos				= self.raw_data[3]
+# 			self.Vsin				= self.raw_data[4]
+# 			self.Vref				= self.raw_data[5]
+# 			self.Comment 			= self.raw_data[6]
+# 			self.TempPM 			= self.raw_data[7]
+# 			self.TempOptical 		= self.raw_data[8]
+# 			self.TempAmbiant 		= self.raw_data[9]
+# 		elif self.nb_data_per_rot == 9:
+# 			self.time				= dt.timedelta(milliseconds = float(self.raw_data[1]))
+# 			self.V					= self.raw_data[2]
+# 			self.Vcos				= self.raw_data[3]
+# 			self.Vsin				= self.raw_data[4]
+# 			self.Vref				= False
+# 			self.Comment 			= self.raw_data[5]
+# 			self.TempPM 			= self.raw_data[6]
+# 			self.TempOptical 		= self.raw_data[7]
+# 			self.TempAmbiant 		= self.raw_data[8]
+# 		elif self.nb_data_per_rot == 13:
+# 			self.time				= dt.timedelta(milliseconds = float(self.raw_data[1]))
+# 			self.V					= self.raw_data[3]
+# 			self.Vcos				= self.raw_data[4]
+# 			self.Vsin				= self.raw_data[5]
+# 			self.Vref				= False
+# 			self.IDTemperature		= self.raw_data[6]
+# 			self.TempPM 			= self.raw_data[7]
+# 			self.TempOptical 		= self.raw_data[8]
+# 			self.TempAmbiant 		= self.raw_data[9]
+# 			self.IDLiveComment 		= self.raw_data[10]
+# 			self.Comment 			= self.raw_data[11]
+# 			self.live_Commentscol 	= self.raw_data[12]
+# 		elif self.nb_data_per_rot == 6:
+# 			self.time				= dt.timedelta(milliseconds = float(self.raw_data[2]))
+# 			self.V					= self.raw_data[3]
+# 			self.Vcos				= self.raw_data[4]
+# 			self.Vsin				= self.raw_data[5]
+# 			self.Vref				= False
+# 			self.IDTemperature		= False
+# 			self.TempPM 			= False
+# 			self.TempOptical 		= False
+# 			self.TempAmbiant 		= False
+# 			self.IDLiveComment 		= False
+# 			self.Comment 			= False
+# 			self.live_Commentscol 	= False
+# 		elif self.nb_data_per_rot == 4:
+# 			self.time				= dt.timedelta(milliseconds = float(self.raw_data[0]))
+# 			self.V					= self.raw_data[1]
+# 			self.Vcos				= self.raw_data[2]
+# 			self.Vsin				= self.raw_data[3]
+# 			self.Vref				= False
+# 			self.IDTemperature		= False
+# 			self.TempPM 			= False
+# 			self.TempOptical 		= False
+# 			self.TempAmbiant 		= False
+# 			self.IDLiveComment 		= False
+# 			self.Comment 			= False
+# 			self.live_Commentscol 	= False
+# 		# self.Vcos	= self.raw_data[4]
+# 		# self.Vsin	= self.raw_data[5]
 
-		# self.tilt 	= self.config["CM_Tilt"]
+# 		# self.tilt 	= self.config["CM_Tilt"]
 
-		### Get I0, DoLP, AoLP
-		self.V = np.absolute(self.V)
-		self.I0, self.DoLP,	self.AoLP = self.GetLightParameters(self.V, self.Vcos, self.Vsin)
-		self.Iref = 2 * self.Vref
+# 		### Get I0, DoLP, AoLP
+# 		self.V = np.absolute(self.V)
+# 		self.I0, self.DoLP,	self.AoLP = self.GetLightParameters(self.V, self.Vcos, self.Vsin)
+# 		self.Iref = 2 * self.Vref
 		
-		### Check if 'good'
-		self.is_good = self.IsGood()
+# 		### Check if 'good'
+# 		self.is_good = self.IsGood()
 
 class SPPRotation(Rotation):
 	def __init__(self, rotation_data, fake = False, instrument = "spp"):
