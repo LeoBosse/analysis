@@ -441,8 +441,9 @@ class EqCurrent:
 		print("Saving currents in", self.path + "/" + self.saving_name + ".txt")
 		self.data.to_csv(self.path + "/" + self.saving_name + '_DONE.txt', sep=",", index=False)
 
+
 class MagData:
-	def __init__(self, bottle):
+	def __init__(self, location, start, end):
 
 		print("Creating Magnetometer Data Object")
 
@@ -450,31 +451,42 @@ class MagData:
 		# self.data_path = "/home/bossel/These/Analysis/data/magnetometer/"
 
 		self.file = self.data_path
-		if bottle.location.lower() in ["tromso", 'lacsud', "skibotn", "skibotnsud", "skibotnnord", "kilpisjarvi"]:
+		if location.lower() in ["tromso", 'lacsud', "skibotn", "skibotnsud", "skibotnnord", "kilpisjarvi"]:
 			self.file += "Tromso"
-		elif bottle.location.lower() in ["nyalesund", "corbel"]:
+		elif location.lower() in ["nyalesund", "corbel"]:
 			self.file += "Nyalesund"
 		self.file += "/"
 
 
 		self.additional_files = []
-		if bottle.DateTime("start", format="UT").day != bottle.DateTime("end", format="UT").day:
+		if start.day != end.day:
 			one_day = dt.timedelta(days=1)
-			start_date = bottle.DateTime("start", format="UT")
-			end_date = bottle.DateTime("end", format="UT")
+			start_date = start
+			end_date = end
 			while start_date.day != end_date.day:
 				start_date += one_day
 				self.additional_files.append(self.file + start_date.strftime("%Y%m%d"))
 
 
-		self.file += bottle.DateTime("start", format="UT").strftime("%Y%m%d")
+		self.file += start.strftime("%Y%m%d")
 		self.exist = True
 		try:
 			self.GetDataFromFile()
+			self.StripTime(start, end)
 			print("INFO: Magnetic data available in file:", self.file)
 		except:
 			self.exist = False
 			print(f"WARNING: No magnetometer data found for this observation ({self.file})")
+
+
+	@classmethod
+	def FromBottle(cls, bottle):
+		return MagData(bottle.location, bottle.DateTime("start", format="UT"), bottle.DateTime("end", format="UT"))
+
+	@classmethod
+	def FromSpectroSerie(cls, serie):
+		return MagData('skibotn', serie.times[0], serie.times[-1])
+
 
 	def GetDataFromFile(self):
 		self.array_type = [('date','<U10'),('time','<U8'),('Dec',float),('Horiz',float),('Vert',float),('Incl',float),('Total',float)]
@@ -562,6 +574,22 @@ class MagData:
 		return [(t - norm) / divisor for t in self.times_sec]
 
 
+	def MakeFigure(self):
+		fig, axs = plt.subplots(3, 1, sharex=True)
+		axs = np.append(axs, [axs[0].twinx(), axs[1].twinx()])
+		axs[0].plot(self.datetime, self.Dec, 'r', label='Declination')
+		axs[3].plot(self.datetime, self.Incl, 'b', label='Inclination')
+		axs[1].plot(self.datetime, self.Horiz, 'r', label='Horizontal')
+		axs[4].plot(self.datetime, self.Vert, 'b', label='Vertical')
+		axs[2].plot(self.datetime, self.Total, 'k', label = 'Total')
+		
+		lines, labels = np.empty_like(axs), np.empty_like(axs)
+		for i, a in enumerate(axs):
+			lines[i], labels[i] = a.get_legend_handles_labels()
+		
+		axs[0].legend(lines[0] + lines[3], labels[0] + labels[3], loc=0)
+		axs[1].legend(lines[1] + lines[4], labels[1] + labels[4], loc=0)
+		axs[2].legend(loc=0)
 
 	def __getattr__(self, name):
 		if name in ["Dec", "Horiz", "Vert", "Total", 'Incl']:
