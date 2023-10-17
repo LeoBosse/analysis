@@ -170,7 +170,7 @@ if not from_txt:
 		b.SaveHDF5()
 
 # if True :#mag_data_file:
-# 	mag_data = MagData(bottles[0])
+# 	mag_data = MagData.FromBottle(bottles[0])
 # 	if not mag_data.exist:
 # 		mag_data = False
 # else:
