@@ -14,6 +14,7 @@ rc('text', usetex=False)
 from scipy import signal
 import sys
 import os
+import wget
 from subprocess import call
 import datetime as dt
 
@@ -443,9 +444,11 @@ class EqCurrent:
 
 
 class MagData:
-	def __init__(self, location, start, end):
+	def __init__(self, location, start, end, force_download = True):
 
 		print("Creating Magnetometer Data Object")
+		self.force_download = force_download
+		self.location, self.start, self.end = location, start, end
 
 		self.data_path = global_configuration.magnetometer_data_path
 		# self.data_path = "/home/bossel/These/Analysis/data/magnetometer/"
@@ -466,13 +469,18 @@ class MagData:
 			while start_date.day != end_date.day:
 				start_date += one_day
 				self.additional_files.append(self.file + start_date.strftime("%Y%m%d"))
+				
 
 
 		self.file += start.strftime("%Y%m%d")
 		self.exist = True
+
+		if self.force_download:
+			self.DownloadFiles()
+
 		try:
 			self.GetDataFromFile()
-			self.StripTime(start, end)
+			self.StripTime()
 			print("INFO: Magnetic data available in file:", self.file)
 		except:
 			self.exist = False
@@ -480,12 +488,41 @@ class MagData:
 
 
 	@classmethod
-	def FromBottle(cls, bottle):
+	def FromBottle(cls, bottle, force_download = True):
 		return MagData(bottle.location, bottle.DateTime("start", format="UT"), bottle.DateTime("end", format="UT"))
 
 	@classmethod
-	def FromSpectroSerie(cls, serie):
-		return MagData('skibotn', serie.times[0], serie.times[-1])
+	def FromSpectroSerie(cls, serie, force_download = True):
+		return MagData('skibotn', serie.times[0], serie.times[-1], force_download = force_download)
+
+
+	def DownloadFiles(self):
+		for i, f in enumerate([self.file] + self.additional_files):
+			if not self.CheckDataFileExists(f):
+				self.DownloadDataFile(f)
+
+	def CheckDataFileExists(self, filename):
+		if os.path.isfile(filename):
+			return True
+		else:
+			return False
+	
+	def DownloadDataFile(self, save_path):
+		if 'Tromso' in save_path:
+			site = 'tro2a'
+		elif 'Nyalesund' in save_path:
+			site = 'nal1a'
+		date = dt.datetime.strptime(save_path.split('/')[-1], "%Y%m%d")
+		year  = date.year
+		month = date.month
+		day   = date.day
+		password = "ResUseNoCom"
+		res = "10sec"
+
+		url = f"http://flux.phys.uit.no/cgi-bin/mkascii.cgi?site={site}&year={year}&month={month}&day={day}&res={res}&pwd={password}&format=html&comps=DHZ&getdata=+Get+Data+"
+		
+		print(f"Downloading magnetometer data files from {url} in {self.data_path}.")
+		wget.download(url, save_path)
 
 
 	def GetDataFromFile(self):
@@ -544,14 +581,14 @@ class MagData:
 
 		return times, deriv
 
-	def StripTime(self, start, end):
+	def StripTime(self):
 		# start = usefull_times[0]
 		# end = usefull_times[-1]
 		# print("DEBUG MAGDATA TIME", start, end)
 		# print("DEBUG MAGDATA TIME", self.datetime[0], self.datetime[-1])
 		# print(len(self.data))
 
-		self.data = np.array([d for i, d in enumerate(self.data) if start <= self.datetime[i] <= end], dtype = self.array_type)
+		self.data = np.array([d for i, d in enumerate(self.data) if self.start <= self.datetime[i] <= self.end], dtype = self.array_type)
 
 		self.datetime = ([dt.datetime.strptime(d + " " + t, "%d/%m/%Y %H:%M:%S") for d, t in zip(self.data["date"], self.data["time"])])
 
