@@ -38,7 +38,7 @@ file_name = args.datafile #'data_G1_30sec_100um_Tue Oct 10 2023_04.48.32_76.fits
 dark_file_30 = Serie.path + 'darks/240x30sec_G1_FVB_Sat Oct 7 2023_15.56.51_37.fits'
 dark_file_60 = Serie.path + 'darks/90x1min_G1_FVB_Sat Oct 7 2023_13.32.24_36.fits'
 
-serie = Serie.FromFitsFile(file_name)
+serie = Serie.FromFitsFile(Serie.path + file_name)
 serie.MaskSunMoon(sun_limit = -12)
 
 serie.SetDark(dark_file_30, dark_file_60)
@@ -54,8 +54,6 @@ serie.SubtractBaseLines()
 # print(np.where(serie.cosmics[159]))
 
 # serie.SetGradient()
-
-
 
 # serie.MakeSpectrumFigure(serie.nb_spec//2)
 
@@ -75,7 +73,6 @@ serie.SubtractBaseLines()
 #         n += 1
 
 
-
 ### Load the magnetometer data
 mag_data = MagData.FromSpectroSerie(serie)
 if mag_data.exist:
@@ -90,8 +87,8 @@ serie.MakeAnimation()
 
 ### Add auroral lines
 serie.AddLine(557.7, 1.5, color = 'g')
-serie.AddLine(629.5, 2, color = 'r', delay = 0)
-serie.AddLine(424, 5, color = 'b')
+serie.AddLine(629.5, 2,   color = 'r', delay = 0)
+serie.AddLine(424, 5,     color = 'b')
 
 for l in serie.lines:
     l.GetIntegral()
@@ -108,7 +105,8 @@ ax = fig.add_subplot(111)
 for l in serie.lines[1:]:
     ratio = l.GetRatio(serie.lines[0])
     ax.plot(l.times[:len(ratio)] - l.delay, ratio, l.color)
-    ax.twinx().plot(mag_data.datetime, mag_data.Vert, '--k')
+    if mag_data.exist:
+        ax.twinx().plot(mag_data.datetime, mag_data.Horiz, '--k')
 
 plt.legend()
 plt.show()
