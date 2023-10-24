@@ -405,11 +405,17 @@ class Taster:
 			self.PlotRSModel(bottle)
 
 		# self.PlotPLIPData(self.ax1.twinx(), self.ax2.twinx(), self.ax3, (11, 7))
-		self.PlotPLIPData(bottle, self.ax1.twinx(), self.ax2, self.ax3, (9, 6))
-		# for l in range(3, 8):
-		# 	for c in range(3, 8):
+		# self.PlotPLIPData(self.ax1.twinx(), self.ax2, self.ax3, (9, 4))
+		
+		plip_I_ax = self.ax1.twinx()
+		plip_D_ax = self.ax2
+		# for l in range(6, 10):
+		# 	for c in range(4, 7):
 		# 		pos = (l, c)
-		# 		self.PlotPLIPData(self.ax1.twinx(), self.ax2.twinx(), self.ax3, pos)
+		# 		self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, label = f'{pos}')
+		for pos in [(6,4),(9,5),(6,5),(7,5)]:
+			self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, label = f'{pos}')
+		plt.legend()
 
 		# self.ax4.plot(self.x_axis_list, bottle.all_TempPM, "k.", linestyle = 'none', markersize=self.mixer.marker_size, label="PM")
 		# self.ax4.plot(self.x_axis_list, bottle.all_TempOptical, "r.", linestyle = 'none', markersize=self.mixer.marker_size, label="Optical")
@@ -470,16 +476,17 @@ class Taster:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.png', bbox_inches='tight')
 			# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
 
-	def PlotPLIPData(self, bottle, axI, axD, axA, pos=None):
+	def PlotPLIPData(self, axI, axD, axA, pos=None, **kwargs):
 		if pos is None:
 			I, D, A = self.mixer.plip_data.I_laser, self.mixer.plip_data.D_laser, self.mixer.plip_data.A_laser
 		else:
 			l, c = pos
 			I, D, A = self.mixer.plip_data.I[:, l, c], self.mixer.plip_data.D[:, l, c], self.mixer.plip_data.A[:, l, c]
 
-		axI.plot(self.mixer.plip_data.times, I, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, zorder=1)
-		axD.plot(self.mixer.plip_data.times, D, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, zorder=1)
-		axA.plot(self.mixer.plip_data.times, A * RtoD, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, zorder=1)
+		axI.plot(self.mixer.plip_data.times, I, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, zorder=1, **kwargs)
+		axD.plot(self.mixer.plip_data.times, D, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, zorder=1, **kwargs)
+		print(axA)
+		axA.plot(self.mixer.plip_data.times, A * RtoD, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, zorder=1, **kwargs)
 		
 
 

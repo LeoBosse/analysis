@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal
 import scipy as sci
+from scipy.interpolate import CubicSpline
 import sys as sys
 import os
 from copy import deepcopy
@@ -111,14 +112,18 @@ class Bottle:
         # Loading the data from the files, then creating a list of Rotation objects depending on the instrument name specified. Can be 'spp', 'spp2014', 'fake_spp', 'ptcu', 'fake_ptcu'
         if not self.from_txt:
             self.LoadData()
+            
             self.SetJumps()
+            
             if self.valid:
                 self.CleanRotations()
+            
 
             # Now that we have all our rotations, creating lists of usefull data for easier smoothing
                 self.CreateLists()
                 self.GetSmoothLists()
                 self.TestResample()
+                print(self.data['DoLP'])
         else:
             self.LoadFromTxt()
 
@@ -1169,9 +1174,12 @@ class Bottle:
         N_rot = len(self.data['I0'])
         filter_angles = np.linspace(0, N_rot * 2*np.pi, N_rot * N_pts) #List of angles (rad) for the polarising filter between 0 and 2π.
 
-        resamp_signal, resampled_t = sci.signal.resample(np.array(self.data['I0'].copy()), N_rot * N_pts, t = np.array(self.data['Times'].copy().dt.total_seconds()))
-        resamp_signal /= 2.
+        print("Resampling signal")
 
+        resamp_signal = CubicSpline(np.array(self.data['Times'].copy().dt.total_seconds()), np.array(self.data['I0'].copy()))
+        resampled_t = np.linspace(self.data['Times'].iloc[0].total_seconds(), self.data['Times'].iloc[-1].total_seconds(), N_pts*N_rot, endpoint=True)
+        resamp_signal = resamp_signal(resampled_t) / 2.
+        
 
         def GetPola(V, Vcos, Vsin):
             """Given V, Vcos, Vsin, returns the initial intensity, DoLP and AoLP. This method is shared for spp and ptcu. It is also a static method, that can be called outside of the object. This way it can be used everywhere, each time you need I0, DoLP, AoLP to decrease the chances of making a mistake."""
@@ -1202,20 +1210,18 @@ class Bottle:
             Vcos = np.zeros(N_rot)
             Vsin = np.zeros(N_rot)
             for ir in range(N_rot):
-                start_rot = ir * N_pts
-                end_rot = start_rot + N_pts
+                start_rot  = ir * N_pts
+                end_rot    = start_rot + N_pts
                 tmp_signal = fake_signal[start_rot:end_rot]
 
                 V[ir] = sum(tmp_signal) / N_pts
                 Vcos[ir] = sum(tmp_signal * np.cos(2 * filter_angles[start_rot:end_rot])) / N_pts
                 Vsin[ir] = sum(tmp_signal * np.sin(2 * filter_angles[start_rot:end_rot])) / N_pts
-
             return V, Vcos, Vsin
 
 
         V, Vcos, Vsin = GetStokesTime(resamp_signal)
         I_list, DoLP_list, AoLP_list = GetPola(V, Vcos, Vsin)
-
 
         self.data['Vcos'] -= Vcos
         self.data['Vsin'] -= Vsin
@@ -1238,17 +1244,18 @@ class Bottle:
         self.data['smooth_AoLP'] = SetAngleBounds(
             self.data['smooth_AoLP'], -np.pi / 2, np.pi / 2)
 
-
-        # axs[0].plot(np.linspace(0, len(self.data['I0']), len(resamp_signal)), resamp_signal*2, ".")
+        # fig, axs = plt.subplots(3, sharex = True)
+        # axs[0].plot(resampled_t, resamp_signal*2, ".")
+        # axs[0].plot(self.data['Times'].dt.total_seconds(), self.data['I0'])
         # axs[0].plot(self.data['I0'], ".")
         # axs[0].plot(I_list, ".")
-        # # axs[0].plot(dI)
+        # axs[0].plot(dI)
         # axs[1].plot(self.data['DoLP'], ".")
         # axs[1].plot(DoLP_list, ".")
-        # # axs[1].plot(dD, ".")
+        # axs[1].plot(dD, ".")
         # axs[2].plot(self.data['AoLP']*RtoD, ".")
         # axs[2].plot(AoLP_list*RtoD, ".")
-        # # axs[2].plot(dA*RtoD)
+        # axs[2].plot(dA*RtoD)
 
 
 
@@ -1271,6 +1278,7 @@ class Bottle:
                             | (self.data['DoLP'] < self.DoLPmin)].index
 
         self.nb_bad_rot = len(indexes)
+        print(indexes)
         self.data.drop(indexes, inplace=True)
 
         if len(self.data) == 0:

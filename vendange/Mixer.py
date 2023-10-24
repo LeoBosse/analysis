@@ -159,9 +159,8 @@ class Mixer:
 
 	def LoadPLIPData(self, bottle):
 		# self.plip_data = PLIP(bottle, "data_NOT_ROT.h5")
-		self.plip_data = PLIP(bottle, "data_hv+-_FLAT_BEFORE_GLOBAL.h5")
+		self.plip_data = PLIP(bottle, "data_vh-+.h5")
 		
-
 
 	def LoadMagData(self, bottle):
 		self.mag_data = MagData.FromBottle(bottle)
