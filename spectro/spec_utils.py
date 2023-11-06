@@ -35,6 +35,7 @@ class Serie:
     Class containing a spectra kinetic serie. Used to load fits files, clean the data, plot them or isolate emission lines.
     Each spectra is described by a Spectrum object, defined below.
     """
+    
     path = data_path
 
     def __init__(self, header, data, **kwargs):
@@ -61,7 +62,10 @@ class Serie:
         self.start_datetime = dt.datetime.strptime(self.header['DATE'], '%Y-%m-%dT%H:%M:%S')
         self.times = self.start_datetime + np.arange(0, self.nb_spec) * self.cycle_time
         self.timestamps = np.array([t.timestamp() for t in self.times])
-
+        
+        self.start = self.times[0]
+        self.end = self.times[-1]
+        
         self.lines = []
         self.color = 'k'
         self.delay = dt.timedelta(seconds = 0)
@@ -116,6 +120,7 @@ class Serie:
             root.destroy()    
 
         header, raw_data = Serie.LoadFitsFile(file_name)
+
         return Serie(header, raw_data)
 
 
@@ -202,7 +207,7 @@ class Serie:
         if sun_limit is not None: # If an upper limit on Sun elevation is given
             sun = get_sun(astro_times).transform_to(frame_night) #Get astropy Sun object
             sun_mask = np.where(sun.alt < sun_limit*u.deg) #Get indices of the Spectra when the sun is below the upper elevation limit
-            self.ApplyTimeMask(sun_mask) #REmove all spectra where the sun is too high in the sky
+            self.ApplyTimeMask(sun_mask) #Remove all spectra where the sun is too high in the sky
 
         if moon_limit is not None:
             moon = get_body("moon", astro_times).transform_to(frame_night)
@@ -217,8 +222,11 @@ class Serie:
         # print(mask)
         self.spectra = np.array(self.spectra)[mask]
         self.times = self.times[mask]
-        self.timestamps = self.timestamps[mask]
+        
+        self.start = self.times[0]
+        self.end = self.times[-1]
 
+        self.timestamps = self.timestamps[mask]
         self.nb_spec = len(self.spectra)
         self.shape = self.nb_spec, self.nb_wavelengths
 
@@ -355,6 +363,21 @@ class Serie:
         return np.array([s.data for s in spectra])
 
 
+    def GetMax(self):
+        data = self.GetData()
+        index = np.unravel_index(np.argmax(data), data.shape)
+        print(index)
+        return index, data[index]
+    
+    def GetPercentile(self, P):
+        return np.percentile(self.GetData(), P)
+    
+    def GetMin(self):
+        index = np.argmin(self.GetData())
+        return index, self.GetData()[index]
+
+    def GetData(self):
+        return np.array([s.data for s in self.spectra])
 
     def PlotSpectrum(self, ax, spec_id, spectra=None):
         """
@@ -382,16 +405,18 @@ class Serie:
         if spectra is None:
             spectra = self.spectra
 
-        fig, axs = plt.subplots(2, 1, sharex=True)
-        self.PlotSpectrum(axs[0], spec_id, spectra=spectra)
-        # self.PlotSpectrum(axs[0], spec_id+1)
-        # self.PlotSpectrum(axs[0], spec_id-1)
+        spectra[spec_id].MakeFigure()
 
-        # axs[1].plot(self.wavelengths, np.abs(self.gradient[1][spec_id]))
-        axs[1].plot(self.wavelengths, np.abs(self.gradient[0][spec_id]), 'r')
+        # fig, axs = plt.subplots(2, 1, sharex=True)
+        # self.PlotSpectrum(axs[0], spec_id, spectra=spectra)
+        # # self.PlotSpectrum(axs[0], spec_id+1)
+        # # self.PlotSpectrum(axs[0], spec_id-1)
 
-        axs[1].plot(self.wavelengths, np.abs(self.gradient[0][spec_id-1]), 'k')
-        axs[1].plot(self.wavelengths, np.abs(self.gradient[0][spec_id+1]), 'g')
+        # # axs[1].plot(self.wavelengths, np.abs(self.gradient[1][spec_id]))
+        # axs[1].plot(self.wavelengths, np.abs(self.gradient[0][spec_id]), 'r')
+
+        # axs[1].plot(self.wavelengths, np.abs(self.gradient[0][spec_id-1]), 'k')
+        # axs[1].plot(self.wavelengths, np.abs(self.gradient[0][spec_id+1]), 'g')
 
     def PlotImage(self, spectra=None, wavelengths=None, timestamps=None):
         """
@@ -433,10 +458,14 @@ class Serie:
         ax = fig.add_subplot(1, 1, 1)
         line, = self.spectra[0].Plot(ax, label = '0 ' + self.times[0].strftime('%Y-%m-%d %H:%M:%S'))
         L=plt.legend(loc=1) #Define legend objects
+        ax.set_ylim(top = self.GetPercentile(99.9) * 1.5)
+
 
         def animate(i): 
             line.set_data(self.wavelengths, self.spectra[i].data)
             L.get_texts()[0].set_text(str(i) + ' ' + self.times[i].strftime('%Y-%m-%d %H:%M:%S')) #Update label each at frame
+            
+
             return line, L
         
         self.ani = animation.FuncAnimation(fig, animate, frames=self.nb_spec,
@@ -486,7 +515,7 @@ class Spectrum:
             file_name = filedialog.askopenfilename(initialdir = Serie.path, title="Select spectrograph single spectrum data file (.fits).", filetypes=[("fits files", "*.fits")])
             root.destroy()    
 
-        header, raw_data = Spectrum.LoadFitsFile(Serie.path + file_name)
+        header, raw_data = Spectrum.LoadFitsFile(Spectrum.path + file_name)
         return Spectrum(header, raw_data)
 
     @classmethod

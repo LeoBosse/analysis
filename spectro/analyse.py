@@ -20,6 +20,7 @@ import argparse
 
 from spec_utils import *
 
+
 from MagData import *
 
 
@@ -39,7 +40,9 @@ dark_file_30 = Serie.path + 'darks/240x30sec_G1_FVB_Sat Oct 7 2023_15.56.51_37.f
 dark_file_60 = Serie.path + 'darks/90x1min_G1_FVB_Sat Oct 7 2023_13.32.24_36.fits'
 
 serie = Serie.FromFitsFile(Serie.path + file_name)
-serie.MaskSunMoon(sun_limit = -12)
+# serie.MaskSunMoon(sun_limit = -12)
+
+print(serie)
 
 serie.SetDark(dark_file_30, dark_file_60)
 serie.SubtractDarks()
@@ -58,7 +61,8 @@ serie.SubtractBaseLines()
 # serie.MakeSpectrumFigure(serie.nb_spec//2)
 
 # serie.RemoveCosmicRays('dd')
-# serie.MakeSpectrumFigure(159)
+serie.MakeSpectrumFigure(143)
+print(serie.GetMax())
 
 # data_mp= serie.RemoveCosmicRays('mp')
 # data_med = serie.RemoveCosmicRays('med')
@@ -87,13 +91,13 @@ serie.MakeAnimation()
 
 ### Add auroral lines
 serie.AddLine(557.7, 1.5, color = 'g')
-serie.AddLine(629.5, 2,   color = 'r', delay = 0)
-serie.AddLine(424, 5,     color = 'b')
+serie.AddLine(629.5, 2,   color = 'r', delay = 75)
+serie.AddLine(424,   5,   color = 'b', delay = 77)
 
 for l in serie.lines:
     l.GetIntegral()
-    l.PlotImage()
-    l.Plot3D()
+    # l.PlotImage()
+    # l.Plot3D()
 
 fig = plt.figure()
 for l in serie.lines:
