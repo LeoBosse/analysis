@@ -5,6 +5,7 @@ import numpy as np
 from scipy.interpolate import interpn
 from scipy.signal import fftconvolve
 import matplotlib as mpl
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import sys
@@ -17,6 +18,7 @@ import astropy.io.fits as fits
 import astropy.units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord, get_sun, get_body
 from astropy.time import Time
+
 from pybaselines import Baseline, utils
 from scipy.ndimage import uniform_filter1d
 
@@ -171,10 +173,10 @@ class Serie:
         for s in self.spectra:
             s.Subtract(s.baseline)
 
-    def SetBaseLines(self):
+    def SetBaseLines(self, algo = 'modpoly'):
         """Set the baseline of each spectrum of the serie."""
         for s in self.spectra:
-            s.SetBaseLine()
+            s.SetBaseLine(algo=algo)
 
 
     def GetWavelengthList(self):
@@ -328,6 +330,15 @@ class Serie:
         self.integral = np.array([s.GetIntegral() for s in self.spectra])
         return self.integral
 
+
+    def CombineSpectra(self, start=None, end=None, fct = np.sum):
+        if start is None:
+            start = 0
+        if end is None:
+            end = len(self.spectra)
+            
+        return fct([s.data for s in self.spectra[start:end]], axis = 0)
+        
     
     def GetRatio(self, div_line):
         """
@@ -418,7 +429,7 @@ class Serie:
         # axs[1].plot(self.wavelengths, np.abs(self.gradient[0][spec_id-1]), 'k')
         # axs[1].plot(self.wavelengths, np.abs(self.gradient[0][spec_id+1]), 'g')
 
-    def PlotImage(self, spectra=None, wavelengths=None, timestamps=None):
+    def PlotImage(self, spectra=None, wavelengths=None, timestamps=None, times=None):
         """
         Makes a plt.figure with the serie as a image.
         """
@@ -426,12 +437,22 @@ class Serie:
             spectra = self.spectra 
             wavelengths = self.wavelengths
             timestamps = self.timestamps
+            times = self.times
         
         fig = plt.figure()
+        ax = fig.add_subplot(111)
         # W, T = np.meshgrid()
-        extent = [0, (timestamps[-1] - timestamps[0])/3600, wavelengths[-1], wavelengths[0]]
+        # extent = [0, (timestamps[-1] - timestamps[0])/3600, wavelengths[-1], wavelengths[0]]
+        extent = [mdates.date2num(times[0]), mdates.date2num(times[-1]), wavelengths[-1], wavelengths[0]]
         data = self.GetAllSpectraData(spectra)
-        plt.imshow(data.T, extent = extent, interpolation='none', aspect="auto")
+        im = ax.imshow(data.T, extent = extent, interpolation='none', aspect="auto", norm=mpl.colors.LogNorm())
+        ax.xaxis_date()
+        date_format = mdates.DateFormatter('%H:%M:%S')
+        ax.xaxis.set_major_formatter(date_format)
+        fig.autofmt_xdate()
+        
+        cbar = fig.colorbar(im)
+
 
 
     def Plot3D(self, spectra=None, wavelengths=None, timestamps=None):
@@ -450,7 +471,7 @@ class Serie:
         ax.plot_surface(T, W, data)
 
 
-    def MakeAnimation(self):
+    def MakeAnimation(self, frame_step=1):
         """
         Makes a plt.figure with an animation of the spectra over time.
         """
@@ -458,18 +479,18 @@ class Serie:
         ax = fig.add_subplot(1, 1, 1)
         line, = self.spectra[0].Plot(ax, label = '0 ' + self.times[0].strftime('%Y-%m-%d %H:%M:%S'))
         L=plt.legend(loc=1) #Define legend objects
-        ax.set_ylim(top = self.GetPercentile(99.9) * 1.5)
+        # ax.set_ylim(top = self.GetPercentile(99.9) * 1.5)
+        ax.set_ylim(top = 1000)
 
 
         def animate(i): 
+            i *= frame_step
             line.set_data(self.wavelengths, self.spectra[i].data)
             L.get_texts()[0].set_text(str(i) + ' ' + self.times[i].strftime('%Y-%m-%d %H:%M:%S')) #Update label each at frame
-            
-
             return line, L
         
-        self.ani = animation.FuncAnimation(fig, animate, frames=self.nb_spec,
-                                    interval=100, blit=True, repeat=False)
+        self.ani = animation.FuncAnimation(fig, animate, frames=self.nb_spec // frame_step,
+                                    interval=30, blit=True, repeat=False)
 
 
 class Spectrum:
@@ -587,7 +608,7 @@ class Spectrum:
 
         match algo:
             case 'modpoly':
-                self.baseline = baseline_fitter.modpoly(y, poly_order=3)[0]
+                self.baseline = baseline_fitter.modpoly(y, poly_order=5)[0]
             case 'asls':
                 self.baseline = baseline_fitter.asls(y, lam=1e7, p=0.02)[0]
             case 'mor':
