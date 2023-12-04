@@ -217,10 +217,11 @@ class Taster:
 
 				self.x_time_ticks_label = [x.strftime("%H:%M:%S") for x in self.x_time_ticks_label]
 
-		if self.mixer.xaxis_azimut:
-			self.error_step = len(self.x_axis_list) // self.mixer.xaxis_azimut + 1
+		if self.mixer.max_error_bars:
+			self.error_step = len(self.x_axis_list) // self.mixer.max_error_bars + 1
 		else:
 			self.error_step = 1
+		print('self.error_step', self.error_step)
 
 	def MakeFigure(self):
 		self.f1, (self.ax1, self.ax2, self.ax3) = plt.subplots(3, sharex=True, figsize=(16, 8))
@@ -404,23 +405,27 @@ class Taster:
 		if self.mixer.show_RS_model:
 			self.PlotRSModel(bottle)
 
-		# self.PlotPLIPData(self.ax1.twinx(), self.ax2.twinx(), self.ax3, (11, 7))
-		# self.PlotPLIPData(self.ax1.twinx(), self.ax2, self.ax3, (9, 4))
-		
-		plip_I_ax = self.ax1.twinx()
-		plip_D_ax = self.ax2
-		# for l in range(6, 10):
-		# 	for c in range(4, 7):
-		# 		pos = (l, c)
-		# 		self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, label = f'{pos}')
-		for pos in [(6,4),(9,5),(6,5),(7,5)]:
-			self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, label = f'{pos}')
-		plt.legend()
 
-		# self.ax4.plot(self.x_axis_list, bottle.all_TempPM, "k.", linestyle = 'none', markersize=self.mixer.marker_size, label="PM")
-		# self.ax4.plot(self.x_axis_list, bottle.all_TempOptical, "r.", linestyle = 'none', markersize=self.mixer.marker_size, label="Optical")
-		# self.ax4.plot(self.x_axis_list, bottle.all_TempAmbiant, "b.", linestyle = 'none', markersize=self.mixer.marker_size, label="Ambiant")
-		# self.ax2.plot(self.x_axis_list,[DoLP_average] * nb_rot, "b", label="Avg: " + str(DoLP_average))
+		if self.mixer.show_plip:
+			# self.PlotPLIPData(self.ax1.twinx(), self.ax2.twinx(), self.ax3, (11, 7))
+			# self.PlotPLIPData(self.ax1.twinx(), self.ax2, self.ax3, (9, 4))
+			
+			plip_I_ax = self.ax1
+			plip_D_ax = self.ax2.twinx()
+			# for l in range(6, 11):
+			# 	for c in range(4, 7):
+			# 		pos = (l, c)
+			# 		self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle, label = f'{pos}')
+			# for pos in [(8,5),(9,5),(6,5),(7,5)]:
+			# 	self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle, label = f'{pos}')
+			
+			pos = (9,5)
+			self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle)
+			# plt.legend()
+			# self.ax4.plot(self.x_axis_list, bottle.all_TempPM, "k.", linestyle = 'none', markersize=self.mixer.marker_size, label="PM")
+			# self.ax4.plot(self.x_axis_list, bottle.all_TempOptical, "r.", linestyle = 'none', markersize=self.mixer.marker_size, label="Optical")
+			# self.ax4.plot(self.x_axis_list, bottle.all_TempAmbiant, "b.", linestyle = 'none', markersize=self.mixer.marker_size, label="Ambiant")
+			# self.ax2.plot(self.x_axis_list,[DoLP_average] * nb_rot, "b", label="Avg: " + str(DoLP_average))
 
 
 		self.f1.subplots_adjust(hspace=0)
@@ -476,17 +481,22 @@ class Taster:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.png', bbox_inches='tight')
 			# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
 
-	def PlotPLIPData(self, axI, axD, axA, pos=None, **kwargs):
+	def PlotPLIPData(self, axI, axD, axA, pos=None, bottle = None, **kwargs):
 		if pos is None:
 			I, D, A = self.mixer.plip_data.I_laser, self.mixer.plip_data.D_laser, self.mixer.plip_data.A_laser
 		else:
 			l, c = pos
 			I, D, A = self.mixer.plip_data.I[:, l, c], self.mixer.plip_data.D[:, l, c], self.mixer.plip_data.A[:, l, c]
 
-		axI.plot(self.mixer.plip_data.times, I, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, zorder=1, **kwargs)
-		axD.plot(self.mixer.plip_data.times, D, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, zorder=1, **kwargs)
+		if bottle is None:
+			norm_factor = 1.
+		else:
+			norm_factor = np.average(bottle.data['smooth_I0']) / np.average(I)
+
+		axI.plot(self.mixer.plip_data.times, I * norm_factor, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
+		axD.plot(self.mixer.plip_data.times, D, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
 		print(axA)
-		axA.plot(self.mixer.plip_data.times, A * RtoD, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, zorder=1, **kwargs)
+		axA.plot(self.mixer.plip_data.times, A * RtoD, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
 		
 
 
@@ -579,7 +589,7 @@ class Taster:
 		elif  self.mixer.show_smooth_data:
 			(l_smooth_DoLP, _, _) = ax.errorbar(self.x_axis_list, bottle.data['smooth_DoLP'], yerr = bottle.data['std_smooth_DoLP'],  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
-		ax.set_ylim(bottom = 0)
+		ax.set_ylim(bottom = 0, top = 10)
 
 		if self.mixer.show_raw_data:
 			ax_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
@@ -797,7 +807,7 @@ class Taster:
 
 		if self.mixer.show_currents and self.mixer.eq_currents.valid:
 			time_format = "delta"
-			time_delta = 0
+			time_delta = dt.timedelta(hours=0)
 			if self.mixer.use_24h_time_format:
 				time_format = "datetime"
 				if self.mixer.time_format == "LT":
@@ -830,10 +840,10 @@ class Taster:
 			AoJapp90 = SetAngleBounds(AoJapp+np.pi/2, -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift)
 			AoJappperp = SetAngleBounds(AoJappperp, -np.pi/2 + np.pi/2 * bottle.graph_angle_shift, np.pi/2 + np.pi/2 * bottle.graph_angle_shift)
 
-			l_AoJapp, = self.ax3.plot(self.mixer.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
-			l_AoJapp, = self.ax3.plot(self.mixer.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp90 * RtoD, "+", color = "xkcd:pink", label="AoJapp")
+			# l_AoJapp, = self.ax3.plot(self.mixer.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp * RtoD, "*", color = self.currents_color, label="AoJapp")
+			# l_AoJapp, = self.ax3.plot(self.mixer.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJapp90 * RtoD, "+", color = "xkcd:pink", label="AoJapp")
 
-			l_AoJapp, = self.ax3.plot(self.mixer.eq_currents.GetNormTimes(self.divisor), AoJappperp * RtoD, "*", color = "red", label="AoJapp_perp")
+			l_AoJapp, = self.ax3.plot(self.mixer.eq_currents.GetNormTimes(self.divisor, format=time_format) + time_delta, AoJappperp * RtoD, "*", color = "xkcd:mustard", label="AoJapp_perp")
 
 			# self.ax3_lines.append([l_AoJapp, l_AoJapp.get_label()])
 

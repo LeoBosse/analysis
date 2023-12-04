@@ -159,7 +159,7 @@ class Mixer:
 
 	def LoadPLIPData(self, bottle):
 		# self.plip_data = PLIP(bottle, "data_NOT_ROT.h5")
-		self.plip_data = PLIP(bottle, "data_vh-+.h5")
+		self.plip_data = PLIP("data_vh-+.h5")
 		
 
 	def LoadMagData(self, bottle):
@@ -167,8 +167,8 @@ class Mixer:
 		if not self.mag_data.exist:
 			self.mag_data = None
 		else:
-			self.mag_data.StripTime(bottle.DateTime("start", format = 'UT'), bottle.DateTime("end", format = 'UT'))
-
+			self.mag_data.StripTime()
+			self.mag_data
 		# if self.mag_data is not False:
 		# 	self.mag_data.StripTime(bottle.DateTime("start"), bottle.DateTime("end"))
 
@@ -194,8 +194,8 @@ class Mixer:
 		if not self.eq_currents.valid:
 			return
 
-		self.eq_currents.GetApparentAngle(bottles[0].observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
-		self.eq_currents.Polarisation(bottles[0].observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
+		self.eq_currents.GetApparentAngle(bottle.observation, Jup_mode = self.compute_Jup)#, shift=bottle.graph_angle_shift)
+		self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
 		
 		if not self.eq_currents.valid:
 			return
@@ -494,11 +494,10 @@ class Mixer:
 		"""
 		self.langue = "en" #Language used for the plots. "fr" or "en"
 
-		self.marker_size = 5 # Size of the points used for all plots
+		self.marker_size = 1 # Size of the points used for all plots
 		self.single_star_size = self.marker_size*5 # When plotting the apparent angle of B AoBapp or the light pollution Rayleighj angle AoRD, control the size of the ztar markers.
-		self.marker = "" #Linestyle of the polarisation parameters. "." or "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
-		self.linestyle = "-" #Linestyle of the polarisation parameters. "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
-
+		self.marker = "." #Linestyle of the polarisation parameters. "." or "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
+		self.linestyle = "none" #Linestyle of the polarisation parameters. "none" for point cloud, "-" or "solid" for solid lines.  Refer to https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html or https://www.geeksforgeeks.org/linestyles-in-matplotlib-python/ for more.
 		self.show_Ipola = False # Show the plot for I0 * DoLP, i.e. the flux of polarized light
 		self.show_Iref = False # For CarmenCru only. Show the reference channel with no polarizing lens
 
@@ -511,10 +510,10 @@ class Mixer:
 		self.show_smooth_data = 1 # Show smoothed data (averaged over the time window defined in the input file)
 
 		self.show_error_bars 		= 1 # Show error bars for the raw cru data. in grey
-		self.show_smooth_error_bars = 1 # Show error bars for the raw cru data. in grey
+		self.show_smooth_error_bars = 1 # Show error bars for the smooth cru data. in grey
 		self.max_error_bars = 10000 #If there are too many data, takes very long to plot error bars. If != 0, will plot max_error_bars error bars once every x points.
 
-		self.show_avg_I0 = False #Show the flux average over the whole observation
+		self.show_avg_I0   = False #Show the flux average over the whole observation
 		self.show_avg_Iref = False #Only for Carmen Cru. Show the reference flux average over the whole observation
 		self.show_avg_DoLP = False #Show the DoLP for a smoothed data point obtained by averaging all data over the whle observation. It is different from the DoLP average because it is done on the V, Vcos and Vsin values.
 		self.show_avg_AoLP = False #Show the AoLP for a smoothed data point obtained by averaging all data over the whle observation. It is different from the AoLP average because it is done on the V, Vcos and Vsin values.
@@ -527,15 +526,17 @@ class Mixer:
 
 		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
 
+		self.show_plip = False
+
 		self.show_eiscat = 0 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
 		self.eiscat_type = "uhf" #Initally for March 2022 data. Choose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
 
-		self.show_mag_data 	= 0 # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
+		self.show_mag_data 	= 1 # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
 		self.B_component	= 'Horiz' # B field component to plot (Dec, Horiz, Vert, 'Incl' or 'Total')
 		self.show_AoBapp 	= 0 # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
 		self.show_AoRD	 	= 0 # If True, show the AoLP produced by a point source defined in the input.in file.
 
-		self.show_currents	= 0 # If available, show the apparent angle of the equivalent currents from Magnar.
+		self.show_currents	= 1 # If available, show the apparent angle of the equivalent currents from Magnar.
 		self.compute_Jup	= "" #False, "para" or "perp". Will add a vertical component to the equivalent current so that it match the AoLP. If para: the AoLP is parallel to the current. If perp, the AoLP is perpendicular to the current.
 
 		self.show_grid_lines = True # Just to have a nicer grpah. self explainatory

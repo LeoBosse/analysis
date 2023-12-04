@@ -369,6 +369,7 @@ class EqCurrent:
 
 		return self.x_axis
 
+
 	def GetInterpolation(self, new_time, obs, divisor=1, shift=0):
 
 		new_data = pd.DataFrame()
@@ -554,6 +555,8 @@ class MagData:
 		data = self.data[comp]
 		times = self.GetNormTimes(divisor, use_datetime = use_datetime)
 
+		if comp == 'Horiz':
+			data -= 10730
 		return times, data
 
 	def GetDerivative(self, comp, divisor, use_datetime=True):
