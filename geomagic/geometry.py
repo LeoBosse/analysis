@@ -13,6 +13,14 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import sys as sys
 
+import datetime as dt
+
+import astropy.coordinates as coord
+from astropy.time import Time
+import astropy.units as u
+
+import argparse
+
 
 DtoR = np.pi/ 180	#Convert Degree to Radian
 RtoD = 180. / np.pi	#Convert Radians to Degree
@@ -32,6 +40,27 @@ elevation = 45 * DtoR
 N = 10000
 RD_src_azimut = None
 RD_src_elevation = None
+
+
+def UENToAzEl(uen):
+	'''Converts up-east-north coordinates to azimuth and elevation angles.'''
+	u, e, n = uen
+	az = np.arctan2(e, n)
+	el = np.arcsin(u)
+	return az, el
+
+
+def GetSunAltAz(lon, lat, datetime):
+	
+	loc = coord.EarthLocation(lon=lon * u.rad,
+							  lat=lat * u.rad)
+	time = Time(datetime, format='datetime', scale='utc')
+
+	altaz = coord.AltAz(location=loc, obstime=time)
+	sun = coord.get_sun(time).transform_to(altaz)
+	# print(sun.transform_to(altaz).alt)
+
+	return sun.alt.value, sun.az.value
 
 
 def GetLonLatFromName(name, unit="radians"):
@@ -113,136 +142,194 @@ def GetLonLatFromName(name, unit="radians"):
 		A_lat *= DtoR
 
 	return A_lon, A_lat
-###	Managing the input from the command lines. Of the form:
-#	python3 geometry.py <position> <altitude> [<azimuth> <elevation>]
-#	position: "mens", "skibotn", or any two number for longitude, latitude in degrees
-#	altitude: Altitude of the observed point H in kilometer
-#	azimuth elevation: Optionals. Will output all the attribute of one observation.
-# Pour le lancer, place-toi dans le dossier src/ puis lance geometry.py dans le terminal avec les arguments suivants :
-# python3 geometry.py position altitude (azimut elevation)
-# position : "mens", "skibotn" ou "lon lat" en degrés
-# altitude : altitude de l'émission en km
-# Les deux derniers arguments sont un peu plus souples pour faire différentes choses.
-# Pour un tour sur toi-même à élévation fixée de 45°:
-# python3 geometry.py <position> <altitude> e 45
-# Pour azimut fixé à 90°, de 0 à 90° d'élévation:
-# python3 geometry.py <position> <altitude> a 90
-# Pour une observation à azimut et élévation fixés (e.g. a=270, e=30):
-# python3 geometry.py <position> <altitude> 270 30
-# Du coup pour l'observation de skibotn, tu lances : "python3 geometry.py skibotn 220 270 30"
+	
+
 if __name__ == "__main__":
 	nb_args = len(sys.argv)
 	arguments = sys.argv
 
-	entries = []
 
-	if nb_args > 1:
-		entries.append(arguments[1])
+	arg_parser = argparse.ArgumentParser(
+                    #prog='Vendange',
+                    description='Geometry computations.',
+					)
+
+	arg_parser.add_argument('-l', '--location', default='0;0', help='location of observation. Name or lon;lat pair')        # positional argument
+	arg_parser.add_argument('-alt', '--altitude', default = 110,  help="Altitude of the observed emission")
+	arg_parser.add_argument('-az', '--azimut', default = 0,  help='Azimut of the observation.')
+	arg_parser.add_argument('-el', '--elevation', default = 0,  help='Elevation of the observation.')
+	arg_parser.add_argument('-src_el', '--source_elevation', default = None,  help='Elevation of the pollution source.')
+	arg_parser.add_argument('-src_az', '--source_azimut', default = None,  help='Azimut of the pollution source.')
+	arg_parser.add_argument('-dt', '--datetime', default = None,  help='Date and time of observation in UTC (YYYYMMDD-HH:MM:SS)')
+	
+	args = arg_parser.parse_args()
+
+
+	A_lon, A_lat = GetLonLatFromName(args.location)
+	outfile_name += "_" + args.location.lower()
+
+	if args.datetime:
+		obs_time = dt.datetime.strptime(args.datetime, "%Y%m%d-%H:%M:%S")
 	else:
-		entries.append(input("Enter the location of observation. Name or lon;lat pair: "))
+		obs_time = None
 
-	A_lon, A_lat = GetLonLatFromName(entries[0])
-	outfile_name += "_" + entries[0].lower()
-	# if entries[0] == "mens":
-	# 	A_lon = 5.76 * DtoR
-	# 	A_lat = 44.83 * DtoR
-	# 	outfile_name += "_mens"
-	# elif entries[0] == "skibotn":
-	# 	A_lon = 20.24 * DtoR
-	# 	A_lat = 69.34 * DtoR
-	# 	outfile_name += "_skibotn"
-	# elif entries[0] == "nyalesund":
-	# 	A_lon = 11.92288 * DtoR
-	# 	A_lat = 78.92320 * DtoR
-	# 	outfile_name += "_nyalesund"
-	# elif entries[0] == "vigan":
-	# 	A_lon = 3.504259 * DtoR
-	# 	A_lat = 44.039661 * DtoR
-	# 	outfile_name += "_vigan"
-	# elif entries[0] == "lagorge":
-	# 	A_lon = 5.936935 * DtoR
-	# 	A_lat = 45.212343 * DtoR
-	# 	outfile_name += "_lagorge"
+	h = float(args.altitude)
+	outfile_name += "_h" + str(h)
 
-	#If the name is not predefined, and lon;lat are entered
-	# else:
-	# 	A_lon = float(entries[0].split(";")[0]) * DtoR
-	# 	A_lat = float(entries[0].split(";")[1]) * DtoR
-	# 	outfile_name += "_lon" + str(A_lon*RtoD) + "lat" + str(A_lat*RtoD)
-
-	if nb_args > 2:
-		entries.append(arguments[2])
-	else:
-		entries.append(input("Enter the altitude of observation (km): "))
-	h = float(entries[1])
-	outfile_name += "_h" + entries[1]
-
-	if nb_args > 3:
-		entries.append(arguments[3])
-	else:
-		entries.append(input("Enter the azimut of observation, or the fixed parameter name (a, e) for rotations: "))
-	if entries[2] == "a":
-		mode = "fixed_a"
-		if nb_args > 4:
-			entries.append(arguments[4])
-		else:
-			entries.append(input("Enter the fixed azimut for the rotation: "))
-		azimuth = float(entries[3]) * DtoR
-		outfile_name += "_a" + entries[3]
-	elif entries[2] == "e":
-		mode = "fixed_e"
-		if nb_args > 4:
-			entries.append(arguments[4])
-		else:
-			entries.append(input("Enter the fixed elevation for the rotation: "))
-		elevation = float(entries[3]) * DtoR
-		outfile_name += "_e" + entries[3]
-	elif entries[2] == "map":
+	if args.elevation.lower() in ["rot", ''] and args.azimut.lower() in ["rot", '']:
 		mode = "map"
-		if nb_args > 4:
-			entries.append(arguments[4])
-		else:
-			entries.append(input("Optional: Enter the Rayleigh Diff source azimut: "))
-		if entries[3]:
-			RD_src_azimut = float(entries[3]) * DtoR
-		if nb_args > 5:
-			entries.append(arguments[5])
-		else:
-			entries.append(input("Optional: Enter the Rayleigh Diff source elevation: "))
-		if entries[4]:
-			RD_src_elevation = float(entries[4]) * DtoR
+		outfile_name += "_map"
+	elif args.azimut.lower() in ["rot", '']:
+		mode = "fixed_e"
+		elevation = float(args.elevation) * DtoR
+		outfile_name += "_e" + args.elevation
+	elif args.elevation.lower() in ["rot", '']:
+		mode = "fixed_a"
+		azimuth = float(args.azimut) * DtoR
+		outfile_name += "_a" + args.azimut
 	else:
-		azimuth = float(entries[2]) * DtoR
+		azimuth = float(args.azimut) * DtoR
+		elevation = float(args.elevation) * DtoR
 		mode = "fixed_obs"
-		if nb_args > 4:
-			entries.append(arguments[4])
-		else:
-			entries.append(input("Enter the elevation: "))
-		elevation = float(entries[3]) * DtoR
-		outfile_name += "_e" + entries[3]
+		outfile_name += "_a" + args.azimut
+		outfile_name += "_e" + args.elevation
+
+	if args.source_azimut and args.source_elevation:
+		RD_src_azimut = float(args.source_azimut) * DtoR
+		RD_src_elevation = float(args.source_azimut) * DtoR
 
 
-	if RD_src_azimut is None:
-		if nb_args > 5:
-			entries.append(arguments[5])
-		else:
-			entries.append(input("Optional: Enter the Rayleigh Diff source azimut: "))
-		if entries[4]:
-			RD_src_azimut = float(entries[4]) * DtoR
+	# entries = []
 
-	if nb_args > 6:
-		entries.append(arguments[6])
-		print("test")
-	else:
-		entries.append(input("Optional: Enter the Rayleigh Diff source elevation: "))
-	if entries[5]:
-		RD_src_elevation = float(entries[5]) * DtoR
+	# if nb_args > 1:
+	# 	entries.append(arguments[1])
+	# else:
+	# 	entries.append(input("Enter the location of observation. Name or lon;lat pair: "))
 
+	# A_lon, A_lat = GetLonLatFromName(entries[0])
+	# outfile_name += "_" + entries[0].lower()
+	
+	
+
+	# if nb_args > 2:
+	# 	entries.append(arguments[2])
+	# else:
+	# 	entries.append(input("Enter the altitude of observation (km): "))
+	# h = float(entries[1])
+	# outfile_name += "_h" + entries[1]
+
+	# if nb_args > 3:
+	# 	entries.append(arguments[3])
+	# else:
+	# 	entries.append(input("Enter the azimut of observation, or the fixed parameter name (a, e) for rotations: "))
+		
+	# if entries[2] == "a":
+	# 	mode = "fixed_a"
+	# 	if nb_args > 4:
+	# 		entries.append(arguments[4])
+	# 	else:
+	# 		entries.append(input("Enter the fixed azimut for the rotation: "))
+	# 	azimuth = float(entries[3]) * DtoR
+	# 	outfile_name += "_a" + entries[3]
+	# elif entries[2] == "e":
+	# 	mode = "fixed_e"
+	# 	if nb_args > 4:
+	# 		entries.append(arguments[4])
+	# 	else:
+	# 		entries.append(input("Enter the fixed elevation for the rotation: "))
+	# 	elevation = float(entries[3]) * DtoR
+	# 	outfile_name += "_e" + entries[3]
+	# elif entries[2] == "map":
+	# 	mode = "map"
+	# 	if nb_args > 4:
+	# 		entries.append(arguments[4])
+	# 	else:
+	# 		entries.append(input("Optional: Enter the Rayleigh Diff source azimut: "))
+	# 	if entries[3]:
+	# 		RD_src_azimut = float(entries[3]) * DtoR
+	# 	if nb_args > 5:
+	# 		entries.append(arguments[5])
+	# 	else:
+	# 		entries.append(input("Optional: Enter the Rayleigh Diff source elevation: "))
+	# 	if entries[4]:
+	# 		RD_src_elevation = float(entries[4]) * DtoR
+	# else:
+	# 	azimuth = float(entries[2]) * DtoR
+	# 	mode = "fixed_obs"
+	# 	if nb_args > 4:
+	# 		entries.append(arguments[4])
+	# 	else:
+	# 		entries.append(input("Enter the elevation: "))
+	# 	elevation = float(entries[3]) * DtoR
+	# 	outfile_name += "_e" + entries[3]
+
+
+	# if RD_src_azimut is None:
+	# 	if nb_args > 5:
+	# 		entries.append(arguments[5])
+	# 	else:
+	# 		entries.append(input("Optional: Enter the Rayleigh Diff source azimut: "))
+	# 	if entries[4]:
+	# 		RD_src_azimut = float(entries[4]) * DtoR
+
+	# if nb_args > 6:
+	# 	entries.append(arguments[6])
+	# 	print("test")
+	# else:
+	# 	entries.append(input("Optional: Enter the Rayleigh Diff source elevation: "))
+	# if entries[5]:
+		# RD_src_elevation = float(entries[5]) * DtoR
+
+	
 
 	if mode == "fixed_obs":
 		obs = ObservationPoint(A_lon, A_lat, h, azimuth, elevation, RD_src_azimut, RD_src_elevation)
 		obs.SinglePointGeometry()
 		obs.PrintAllParameters()
+		
+		if obs_time:
+			sun_alt_I, sun_az_I = GetSunAltAz(obs.lon, obs.lat, obs_time)
+			sun_alt_O, sun_az_O = GetSunAltAz(obs.P_lon, obs.P_lat, obs_time)
+			print('Sun alt az (instrument): ', sun_alt_I, sun_az_I)
+			print('Sun alt az (observation): ', sun_alt_O, sun_az_O)
+			
+			sol_zenith_angle = lambda sun_alt: (90 - sun_alt)*DtoR
+			sol_zenith_angle_I = sol_zenith_angle(sun_alt_I)
+			sol_zenith_angle_O = sol_zenith_angle(sun_alt_O)
+			
+			# print('Solar Zenith angle (instrument): ', sol_zenith_angle_I)
+			# print('Solar Zenith angle (observation): ', sol_zenith_angle_O)
+			
+			el_margin = 10 * DtoR   # Count as illuminated if the sun is below the horizon by a given margin.
+			
+			illumination_height = lambda zen_angle, margin=0: RT * (np.cos(margin) / np.sin(zen_angle - margin) - 1)
+			illumination_height_I = illumination_height(sol_zenith_angle_I, DtoR)
+			illumination_height_O = illumination_height(sol_zenith_angle_O, DtoR)
+			
+			print(f'Illumination height above instrument (km) with a {el_margin*RtoD} degree margin: ', illumination_height_I)
+			print(f'Illumination height above observation (km) with a {el_margin*RtoD} degree margin: ', illumination_height_O)
+			
+			
+			max_range = 1000000
+			step = max_range//100
+			for r in range(0, max_range, step):
+				r_lon, r_lat, r_alt = obs.GetPCoordinatesFromRange(r)
+				sun_alt_R, sun_az_R = GetSunAltAz(r_lon, r_lat, obs_time)
+				sol_zenith_angle_R = sol_zenith_angle(sun_alt_R)
+				illumination_height_R = illumination_height(sol_zenith_angle_R, el_margin)
+				if illumination_height_R <= r_alt:
+					for fr in range(0, step, step//100):
+						r_lon, r_lat, r_alt = obs.GetPCoordinatesFromRange(r-fr)
+						sun_alt_R, sun_az_R = GetSunAltAz(r_lon, r_lat, obs_time)
+						sol_zenith_angle_R = sol_zenith_angle(sun_alt_R)
+						illumination_height_R = illumination_height(sol_zenith_angle_R, el_margin)
+						if illumination_height_R >= r_alt:
+							print(f"Line of sight is illuminated by the sun at altitude {r_alt}, longitude {r_lon*RtoD}, latitude {r_lat*RtoD}, (with a {el_margin*RtoD} degree margin)")
+							break
+					break
+				
+			
+			
 
 	#If we do several observations and want to plot the results.
 	else:

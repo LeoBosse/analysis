@@ -13,7 +13,6 @@ from time import perf_counter #For the timer decorator
 import chaosmagpy as chaos
 
 def timer(fn):
-
     def inner(*args, **kwargs):
         start_time = perf_counter()
         to_execute = fn(*args, **kwargs)
@@ -266,7 +265,7 @@ class ObservationPoint:
             norm = np.dot(R_A0, norm) #plane expressed in earth centered ref frame
             # print("plane", plane)
 
-        return norm
+        return np.array(norm)
 
     def GetBatP(self, time=None, B_model = None):
         """Return the mag field of igrf and chaos at the observation point"""
@@ -386,7 +385,7 @@ class ObservationPoint:
             return eta
 
     def GetAllParameters(self):
-        """Return a list of all interesting parmaters of the observation to print in a terminal"""
+        """Return a list of all interesting parameters of the observation to print in a terminal"""
         list = [ ("lon", self.lon*RtoD),
                 ("lat",self.lat*RtoD),
                 ("elevation", self.e*RtoD),

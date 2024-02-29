@@ -11,7 +11,8 @@ RtoD = 1. / DtoR
 RT = 6371 # #km
 
 ###########
-# For a list of polarisation observations (AoLPs and instrument setup), computes the theoretical planes of the current (perpendicular or parallel to the AoLP) for each one, and find their intersections. Prints the intersections, and average intersection with the angle difference between each intersection.
+# For a list of polarisation observations (AoLPs and instrument setup), computes the theoretical planes of the current (perpendicular or parallel to the AoLP) for each one, and find their intersections. 
+# Prints the intersections, and average intersection with the angle difference between each intersection.
 # You want the difference to be as close to zero as possible.
 ###########
 
@@ -33,13 +34,13 @@ corbel = {
 'AoLP': 0  * DtoR #-8
 }
 
-carmen = {
-'name': "skibotn",
-'h': 110, #km
-'a': -97 * DtoR,
-'e': 45 * DtoR,
-'AoLP': 40 * DtoR
-}
+# carmen = {
+# 'name': "skibotn",
+# 'h': 110, #km
+# 'a': -97 * DtoR,
+# 'e': 45 * DtoR,
+# 'AoLP': 40 * DtoR
+# }
 
 #List of the dictionnaries to use
 instruments = [gdcu, corbel]
