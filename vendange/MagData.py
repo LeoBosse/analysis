@@ -454,12 +454,13 @@ class MagData:
 		self.data_path = global_configuration.magnetometer_data_path
 		# self.data_path = "/home/bossel/These/Analysis/data/magnetometer/"
 
-		self.file = self.data_path
+		self.file = str(self.data_path)
 		if location.lower() in ["tromso", 'lacsud', "skibotn", "skibotnsud", "skibotnnord", "kilpisjarvi"]:
 			self.file += "Tromso"
 		elif location.lower() in ["nyalesund", "corbel"]:
 			self.file += "Nyalesund"
 		self.file += "/"
+		
 
 
 		self.additional_files = []
@@ -474,6 +475,7 @@ class MagData:
 
 
 		self.file += start.strftime("%Y%m%d")
+		self.file = Path(self.file)
 		self.exist = True
 
 		if self.force_download:
@@ -482,10 +484,10 @@ class MagData:
 		try:
 			self.GetDataFromFile()
 			self.StripTime()
-			print("INFO: Magnetic data available in file:", self.file)
+			print("INFO: Magnetic data available in file:", str(self.file))
 		except:
 			self.exist = False
-			print(f"WARNING: No magnetometer data found for this observation ({self.file})")
+			print(f"WARNING: No magnetometer data found for this observation ({str(self.file)})")
 
 
 	@classmethod
@@ -509,10 +511,15 @@ class MagData:
 			return False
 	
 	def DownloadDataFile(self, save_path):
+		save_path = str(save_path)
 		if 'Tromso' in save_path:
 			site = 'tro2a'
 		elif 'Nyalesund' in save_path:
 			site = 'nal1a'
+		else:
+			print('WARNING: magnetometer location not found. Using Tromso as default.')
+			site = 'tro2a'
+			
 		date = dt.datetime.strptime(save_path.split('/')[-1], "%Y%m%d")
 		year  = date.year
 		month = date.month
@@ -523,7 +530,10 @@ class MagData:
 		url = f"http://flux.phys.uit.no/cgi-bin/mkascii.cgi?site={site}&year={year}&month={month}&day={day}&res={res}&pwd={password}&format=html&comps=DHZ&getdata=+Get+Data+"
 		
 		print(f"Downloading magnetometer data files from {url} in {self.data_path}.")
-		wget.download(url, save_path)
+		try:
+			wget.download(url, save_path)
+		except:
+			print(f'WARNING: The magnetometer data could not be downloaded for the date {date}.')
 
 
 	def GetDataFromFile(self):
@@ -603,7 +613,7 @@ class MagData:
 
 	def GetNormTimes(self, divisor = 1, use_datetime = True):
 		if use_datetime:
-			return self.datetime
+			return np.array(self.datetime)
 
 		try:
 			norm = self.times_sec[0]
@@ -611,7 +621,7 @@ class MagData:
 			print("WARNING: GeoMag Data has no time list.")
 			norm = 0.
 
-		return [(t - norm) / divisor for t in self.times_sec]
+		return np.array([(t - norm) / divisor for t in self.times_sec])
 
 
 	def MakeFigure(self):

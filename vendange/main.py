@@ -40,11 +40,11 @@ def GetNbLines(bottle_name):
 	print(instrument_name, bottle_name)
 	if instrument_name not in ["spp", 'carmen']:
 		try:
-			print("TRY", os.listdir(data_path + bottle_name))
-			ls = [f for f in os.listdir(data_path + bottle_name) if "data" in f and ".csv" in f and len(f) in [9, 10]]
+			print("TRY", os.listdir(data_path / bottle_name))
+			ls = [f for f in os.listdir(data_path / bottle_name) if "data" in f and ".csv" in f and len(f) in [9, 10]]
 		except:
-			print("EXCEPT", os.listdir(data_path + "/".join(bottle_name.split("/")[:-1])))
-			ls = [f for f in os.listdir(data_path + "/".join(bottle_name.split("/")[:-1])) if "data" in f and ".csv" in f and len(f) in [9, 10]]
+			print("EXCEPT", os.listdir(data_path / "/".join(str(bottle_name).split("/")[:-1])))
+			ls = [f for f in os.listdir(data_path / "/".join(str(bottle_name).split("/")[:-1])) if "data" in f and ".csv" in f and len(f) in [9, 10]]
 		print("ls", ls)
 		nb_lines = len(ls)
 	else:
@@ -95,7 +95,7 @@ args = arg_parser.parse_args()
 
 print(args)
 
-bottle_name = args.bottle_name #arguments[1]
+bottle_name = Path(args.bottle_name) #arguments[1]
 
 show_plots = args.show_plots
 comp_bottle = args.comp_bottle

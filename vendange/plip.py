@@ -31,7 +31,7 @@ class PLIP:
        
 
     def LoadData(self):
-        with h5.File(self.path + self.file_name, 'r') as h5f:
+        with h5.File(self.path / self.file_name, 'r') as h5f:
             self.times = np.array([dt.datetime.fromtimestamp(t) - self.timeshift for t in h5f['times']]) 
             self.times += np.array([dt.timedelta(seconds = a) for a in range(len(self.times))])
 

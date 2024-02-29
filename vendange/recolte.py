@@ -23,7 +23,7 @@ instrument = arguments[1].lower()
 IDConfiguration = [int(arguments[2])]
 if nb_args == 4:
 	IDConfiguration = range(int(arguments[2]), int(arguments[3]) + 1)
-	print(f"4 arguments given. Will try to download all observations from ID {arguments[2]} to {arguments[3]}")
+	print(f"4 arguments given. Will try to download all observations from ID {arguments[2]} to {arguments[3]} included.")
 elif nb_args > 4:
 	IDConfiguration = [int(arguments[i]) for i in range(2, nb_args)]
 	print(f"4 arguments given. Will try to download all observations ID: {IDConfiguration}")

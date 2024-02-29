@@ -27,7 +27,7 @@ class Taster:
 
 		for ib, bottle in enumerate(self.mixer.bottles):
 			# self.SetGraphParameter(bottle)
-			self.SetColors(bottle)
+			self.SetColors(bottle, comp = ib > 0)
 			self.MakeXAxis(bottle)
 			self.MakeBottlePlots(ib, bottle)
 
@@ -253,9 +253,6 @@ class Taster:
 
 
 
-
-
-
 	def SetGraphParameter(self, bottle, comp = False):
 
 		self.mixer.marker_size = 5 # Size of the points used for all plots
@@ -473,12 +470,12 @@ class Taster:
 			self.ax3.legend(list(zip(*self.ax3_lines))[0], list(zip(*self.ax3_lines))[1], loc = "lower center")
 
 
-		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_graphs.png')
+		print("Saving graphs in", bottle.data_file_name / (bottle.saving_name + '_graphs.png'))
 		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_graphs.png', bbox_inches='tight')
+			plt.savefig(bottle.data_file_name / (bottle.saving_name + '_graphs.png'), bbox_inches='tight')
 			# plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
 		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.png', bbox_inches='tight')
+			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) / (bottle.saving_name + '_graphs.png'), bbox_inches='tight')
 			# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
 
 	def PlotPLIPData(self, axI, axD, axA, pos=None, bottle = None, **kwargs):
@@ -627,6 +624,10 @@ class Taster:
 			t, d = self.mixer.mag_data.GetComponent(component, self.divisor, use_datetime = self.mixer.use_24h_time_format)
 		else:
 			t, d = self.mixer.mag_data.GetDerivative(component, self.divisor, use_datetime = self.mixer.use_24h_time_format)
+		
+		if self.mixer.time_format.lower() == 'lt':
+			t += bottle.time_zone
+		
 		l_mag_data, = ax.plot(t, d, "orange", label=label)
 		# l_mag_data, = ax.plot(t, d, self.mag_color, label="dB/dt (nT/s)", zorder=2, linewidth=2)
 		# print(t, d)
@@ -676,7 +677,7 @@ class Taster:
 		if self.mixer.use_24h_time_format:
 			time_format = "datetime"
 			if self.mixer.time_format == "LT":
-				time_delta = dt.timedelta(hours=1)
+				time_delta = bottle.time_zone
 
 		# if self.mixer.eiscat_type == "uhf_v":
 		# 	parameter = "AoVi"

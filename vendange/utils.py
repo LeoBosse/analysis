@@ -402,9 +402,9 @@ def SetAngleBounds(angles, min, max, mod = np.pi, unit="radians"):
 	return angles
 
 def GetInstrumentName(file_name):
-	if "ptcu" in file_name:
+	if "ptcu" in str(file_name):
 		return "ptcu"
-	elif "spp" in file_name:
+	elif "spp" in str(file_name):
 		return "spp"
 
 

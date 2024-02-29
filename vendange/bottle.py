@@ -13,6 +13,7 @@ from copy import deepcopy
 from subprocess import call
 import datetime as dt
 import h5py as h5
+from pathlib import Path
 
 import observation
 import geometry
@@ -27,7 +28,7 @@ import chaosmagpy as chaos
 
 class Bottle:
     def __init__(self, folder_name, auto=True, line=1, from_txt=False):
-        self.folder = folder_name
+        self.folder = Path(folder_name)
         self.rotations = []
 
         self.AoBapp = False
@@ -42,15 +43,14 @@ class Bottle:
         self.valid = True
 
         try:  # If you specify the exact input file name (with .in)
-            self.input_parameters = self.ReadInputFile(pwd_data + self.folder)
+            self.input_parameters = self.ReadInputFile(pwd_data / self.folder)
         except:
             try:  # If you only specify the folder, will look for a default input.in file
-                self.input_parameters = self.ReadInputFile(pwd_data + self.folder + "/input.in")
+                self.input_parameters = self.ReadInputFile(pwd_data / self.folder / "input.in")
             except:  # Don't use it, or verify it works first.
-                self.input_parameters = self.ReadInputFile(pwd_data + self.folder + ".in")
+                self.input_parameters = self.ReadInputFile(pwd_data / str(self.folder) + ".in")
 
-        self.data_file_name = pwd_data + \
-            self.input_parameters["data_files"].split(",")[0]
+        self.data_file_name = pwd_data / self.input_parameters["data_files"].split(",")[0]
         self.instrument_name = self.input_parameters["instrument_name"]
         if self.instrument_name == "ptcu":
             self.instrument_name = "carmen"
@@ -76,8 +76,7 @@ class Bottle:
             self.saving_name = self.input_parameters["saving_name"]
             self.saving_name += "_voie" + str(self.line)
         except:
-            print("WARNING: No saving name specified. Will be saved in "
-                  + self.data_file_name)
+            print("WARNING: No saving name specified. Will be saved in " + self.data_file_name)
             self.saving_name = ""
 
         self.date, self.location, self.filters, self.azimut, self.elevation, self.com = "", "", [
@@ -100,7 +99,7 @@ class Bottle:
         # See PTCUBottle or SPPBottle for specific instructions
 
     def SetInfoFromDataFileName(self, f, data_f):
-        self.folders, self.data_folders = f.split("/"), data_f.split("/")
+        self.folders, self.data_folders = str(f).split("/"), str(data_f).split("/")
         # i = len(data_folders) - 1
         self.folders_index = -3
 
@@ -1006,21 +1005,19 @@ class Bottle:
 
     def PrintInfo(self):
         print("*********************************************")
-        print("INFO:", self.data_file_name.split("/")[-3:])
+        print("INFO:", str(self.data_file_name).split("/")[-3:])
         print("DoLP min:", np.min(self.data['smooth_DoLP']))
         print("DoLP max:", np.max(self.data['smooth_DoLP']))
         print("DoLP stddev:", np.std(self.data['smooth_DoLP']))
         print("AoLP stddev:", np.std(self.data['smooth_AoLP']) * RtoD)
-        print("Averages: I0, DoLP, AoLP:", self.I0_average,
-              self.DoLP_average, self.AoLP_average * RtoD)
+        print("Averages: I0, DoLP, AoLP:", self.I0_average, self.DoLP_average, self.AoLP_average * RtoD)
 
         if self.observation_type == "fixed":
             print("AoBlos:", self.AoBlos * RtoD)
         print("*********************************************")
 
     def SaveTXT(self):
-        print("Saving as .txt in", self.data_file_name
-              + "/" + self.saving_name + '_results.txt')
+        print("Saving as .txt in", self.data_file_name / (self.saving_name + '_results.txt'))
 
     def ConvertRotTimeTogmTime(self, rot_time):
         t = dt.mktime(self.DateTime())
@@ -1514,8 +1511,7 @@ class PTCUBottle(Bottle):
 
 
     def SaveTXT(self):
-        print("Saving as .txt in", self.data_file_name
-              + "/" + self.saving_name + '_results.txt')
+        print("Saving as .txt in", self.data_file_name / (self.saving_name + '_results.txt'))
 
         # Default Format
         # times = [t.total_seconds(
@@ -1531,11 +1527,10 @@ class PTCUBottle(Bottle):
         # data.columns = ["time","SI0","SDoLP","SAoLP","errSI0","errSDoLP","errSAoLP"]
 
         # data.to_csv(self.data_file_name + "/" + self.saving_name + '_results.txt', sep="\t", index=False)
-        self.data.to_csv(self.data_file_name + "/" + self.saving_name + '_results.txt', sep="\t", index=False)
+        self.data.to_csv(self.data_file_name / (self.saving_name + '_results.txt'), sep="\t", index=False)
 
     def SaveHDF5(self):
-        print("Saving as .hdf5 in", self.data_file_name
-              + "/" + self.saving_name + '_results.hdf5')
+        print("Saving as .hdf5 in", self.data_file_name / (self.saving_name + '_results.hdf5'))
 
         # times = [t.total_seconds(
         # ) * 1000 for t in self.GetTimeFromDateTime(self.DateTime(moment="config"))]
@@ -1546,7 +1541,7 @@ class PTCUBottle(Bottle):
         #            "SDoLP", "SAoLP", "errI0", "errDoLP", "errAoLP", "errSI0", "errSDoLP", "errSAoLP", "SN", "SSN"]
 
         # print(self.data)
-        with h5.File(self.data_file_name + "/" + self.saving_name + '_results.hdf5', 'w') as f:
+        with h5.File(self.data_file_name / (self.saving_name + '_results.hdf5'), 'w') as f:
 
             f.create_group("/data")
             # print(self.data.columns)
@@ -1612,8 +1607,8 @@ class PTCUBottle(Bottle):
         data_path = file_names
         # Loading the data from a binary file.
         # Output is one big 1-D array of length nb_data_tot = nb_toy * nb_data_per_rot
-        data_file = data_path + "/data" + str(line) + ".csv"
-        config_file = data_path + "/config.csv"
+        data_file = data_path / ("data" + str(line) + ".csv")
+        config_file = data_path / "config.csv"
 
         # print(data_file, config_file)
 

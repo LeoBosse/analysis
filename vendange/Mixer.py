@@ -23,6 +23,10 @@ import sys
 import os
 from subprocess import call
 
+import observation as obs
+from geometry import GetLonLatFromName, UENToAzEl
+from itertools import combinations
+
 from utils import *
 from rotation import *
 from bottle import *
@@ -54,6 +58,8 @@ class Mixer:
 			self.LoadExternData(bottle)
 
 
+			if self.comp_bottles:
+				self.TriangulateAoLP(bottle, self.comp_bottles)
 			# self.MakeFigure()
 			# self.MakePlots(bottle)
 			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
@@ -502,8 +508,8 @@ class Mixer:
 		self.show_Iref = False # For CarmenCru only. Show the reference channel with no polarizing lens
 
 		self.show_time = not comp #Don't touch!
-		self.time_format = "UT" #LT or UT. Self explainatory. Control the time format of the x-axis
-		self.time_label = "UTC" # The title of the time x-axis
+		self.time_format = "LT" #LT or UT. Self explainatory. Control the time format of the x-axis
+		self.time_label = "LT" # The title of the time x-axis
 		self.use_24h_time_format = 1
 
 		self.show_raw_data = 1 and len(self.comp_bottles) == 0 # Show the data with no slidding average. All rotations of the polarizing filter. In black
@@ -797,6 +803,104 @@ class Mixer:
 
 		# plt.tight_layout(pad=0, h_pad=None, w_pad=None, rect=None)
 
+
+	def TriangulateAoLP(self, bottle, comp_bottles):
+		
+		all_bottles = comp_bottles.copy()
+		all_bottles.append(bottle)
+		
+		for b in all_bottles:
+			aolps = np.asarray(b.data['smooth_AoLP'])
+			b.data['Pperp'] = [b.observation.GetPolaPlane(a, mode='perp', coord='A') for a in aolps] #Norm of the plane that is perp to the los and the AoLP (cross product)
+			b.data['Ppara'] = [b.observation.GetPolaPlane(a, mode='para', coord='A') for a in aolps] #Norm of the plane that is parallel to the AoLP (contains AoLP and los -> norm is the cross product)
+		
+		# All possible pairings of the instruments. (1, 2)==(2, 1)
+		pairings = combinations(all_bottles, 2)
+
+		perp_intersections_uen  = []
+		perp_intersections_azel = []
+		para_intersections_uen  = []
+		para_intersections_azel = []
+
+		# Compute the intersection of the plane for each pair of observation
+		for i, pair in enumerate(pairings):
+			perp_uen = np.array([np.cross(p0, p1) for p0, p1 in zip(pair[0].data['Pperp'], pair[1].data['Pperp'])])
+			perp_uen /= np.linalg.norm(perp_uen)
+
+			para_uen = np.array([np.cross(p0, p1) for p0, p1 in zip(pair[0].data['Ppara'], pair[1].data['Ppara'])])
+			para_uen /= np.linalg.norm(para_uen)
+
+			perp_azel = np.array([UENToAzEl(uen) for uen in perp_uen])
+			para_azel = np.array([UENToAzEl(uen) for uen in para_uen])
+
+			perp_intersections_uen.append(perp_uen)
+			para_intersections_uen.append(para_uen)
+			perp_intersections_azel.append(perp_azel)
+			para_intersections_azel.append(para_azel)
+
+
+		if len(all_bottles) > 2:
+			perp_diff = []
+			para_diff = []
+			perp_pairings = combinations(perp_intersections_uen, 2)
+			para_pairings = combinations(para_intersections_uen, 2)
+
+			print('Angles between every intersections of the perpendicular planes')
+			for i, pair in enumerate(perp_pairings):
+				angle_diff = np.arccos(np.dot(pair[0], pair[1]))
+				perp_diff.append(angle_diff)
+				print(angle_diff*RtoD)
+
+			print('Angles between every intersections of the parallel planes')
+			for i, pair in enumerate(para_pairings):
+				angle_diff = np.arccos(np.dot(pair[0], pair[1]))
+				para_diff.append(angle_diff)
+				print(angle_diff*RtoD)
+
+			perp_error = np.average(perp_diff)
+			para_error = np.average(para_diff)
+			if perp_error > para_error:
+				print(f'PARALLEL currents are closer, with an average difference angle of {para_error*RtoD}')
+			elif perp_error < para_error:
+				print(f'PERPENDICULAR currents are closer, with an average difference angle of {perp_error*RtoD}')
+			else:
+				print('Parallel and perpendicular have exactly the same average difference! Hard to tell which is better...')
+
+			print('All intersections for perp current')
+			# print(perp_intersections_uen)
+			for i in range(len(perp_intersections_uen)):
+				print(perp_intersections_uen[i])
+
+			print('All intersections for para current')
+			# print(para_intersections_uen)
+			for i in range(len(para_intersections_uen)):
+				print(para_intersections_uen[i])
+
+
+
+		# perp_current = np.average(perp_intersections_uen, axis=0)
+		# perp_current /= np.linalg.norm(perp_current)
+		# print("Average perpendicular current (uen)", perp_current)
+		# print("Average perpendicular current (azel)", np.array(UENToAzEl(perp_current))*RtoD)
+		
+		
+
+		# para_current = np.average(para_intersections_uen, axis=0)
+		# para_current /= np.linalg.norm(para_current)
+		# print("Average parallel current (uen)", para_current)
+		# print("Average parallel current (azel)", np.array(UENToAzEl(para_current))*RtoD)
+
+
+		fig, axs = plt.subplots(2,1, sharex=True)
+		axs[0].plot(perp_intersections_azel[0][:, 0]*RtoD)
+		axs[1].plot(perp_intersections_azel[0][:, 1]*RtoD)
+
+		fig, axs = plt.subplots(2,1, sharex=True)
+		axs[0].plot(para_intersections_azel[0][:, 0]*RtoD)
+		axs[1].plot(para_intersections_azel[0][:, 1]*RtoD)
+		
+		return perp_intersections_azel
+		
 
 	# def SetColors(self, bottle, comp = False):
 
