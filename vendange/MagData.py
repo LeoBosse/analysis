@@ -511,16 +511,16 @@ class MagData:
 			return False
 	
 	def DownloadDataFile(self, save_path):
-		save_path = str(save_path)
-		if 'Tromso' in save_path:
+		save_path = save_path
+		if 'Tromso' in str(save_path):
 			site = 'tro2a'
-		elif 'Nyalesund' in save_path:
+		elif 'Nyalesund' in str(save_path):
 			site = 'nal1a'
 		else:
 			print('WARNING: magnetometer location not found. Using Tromso as default.')
 			site = 'tro2a'
 			
-		date = dt.datetime.strptime(save_path.split('/')[-1], "%Y%m%d")
+		date = dt.datetime.strptime(save_path.name, "%Y%m%d")
 		year  = date.year
 		month = date.month
 		day   = date.day

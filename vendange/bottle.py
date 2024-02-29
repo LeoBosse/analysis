@@ -99,7 +99,8 @@ class Bottle:
         # See PTCUBottle or SPPBottle for specific instructions
 
     def SetInfoFromDataFileName(self, f, data_f):
-        self.folders, self.data_folders = str(f).split("/"), str(data_f).split("/")
+        self.folders, self.data_folders = f.parts, data_f.parts
+        # self.folders, self.data_folders = str(f).split("/"), str(data_f).split("/")
         # i = len(data_folders) - 1
         self.folders_index = -3
 
@@ -1005,7 +1006,7 @@ class Bottle:
 
     def PrintInfo(self):
         print("*********************************************")
-        print("INFO:", str(self.data_file_name).split("/")[-3:])
+        print("INFO:", self.data_file_name.parts[-3:])
         print("DoLP min:", np.min(self.data['smooth_DoLP']))
         print("DoLP max:", np.max(self.data['smooth_DoLP']))
         print("DoLP stddev:", np.std(self.data['smooth_DoLP']))
@@ -1340,8 +1341,6 @@ class PTCUBottle(Bottle):
               self.location, self.filters, self.azimut * RtoD, self.elevation * RtoD, self.com)
 
     def LoadData(self):
-
-
         if self.instrument_name == "carmen" or self.instrument_name == "corbel" or self.instrument_name == "gdcu":
             self.raw_data, self.config = self.LoadPTCUData()
             self.nb_rot = len(self.raw_data)
@@ -1761,7 +1760,7 @@ class PTCUBottle(Bottle):
                 break
 
     def LoadFromTxt(self):
-        file_name = self.data_file_name + "/" + self.saving_name + '_results.txt'
+        file_name = self.data_file_name / (self.saving_name + '_results.txt')
 
         data = pd.read_csv(file_name, delimiter="\t")
         data.columns = [c.replace("#", "").replace(
@@ -1990,10 +1989,9 @@ class SPPBottle(Bottle):
         print(self.nb_rot, "good rotations left after good rot cuts.")
 
     def SaveTXT(self):
-        print("Saving as .txt in", self.data_file_name
-              + "/" + self.saving_name + '_results.txt')
+        print("Saving as .txt in", self.data_file_name / (self.saving_name + '_results.txt'))
         times = [t.total_seconds() for t in self.data['Times']]
-        np.savetxt("/".join(self.data_file_name.split("/")[:-1]) + "/" + self.saving_name + '_results.txt',                    np.array([times, self.data['smooth_V'], self.data['smooth_Vcos'], self.data['smooth_Vsin'],
+        np.savetxt(self.data_file_name / (self.saving_name + '_results.txt'), np.array([times, self.data['smooth_V'], self.data['smooth_Vcos'], self.data['smooth_Vsin'],
                    self.data['smooth_I0'], self.data['smooth_DoLP'], self.data['smooth_AoLP']]).transpose(), delimiter="\t", header="time (ms)\tV\tVcos\tVsin\tI0 (mV)\tDoLP (percent)\tAoLP (deg)")
 
     def LoadSPPData(self, file_names):
