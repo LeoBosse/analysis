@@ -559,6 +559,7 @@ class Spectrum:
         calibration = [float(c) for c in self.header['CALIB'].split(',')]
         pixels = np.arange(self.nb_wavelengths)
         wavelengths = pixels**3 * calibration[3] + pixels**2 * calibration[2] + pixels * calibration[1] + calibration[0]
+        print(calibration)
         return wavelengths
 
 
