@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
+# matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{lmodern}']
 from scipy import signal
 import sys
 import os

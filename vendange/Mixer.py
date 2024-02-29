@@ -165,7 +165,10 @@ class Mixer:
 
 	def LoadPLIPData(self, bottle):
 		# self.plip_data = PLIP(bottle, "data_NOT_ROT.h5")
-		self.plip_data = PLIP("data_vh-+.h5")
+		try:
+			self.plip_data = PLIP("data_vh-+.h5")
+		except:
+			print("WARNING: error while loading plip data. Check file path, formating of the hdf5 file, etc")
 		
 
 	def LoadMagData(self, bottle):
