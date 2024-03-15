@@ -1,6 +1,18 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+
+#######################################################################
+# Contains the Input object that represent the input file for vendange.
+# It can read, update and write the input files. 
+# It is used for automatically creating input files with default values when downloading CRU data from the instrument in the recolte.py script.
+
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
 import mysql.connector as mysql
 import sys
 import os.path

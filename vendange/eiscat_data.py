@@ -1,6 +1,16 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+
+#######################################################################
+# Contains Eiscat data object that reads and selects eiscat data from the ../../data/eiscat folder.
+# Two object exists, one for old eiscat files in matlab format (Eiscat). The other for more recent data in hdf5 format.
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from utils import *
@@ -41,7 +51,7 @@ class Eiscat:
 			print("No EISCAT data available.")
 
 	def SetPaths(self, bottle):
-		self.folder = self.path
+		self.folder = str(self.path)
 		if self.start_datetime.year == 2020:
 			self.folder += "SP_FR_anadata/"
 
@@ -51,6 +61,7 @@ class Eiscat:
 			self.folder += "_beata_10@uhfa/"
 		elif self.start_datetime.year == 2020:
 			self.folder += "_beata_60@vhf/"
+		self.folder = Path(self.folder)
 
 		self.folders = [self.folder]
 		if self.start_datetime.day != self.end_datetime.day:
@@ -59,15 +70,16 @@ class Eiscat:
 			end_date = bottle.DateTime("end", format="UT")
 			while start_date.day != end_date.day:
 				start_date += one_day
-				folder = self.path
+				folder = str(self.path)
 				folder += start_date.strftime("%Y-%m-%d")
 				folder += "_beata_10@uhfa/"
-				self.folders.append(folder)
+				self.folders.append(Path(folder))
 		# print(self.folders)
+		
 		self.file_list = []
 		for f in self.folders:
 			try:
-				self.file_list.extend([f + fs for fs in os.listdir(f)])
+				self.file_list.extend([f / fs for fs in os.listdir(f)])
 			except:
 				print("WARNING: No eiscat data files for this date.")
 
@@ -76,7 +88,7 @@ class Eiscat:
 			self.valid = False
 
 		if self.valid:
-			self.files_list = [f for f in self.file_list if f[-4:] == ".mat"]
+			self.files_list = [f for f in self.file_list if str(f)[-4:] == ".mat"]
 
 
 	def InitTime(self, bottle):
@@ -162,8 +174,8 @@ class EiscatHDF5(Eiscat):
 
 		self.folder = self.path #Init folder containing all Eiscat files for any dates
 
-		self.folder += bottle.DateTime(format="UT").strftime("%Y%m%d") + "/"
-
+		self.folder = self.folder / bottle.DateTime(format="UT").strftime("%Y%m%d")
+		
 		self.folders = []
 		self.file_list = []
 
@@ -172,33 +184,33 @@ class EiscatHDF5(Eiscat):
 		start_date = bottle.DateTime("start", format="UT")
 		end_date = bottle.DateTime("end", format="UT")
 		while start_date.day <= end_date.day:
-			folder = self.path
-			folder += start_date.strftime("%Y%m%d") + "/"
+			folder = self.path / start_date.strftime("%Y%m%d")
+			# folder += start_date.strftime("%Y%m%d") + "/"
 			self.folders.append(folder)
-
 			file_date = start_date.strftime("%Y-%m-%d")
+			# print(self.folders, file_date)
 			if   self.antenna == "tristatic":
-				self.file_list.append(folder + f"MAD6529_{file_date}_beata_V139@kst.hdf5")
+				self.file_list.append(folder / f"MAD6529_{file_date}_beata_V139@kst.hdf5")
 				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_V139@kst.hdf5")
 
 			elif self.antenna == "tromso":
-				self.file_list.append(folder + f"MAD6400_{file_date}_beata_60@vhf.hdf5")
+				self.file_list.append(folder / f"MAD6400_{file_date}_beata_60@vhf.hdf5")
 				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_60@vhf.hdf5")
 
 			elif self.antenna == "kiruna":
-				self.file_list.append(folder + f"MAD6400_{file_date}_beata_V120@krva.hdf5")
+				self.file_list.append(folder / f"MAD6400_{file_date}_beata_V120@krva.hdf5")
 				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_V120@krva.hdf5")
 
 			elif self.antenna == "sodankyla":
-				self.file_list.append(folder + f"MAD6400_{file_date}_beata_V120@sdva.hdf5")
+				self.file_list.append(folder / f"MAD6400_{file_date}_beata_V120@sdva.hdf5")
 				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_V120@sdva.hdf5")
 
 			elif self.antenna == "uhf_v":
-				self.file_list.append(folder + f"MAD6502_{file_date}_beata_V225@uhf.hdf5")
+				self.file_list.append(folder / f"MAD6502_{file_date}_beata_V225@uhf.hdf5")
 				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_V225@uhf.hdf5")
 
 			elif self.antenna == "uhf":
-				self.file_list.append(folder + f"MAD6400_{file_date}_beata_ant@uhfa.hdf5")
+				self.file_list.append(folder / f"MAD6400_{file_date}_beata_ant@uhfa.hdf5")
 				# self.file_list.append(folder + f"EISCAT_{file_date}_beata_ant@uhfa.hdf5")
 
 			else:
@@ -212,7 +224,7 @@ class EiscatHDF5(Eiscat):
 			self.valid = False
 
 		if self.valid:
-			self.files_list = [f for f in self.file_list if f[-5:] == ".hdf5"]
+			self.files_list = [f for f in self.file_list if str(f)[-5:] == ".hdf5"]
 
 
 	def GetDataFromFile(self, file_name):

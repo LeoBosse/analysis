@@ -2,6 +2,29 @@
 # -*-coding:utf-8 -*
 
 
+
+#######################################################################
+# Contains a script to download automatically the CRU data from the instrument!
+# Super helpful if the data was acquired following the corresponding protocol and naming conventions.
+# Connects to the instrument, looks for the given observation ID, downloads it, make a sanity check on the data, and store it in the correct folder with a useable default input file.
+# You can gain soooooo much time using this if you respect the correct naming convention when naming the observation campaign before hitting START on the instrument dashboard.
+# Correct name:
+# [YYYMMDD]_[Location]_[FF(FF)]_a[A]_e[E]_[comments]
+# YYYMMDD: Date with year-month-day like 20241503 for March 15th, 2024
+# Location: Location name. For example Skibotn. You can check the geomagic/geometry.py file for a list of registered locations. Unknown locations are also accepted, but some analysis optional calculations might not work.
+# F: filter color by channel (for exemple: rovm for grand cru if filters are red-orange-green-purple)
+# A: azimuth in degrees. can be positive or negative, any number of digits
+# E: elevation in degrees. between 0 and 90, any number of digits
+# comments: anything you want. often the polarizer rotation speed (e.g: 5hz)
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
+
+
+
 import mysql.connector as mysql
 import sys
 import os.path

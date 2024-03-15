@@ -13,7 +13,24 @@ from vendange_configuration import *
 DtoR = np.pi / 180.
 RtoD = 180. / np.pi
 
-### Rotaion classes. Rotation object is the parent of SPPRotaion and PTCURotation objects. Both classes exist because of the initialisations that are a little different and SPPRotations needs more methods. But they still share some common things.
+
+
+#######################################################################
+# DEPRECATED
+# This was used for SPP data and CRU data in the old times when it was useful. Today, only SPPRotation might be useful.
+# CRU data does not register the full intensity curve dureing the rotation of the polarizer, only the 3 polarisation parameters.
+# Keep it for posterity if anyone wants to play with SPP data again.
+
+# Rotation classes. 
+# Rotation object is the parent of SPPRotation and PTCURotation objects. 
+# Both classes exist because of the initialisations that are a little different and SPPRotations needs more methods. But they still share some common things.
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
+
 
 class Rotation:
 	nb_bad_rot = 0

@@ -1,6 +1,20 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+
+
+#######################################################################
+# Contains the PLIP data object.
+# This is not useable as is, and should be develooped further once PLIP data is standard. Right now (2024), the format still moves regularly...
+
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from utils import *

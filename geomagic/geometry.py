@@ -9,6 +9,7 @@ except:
 from subprocess import call
 import numpy as np
 import math as m
+import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import sys as sys
@@ -44,9 +45,11 @@ RD_src_elevation = None
 
 def UENToAzEl(uen):
 	'''Converts up-east-north coordinates to azimuth and elevation angles.'''
-	u, e, n = uen
+	u, e, n = np.array(uen) / np.sqrt(np.sum([d**2 for d in uen]))
+	
 	az = np.arctan2(e, n)
 	el = np.arcsin(u)
+	
 	return az, el
 
 
@@ -163,7 +166,6 @@ if __name__ == "__main__":
 	arg_parser.add_argument('-dt', '--datetime', default = None,  help='Date and time of observation in UTC (YYYYMMDD-HH:MM:SS)')
 	
 	args = arg_parser.parse_args()
-
 
 	A_lon, A_lat = GetLonLatFromName(args.location)
 	outfile_name += "_" + args.location.lower()
@@ -300,7 +302,7 @@ if __name__ == "__main__":
 			# print('Solar Zenith angle (instrument): ', sol_zenith_angle_I)
 			# print('Solar Zenith angle (observation): ', sol_zenith_angle_O)
 			
-			el_margin = 10 * DtoR   # Count as illuminated if the sun is below the horizon by a given margin.
+			el_margin = 0 * DtoR   # Count as illuminated if the sun is below the horizon by a given margin.
 			
 			illumination_height = lambda zen_angle, margin=0: RT * (np.cos(margin) / np.sin(zen_angle - margin) - 1)
 			illumination_height_I = illumination_height(sol_zenith_angle_I, DtoR)
@@ -310,26 +312,34 @@ if __name__ == "__main__":
 			print(f'Illumination height above observation (km) with a {el_margin*RtoD} degree margin: ', illumination_height_O)
 			
 			
-			max_range = 1000000
-			step = max_range//100
-			for r in range(0, max_range, step):
-				r_lon, r_lat, r_alt = obs.GetPCoordinatesFromRange(r)
-				sun_alt_R, sun_az_R = GetSunAltAz(r_lon, r_lat, obs_time)
-				sol_zenith_angle_R = sol_zenith_angle(sun_alt_R)
-				illumination_height_R = illumination_height(sol_zenith_angle_R, el_margin)
-				if illumination_height_R <= r_alt:
-					for fr in range(0, step, step//100):
-						r_lon, r_lat, r_alt = obs.GetPCoordinatesFromRange(r-fr)
-						sun_alt_R, sun_az_R = GetSunAltAz(r_lon, r_lat, obs_time)
-						sol_zenith_angle_R = sol_zenith_angle(sun_alt_R)
-						illumination_height_R = illumination_height(sol_zenith_angle_R, el_margin)
-						if illumination_height_R >= r_alt:
-							print(f"Line of sight is illuminated by the sun at altitude {r_alt}, longitude {r_lon*RtoD}, latitude {r_lat*RtoD}, (with a {el_margin*RtoD} degree margin)")
-							break
-					break
+			ranges = range(0, 5000, 50)
+			longs, lats, alts = zip(*[obs.GetPCoordinatesFromRange(r) for r in ranges])
+			illumination_heights = np.array([illumination_height(sol_zenith_angle(GetSunAltAz(lon, lat, obs_time)[0]), el_margin) for lon, lat in zip(longs, lats)])
+			illumination_index  = np.where(alts > illumination_heights)[0][0]
+			illumination_alt = alts[illumination_index]
+			print(f"Line of sight is illuminated by the sun at altitude {illumination_alt}, longitude {longs[illumination_index]*RtoD}, latitude {lats[illumination_index]*RtoD}, (with a {el_margin*RtoD} degree margin)")
+			
+			el_margin = 10 * DtoR 
+			illumination_heights_sca = np.array([illumination_height(sol_zenith_angle(GetSunAltAz(lon, lat, obs_time)[0]), el_margin) for lon, lat in zip(longs, lats)])
+			illumination_index_sca  = np.where(alts > illumination_heights)[0][0]
+			illumination_alt_sca = alts[illumination_index]
+			print(f"Line of sight is illuminated by the sun at altitude {illumination_alt_sca}, longitude {longs[illumination_index]*RtoD}, latitude {lats[illumination_index]*RtoD}, (with a {el_margin*RtoD} degree margin)")
+			
 				
+			f, axs = plt.subplots(3, sharex= True)
+			axs[0].set_ylabel('Longitude')
+			axs[0].plot(ranges, np.array(longs)*RtoD)
+			axs[1].set_ylabel('Latitude')
+			axs[1].plot(ranges, np.array(lats)*RtoD)
+			axs[2].set_ylabel('Altitude (km)')
+			axs[2].plot(ranges, np.array(alts))
+			axs[2].plot(ranges, illumination_heights, 'r')
+			axs[2].plot(ranges, illumination_heights_sca, 'y')
 			
+			# axs[2].add_patch(patches.Rectangle((illumination_range, alts[0]), ranges[-1] -illumination_range, alts[-1], color="yellow"))
 			
+			axs[-1].set_xlabel('Range (km)')
+			plt.show()
 
 	#If we do several observations and want to plot the results.
 	else:

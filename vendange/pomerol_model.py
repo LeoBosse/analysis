@@ -1,6 +1,20 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+
+#######################################################################
+# Contains the POMEROL model object.
+# Methods are available to fit the model to the data, add and subtract moels from each other.
+# This object reads the polarisation computed by a run of the POMEROL model (light pollutio calculator). 
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
+
+
+
 import numpy as np
 import pandas as pd
 # import pymc3 as pm

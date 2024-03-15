@@ -1,6 +1,24 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+
+
+#######################################################################
+# Contains the Magnetometer data object and equivalent curent object.
+# Magnetometer data:
+# Can download missing data, read them. Can take a bottle in input if it is used for CRU analysis. Has helper methods to calculate the derivative of a parameter.
+
+# EqCurrent object:
+# read and help to manage equivalent current data for CRU analysis.
+# It can compute the apparent angle of the current on the CRU detector, or the angle with the line of sight. Can also compute the vertical component needed to align the current on the AoLP.
+
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
+
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -454,12 +472,11 @@ class MagData:
 		self.data_path = global_configuration.magnetometer_data_path
 		# self.data_path = "/home/bossel/These/Analysis/data/magnetometer/"
 
-		self.file = str(self.data_path)
+		self.file = self.data_path
 		if location.lower() in ["tromso", 'lacsud', "skibotn", "skibotnsud", "skibotnnord", "kilpisjarvi"]:
-			self.file += "Tromso"
+			self.file /= Path("Tromso")
 		elif location.lower() in ["nyalesund", "corbel"]:
-			self.file += "Nyalesund"
-		self.file += "/"
+			self.file /= Path("Nyalesund")
 		
 
 
@@ -474,8 +491,9 @@ class MagData:
 				
 
 
-		self.file += start.strftime("%Y%m%d")
+		self.file /= Path(start.strftime("%Y%m%d"))
 		self.file = Path(self.file)
+		self.additional_files = [Path(f) for f in self.additional_files]
 		self.exist = True
 
 		if self.force_download:
@@ -500,6 +518,7 @@ class MagData:
 
 
 	def DownloadFiles(self):
+		# print(self.file, self.additional_files)
 		for i, f in enumerate([self.file] + self.additional_files):
 			if not self.CheckDataFileExists(f):
 				self.DownloadDataFile(f)
@@ -519,7 +538,7 @@ class MagData:
 		else:
 			print('WARNING: magnetometer location not found. Using Tromso as default.')
 			site = 'tro2a'
-			
+		
 		date = dt.datetime.strptime(save_path.name, "%Y%m%d")
 		year  = date.year
 		month = date.month
@@ -529,9 +548,9 @@ class MagData:
 
 		url = f"http://flux.phys.uit.no/cgi-bin/mkascii.cgi?site={site}&year={year}&month={month}&day={day}&res={res}&pwd={password}&format=html&comps=DHZ&getdata=+Get+Data+"
 		
-		print(f"Downloading magnetometer data files from {url} in {self.data_path}.")
+		print(f"Downloading magnetometer data files from {url} in {save_path}.")
 		try:
-			wget.download(url, save_path)
+			wget.download(url, str(save_path))
 		except:
 			print(f'WARNING: The magnetometer data could not be downloaded for the date {date}.')
 
@@ -540,7 +559,7 @@ class MagData:
 		self.array_type = [('date','<U10'),('time','<U8'),('Dec',float),('Horiz',float),('Vert',float),('Incl',float),('Total',float)]
 
 		self.data = np.genfromtxt(self.file, dtype=self.array_type, delimiter = [12, 8, 11, 10, 10, 10, 10], skip_header=7, skip_footer=1, names=None)
-
+		
 		for f in self.additional_files:
 			print(f, len(self.data))
 			self.data = np.concatenate((self.data, np.genfromtxt(f, dtype=self.array_type, delimiter = [12, 8, 11, 10, 10, 10, 10], skip_header=7, skip_footer=1, names=None)))

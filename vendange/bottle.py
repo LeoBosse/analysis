@@ -1,6 +1,19 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+#######################################################################
+# This file contains 3 objects: Bottle, PTCUBottle(Bottle), SPP(Bottle)
+# The first is a parent to the other two. 
+# Today (2024), all data is a PTCUBottle. SPPBottle was only usefull for SPP data where all the sine wave was registered. It is most certainly broken today, but might still be usefull.
+# It is in the Bottle object that we read the data files, select good data, compute slidding average, etc. And then save the data file.
+# A Bottle object contains the time serie of one instrument channel. (So grand cru will produce 4 Bottle object, one for each channel)
+# other data from different instruments can also expect a bottle object dureing creation to know the time frame of the observation for exemple.
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -29,7 +42,7 @@ import chaosmagpy as chaos
 class Bottle:
     def __init__(self, folder_name, auto=True, line=1, from_txt=False):
         self.folder = Path(folder_name)
-        self.rotations = []
+        # self.rotations = []
 
         self.AoBapp = False
         self.AoBlos = False
@@ -63,7 +76,7 @@ class Bottle:
             self.observation_type = self.input_parameters["observation_type"]
         except:
             self.observation_type = "fixed"
-        print("INFO: Observation type is", self.observation_type)
+        # print("INFO: Observation type is", self.observation_type)
 
         self.NoVref = True
         try:
@@ -112,7 +125,6 @@ class Bottle:
         # Loading the data from the files, then creating a list of Rotation objects depending on the instrument name specified. Can be 'spp', 'spp2014', 'fake_spp', 'ptcu', 'fake_ptcu'
         if not self.from_txt:
             self.LoadData()
-            
             self.SetJumps()
             
             if self.valid:
@@ -123,7 +135,6 @@ class Bottle:
                 self.CreateLists()
                 self.GetSmoothLists()
                 self.TestResample()
-                print(self.data['DoLP'])
         else:
             self.LoadFromTxt()
 
@@ -249,19 +260,20 @@ class Bottle:
         #     except:
         #         self.tail_jump = self.rotations[-1].time - self.tail_jump
         #
-        print('DEBUG JUMPS', self.head_jump, self.tail_jump)
+        # print('DEBUG JUMPS', self.head_jump, self.tail_jump)
 
     def CorrectDensity(self):
         try:
             use_density = int(self.input_parameters["density"].split(";")[self.line-1])
         except KeyError:
-            print("Warning, no density paramters in the input files (exist only since 20220523). Not a probelm if you did not use a density filter during your mesurments.")
+            print("Warning, no density parameters in the input files (exist only since 20220523). Not a probelm if you did not use a density filter during your mesurments.")
             return False
 
-        print(f"use_density {use_density}")
+        
         if not use_density:
             return False
 
+        print(f"A neutral density filter was used. Correcting as specified in the input file...")
         self.time_unit = self.input_parameters["density_time_unit"].lower()
 
 
@@ -367,8 +379,8 @@ class Bottle:
             self.AoLP_correction = float(self.input_parameters["AoLP_correction"]) * DtoR
         else:
             self.AoLP_correction = 0
-        print(self.config['IS_PolarizerOffset1'])
-        print("AoLP correction:", self.line, self.AoLP_correction * RtoD)
+        # print(self.config['IS_PolarizerOffset1'])
+        print(f"AoLP correction for channel {self.line} = {self.AoLP_correction * RtoD} degrees")
 
         # self.data['V'] = np.array([r.V for r in self.rotations])
         # self.data['Vcos'] = np.array([r.Vcos for r in self.rotations])
@@ -437,7 +449,6 @@ class Bottle:
     #     self.data['AoLP'] = SetAngleBounds(self.data['AoLP'], -np.pi/2, np.pi/2)
 
     def SetSmoothLists(self):
-        print("Set Smooth Lists")
         # Smoothing procedure. Can smooth for a given number of rotations (smoothing_unit==rotations) or a  given time period (smoothing_unit==seconds).
         # Average the data over smoothing_factor rotations
         self.smoothing_factor = float(self.input_parameters["smoothing_factor"])
@@ -451,20 +462,16 @@ class Bottle:
         self.avg_dt = self.data["time_deltas"].mean().total_seconds() * 1000 #1000 * np.average(self.data["time_deltas"]).total_seconds()  # in millisec
         # self.time_deltas.append(self.avg_dt/1000)
 
-        print("AVG DT (millisec)", self.avg_dt)
+        # print("AVG DT (millisec)", self.avg_dt)
 
     def GetSmoothLists(self):
 
         self.SetSmoothLists()
 
-        print("Smooting data over {} {}".format(
-            self.smoothing_factor, self.smoothing_unit))
-        self.data['smooth_V'] = self.GetSliddingAverage(
-            self.data['V'],    self.data['Times'], self.smoothing_factor, self.smoothing_unit)
-        self.data['smooth_Vcos'] = self.GetSliddingAverage(
-            self.data['Vcos'], self.data['Times'], self.smoothing_factor, self.smoothing_unit)
-        self.data['smooth_Vsin'] = self.GetSliddingAverage(
-            self.data['Vsin'], self.data['Times'], self.smoothing_factor, self.smoothing_unit)
+        print("Smooting data with a slidding window of {} {}".format(self.smoothing_factor, self.smoothing_unit))
+        self.data['smooth_V']    = self.GetSliddingAverage(self.data['V'],    self.data['Times'], self.smoothing_factor, self.smoothing_unit)
+        self.data['smooth_Vcos'] = self.GetSliddingAverage(self.data['Vcos'], self.data['Times'], self.smoothing_factor, self.smoothing_unit)
+        self.data['smooth_Vsin'] = self.GetSliddingAverage(self.data['Vsin'], self.data['Times'], self.smoothing_factor, self.smoothing_unit)
         if not self.NoVref:
             self.data['smooth_Iref'] = self.GetSliddingAverage(
                 self.data['Iref'], self.data['Times'], self.smoothing_factor, self.smoothing_unit)
@@ -560,7 +567,7 @@ class Bottle:
         # self.SetUnifyAngles()
         self.graph_angle_shift = 0
 
-        print("Get Smooth Lists: DONE")
+        # print("Get Smooth Lists: DONE")
 
     def GetDiffErrors(self, smooth=True):
         if smooth:
@@ -705,8 +712,8 @@ class Bottle:
         else:
             psd_idxs = np.ones_like(fhat)
 
-        print(threshold_freq)
-        print(freq)
+        # print(threshold_freq)
+        # print(freq)
 
         # f = plt.figure()
         # plt.plot(freq, psd)
@@ -752,7 +759,7 @@ class Bottle:
 
     def Geometry(self, to_initiate=True):
 
-        print("Geometry: Start")
+        print("Staring geometry computations")
 
         wd = os.getcwd()
         # os.chdir(pwd_src + "Geometry/Leo/src/")
@@ -839,7 +846,7 @@ class Bottle:
                 self.nb_continue_rotation = len(
                     self.continue_rotation_times) - 1
                 # self.rotation_direction = self.input_parameters["rotation_direction"]
-            print("self.continue_rotation_times", self.continue_rotation_times)
+            # print("self.continue_rotation_times", self.continue_rotation_times)
 
             geo = geometry.Geometry("dummy", str(self.location), str(h), "e", str(
                 self.continue_rotation_elevation * RtoD), str(self.source_azimut * RtoD), str(self.source_elevation * RtoD))
@@ -859,7 +866,7 @@ class Bottle:
 
         os.chdir(wd)
         # print("Geometry:", self.AoBapp, self.AoBlos, self.AoRD)
-        print("Geometry: DONE")
+        print("Geometry computations: DONE")
 
     def GetOneTimePeriod(self, start_time, end_time, smooth_data=True, direct=False):
         """Return the data points between the start and end times given."""
@@ -1067,86 +1074,113 @@ class Bottle:
 
         return interp_I0, interp_DoLP, interp_AoLP
 
+
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, key):
+        return self.data[key]
+    
+    def __setitem__(self, key, value):
+        self.data[key] = value
+    
+    def __delitem__(self, key):
+        del self.data[key]
+    
+    def __contains__(self, key):
+        return key in self.data
+    
     def __add__(self, bottle_to_add):
 
         print(f"Adding: {self} + {bottle_to_add}")
+        
+        print('ADDING', len(self.data), len(bottle_to_add.data))
 
-        if len(bottle_to_add.rotations) > 0:
+        if len(bottle_to_add.data) > 0:
             bottle_to_add.CleanRotations()
 
         norm = bottle_to_add.DateTime("start") - self.DateTime("start")
-        for ir, r in enumerate(bottle_to_add.rotations):
-            bottle_to_add.rotations[ir].time += norm
+        bottle_to_add.data["Times"] += norm
+        
+        self.data = self.data.append(bottle_to_add.data)
+        self.tail_jump = self.data["Times"].iloc[-1]
+        
+        # for ir, r in enumerate(bottle_to_add.data['Times']):
+            # bottle_to_add.data[ir].time += norm
             # bottle_to_add.rotations[ir].time += self.rotations[-1].time
 
-        if len(bottle_to_add.rotations) > 0:  # If not read from a file
+        # if len(bottle_to_add.data) > 0:  # If not read from a file
             # print("DEBUG adding  with rotations")
             # print(len(self.rotations), len(bottle_to_add.rotations))
-            self.rotations = np.append(self.rotations, bottle_to_add.rotations)
+            # self.rotations = np.append(self.rotations, bottle_to_add.rotations)
 
             # print(len(self.rotations), len(bottle_to_add.rotations))
+            
+            # self.data.append(bottle_to_add.data)
 
-            self.tail_jump = self.rotations[-1].time
-            if not self.from_txt:
-                # self.CleanRotations()
+            # self.tail_jump = self.data["Times"].iloc[-1]
+            # if not self.from_txt:
+            #     # self.CleanRotations()
 
-            # Now that we have all our rotations, creating lists of usefull data for easier smoothing
-                self.CreateLists()
-                self.GetSmoothLists()
+            # # Now that we have all our rotations, creating lists of usefull data for easier smoothing
+            #     self.CreateLists()
+            #     self.GetSmoothLists()
 
-        else:  # If read from a file (-f)
-            # print("DEBUG adding  without rotations (from file)")
-            bottle_to_add.all_times += bottle_to_add.DateTime("start") - self.DateTime("start")
-            # bottle_to_add.all_times += self.data['Times'][-1]
+        # else:  # If read from a file (-f)
+        #     # print("DEBUG adding  without rotations (from file)")
+        #     # print(self.rotations)
+        #     # bottle_to_add.data['Times'] += norm
+        #     # bottle_to_add.all_times += self.data['Times'][-1]
 
-            self.data['Times'] = np.append(self.data['Times'], bottle_to_add.all_times)
-            self.nb_rot = len(self.data['Times'])
+        #     self.data['Times'] = np.append(self.data['Times'], bottle_to_add.all_times)
+        #     self.nb_rot = len(self.data['Times'])
 
-            self.data['smooth_V'] = np.append(self.data['smooth_V'], bottle_to_add.data['smooth_V'])
-            self.data['smooth_Vcos'] = np.append(
-                self.data['smooth_Vcos'], bottle_to_add.data['smooth_Vcos'])
-            self.data['smooth_Vsin'] = np.append(
-                self.data['smooth_Vsin'], bottle_to_add.data['smooth_Vsin'])
+        #     self.data['smooth_V'] = np.append(self.data['smooth_V'], bottle_to_add.data['smooth_V'])
+        #     self.data['smooth_Vcos'] = np.append(
+        #         self.data['smooth_Vcos'], bottle_to_add.data['smooth_Vcos'])
+        #     self.data['smooth_Vsin'] = np.append(
+        #         self.data['smooth_Vsin'], bottle_to_add.data['smooth_Vsin'])
 
-            self.nb_smooth_rot = len(self.data['smooth_V'])
+        #     self.nb_smooth_rot = len(self.data['smooth_V'])
 
-            # Calculate the smooth I0, DoLP and AoLP
-            self.data['smooth_I0'] = np.append(self.data['smooth_I0'], bottle_to_add.data['smooth_I0'])
-            self.data['smooth_DoLP'] = np.append(
-                self.data['smooth_DoLP'], bottle_to_add.data['smooth_DoLP'])
-            self.data['smooth_AoLP'] = np.append(
-                self.data['smooth_AoLP'], bottle_to_add.data['smooth_AoLP'])
+        #     # Calculate the smooth I0, DoLP and AoLP
+        #     self.data['smooth_I0'] = np.append(self.data['smooth_I0'], bottle_to_add.data['smooth_I0'])
+        #     self.data['smooth_DoLP'] = np.append(
+        #         self.data['smooth_DoLP'], bottle_to_add.data['smooth_DoLP'])
+        #     self.data['smooth_AoLP'] = np.append(
+        #         self.data['smooth_AoLP'], bottle_to_add.data['smooth_AoLP'])
 
-            self.data['V'] = np.append(self.data['V'], bottle_to_add.data['V'])
-            self.data['Vcos'] = np.append(self.data['Vcos'], bottle_to_add.data['Vcos'])
-            self.data['Vsin'] = np.append(self.data['Vsin'], bottle_to_add.data['Vsin'])
-            self.data['I0'] = np.append(self.data['I0'], bottle_to_add.data['I0'])
-            self.data['DoLP'] = np.append(self.data['DoLP'], bottle_to_add.data['DoLP'])
-            self.data['AoLP'] = np.append(self.data['AoLP'], bottle_to_add.data['AoLP'])
+        #     self.data['V'] = np.append(self.data['V'], bottle_to_add.data['V'])
+        #     self.data['Vcos'] = np.append(self.data['Vcos'], bottle_to_add.data['Vcos'])
+        #     self.data['Vsin'] = np.append(self.data['Vsin'], bottle_to_add.data['Vsin'])
+        #     self.data['I0'] = np.append(self.data['I0'], bottle_to_add.data['I0'])
+        #     self.data['DoLP'] = np.append(self.data['DoLP'], bottle_to_add.data['DoLP'])
+        #     self.data['AoLP'] = np.append(self.data['AoLP'], bottle_to_add.data['AoLP'])
 
-            self.V_average = np.average(self.data['V'])
-            self.Vcos_average = np.average(self.data['Vcos'])
-            self.Vsin_average = np.average(self.data['Vsin'])
-            self.I0_average, self.DoLP_average, self.AoLP_average = Rotation.GetLightParameters(
-                self.V_average, self.Vcos_average, self.Vsin_average)
+        #     self.V_average = np.average(self.data['V'])
+        #     self.Vcos_average = np.average(self.data['Vcos'])
+        #     self.Vsin_average = np.average(self.data['Vsin'])
+        #     self.I0_average, self.DoLP_average, self.AoLP_average = Rotation.GetLightParameters(
+        #         self.V_average, self.Vcos_average, self.Vsin_average)
 
-            self.std_I0 = np.append(self.std_I0, bottle_to_add.std_I0)
-            self.std_smooth_I0 = np.append(
-                self.std_smooth_I0, bottle_to_add.std_smooth_I0)
-            self.std_DoLP = np.append(self.std_DoLP, bottle_to_add.std_DoLP)
-            self.std_smooth_DoLP = np.append(
-                self.std_smooth_DoLP, bottle_to_add.std_smooth_DoLP)
-            self.std_AoLP = np.append(self.std_AoLP, bottle_to_add.std_AoLP)
-            self.std_smooth_AoLP = np.append(
-                self.std_smooth_AoLP, bottle_to_add.std_smooth_AoLP)
+        #     self.std_I0 = np.append(self.std_I0, bottle_to_add.std_I0)
+        #     self.std_smooth_I0 = np.append(
+        #         self.std_smooth_I0, bottle_to_add.std_smooth_I0)
+        #     self.std_DoLP = np.append(self.std_DoLP, bottle_to_add.std_DoLP)
+        #     self.std_smooth_DoLP = np.append(
+        #         self.std_smooth_DoLP, bottle_to_add.std_smooth_DoLP)
+        #     self.std_AoLP = np.append(self.std_AoLP, bottle_to_add.std_AoLP)
+        #     self.std_smooth_AoLP = np.append(
+        #         self.std_smooth_AoLP, bottle_to_add.std_smooth_AoLP)
 
-            self.SetUnifyAngles()
+        #     self.SetUnifyAngles()
 
-            self.tail_jump = self.data['Times'][-1]
+        #     self.tail_jump = self.data['Times'][-1]
 
-        self.graph_angle_shift = max(
-            self.graph_angle_shift, bottle_to_add.graph_angle_shift)
+        self.graph_angle_shift = max(self.graph_angle_shift, bottle_to_add.graph_angle_shift)
         self.Geometry()
+        
+        print('ADDING', len(self.data), len(bottle_to_add.data))
 
         return self
 
@@ -1172,7 +1206,7 @@ class Bottle:
         N_rot = len(self.data['I0'])
         filter_angles = np.linspace(0, N_rot * 2*np.pi, N_rot * N_pts) #List of angles (rad) for the polarising filter between 0 and 2π.
 
-        print("Resampling signal")
+        print("Resampling signal...")
 
         resamp_signal = CubicSpline(np.array(self.data['Times'].copy().dt.total_seconds()), np.array(self.data['I0'].copy()))
         resampled_t = np.linspace(self.data['Times'].iloc[0].total_seconds(), self.data['Times'].iloc[-1].total_seconds(), N_pts*N_rot, endpoint=True)
@@ -1276,7 +1310,7 @@ class Bottle:
                             | (self.data['DoLP'] < self.DoLPmin)].index
 
         self.nb_bad_rot = len(indexes)
-        print(indexes)
+        # print(indexes)
         self.data.drop(indexes, inplace=True)
 
         if len(self.data) == 0:
@@ -1305,10 +1339,10 @@ class PTCUBottle(Bottle):
 
         i = self.folders_index
         date_location = self.folders[i + 1].split("_")
-        print(self.folders[i + 1], date_location)
+        # print(self.folders[i + 1], date_location)
         self.date, self.location = date_location[0], date_location[1]
         rest = self.folders[i + 2].split("_")
-        print(i, date_location, self.date, self.location, rest)
+        # print(i, date_location, self.date, self.location, rest)
         # print(rest)
         # Filters: r,v,b,m pour rouge, vert, bleu, mauve
         # 0: no filters_list
@@ -1326,7 +1360,7 @@ class PTCUBottle(Bottle):
                     if self.filters[1] in [0, "0"]:
                         self.NoVref = True
                 elif self.instrument_name in ["corbel", "gdcu"]:
-                    print(rest, r, self.line)
+                    # print(rest, r, self.line)
                     self.filters = r[self.line - 1]
                 # print("FILTERS:", r, self.filters)
 
@@ -1337,8 +1371,7 @@ class PTCUBottle(Bottle):
             else:
                 self.com += "_" + r
 
-        print("SetInfoFromDataFileName", self.instrument_name, self.date,
-              self.location, self.filters, self.azimut * RtoD, self.elevation * RtoD, self.com)
+        print(f"SetInfoFromDataFileName retrieved, {self.instrument_name}, {self.date}, {self.location}, {self.filters}, {self.azimut * RtoD}, {self.elevation * RtoD}, {self.com}")
 
     def LoadData(self):
         if self.instrument_name == "carmen" or self.instrument_name == "corbel" or self.instrument_name == "gdcu":
@@ -1400,12 +1433,12 @@ class PTCUBottle(Bottle):
         # except:
         #     self.time_stamp = str(self.config["Timestamp"]).split("\'")[1]
         self.time_stamp = self.config["Timestamp"]
-        print(self.time_stamp)
+        # print(self.time_stamp)
         # Date and time of first rotation (before deleting head_jump)
 
         self.datetime = dt.datetime.strptime(
             self.time_stamp, "%Y-%m-%d %H:%M:%S")
-        print(self.datetime, self.datetime.strftime("%H:%M:%S"))
+        # print(self.datetime, self.datetime.strftime("%H:%M:%S"))
         # Time in sec since EPOCH
         # self.time = self.datetime.timestamp()
 
@@ -1493,19 +1526,18 @@ class PTCUBottle(Bottle):
             print("Correcting density")
             # print(self.density_start, self.density_end)
             # print(self.rotations[0].time, self.rotations[-1].time)
-            for ir, r in enumerate(self.rotations):
-                if self.density_start <= r.time < self.density_end:
-                    self.data['V'].iloc[ir]    *= self.density_factor
-                    self.data['Vcos'].iloc[ir] *= self.density_factor
-                    self.data['Vsin'].iloc[ir] *= self.density_factor
-                    self.data['I0'].iloc[ir]   *= self.density_factor
+            for it, t in enumerate(self.data['Times']):
+                if self.density_start <= t < self.density_end:
+                    self.data['V'].iloc[it]    *= self.density_factor
+                    self.data['Vcos'].iloc[it] *= self.density_factor
+                    self.data['Vsin'].iloc[it] *= self.density_factor
+                    self.data['I0'].iloc[it]   *= self.density_factor
 
 
         # self.rotations = [r for r in self.rotations if r.IsGood(
             # Imin=self.Imin, Imax=self.Imax, DoLPmin=self.DoLPmin, DoLPmax=self.DoLPmax)]
         self.IsGood()
-        print(len(self.data), "good rotations in", self.nb_rot, ";",
-              self.nb_rot - len(self.rotations), "deleted because of invalid data.")
+        print(len(self.data), "good rotations in", self.nb_rot, ";", self.nb_rot - len(self.data['Times']), "deleted because of invalid data.")
         self.nb_rot = len(self.data)
 
 
@@ -1602,7 +1634,7 @@ class PTCUBottle(Bottle):
         file_names = self.data_file_name
         line = self.line
 
-        print("LOADING PTCU data: line", line)
+        # print("LOADING PTCU data: line", line)
         data_path = file_names
         # Loading the data from a binary file.
         # Output is one big 1-D array of length nb_data_tot = nb_toy * nb_data_per_rot
@@ -1634,11 +1666,11 @@ class PTCUBottle(Bottle):
         conf_df = pd.read_csv(config_file, sep=",")
         configuration = dict()
         # print(config_file)
-        print('configuration', configuration)
+        # print('configuration', configuration)
         for n in conf_df.columns:
             configuration[n] = conf_df[n][0]
 
-        print('configuration', configuration)
+        # print('configuration', configuration)
 
         # For new hdf5 files
         # file_names = self.data_file_name
@@ -1672,14 +1704,14 @@ class PTCUBottle(Bottle):
         # # 'IS_IpAddress':,
         # }
 
-        print("PTCU DATA loaded")
+        # print("PTCU DATA loaded")
 
         return raw_data, configuration
 
     def LoadFromHDF5(self):
         file_names = self.data_file_name
         line = self.line
-        print("LOADING PTCU data: line", line)
+        # print("LOADING PTCU data: line", line)
         data_path = file_names
 
         data_file = data_path
@@ -1765,7 +1797,7 @@ class PTCUBottle(Bottle):
         data = pd.read_csv(file_name, delimiter="\t")
         data.columns = [c.replace("#", "").replace(
             "(", "").replace(")", "").strip() for c in data.columns]
-        print(data.columns)
+        # print(data.columns)
         time_name = data.columns[0]
 
         self.data['Times'] = np.array([dt.timedelta(milliseconds=t)
@@ -1861,8 +1893,7 @@ class SPPBottle(Bottle):
             self.SetInfoFromDataFileName(self.data_file_name, pwd_data)
         except:
             self.location = ""
-            print(
-                "WARNING: Folders not standard. Could not retrieve info from folders name.")
+            print("WARNING: Folders not standard. Could not retrieve info from folders name.")
 
         self.filters = ["r"]
 
@@ -1879,7 +1910,7 @@ class SPPBottle(Bottle):
         # print(self.instrument_name, self.date, self.location, self.filters, self.azimut*RtoD, self.elevation*RtoD, self.com)
 
         rest = self.folders[i + 2].split("_")
-        print(rest)
+        # print(rest)
         for r in rest:
             if len(r) == 2 and ((r[0] and r[1]) in ["r", "v", "b", "m", "0", "o"]):
                 self.filters = r

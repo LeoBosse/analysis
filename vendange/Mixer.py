@@ -1,6 +1,19 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+#######################################################################
+# Vendange script containing the Mixer object.
+# a Mixer object is made to contain all the data types you want to mix (CRU, magnetometer, all-sky images, eiscat...)
+# It needs a list of bottles of CRU data so that all other instrumental data are selected in the same time window.
+# Each instrumental data will be stored in its own object, scripted in an other file, go find them, the file names are close to the object name (most of the time).
+
+# One of the most important method here is SetGraphParameter()! It decides what data you want to mix with your bottles and some graph parameters (do you want the horizontal or vertical magnetic field?)
+
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -60,6 +73,7 @@ class Mixer:
 
 			if self.comp_bottles:
 				self.TriangulateAoLP(bottle, self.comp_bottles)
+				
 			# self.MakeFigure()
 			# self.MakePlots(bottle)
 			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
@@ -142,6 +156,7 @@ class Mixer:
 
 
 			# self.MakeCoherencePLots()
+
 	def LoadExternData(self, bottle):
 
 		if self.show_mag_data:
@@ -162,7 +177,6 @@ class Mixer:
 
 		self.LoadPLIPData(bottle)
 
-
 	def LoadPLIPData(self, bottle):
 		# self.plip_data = PLIP(bottle, "data_NOT_ROT.h5")
 		try:
@@ -170,7 +184,6 @@ class Mixer:
 		except:
 			print("WARNING: error while loading plip data. Check file path, formating of the hdf5 file, etc")
 		
-
 	def LoadMagData(self, bottle):
 		self.mag_data = MagData.FromBottle(bottle)
 		if not self.mag_data.exist:
@@ -195,10 +208,9 @@ class Mixer:
 			self.eiscat_data = EiscatHDF5(bottle, antenna = self.eiscat_type)
 			print("EISCAT data valid? ", self.eiscat_data.valid)
 
-
 	def LoadCurrentData(self, bottle):
 		self.eq_currents = EqCurrent(bottle, file_type=None)
-		print("Equivalent current is valid? ", bool(self.eq_currents.valid))
+		# print("Equivalent current is valid? ", bool(self.eq_currents.valid))
 		
 		if not self.eq_currents.valid:
 			return
@@ -218,7 +230,6 @@ class Mixer:
 			self.eq_currents.Polarisation(bottle.observation, DoLP_max = 1, DoLP_mode="rayleigh", AoLP_mode="perp")
 	
 			self.eq_currents.SaveTXT()
-
 
 	def LoadPOMEROLModel(self, bottle):
 		
@@ -511,8 +522,8 @@ class Mixer:
 		self.show_Iref = False # For CarmenCru only. Show the reference channel with no polarizing lens
 
 		self.show_time = not comp #Don't touch!
-		self.time_format = "LT" #LT or UT. Self explainatory. Control the time format of the x-axis
-		self.time_label = "LT" # The title of the time x-axis
+		self.time_format = "UT" #LT or UT. Self explainatory. Control the time format of the x-axis
+		self.time_label = "UT" # The title of the time x-axis
 		self.use_24h_time_format = 1
 
 		self.show_raw_data = 1 and len(self.comp_bottles) == 0 # Show the data with no slidding average. All rotations of the polarizing filter. In black
@@ -537,8 +548,8 @@ class Mixer:
 
 		self.show_plip = False
 
-		self.show_eiscat = 0 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
-		self.eiscat_type = "uhf" #Initally for March 2022 data. Choose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
+		self.show_eiscat = 1 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
+		self.eiscat_type = "uhf_v" #Initally for March 2022 data. Choose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
 
 		self.show_mag_data 	= 1 # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
 		self.B_component	= 'Horiz' # B field component to plot (Dec, Horiz, Vert, 'Incl' or 'Total')
@@ -806,19 +817,32 @@ class Mixer:
 
 		# plt.tight_layout(pad=0, h_pad=None, w_pad=None, rect=None)
 
-
 	def TriangulateAoLP(self, bottle, comp_bottles):
 		
 		all_bottles = comp_bottles.copy()
 		all_bottles.append(bottle)
+		all_bottles.sort(key=lambda b: len(b))
 		
-		for b in all_bottles:
-			aolps = np.asarray(b.data['smooth_AoLP'])
-			b.data['Pperp'] = [b.observation.GetPolaPlane(a, mode='perp', coord='A') for a in aolps] #Norm of the plane that is perp to the los and the AoLP (cross product)
-			b.data['Ppara'] = [b.observation.GetPolaPlane(a, mode='para', coord='A') for a in aolps] #Norm of the plane that is parallel to the AoLP (contains AoLP and los -> norm is the cross product)
+		self.triangulation_ref_bottle = all_bottles[0]
+		times = np.array([t.total_seconds() for t in self.triangulation_ref_bottle.data['Times']])
+		self.triangulation_data = pd.DataFrame(index=times)
+		aolps = np.empty((len(all_bottles), len(all_bottles[0])))
+		aolps[0] = all_bottles[0].data['smooth_AoLP']
+		for ib, b in enumerate(all_bottles[1:]):
+			ib += 1
+			bottle_time_delay = (b.DateTime() - all_bottles[0].DateTime()).total_seconds()
+			aolps[ib] = b.GetInterpolation(times - bottle_time_delay)[2]
+		
+		perp_planes = np.empty((aolps.shape[0], aolps.shape[1], 3))
+		para_planes = np.empty_like(perp_planes)
+		for ib, b in enumerate(all_bottles):
+			perp_planes[ib] = np.array([b.observation.GetPolaPlane(a, mode='perp', coord='A') for a in aolps[ib]]) #Norm of the plane that is perp to the los and the AoLP (cross product)
+			para_planes[ib] = np.array([b.observation.GetPolaPlane(a, mode='para', coord='A') for a in aolps[ib]]) #Norm of the plane that is parallel to the AoLP (contains AoLP and los -> norm is the cross product)
 		
 		# All possible pairings of the instruments. (1, 2)==(2, 1)
-		pairings = combinations(all_bottles, 2)
+		pairings = combinations(range(len(all_bottles)), 2)
+
+		self.nb_triangulation_pairings = len([pairings])
 
 		perp_intersections_uen  = []
 		perp_intersections_azel = []
@@ -826,18 +850,27 @@ class Mixer:
 		para_intersections_azel = []
 
 		# Compute the intersection of the plane for each pair of observation
-		for i, pair in enumerate(pairings):
-			perp_uen = np.array([np.cross(p0, p1) for p0, p1 in zip(pair[0].data['Pperp'], pair[1].data['Pperp'])])
-			perp_uen /= np.linalg.norm(perp_uen)
+		for i, (b1, b2) in enumerate(pairings):
+    		
+			# print('pairing:', i, b1, b2)
+			perp_uen = np.array([np.cross(p0, p1) for p0, p1 in zip(perp_planes[b1], perp_planes[b2])])
+			# perp_uen /= np.linalg.norm(perp_uen)
 
-			para_uen = np.array([np.cross(p0, p1) for p0, p1 in zip(pair[0].data['Ppara'], pair[1].data['Ppara'])])
-			para_uen /= np.linalg.norm(para_uen)
+			# print('pairing:', i, b1, b2)
+			para_uen = np.array([np.cross(p0, p1) for p0, p1 in zip(para_planes[b1], para_planes[b2])])
+			# para_uen /= np.linalg.norm(para_uen)
 
+			# print(np.array([uen /  np.sqrt(uen[1]**2 + uen[2]**2) for uen in para_uen]))
+			# print(perp_uen.shape)
 			perp_azel = np.array([UENToAzEl(uen) for uen in perp_uen])
 			para_azel = np.array([UENToAzEl(uen) for uen in para_uen])
 
+			# print(para_azel*RtoD)
+			# print(perp_azel.shape)
+			
 			perp_intersections_uen.append(perp_uen)
 			para_intersections_uen.append(para_uen)
+			
 			perp_intersections_azel.append(perp_azel)
 			para_intersections_azel.append(para_azel)
 
@@ -852,13 +885,13 @@ class Mixer:
 			for i, pair in enumerate(perp_pairings):
 				angle_diff = np.arccos(np.dot(pair[0], pair[1]))
 				perp_diff.append(angle_diff)
-				print(angle_diff*RtoD)
+				# print(angle_diff*RtoD)
 
 			print('Angles between every intersections of the parallel planes')
 			for i, pair in enumerate(para_pairings):
 				angle_diff = np.arccos(np.dot(pair[0], pair[1]))
 				para_diff.append(angle_diff)
-				print(angle_diff*RtoD)
+				# print(angle_diff*RtoD)
 
 			perp_error = np.average(perp_diff)
 			para_error = np.average(para_diff)
@@ -879,30 +912,36 @@ class Mixer:
 			for i in range(len(para_intersections_uen)):
 				print(para_intersections_uen[i])
 
-
-
+		
+		for i in range(self.nb_triangulation_pairings):
+			self.triangulation_data[f'az_perp_{i}'] = SetAngleBounds(perp_intersections_azel[0][:, 0], -np.pi / 2, np.pi / 2)
+			self.triangulation_data[f'el_perp_{i}'] = SetAngleBounds(perp_intersections_azel[0][:, 1], -np.pi / 2, np.pi / 2)
+			self.triangulation_data[f'az_para_{i}'] = SetAngleBounds(para_intersections_azel[0][:, 0], -np.pi / 2, np.pi / 2)
+			self.triangulation_data[f'el_para_{i}'] = SetAngleBounds(para_intersections_azel[0][:, 1], -np.pi / 2, np.pi / 2)
+			
+		# self.triangulation_data[f'az_perp_{}'] = SetAngleBounds(perp_intersections_azel[0][:, 0], -np.pi / 2, np.pi / 2)
+		# b.data['el_perp'] = SetAngleBounds(perp_intersections_azel[0][:, 1], -np.pi / 2, np.pi / 2)
+		# b.data['az_para'] = SetAngleBounds(para_intersections_azel[0][:, 0], -np.pi / 2, np.pi / 2)
+		# b.data['el_para'] = SetAngleBounds(para_intersections_azel[0][:, 1], -np.pi / 2, np.pi / 2)
+		
 		# perp_current = np.average(perp_intersections_uen, axis=0)
 		# perp_current /= np.linalg.norm(perp_current)
 		# print("Average perpendicular current (uen)", perp_current)
 		# print("Average perpendicular current (azel)", np.array(UENToAzEl(perp_current))*RtoD)
-		
-		
-
 		# para_current = np.average(para_intersections_uen, axis=0)
 		# para_current /= np.linalg.norm(para_current)
 		# print("Average parallel current (uen)", para_current)
 		# print("Average parallel current (azel)", np.array(UENToAzEl(para_current))*RtoD)
 
+		# fig, axs = plt.subplots(2,1, sharex=True)
+		# axs[0].plot(SetAngleBounds(perp_intersections_azel[0][:, 0], -np.pi / 2, np.pi / 2)*RtoD, 'k.')
+		# axs[1].plot(perp_intersections_azel[0][:, 1]*RtoD, 'k')
 
-		fig, axs = plt.subplots(2,1, sharex=True)
-		axs[0].plot(perp_intersections_azel[0][:, 0]*RtoD)
-		axs[1].plot(perp_intersections_azel[0][:, 1]*RtoD)
-
-		fig, axs = plt.subplots(2,1, sharex=True)
-		axs[0].plot(para_intersections_azel[0][:, 0]*RtoD)
-		axs[1].plot(para_intersections_azel[0][:, 1]*RtoD)
+		# fig, axs = plt.subplots(2,1, sharex=True)
+		# axs[0].plot(SetAngleBounds(para_intersections_azel[0][:, 0], -np.pi / 2, np.pi / 2)*RtoD, 'k.')
+		# axs[1].plot(para_intersections_azel[0][:, 1]*RtoD, 'k')
 		
-		return perp_intersections_azel
+		# return perp_intersections_azel
 		
 
 	# def SetColors(self, bottle, comp = False):

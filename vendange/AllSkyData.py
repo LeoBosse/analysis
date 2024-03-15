@@ -1,6 +1,18 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+
+#######################################################################
+# Contains the AllSkyData object that manages everything related to all sky data images data.
+# Takes a bottle in input to know the time frame of the observation and the location.
+# It can read the images and create a time serie of the integrated intensity in a region of the image (usefull to compare to CRU).
+# The all sky data is stored in the folder ../../data/allsky_camera. Missing data can be downloading with a small get_data.sh script in the data folder.
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt

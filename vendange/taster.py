@@ -1,6 +1,17 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+#######################################################################
+# Vendange script containing the Taster object.
+# a Taster is supposed to take in a Mixer object and produce graphs or other images of the data.
+# The graph parameters are stored in the Mixer object, or the several data objects it contains. (this is an old consequence of bad early code, sorry!)
+# Some methods produce matplotlib figures and draw on them (like MakeBottlePlots or MakePlots). Others dras the data on a given figure (like PlotFlux, PlotDoLP or PlotEiscat)
+# This is the place to create a new graph or find the scripts that graph the data parameter in a standardize way.
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -27,7 +38,7 @@ class Taster:
 
 		for ib, bottle in enumerate(self.mixer.bottles):
 			# self.SetGraphParameter(bottle)
-			self.SetColors(bottle, comp = ib > 0)
+			self.SetColors(bottle)
 			self.MakeXAxis(bottle)
 			self.MakeBottlePlots(ib, bottle)
 
@@ -68,9 +79,6 @@ class Taster:
 		if self.mixer.comp_bottles:
 			print('DEBUG COMP BOTTLES', self.mixer.comp_bottles)
 
-			for b in self.mixer.comp_bottles:
-				b.TestResample()
-			
 			### If the same number of channels in bottles and comp_bottles, plot them one for one
 			### If not, then plot all comp_bottles on top of of every bottle.
 			comp_bottles_to_show = [ib]
@@ -78,11 +86,13 @@ class Taster:
 				comp_bottles_to_show = range(len(self.mixer.comp_bottles))
 			
 			for ibc in comp_bottles_to_show:
-
 				self.SetGraphParameter(self.mixer.comp_bottles[ibc], comp=True)
+				self.SetColors(self.mixer.comp_bottles[ibc], comp=True)
 				self.MakeXAxis(self.mixer.comp_bottles[ibc])
 				self.MakePlots(self.mixer.comp_bottles[ibc], comp=True)
 				
+				self.PlotTriangulationCurrent('perp')
+				self.PlotTriangulationCurrent('para')
 				if self.mixer.make_optional_plots:
 					if self.mixer.show_SN:
 						self.MakeSNratio(self.mixer.comp_bottles[ibc])
@@ -91,6 +101,7 @@ class Taster:
 					self.MakeXAxis(bottle)
 
 					self.CompareBottles(self.mixer.comp_bottles[ibc], bottle)
+					
 
 		# if self.make_optional_plots:
 		# 	self.MakeFFT(bottle)
@@ -251,8 +262,6 @@ class Taster:
 			# self.ax3.xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m-%d'))
 			self.f1.autofmt_xdate()
 
-
-
 	def SetGraphParameter(self, bottle, comp = False):
 
 		self.mixer.marker_size = 5 # Size of the points used for all plots
@@ -262,9 +271,6 @@ class Taster:
 
 		font = {'size'   : 24}
 		matplotlib.rc('font', **font)
-
-
-
 
 	def SetColors(self, bottle, comp = False):
 
@@ -346,6 +352,15 @@ class Taster:
 		self.all_SN_color = "black"
 		self.smooth_SN_color = self.smooth_I0_color
 
+	def SaveGraph(self, bottle, name_extention="", file_type='png'):
+		save_name = bottle.data_file_name / (bottle.saving_name + f'_{name_extention}.{file_type}')
+		
+		print(f"Saving {name_extention} graphs in", save_name)
+		if self.mixer.triangulation_ref_bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+			plt.savefig(save_name, bbox_inches='tight')
+		else:
+			plt.savefig("/".join(str(bottle.data_file_name).split("/")[:-1]) / bottle.saving_name + f'_{name_extention}.{file_type}', bbox_inches='tight')
+
 
 	def MakePlots(self, bottle, comp=False):
 		#Plotting the mean intensity I0, DoLP, AoLP for each rotation and more!
@@ -373,13 +388,13 @@ class Taster:
 		# else:
 		# 	self.PlotDoLP(self.ax2.twinx(), bottle, ax_lines=self.ax2_lines)
 
-		if self.mixer.show_mag_data:
+		if self.mixer.show_mag_data and self.mixer.mag_data and self.mixer.mag_data.exist:
 			self.PlotB(self.ax2.twinx(), bottle, component = self.mixer.B_component, ax_lines=self.ax2_lines)
 			# self.PlotB(self.ax2.twinx(), bottle, component = self.mixer.B_component, ax_lines=self.ax2_lines, derivative = True)
 			# self.PlotB(self.ax2.twinx(), bottle, component = 'Horiz', ax_lines=self.ax2_lines)
 			# self.PlotB(self.ax3.twinx(), bottle, component = 'Vert', ax_lines=self.ax3_lines)
 
-		if self.mixer.show_eiscat:
+		if self.mixer.show_eiscat and self.mixer.eiscat_data.valid:
 			print('plotting eiscat')
 
 			if self.mixer.eiscat_type == "uhf_v":
@@ -469,14 +484,14 @@ class Taster:
 			self.ax2.legend(list(zip(*self.ax2_lines))[0], list(zip(*self.ax2_lines))[1])
 			self.ax3.legend(list(zip(*self.ax3_lines))[0], list(zip(*self.ax3_lines))[1], loc = "lower center")
 
-
-		print("Saving graphs in", bottle.data_file_name / (bottle.saving_name + '_graphs.png'))
-		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name / (bottle.saving_name + '_graphs.png'), bbox_inches='tight')
-			# plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) / (bottle.saving_name + '_graphs.png'), bbox_inches='tight')
-			# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
+		self.SaveGraph(bottle, name_extention = 'graphs')
+		# print("Saving graphs in", bottle.data_file_name / (bottle.saving_name + '_graphs.png'))
+		# if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(bottle.data_file_name / (bottle.saving_name + '_graphs.png'), bbox_inches='tight')
+		# 	# plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
+		# else:
+		# 	plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) / (bottle.saving_name + '_graphs.png'), bbox_inches='tight')
+		# 	# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
 
 	def PlotPLIPData(self, axI, axD, axA, pos=None, bottle = None, **kwargs):
 		if pos is None:
@@ -495,6 +510,8 @@ class Taster:
 		print(axA)
 		axA.plot(self.mixer.plip_data.times, A * RtoD, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
 		
+		if bottle is not None:
+			self.SaveGraph(bottle, name_extention = 'plip')
 
 
 	def PlotFlux(self, ax, bottle, ax_lines=[]):
@@ -615,7 +632,7 @@ class Taster:
 		# print(self.mixer.mag_data.times[0], self.mixer.mag_data.times[-1])
 		# print(self.mixer.mag_data.GetNormTimes(self.divisor)[0], self.mixer.mag_data.GetNormTimes(self.divisor)[-1])
 		label = component
-		if component in ['Dec' or 'Incl']:
+		if component.lower() in ['dec','incl']:
 			label += ' (deg)'
 		else:
 			label += ' (nT)'
@@ -1046,10 +1063,11 @@ class Taster:
 		axs[2].set_ylabel("Diff")
 		fig.suptitle("Data /- Model")
 
-		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_RSmodel_comp.png', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_RSmodel_comp.png', bbox_inches='tight')
+		self.SaveGraph(bottle, name_extention = 'RSmodel_comp')
+		# if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(bottle.data_file_name / (bottle.saving_name + '_RSmodel_comp.png'), bbox_inches='tight')
+		# else:
+		# 	plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) / (bottle.saving_name + '_RSmodel_comp.png'), bbox_inches='tight')
 
 
 	def MakeSNratio(self, bottle):
@@ -1069,13 +1087,16 @@ class Taster:
 		plt.minorticks_on()
 
 		ax.set_title("SN ratio")
-		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_SNratio.png')
-		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_SNratio.png', bbox_inches='tight')
-			# plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_SNratio.png', bbox_inches='tight')
-			# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
+		
+		
+		self.SaveGraph(bottle, name_extention = 'SNratio')
+		# print("Saving graphs in", bottle.data_file_name / (bottle.saving_name + '_SNratio.png'))
+		# if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(bottle.data_file_name / (bottle.saving_name + '_SNratio.png'), bbox_inches='tight')
+		# 	# plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
+		# else:
+		# 	plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_SNratio.png', bbox_inches='tight')
+		# 	# plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
 
 
 	def TestResample(self, bottle):
@@ -1160,9 +1181,11 @@ class Taster:
 		ax1.set_ylabel("Smooth")
 
 		ax.set_title("Intensity SN ratio")
-		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_I0SNratio.png')
+		
+		self.SaveGraph(bottle, name_extention = 'I)SNratio')
+		print("Saving graphs in", bottle.data_file_name / (bottle.saving_name + '_I0SNratio.png'))
 		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_I0SNratio.png', bbox_inches='tight')
+			plt.savefig(bottle.data_file_name / (bottle.saving_name + '_I0SNratio.png'), bbox_inches='tight')
 			# plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_graphs.eps', bbox_inches='tight')
 		else:
 			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_I0SNratio.png', bbox_inches='tight')
@@ -1195,11 +1218,12 @@ class Taster:
 		for a in ax:
 			a.legend()
 
-		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_eiscat.png')
-		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_eiscat.png', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_eiscat.png', bbox_inches='tight')
+		self.SaveGraph(bottle, name_extention = 'eiscat')
+		# print("Saving graphs in", bottle.data_file_name / (bottle.saving_name + '_eiscat.png'))
+		# if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(bottle.data_file_name / (bottle.saving_name + '_eiscat.png'), bbox_inches='tight')
+		# else:
+		# 	plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_eiscat.png', bbox_inches='tight')
 
 
 	def MakeMagDataPlots(self, bottle):
@@ -1214,11 +1238,13 @@ class Taster:
 		ax[-1].set_xlabel(self.xlabel)
 		for a in ax:
 			a.legend()
-		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_magneto.png')
-		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_magneto.png', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_magneto.png', bbox_inches='tight')
+			
+		self.SaveGraph(bottle, name_extention = 'magneto')
+		# print("Saving graphs in", bottle.data_file_name / (bottle.saving_name + '_magneto.png'))
+		# if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(bottle.data_file_name / (bottle.saving_name + '_magneto.png'), bbox_inches='tight')
+		# else:
+		# 	plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_magneto.png', bbox_inches='tight')
 
 
 
@@ -1259,11 +1285,13 @@ class Taster:
 		ax.plot(x_axis, RD_diff * RtoD, "*", color = self.AoRD_color, label="Total")
 		ax.plot(x_axis, Bapps_diff * RtoD, "*", color = self.AoBapp_color, label="Total")
 
-		print("Saving graphs in", bottle.data_file_name + "/" + bottle.saving_name + '_angles_comp.png')
-		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_angles_comp.png', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_angles_comp.png', bbox_inches='tight')
+
+		self.SaveGraph(bottle, name_extention = 'angles_comp')
+		# print("Saving graphs in", bottle.data_file_name / (bottle.saving_name + '_angles_comp.png'))
+		# if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(bottle.data_file_name / (bottle.saving_name + '_angles_comp.png'), bbox_inches='tight')
+		# else:
+		# 	plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_angles_comp.png', bbox_inches='tight')
 
 
 	def MakeSmartCorrelationPlots(self, bottle, diff_thresholds=None, smooth=True, COMP = None):
@@ -1374,11 +1402,12 @@ class Taster:
 
 		# f2.suptitle(f"smooth:{smooth}; {COMP.upper()}")
 
-		print("Saving correlation in", bottle.data_file_name + "/" + bottle.saving_name + '_smart_correlations.png')
-		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_S' + str(smooth) + COMP.upper() + '_smart_correlation.png', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + '_S' + str(smooth) + "/" + bottle.saving_name + '_smart_correlation.png', bbox_inches='tight')
+		self.SaveGraph(bottle, name_extention = 'smart_correlations')
+		# print("Saving correlation in", bottle.data_file_name / (bottle.saving_name + '_smart_correlations.png'))
+		# if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(bottle.data_file_name / (bottle.saving_name + '_S' )+ str(smooth) + COMP.upper() + '_smart_correlation.png', bbox_inches='tight')
+		# else:
+		# 	plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + '_S' + str(smooth) + "/" + bottle.saving_name + '_smart_correlation.png', bbox_inches='tight')
 
 	def MakeCleanCorrelationPlots(self, bottle, diff_thresholds=None, smooth=True):
 
@@ -1450,9 +1479,9 @@ class Taster:
 			axs[1].set_ylim(-90, 90)
 
 
-			print("Saving correlation in", bottle.data_file_name + "/" + bottle.saving_name + '_clean_correlations.png')
+			print("Saving correlation in", bottle.data_file_name / (bottle.saving_name + '_clean_correlations.png'))
 			if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-				plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_S' + str(smooth) + '_clean_correlation.png', bbox_inches='tight')
+				plt.savefig(bottle.data_file_name / (bottle.saving_name + '_S' + str(smooth) + '_clean_correlation.png'), bbox_inches='tight')
 			else:
 				plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + '_S' + str(smooth) + "/" + bottle.saving_name + '_clean_correlation.png', bbox_inches='tight')
 
@@ -1474,11 +1503,12 @@ class Taster:
 
 			ax2.legend()
 
-		print("Saving correlation in", bottle.data_file_name + "/" + bottle.saving_name + '_correlations.png')
-		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_correlation.png', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_correlation.png', bbox_inches='tight')
+		self.SaveGraph(bottle, name_extention = 'correlations')
+		# print("Saving correlation in", bottle.data_file_name / (bottle.saving_name + '_correlations.png'))
+		# if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(bottle.data_file_name / (bottle.saving_name + '_correlation.png'), bbox_inches='tight')
+		# else:
+		# 	plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + '_correlation.png', bbox_inches='tight')
 
 
 	def GetCoherence(self, data1, data2, freq):
@@ -1526,12 +1556,12 @@ class Taster:
 		ax_angle.set_ylim((-180,180))
 		ax_angle.legend()
 
-
-		print("Saving coherence in", bottle.data_file_name + "/" + bottle.saving_name + '_coherence.png')
-		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(bottle.data_file_name + "/" + bottle.saving_name + '_coherence.png', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + 'coherence.png', bbox_inches='tight')
+		self.SaveGraph(bottle, name_extention = 'coherence')
+		# print("Saving coherence in", bottle.data_file_name / (bottle.saving_name + '_coherence.png'))
+		# if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(bottle.data_file_name / (bottle.saving_name + '_coherence.png'), bbox_inches='tight')
+		# else:
+		# 	plt.savefig("/".join(bottle.data_file_name.split("/")[:-1]) + "/" + bottle.saving_name + 'coherence.png', bbox_inches='tight')
 
 
 
@@ -1594,12 +1624,39 @@ class Taster:
 		ax3.set_xlabel(self.xlabel)
 		ax3.grid(which="both")
 
-		print("Saving bottle comparison in", b1.data_file_name + "/" + b1.saving_name + '_bottle_comparison.png')
-		if b1.instrument_name in ["carmen", "corbel", "gdcu"]:
-			plt.savefig(b1.data_file_name + "/" + b1.saving_name + '_bottle_comparison.png', bbox_inches='tight')
-		else:
-			plt.savefig("/".join(b1.data_file_name.split("/")[:-1]) + "/" + b1.saving_name + 'bottle_comparison.png', bbox_inches='tight')
 
+		self.SaveGraph(b1, name_extention = 'bottle_comparison')
+		# print("Saving bottle comparison in", b1.data_file_name / (b1.saving_name + '_bottle_comparison.png'))
+		# if b1.instrument_name in ["carmen", "corbel", "gdcu"]:
+		# 	plt.savefig(b1.data_file_name / (b1.saving_name + '_bottle_comparison.png'), bbox_inches='tight')
+		# else:
+		# 	plt.savefig(b1.data_file_name.parent / (b1.saving_name + 'bottle_comparison.png'), bbox_inches='tight')
+
+	def PlotTriangulationCurrent(self, current_orientation='para', fig=None, axs=None):
+		"""
+		Will plot the current orientation triangulated from two bottle AoLPs in the mixer.
+		current_orientation: [str]. Must be 'para' or 'perp' depending on if the current is assumed parallel or perpendicular to the aolp.
+		fig, axs: matplolib objects on which to draw the graphs. If not given, they are created. axs must be an array of len 2 or more.
+		"""
+		
+		if fig is None or axs is None or len(axs) < 2: # Create a new figure if the figure or axes in the parameters are not given or worng.
+			fig, axs = plt.subplots(2,1, sharex=True, figsize=(16, 8))
+			axs[-1].set_xlabel('Time')
+			axs[0].set_ylabel('Azimuth')
+			axs[1].set_ylabel('Elevation')
+			
+		# Get the x-axis from the reference bottle
+		x_axis = [self.mixer.triangulation_ref_bottle.DateTime(format=self.mixer.time_format) + dt.timedelta(seconds = t) for t in self.mixer.triangulation_data.index]
+		
+		for i in range(self.mixer.nb_triangulation_pairings):
+			axs[0].plot(x_axis, self.mixer.triangulation_data[f'az_{current_orientation.lower()}_{i}']*RtoD, '.', markersize = self.mixer.marker_size)
+			self.PlotB(axs[0].twinx(), self.mixer.triangulation_ref_bottle, 'Dec')
+			
+			axs[1].plot(x_axis, self.mixer.triangulation_data[f'el_{current_orientation.lower()}_{i}']*RtoD, '.', markersize = self.mixer.marker_size)
+			self.PlotB(axs[1].twinx(), self.mixer.triangulation_ref_bottle, 'Incl')
+			
+		self.SaveGraph(self.mixer.triangulation_ref_bottle, name_extention= f'Jtriangulation_{current_orientation}')
+		
 
 
 	def GetDataFromTxt(self, filename, t_name=None, I_name=None, DoLP_name=None, AoLP_name=None, **kwargs):
@@ -1623,7 +1680,7 @@ class Taster:
 		# if len(t) == 1:
 		# 	t = self.x_axis_list
 		# 	I = np.array([I[0]] * len(t))
-		# 	DoLP = np.array([DoLP[0]] * len(t))
+		# 	DoLP = np.array([DoLP[0]] * len(t))	
 		# 	AoLP = np.array([AoLP[0]] * len(t))
 
 		return t, I, DoLP, AoLP

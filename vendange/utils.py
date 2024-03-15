@@ -1,6 +1,15 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+
+#######################################################################
+# A whole bunch of helpfull functions for vendange. Most of them are not used anymore, or where moved inside an object.
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
 import numpy as np
 import time as time
 import datetime as dt

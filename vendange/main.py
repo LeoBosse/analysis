@@ -1,6 +1,18 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*
 
+#######################################################################
+# Main script of the vendange module. You must run this file if you want to process and graph the CRU data.
+# To know the command line arguments, you can scroll down or launch $python main.py -h
+# This is pretty basic, it first find the CRU bottles available in the data directory listed in the input file.
+# It then create a mixer object where other instrumental data are added and selected.
+# It finally creates the Taster object that graphs the data.
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+#######################################################################
+
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -37,15 +49,15 @@ from vendange_configuration import *
 def GetNbLines(bottle_name):
 	"""Find the number of chanels of the instrument (the number of dataX.csv in the folder)"""
 	instrument_name = GetInstrumentName(bottle_name)
-	print(instrument_name, bottle_name)
+	# print(instrument_name, bottle_name)
 	if instrument_name not in ["spp", 'carmen']:
 		try:
-			print("TRY", os.listdir(data_path / bottle_name))
+			# print("TRY", os.listdir(data_path / bottle_name))
 			ls = [f for f in os.listdir(data_path / bottle_name) if "data" in f and ".csv" in f and len(f) in [9, 10]]
 		except:
-			print("EXCEPT", os.listdir(data_path / "/".join(str(bottle_name).split("/")[:-1])))
+			# print("EXCEPT", os.listdir(data_path / "/".join(str(bottle_name).split("/")[:-1])))
 			ls = [f for f in os.listdir(data_path / "/".join(str(bottle_name).split("/")[:-1])) if "data" in f and ".csv" in f and len(f) in [9, 10]]
-		print("ls", ls)
+		# print("ls", ls)
 		nb_lines = len(ls)
 	else:
 		###SHOULD BE 2. USE ONLY IF COMPARING 2 INSTRUMENTS WITH DIFFERENT NB_LINES !!!
@@ -93,7 +105,7 @@ arg_parser.add_argument('-cl', '--comp_lines', action='extend', default=None, ty
 
 args = arg_parser.parse_args()
 
-print(args)
+# print(args)
 
 bottle_name = Path(args.bottle_name) #arguments[1]
 
@@ -116,11 +128,11 @@ else:
 	nb_comp_lines = 0
 	comp_lines = range(1, nb_comp_lines+1)
 
-print(nb_lines, lines)
+# print(nb_lines, lines)
 
-print(bottle_name)
+# print(bottle_name)
 instrument_name = GetInstrumentName(bottle_name)
-print(instrument_name)
+# print(instrument_name)
 bottles = []
 comp_bottles = []
 
@@ -131,8 +143,8 @@ if instrument_name in ["ptcu", "gdcu", "ptcu_v2", "carmen", "corbel"]:
 	# for l in [2, 1]:
 	for l in lines:
 		print("##################################################################")
+		print(f"Loading bottle from input file: {bottle_name}, channel {l}")
 		print("##################################################################")
-		print(bottle_name)
 		# bottle = PTCUBottle(arguments[1], line = l)
 		# try:
 		# 	print("***************************************")
@@ -142,7 +154,9 @@ if instrument_name in ["ptcu", "gdcu", "ptcu_v2", "carmen", "corbel"]:
 		# 	print("New Bottle FAILED")
 		# 	break
 		bottle = PTCUBottle(bottle_name, line = l, from_txt = from_txt)
+		
 		if to_add_bottle is not None:
+			
 			bottle = bottle + PTCUBottle(to_add_bottle, line = l, from_txt = from_txt)
 
 		if bottle.valid:
@@ -159,7 +173,7 @@ if comp_bottle:
 	# for l in range(1, len(bottles) + 1):
 		print("##################################################################")
 		print("##################################################################")
-		print(comp_bottle)
+		print(f"Loading bottle from input file: {comp_bottle}")
 		comp_bottles.append(PTCUBottle(comp_bottle, line = l, from_txt = from_txt))
 		# comp_bottles[-1].SetTimeFromDateTime(bottles[0].DateTime(moment="start"))
 
@@ -177,7 +191,6 @@ if not from_txt:
 # 	mag_data = False
 
 mixer = Mixer(bottles, comp_bottles=comp_bottles)
-
 taster = Taster(mixer)
 
 

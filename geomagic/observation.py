@@ -65,7 +65,6 @@ class ObservationPoint:
         if self.RD_src_azimut is not None and self.RD_src_elevation is not None:
             self.GetRayleighAngle(self.RD_src_azimut, self.RD_src_elevation)
 
-
     def GetTrigo(self):
         Ce, Se = np.cos(self.e), np.sin(self.e)
         Ca, Sa = np.cos(self.a), np.sin(self.a)
@@ -85,7 +84,6 @@ class ObservationPoint:
         alt = np.sqrt(alt) - RT
 
         return lon, lat, alt
-
 
     def GetRayleighAngle(self, source_azimut, source_elevation, unit="radians"): #obs_azimut, source_azimut, elevation, unit="radians"):
         if unit == "radians":
@@ -128,8 +126,6 @@ class ObservationPoint:
             self.AoRD -= np.pi
 
         return self.AoRD
-
-
 
     #@timer
     def GetOA(self, **kwargs):
@@ -192,7 +188,6 @@ class ObservationPoint:
 
         return x, y, z
 
-
     def GetRotMatrixAO(self, lonA, latA, transpose=False):
         """Return a matrix 3x3. It is the rotation matrix to pass a vector expressed in the reference frame of a point A on the Earth (up-east-north) to the reference frame of the Earth's center O. lonA latA are the longitude and latitude of the point A."""
         Clon, Slon = m.cos(lonA), m.sin(lonA)
@@ -215,7 +210,6 @@ class ObservationPoint:
             return R_OA @ R_HO #matrix multiplication
         else:
             return R_HO @ R_OA #matrix multiplication
-
 
     #@timer
     def GetPCoordinates(self, AH=None):
@@ -241,9 +235,10 @@ class ObservationPoint:
         else:
             return np.pi/2 - latitude
 
-
     def GetPolaPlane(self, AoLP, mode='perp', coord = 'A'):
-        """Returns the normal vector of the plane containing the current at the origin of the polarisation. 2 modes are available: 'perp' and 'para' if the polarisation is supposed to be parallel or perpendicular to the current. coord can be 'I', 'A' or 'O' depending if you want the vector in the instrument reference frame, the local frame (up-east-north) or the earth' center frame.
+        """Returns the normal vector of the plane containing the current at the origin of the polarisation. 
+        2 modes are available: 'perp' and 'para' if the polarisation is supposed to be parallel or perpendicular to the current. 
+        coord can be 'I', 'A' or 'O' depending if you want the vector in the instrument reference frame, the local frame (up-east-north) or the earth' center frame.
         For perpendicular pola: the norm vector of the plane is simply the AoLP vector.
         For parallel pola: the normvector of the plane is the cross product of the AoLP vector and the line of sight.
         Both current planes contain the los -> both norms are perp to it. Only difference is that one plane contains the AoLP (para), the other is perp to the AoLP (perp).
@@ -336,9 +331,9 @@ class ObservationPoint:
         return self.eta_igrf, self.eta_chaos
 
     def GetRotMatrixAI(self, transpose = False):
-        """"Return a matrix 3x3. It is the rotation matrix to pass a vector expressed in the reference frame of a point A on the Earth (up-east-north) to the reference frame of the instrument (line of sight-west-up) if instrument points northern horyzon."""
+        """"Return a matrix 3x3. It is the rotation matrix to pass a vector expressed in the reference frame of a point A on the Earth (up-east-north) to the reference frame of the instrument (line of sight-west-up) if instrument points northern horizon."""
 
-        Ce, Se, Ca, Sa = self.GetTrigo()
+        Ce, Se, Ca, Sa = self.GetTrigo() #cos and sin of azimut, elevation
 
         Raspp = np.array([    [Se,     Ce * Sa,    Ce * Ca],
                          [     0,        -Ca,        Sa],
