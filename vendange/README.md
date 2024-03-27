@@ -72,6 +72,11 @@ It should look like this:
         + data3.csv  
         + data4.csv  
 
+You can also download several observations at once with:
+        
+        $python recolte.py 100 200
+        
+This will download all data with IDConfiguration between 100 and 200 (included). A primitive filter is applied, so data with no valid data points will not download for example.
 
 
 ***
@@ -143,6 +148,14 @@ Add a second observation to compare with the first one. Indicate the path of the
 
 `-a  [append bottle path]`  
 Add a second observation to appende to the first one. Indicate the path of the data for this 2nd observation as you would do when running vendange normally. This will just append the 2nd to the 1st and treat them as a single joined observation.
+
+
+`-l  [line numbers]`  
+The instrument channels you want to analyse, counting from 1. The analysis order will match the order given here. If not given, will automatically search and run all found bottles. e.g: 1234 or 231
+
+`-cl  [comparison bottle line numbers]`  
+Similar to --lines, but applied to the comparison bottles.
+
 
 
 ***

@@ -96,7 +96,7 @@ arg_parser = argparse.ArgumentParser(
                     description='Analysis of CRU data.',
 					)
 
-arg_parser.add_argument('bottle_name', help='The path from the data/ folder where to find the input.in file to use for this run. If given a folder, will look for a "input.in" file in it. If a file, must be an input file.')        # positional argument
+arg_parser.add_argument('-n', '--bottle_name', default = None, help='The path from the data/ folder where to find the input.in file to use for this run. If given a folder, will look for a "input.in" file in it. If a file, must be an input file.')        # positional argument
 arg_parser.add_argument('-s', '--show_plots',  action = 'store_false', help="If used, will not open nor show the graphs at the end of execution. Usefull for launching multiple runs via a bash script for exemple. All plots are saved no matter what.")
 arg_parser.add_argument('-b', '--comp_bottle', default = None, help='Indicate an other input file path. This data will be plotted against the main one for easy comparison.')
 arg_parser.add_argument('-f', '--from_file',  action = 'store_true', help='If used, will load the data from an existing processed data file. Reuse the data and do not compute everything again. Faster for re-plotting the same data again.')
@@ -107,6 +107,14 @@ arg_parser.add_argument('-cl', '--comp_lines', action='extend', default=None, ty
 args = arg_parser.parse_args()
 
 # print(args)
+
+if args.bottle_name is None:
+	root = Tk()
+	root.withdraw()
+	root.update()
+	args.bottle_name = filedialog.askopenfilename(initialdir = data_path / 'ptcu', title="Select input file (*.in).", filetypes=[("input files", "*.in")])
+	root.destroy()
+	# path_file = Path(path_file)
 
 bottle_name = Path(args.bottle_name) #arguments[1]
 
