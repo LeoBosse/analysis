@@ -433,12 +433,13 @@ class Taster:
 			# for pos in [(8,5),(9,5),(6,5),(7,5)]:
 			# 	self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle, label = f'{pos}')
 			
-			pos = (5,4)
+			col = 3
+			pos = (4,col)
 			self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle)
-			pos = (6,4)
+			pos = (5,col)
 			self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle)
-			pos = (7,4)
-			self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle)
+			# pos = (7,col)
+			# self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle)
 			
 			
 			# plt.legend()
@@ -506,8 +507,10 @@ class Taster:
 			I, D, A = self.mixer.plip_data.data['I_laser'], self.mixer.plip_data.data['D_laser'] * 100, self.mixer.plip_data.data['A_laser']
 		else:
 			l, c = pos
-			I, D, A = self.mixer.plip_data.data['Intensity'][0, :, l:l+2, c:c+2], self.mixer.plip_data.data['DoLP'][0, :, l:l+2, c:c+2] * 100, self.mixer.plip_data.data['AoLP'][0, :, l:l+2, c:c+2]
-			# I, D, A = self.mixer.plip_data.data['I'][0, :, l, c], self.mixer.plip_data.data['DoLP'][0, :, l, c] * 100, self.mixer.plip_data.data['AoLP'][0, :, l, c]
+			try:
+				I, D, A = self.mixer.plip_data.data['Intensity'][0, :, l, c], self.mixer.plip_data.data['DoLP'][0, :, l, c] * 100, self.mixer.plip_data.data['AoLP'][0, :, l, c]
+			except:
+				I, D, A = self.mixer.plip_data.data['I'][0, :, l, c], self.mixer.plip_data.data['DoLP'][0, :, l, c] * 100, self.mixer.plip_data.data['AoLP'][0, :, l, c]
 			
 		if bottle is None:
 			norm_factor = 1.

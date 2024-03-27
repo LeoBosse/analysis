@@ -343,7 +343,7 @@ class Mixer:
 
 		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
 
-		self.show_plip = 0
+		self.show_plip = 1
 
 		self.show_eiscat = 0 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
 		self.eiscat_type = "uhf_v" #Initally for March 2022 data. Choose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
@@ -353,7 +353,7 @@ class Mixer:
 		self.show_AoBapp 	= 0 # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
 		self.show_AoRD	 	= 0 # If True, show the AoLP produced by a point source defined in the input.in file.
 
-		self.show_currents	= 1 # If available, show the apparent angle of the equivalent currents from Magnar.
+		self.show_currents	= 0 # If available, show the apparent angle of the equivalent currents from Magnar.
 		self.compute_Jup	= False #False, "para" or "perp". Will add a vertical component to the equivalent current so that it match the AoLP. If para: the AoLP is parallel to the current. If perp, the AoLP is perpendicular to the current.
 
 		self.show_grid_lines = True # Just to have a nicer grpah. self explainatory
