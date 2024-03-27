@@ -504,26 +504,39 @@ class Taster:
 
 	def PlotPLIPData(self, axI, axD, axA, pos=None, bottle = None, **kwargs):
 		if pos is None:
-			I, D, A = self.mixer.plip_data.data['I_laser'], self.mixer.plip_data.data['D_laser'] * 100, self.mixer.plip_data.data['A_laser']
+			I, D, A = self.mixer.plip_data.data['I_laser'], self.mixer.plip_data.data['D_laser'] , self.mixer.plip_data.data['A_laser']
 		else:
 			l, c = pos
 			try:
-				I, D, A = self.mixer.plip_data.data['Intensity'][0, :, l, c], self.mixer.plip_data.data['DoLP'][0, :, l, c] * 100, self.mixer.plip_data.data['AoLP'][0, :, l, c]
+				I, D, A = self.mixer.plip_data.data['Intensity'][0, :, l, c], self.mixer.plip_data.data['DoLP'][0, :, l, c] , self.mixer.plip_data.data['AoLP'][0, :, l, c]
 			except:
-				I, D, A = self.mixer.plip_data.data['I'][0, :, l, c], self.mixer.plip_data.data['DoLP'][0, :, l, c] * 100, self.mixer.plip_data.data['AoLP'][0, :, l, c]
+				I, D, A = self.mixer.plip_data.data['I'][0, :, l, c], self.mixer.plip_data.data['DoLP'][0, :, l, c] , self.mixer.plip_data.data['AoLP'][0, :, l, c]
 			
 		if bottle is None:
 			norm_factor = 1.
 		else:
 			norm_factor = np.average(bottle.data['smooth_I0']) / np.average(I)
 
+
+
+		Q = self.mixer.plip_data.data["Vcos"][0, :, l, c]
+		U = self.mixer.plip_data.data["Vsin"][0, :, l, c]
+		sigmaQ = self.mixer.plip_data.data["sQ_binned"][0, :, l, c]
+		sigmaU = self.mixer.plip_data.data["sU_binned"] [0, :, l, c]
+
+		sigma_DOLP = np.sqrt(Q**2 * sigmaQ**2 / D**2 + U**2 * sigmaU**2 / D**2)
+		DoLP = np.sqrt(D**2 - sigma_DOLP**2) #Debiasage de dolp
+
+
+		
+
 		axI.plot(self.mixer.plip_data.data['times'], I * norm_factor, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
-		axD.plot(self.mixer.plip_data.data['times'], D - 0, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
+		axD.errorbar(self.mixer.plip_data.data['times'], DoLP*100 - 0, yerr = 3*sigma_DOLP * 100, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
 		print(axA)
 		axA.plot(self.mixer.plip_data.data['times'], A * RtoD, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
 		
 		# if bottle is not None:
-		# 	self.SaveGraph(bottle, name_extention = 'plip')
+		#   self.SaveGraph(bottle, name_extention = 'plip')
 
 
 	def PlotFlux(self, ax, bottle, ax_lines=[]):
