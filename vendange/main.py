@@ -56,7 +56,8 @@ def GetNbLines(bottle_name):
 			ls = [f for f in os.listdir(data_path / bottle_name) if "data" in f and ".csv" in f and len(f) in [9, 10]]
 		except:
 			# print("EXCEPT", os.listdir(data_path / "/".join(str(bottle_name).split("/")[:-1])))
-			ls = [f for f in os.listdir(data_path / "/".join(str(bottle_name).split("/")[:-1])) if "data" in f and ".csv" in f and len(f) in [9, 10]]
+			# ls = [f for f in os.listdir(data_path / bottle_name).split("/")[:-1])) if "data" in f and ".csv" in f and len(f) in [9, 10]]
+			ls = [f for f in os.listdir(data_path / bottle_name.parent) if "data" in f and ".csv" in f and len(f) in [9, 10]]
 		# print("ls", ls)
 		nb_lines = len(ls)
 	else:
