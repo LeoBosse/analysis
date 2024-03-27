@@ -43,6 +43,7 @@ from vendange_configuration import *
 
 
 class EqCurrent:
+	
 	def __init__(self, bottle = None, file = None, file_type = None):
 		print("Initialazing Equivalent current object")
 
@@ -54,7 +55,7 @@ class EqCurrent:
 
 		self.file_type = file_type ## Used when given a file and not a bottle. If file_type is None, then equivalent current file from magnar. If == "digisonde", then digisonde file
 
-		self.SetFileNames(bottle=bottle)
+		self.valid = self.SetFileNames(bottle=bottle)
 
 		# print(self.file)
 
@@ -63,7 +64,7 @@ class EqCurrent:
 		self.x_axis = []
 
 		if self.valid:
-			self.saving_name = self.file.split(".")[0]
+			self.saving_name = self.file.name
 			if self.file != "fake":
 				try:
 					self.LoadData()
@@ -73,13 +74,13 @@ class EqCurrent:
 			else:
 				self.LoadFakeData()
 
+	
 	def SetFileNames(self, bottle=None):
-
-		date_format = "%Y%m%d_"
-		if bottle.DateTime("start", format="UT").year >= 2022:
-			date_format = "%Y-%m-%d_"
-
-		if bottle is not None:
+		if self.file is None and bottle is not None:
+			date_format = "%Y%m%d_"
+			if bottle.DateTime("start", format="UT").year >= 2022:
+				date_format = "%Y-%m-%d_"
+				
 			self.files.append(bottle.DateTime("start", format="UT").strftime(date_format))
 			if bottle.DateTime("start").day != bottle.DateTime("end").day:
 				one_day = dt.timedelta(days=1)
@@ -114,9 +115,9 @@ class EqCurrent:
 								self.files[i] += "6"
 						else:
 							print(f"Warning, azimut {bottle.azimut*RtoD} not recognized for equivalent current in finland")
-							self.valid = False
+							return False
 					else:
-						self.valid = False
+						return False
 
 					self.files[i] += ".txt"
 
@@ -130,19 +131,25 @@ class EqCurrent:
 
 
 			if self.files:
+				self.files = [Path(f) for f in self.files]
 				self.file = self.files[0]
 			else:
-				self.valid = False
 				self.file = [""]
+				return False
 
 
 			# print("TIMES: ", self.start_time, self.end_time)
 
 		elif self.file is not None:
-			self.file = file
-			self.files = [file]
+			self.file = Path(self.file)
+			self.files = [self.file]
 			self.start_time = None
 			self.end_time = None
+			if bottle is not None:
+				self.start_time = bottle.DateTime("start", format="UT")
+				self.end_time = bottle.DateTime("end", format="UT")
+		
+		return True
 
 	def LoadFakeData(self):
 
@@ -170,10 +177,11 @@ class EqCurrent:
 			# print(self.files)
 			for f in self.files:
 				try:
-					data = data.append(pd.read_csv(self.path + f, delimiter=" ", names=["date", "time", "Jn", "Je"], skiprows=1))
-					print(f"Equivalent current file valid. {self.path + f}")
+					data = pd.concat([data, pd.read_csv(self.path / f, delimiter=" ", names=["date", "time", "Jn", "Je"], skiprows=1)]) 
+					# data = data.append(pd.read_csv(self.path / f, delimiter=" ", names=["date", "time", "Jn", "Je"], skiprows=1))
+					print(f"Equivalent current file valid. {self.path / f}")
 				except:
-					print(f"Equivalent current file not valid. {self.path + f}")
+					print(f"Equivalent current file not valid. {self.path / f}")
 					# return 0
 			if data.empty:
 				print("No equivalent current data retrieved from files")
@@ -192,13 +200,15 @@ class EqCurrent:
 			data = pd.DataFrame(columns=["date", "time", "Jn", "Je", "Ju"])
 			# print(data)
 			for f in self.files:
-				data = data.append(pd.read_fwf(self.path + f, header=0, usecols=(5, 7, 8, 10, 16), names=("date", "time", "Jn", "Je", "Ju")))
+				data = pd.concat([data, pd.read_fwf(self.path + f, header=0, usecols=(5, 7, 8, 10, 16), names=("date", "time", "Jn", "Je", "Ju"))])
+				# data = data.append(pd.read_fwf(self.path + f, header=0, usecols=(5, 7, 8, 10, 16), names=("date", "time", "Jn", "Je", "Ju")))
 				# print(data)
 			data = data.reset_index(drop=True)
 			data["datetime"] = [dt.datetime.strptime(d, "%Y.%m.%d%H:%M:%S") for d in data["date"] + data["time"]]
 			# print(data)
 
 		if self.start_time is None:
+			print('Setting eq current start from file')
 			# print(data.index, data.index.start, data.index.stop-1)
 			self.start_time = data["datetime"][data.index.start]
 			self.end_time = data["datetime"][data.index.stop-1]
@@ -208,7 +218,7 @@ class EqCurrent:
 		# print(data)
 
 		data["J_norm"] = np.sqrt(data["Jn"] ** 2 + data["Je"] ** 2 + data["Ju"] ** 2)
-		data["Jaz"] = np.arctan2(data["Je"], data["Jn"])
+		data["Jaz"] = SetAngleBounds(np.arctan2(data["Je"], data["Jn"]), -np.pi/2, np.pi/2)
 		data["Jel"] = np.arcsin(data["Ju"] / data["J_norm"])
 		# print(data)
 
@@ -228,7 +238,6 @@ class EqCurrent:
 
 		# self.MakePlot(show=True, app_angle=False, xaxis = True, div=3600)
 
-
 	def Polarisation(self, obs, DoLP_max = 100, DoLP_mode="rayleigh", AoLP_mode="para"):
 		DoLPs, AoLPs = [], []
 		for ju, je, jn in zip(self.data["Ju"], self.data["Je"], self.data["Jn"]):
@@ -240,8 +249,6 @@ class EqCurrent:
 
 		self.data["DoLP"] = DoLPs
 		self.data["AoLP"] = AoLPs
-
-
 
 	@staticmethod
 	def GetPolarisation(current, obs, DoLP_max = 100, DoLP_mode="rayleigh", AoLP_mode="para"):
@@ -283,7 +290,6 @@ class EqCurrent:
 
 		return DoLP, AoLP #[0-1] and radians
 
-
 	def GetApparentAngle(self, obs, shift=0, Jup_mode=False):
 		self.data["AoJapp"], self.data["AoJlos"] = EqCurrent.ApparentAngle(self.data["Ju"], self.data["Je"], self.data["Jn"],  obs, shift)
 
@@ -296,14 +302,11 @@ class EqCurrent:
 				# current.data["AoJapp"] = app_angle
 				app_angle = SetAngleBounds(self.data["AoJapp"], 0, np.pi)
 
-
 	@staticmethod
 	def ApparentAngle(cu, ce, cn, obs, shift=0):
 		app_angle = []
 		for i in range(len(cu)):
 			app_angle.append(obs.GetApparentAngle([cu[i], ce[i], cn[i]], Blos=True))
-
-
 
 		# print(app_angle)
 		app_angle, J_los_angle = zip(*app_angle)
@@ -322,7 +325,6 @@ class EqCurrent:
 		# current.data["AoJlos"] = J_los_angle
 
 		return app_angle, J_los_angle
-
 
 	def FindJup(self, obs, AoLP_array, mode = "para"):
 		"""
@@ -356,7 +358,7 @@ class EqCurrent:
 		### We want to find x in J + x * Up. x is the same in H or I coordinat system.
 		### We want that tan(AoJ) = tan(AoLP) = tanA = (Jy + x * Upy) / ((Jz + x * Upz)) (in the I coordinates)
 		### So that x = (tanA * Jz - Jy) / (Uy - tanA * Uz)
-			Findx = lambda Jy, Jz, Uy, Uz, tanA: (tanA * Jz - Jy) / (Uy - tanA * Uz)
+			Findx = lambda Jy, Jz, Uy, Uz, tanA:   (tanA * Jz - Jy) / (Uy - tanA * Uz)
 		elif mode.lower() == "perp":
 			Findx = lambda Jy, Jz, Uy, Uz, tanA: - (tanA * Jy + Jz) / (Uz + tanA * Uy)
 		else:
@@ -370,7 +372,9 @@ class EqCurrent:
 		# Ju = lambda Je, Jn, tanA: (Je * (Se*Sa - Ca / tanA) + Jn * (Se*Ca + Sa / tanA)) / Ce
 		# Ju_list = Ju(J_Ae, J_An, tanA)
 
-		max_Ju = 2 * max(max(abs(self.data["Je"])), max(abs(self.data["Jn"])))
+		coeff = 4
+		print(f'Limiting the vertical current to {coeff} times the maximum magnitude of the horizontal component.')
+		max_Ju = coeff * max(np.sqrt(self.data["Je"]**2 + self.data["Jn"]**2))
 
 		self.data["Ju"] = np.where(abs(Ju_list) < max_Ju, Ju_list, np.zeros_like(self.data["Je"]))
 		# self.data["Ju"] = Ju_list
@@ -458,8 +462,8 @@ class EqCurrent:
 
 	def SaveTXT(self):
 		### Default Format
-		print("Saving currents in", self.path + "/" + self.saving_name + ".txt")
-		self.data.to_csv(self.path + "/" + self.saving_name + '_DONE.txt', sep=",", index=False)
+		print("Saving currents in", self.path  / Path(str(self.saving_name) + ".txt"))
+		self.data.to_csv(self.path / Path(str(self.saving_name) + '_DONE.txt'), sep=",", index=False)
 
 
 class MagData:
@@ -487,7 +491,7 @@ class MagData:
 			end_date = end
 			while start_date.day != end_date.day:
 				start_date += one_day
-				self.additional_files.append(self.file + start_date.strftime("%Y%m%d"))
+				self.additional_files.append(self.file / start_date.strftime("%Y%m%d"))
 				
 
 

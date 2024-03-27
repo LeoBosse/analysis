@@ -41,22 +41,28 @@ class PLIP:
 
         self.timeshift = dt.timedelta(seconds=80)
 
+        self.valid = False
+        
+        self.data = {}
         self.LoadData()
        
 
     def LoadData(self):
         with h5.File(self.path / self.file_name, 'r') as h5f:
-            self.times = np.array([dt.datetime.fromtimestamp(t) - self.timeshift for t in h5f['times']]) 
-            self.times += np.array([dt.timedelta(seconds = a) for a in range(len(self.times))])
+            
+            self.metadata = h5f.attrs
+            
+            for key, value in h5f.items():
+                self.data[key] = np.array(value)
+            
+            if 'times' in h5f.keys():
+                self.data['times']  = np.array([dt.datetime.fromtimestamp(t) - self.timeshift for t in h5f['times']]) 
+                self.data['times'] += np.array([dt.timedelta(seconds = a) for a in range(len(self.data['times']))])
 
-            self.I = np.array(h5f['Intensity'])
-            self.D = np.array(h5f['DoLP']) * 100 # / np.average(np.array(h5f['DoLP']) * 100)
-            self.A = np.array(h5f['AoLP'])
-
-            self.I_fine = np.array(h5f['Intensity_fine'])
-            self.D_fine = np.array(h5f['DoLP_fine']) * 100
-            self.A_fine = np.array(h5f['AoLP_fine'])
-
-            self.I_laser = np.array(h5f['Intensity_Laser'])
-            self.D_laser = np.array(h5f['DoLP_Laser']) * 100
-            self.A_laser = np.array(h5f['AoLP_Laser'])
+        if len(self.data) > 0:
+            self.valid = True
+            print(f'PLIP data loaded:, available data are: {self.data.keys()}')
+        else:
+            print('Warning: Unvalid PLIP data.')
+            
+        

@@ -61,7 +61,7 @@ class Bottle:
             try:  # If you only specify the folder, will look for a default input.in file
                 self.input_parameters = self.ReadInputFile(pwd_data / self.folder / "input.in")
             except:  # Don't use it, or verify it works first.
-                self.input_parameters = self.ReadInputFile(pwd_data / str(self.folder) + ".in")
+                self.input_parameters = self.ReadInputFile(pwd_data / (str(self.folder) + ".in"))
 
         self.data_file_name = pwd_data / self.input_parameters["data_files"].split(",")[0]
         self.instrument_name = self.input_parameters["instrument_name"]
@@ -523,6 +523,7 @@ class Bottle:
         # self.std_smooth_AoLP = 0#    np.sqrt(1 / ((self.data['smooth_DoLP']/100) ** 2 * self.data['smooth_I0'] * smoothing_factor))
         # self.smooth_AoLP_upper = 0#self.data['smooth_AoLP'] + self.std_smooth_AoLP
         # self.smooth_AoLP_lower = 0#self.data['smooth_AoLP'] - self.std_smooth_AoLP
+        
         self.data['std_I0'] = np.sqrt(2 * self.data['I0'] / self.avg_dt)
         self.data['std_smooth_I0'] = np.sqrt(2 * self.data['smooth_I0'] / smoothing_factor)
 

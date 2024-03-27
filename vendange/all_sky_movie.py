@@ -4,6 +4,10 @@
 ################################################################################
 # This script creates a movie from a set of images.
 # It loads the images from a folder (with a filter on the names), transform them, and stack them in a movie.
+
+# Author: Léo Bosse
+# License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
+
 ################################################################################
 
 import cv2

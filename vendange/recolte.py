@@ -28,6 +28,7 @@
 import mysql.connector as mysql
 import sys
 import os.path
+from pathlib import Path 
 import numpy as np
 
 import input
@@ -50,6 +51,9 @@ if nb_args == 4:
 elif nb_args > 4:
 	IDConfiguration = [int(arguments[i]) for i in range(2, nb_args)]
 	print(f"4 arguments given. Will try to download all observations ID: {IDConfiguration}")
+
+
+
 
 if instrument == "carmen":
 	db = mysql.connect(
@@ -194,7 +198,7 @@ for id in IDConfiguration:
 
 
 	# ### For saving nice titles.
-	folder = "ptcu/" + date.strftime("%Y%m%d") + "_" + lieu + "/"
+	folder = "ptcu" + date.strftime("%Y%m%d") + "_" + lieu
 	# subfolder = "_".join(title[2+i:])
 	subfolder = f"{filters}_{az}_{el}_{int(speed)}hz"
 
@@ -203,13 +207,13 @@ for id in IDConfiguration:
 	# subfolder = str(config[columns.index("IDConfiguration")]) + "_" + str(config[columns.index("CM_Comments")])
 
 	###Create saving data folder
-	os.makedirs(path + folder, exist_ok=True)
+	os.makedirs(path / folder, exist_ok=True)
 	try:
-		os.makedirs(path + folder + subfolder)
+		os.makedirs(path / folder / subfolder)
 	except:
-		nb_doublons = len([d for d in os.listdir(path + folder) if d[:len(subfolder)] == subfolder])
+		nb_doublons = len([d for d in os.listdir(path / folder) if d[:len(subfolder)] == subfolder])
 		subfolder += "_" + str(nb_doublons)
-		os.makedirs(path + folder + subfolder)
+		os.makedirs(path / folder / subfolder)
 
 
 	##Make input file:
@@ -223,11 +227,11 @@ for id in IDConfiguration:
 					"rotation_per_sec": speed
 				})
 
-	input_file.WriteInputFile(folder = path + folder + subfolder + "/")
+	input_file.WriteInputFile(folder = path / folder / subfolder)
 
 
 	###Write config.csv
-	np.savetxt(path + folder + subfolder + "/config.csv", [columns, config], delimiter = ",", fmt='%s')
+	np.savetxt(path / folder / subfolder / "config.csv", [columns, config], delimiter = ",", fmt='%s')
 
 	# print(f"saving config in {path + folder + subfolder}...")
 
@@ -241,4 +245,4 @@ for id in IDConfiguration:
 
 
 		###Write dataV.csv
-		np.savetxt(path + folder + subfolder + "/data{}.csv".format(v), all_data[v - 1], delimiter = ",", fmt='%s', header=",".join(data_columns), comments="")
+		np.savetxt(path / folder / subfolder / "data{}.csv".format(v), all_data[v - 1], delimiter = ",", fmt='%s', header=",".join(data_columns), comments="")

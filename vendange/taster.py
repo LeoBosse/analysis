@@ -91,8 +91,9 @@ class Taster:
 				self.MakeXAxis(self.mixer.comp_bottles[ibc])
 				self.MakePlots(self.mixer.comp_bottles[ibc], comp=True)
 				
-				self.PlotTriangulationCurrent('perp')
-				self.PlotTriangulationCurrent('para')
+				if self.mixer.eq_currents.valid:
+					self.PlotTriangulationCurrent('perp')
+					self.PlotTriangulationCurrent('para')
 				if self.mixer.make_optional_plots:
 					if self.mixer.show_SN:
 						self.MakeSNratio(self.mixer.comp_bottles[ibc])
@@ -232,7 +233,6 @@ class Taster:
 			self.error_step = len(self.x_axis_list) // self.mixer.max_error_bars + 1
 		else:
 			self.error_step = 1
-		print('self.error_step', self.error_step)
 
 	def MakeFigure(self):
 		self.f1, (self.ax1, self.ax2, self.ax3) = plt.subplots(3, sharex=True, figsize=(16, 8))
@@ -356,7 +356,7 @@ class Taster:
 		save_name = bottle.data_file_name / (bottle.saving_name + f'_{name_extention}.{file_type}')
 		
 		print(f"Saving {name_extention} graphs in", save_name)
-		if self.mixer.triangulation_ref_bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
+		if bottle.instrument_name in ["carmen", "corbel", "gdcu"]:
 			plt.savefig(save_name, bbox_inches='tight')
 		else:
 			plt.savefig("/".join(str(bottle.data_file_name).split("/")[:-1]) / bottle.saving_name + f'_{name_extention}.{file_type}', bbox_inches='tight')
@@ -388,14 +388,14 @@ class Taster:
 		# else:
 		# 	self.PlotDoLP(self.ax2.twinx(), bottle, ax_lines=self.ax2_lines)
 
-		if self.mixer.show_mag_data and self.mixer.mag_data and self.mixer.mag_data.exist:
+		if self.mixer.show_mag_data and self.mixer.mag_data and self.mixer.mag_data.exist and not comp: 
 			self.PlotB(self.ax2.twinx(), bottle, component = self.mixer.B_component, ax_lines=self.ax2_lines)
 			# self.PlotB(self.ax2.twinx(), bottle, component = self.mixer.B_component, ax_lines=self.ax2_lines, derivative = True)
 			# self.PlotB(self.ax2.twinx(), bottle, component = 'Horiz', ax_lines=self.ax2_lines)
 			# self.PlotB(self.ax3.twinx(), bottle, component = 'Vert', ax_lines=self.ax3_lines)
 
-		if self.mixer.show_eiscat and self.mixer.eiscat_data.valid:
-			print('plotting eiscat')
+		if self.mixer.show_eiscat and self.mixer.eiscat_data.valid and not comp:
+			# print('plotting eiscat')
 
 			if self.mixer.eiscat_type == "uhf_v":
 				self.PlotEiscat(bottle, 'AoVi', self.ax3.twinx(), self.ax3_lines)
@@ -406,11 +406,12 @@ class Taster:
 
 			# self.PlotEiscat(bottle, 'AoVi', self.ax3, self.ax3_lines)
 			# self.PlotEiscat(bottle, 'vo', self.ax3.twinx(), self.ax3_lines)
-			print('DONE plotting eiscat')
+			# print('DONE plotting eiscat')
 
 		self.PlotAoLP(self.ax3, bottle, ax_lines=self.ax3_lines)
 
-		self.PlotCurrents(bottle)
+		if not comp:
+			self.PlotCurrents(bottle)
 
 		self.PlotAoRD(self.ax3, bottle, ax_lines=self.ax3_lines)
 
@@ -418,21 +419,28 @@ class Taster:
 			self.PlotRSModel(bottle)
 
 
-		if self.mixer.show_plip:
+		if self.mixer.show_plip and self.mixer.plip_data.valid:
 			# self.PlotPLIPData(self.ax1.twinx(), self.ax2.twinx(), self.ax3, (11, 7))
 			# self.PlotPLIPData(self.ax1.twinx(), self.ax2, self.ax3, (9, 4))
 			
 			plip_I_ax = self.ax1
-			plip_D_ax = self.ax2.twinx()
-			# for l in range(6, 11):
-			# 	for c in range(4, 7):
+			plip_D_ax = self.ax2 #.twinx()
+			# for l in range(4, 8)
+			# 	for c in range(3, 6):
 			# 		pos = (l, c)
 			# 		self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle, label = f'{pos}')
+					
 			# for pos in [(8,5),(9,5),(6,5),(7,5)]:
 			# 	self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle, label = f'{pos}')
 			
-			pos = (9,5)
+			pos = (5,4)
 			self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle)
+			pos = (6,4)
+			self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle)
+			pos = (7,4)
+			self.PlotPLIPData(plip_I_ax, plip_D_ax, self.ax3, pos, bottle = bottle)
+			
+			
 			# plt.legend()
 			# self.ax4.plot(self.x_axis_list, bottle.all_TempPM, "k.", linestyle = 'none', markersize=self.mixer.marker_size, label="PM")
 			# self.ax4.plot(self.x_axis_list, bottle.all_TempOptical, "r.", linestyle = 'none', markersize=self.mixer.marker_size, label="Optical")
@@ -495,23 +503,24 @@ class Taster:
 
 	def PlotPLIPData(self, axI, axD, axA, pos=None, bottle = None, **kwargs):
 		if pos is None:
-			I, D, A = self.mixer.plip_data.I_laser, self.mixer.plip_data.D_laser, self.mixer.plip_data.A_laser
+			I, D, A = self.mixer.plip_data.data['I_laser'], self.mixer.plip_data.data['D_laser'] * 100, self.mixer.plip_data.data['A_laser']
 		else:
 			l, c = pos
-			I, D, A = self.mixer.plip_data.I[:, l, c], self.mixer.plip_data.D[:, l, c], self.mixer.plip_data.A[:, l, c]
-
+			I, D, A = self.mixer.plip_data.data['Intensity'][0, :, l:l+2, c:c+2], self.mixer.plip_data.data['DoLP'][0, :, l:l+2, c:c+2] * 100, self.mixer.plip_data.data['AoLP'][0, :, l:l+2, c:c+2]
+			# I, D, A = self.mixer.plip_data.data['I'][0, :, l, c], self.mixer.plip_data.data['DoLP'][0, :, l, c] * 100, self.mixer.plip_data.data['AoLP'][0, :, l, c]
+			
 		if bottle is None:
 			norm_factor = 1.
 		else:
 			norm_factor = np.average(bottle.data['smooth_I0']) / np.average(I)
 
-		axI.plot(self.mixer.plip_data.times, I * norm_factor, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
-		axD.plot(self.mixer.plip_data.times, D, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
+		axI.plot(self.mixer.plip_data.data['times'], I * norm_factor, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
+		axD.plot(self.mixer.plip_data.data['times'], D - 0, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
 		print(axA)
-		axA.plot(self.mixer.plip_data.times, A * RtoD, color=self.plip_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
+		axA.plot(self.mixer.plip_data.data['times'], A * RtoD, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
 		
-		if bottle is not None:
-			self.SaveGraph(bottle, name_extention = 'plip')
+		# if bottle is not None:
+		# 	self.SaveGraph(bottle, name_extention = 'plip')
 
 
 	def PlotFlux(self, ax, bottle, ax_lines=[]):
@@ -603,7 +612,7 @@ class Taster:
 		elif  self.mixer.show_smooth_data:
 			(l_smooth_DoLP, _, _) = ax.errorbar(self.x_axis_list, bottle.data['smooth_DoLP'], yerr = bottle.data['std_smooth_DoLP'],  color = self.smooth_I0_color, ecolor=self.smooth_error_bars_color, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size, label="Smooth DoLP (" + str(bottle.smoothing_factor) + " " + str(bottle.smoothing_unit)[:3] + ")", zorder=1, errorevery=self.error_step)
 
-		ax.set_ylim(bottom = 0, top = 10)
+		# ax.set_ylim(bottom = 0, top = 10)
 
 		if self.mixer.show_raw_data:
 			ax_lines.append([l_all_DoLP, l_all_DoLP.get_label()])
@@ -830,7 +839,8 @@ class Taster:
 				time_format = "datetime"
 				if self.mixer.time_format == "LT":
 					time_delta = dt.timedelta(hours=1)
-
+			
+			# print('doubling ax1 for current')
 			self.ax12 = self.ax1.twinx()
 			if self.mixer.show_eiscat and self.mixer.eiscat_data.valid: # Shift the y axis to not overlap with eiscat plot
 				self.ax12.spines["right"].set_position(("axes", 1.075))
@@ -1650,10 +1660,12 @@ class Taster:
 		
 		for i in range(self.mixer.nb_triangulation_pairings):
 			axs[0].plot(x_axis, self.mixer.triangulation_data[f'az_{current_orientation.lower()}_{i}']*RtoD, '.', markersize = self.mixer.marker_size)
-			self.PlotB(axs[0].twinx(), self.mixer.triangulation_ref_bottle, 'Dec')
+			# self.PlotB(axs[0].twinx(), self.mixer.triangulation_ref_bottle, 'Dec')
+			axs[0].plot(self.mixer.eq_currents.GetNormTimes(format=self.mixer.time_format), self.mixer.eq_currents.data['Jaz']*RtoD, '.', markersize = self.mixer.marker_size)
 			
 			axs[1].plot(x_axis, self.mixer.triangulation_data[f'el_{current_orientation.lower()}_{i}']*RtoD, '.', markersize = self.mixer.marker_size)
-			self.PlotB(axs[1].twinx(), self.mixer.triangulation_ref_bottle, 'Incl')
+			# self.PlotB(axs[1].twinx(), self.mixer.triangulation_ref_bottle, 'Incl')
+			axs[1].plot(self.mixer.eq_currents.GetNormTimes(format=self.mixer.time_format), self.mixer.eq_currents.data['Jel']*RtoD, '.', markersize = self.mixer.marker_size)
 			
 		self.SaveGraph(self.mixer.triangulation_ref_bottle, name_extention= f'Jtriangulation_{current_orientation}')
 		

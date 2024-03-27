@@ -9,7 +9,6 @@
 
 # One of the most important method here is SetGraphParameter()! It decides what data you want to mix with your bottles and some graph parameters (do you want the horizontal or vertical magnetic field?)
 
-
 # Author: Léo Bosse
 # License: the freeest one, do whatever with my bad code if it can be helpfull, nobody really cares!
 #######################################################################
@@ -74,89 +73,6 @@ class Mixer:
 			if self.comp_bottles:
 				self.TriangulateAoLP(bottle, self.comp_bottles)
 				
-			# self.MakeFigure()
-			# self.MakePlots(bottle)
-			# self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
-
-			# self.MakeFigure()
-			# self.MakePlots(bottle)
-			# # self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
-
-			# # self.MakeFFT(bottle)
-
-			# if self.show_correlations:
-			# 	# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "DoLP")
-			# 	# self.MakeCleanCorrelationPlots(bottle, None, smooth=True, COMP = "AoLP")
-			# 	self.MakeCleanCorrelationPlots(bottle, None, smooth=True)
-			# 	# self.MakeCleanCorrelationPlots(bottle, None, smooth=False)
-
-			# # for m in self.pomerol_models:
-			# # 	self.SubtractModel(bottle, m)
-			# # if self.show_RS_model:
-			# # 	self.CompareRayleigh(bottle, self.pomerol_model)
-			# if self.show_SN:
-			# 	self.MakeI0SNratio(bottle)
-			# 	self.MakeSNratio(bottle)
-			# if self.make_optional_plots:
-			# 	if self.show_currents and self.eq_currents.valid and ib == 0:
-			# 		self.eq_currents.MakePlot(coords = "uen")
-			# 		self.eq_currents.MakePlot(coords = "azel")
-
-			# if self.comp_bottles:
-			# 	print('DEBUG COMP BOTTLES', self.comp_bottles)
-
-			# 	# for b in self.comp_bottles:
-			# 	# 	b.TestResample()
-				
-			# 	### If the same number of channels in bottles and comp_bottles, plot them one for one
-			# 	### If not, then plot all comp_bottles on top of of every bottle.
-			# 	comp_bottles_to_show = [ib]
-			# 	if len(self.comp_bottles) != len(self.bottles):
-			# 		comp_bottles_to_show = range(len(self.comp_bottles))
-				
-			# 	for ibc in comp_bottles_to_show:
-
-			# 		self.SetGraphParameter(self.comp_bottles[ibc], comp=True)
-			# 		self.MakeXAxis(self.comp_bottles[ibc])
-			# 		self.MakePlots(self.comp_bottles[ibc], comp=True)
-					
-			# 		if self.make_optional_plots:
-			# 			if self.show_SN:
-			# 				self.MakeSNratio(self.comp_bottles[ibc])
-
-			# 			self.SetGraphParameter(bottle)
-			# 			self.MakeXAxis(bottle)
-
-			# 			self.CompareBottles(self.comp_bottles[ibc], bottle)
-
-			# # if self.make_optional_plots:
-			# # 	self.MakeFFT(bottle)
-
-			# if self.make_optional_plots and self.mag_data is not False:
-			# 	if ib == 0:
-			# 		self.MakeMagDataPlots(bottle)
-			# 	self.MakeCorrelationPlots(bottle)
-
-			# if self.show_eiscat and self.make_optional_plots and self.eiscat_data.valid:
-			# 	self.MakeEiscatDataPlot(bottle)
-
-			# if self.make_optional_plots and bottle.observation_type == "fixed_elevation_continue_rotation":
-			# 	self.CompareAnglesPlots(bottle)
-
-			# 	if len(bottle.continue_rotation_times) > 2:
-			# 		print("AVERAGE ROTATIONS")
-			# 		bottle = bottle.GetAverageContinueRotations()
-			# 		self.SetGraphParameter(bottle)
-			# 		self.MakeXAxis(bottle)
-			# 		self.MakeFigure()
-			# 		self.MakePlots(bottle)
-			# 		self.MakeSNratio(bottle)
-			# 		self.CompareAnglesPlots(bottle)
-
-
-
-			# self.MakeCoherencePLots()
-
 	def LoadExternData(self, bottle):
 
 		if self.show_mag_data:
@@ -174,15 +90,24 @@ class Mixer:
 		
 		if self.show_RS_model and self.RS_model_files:
 			self.LoadPOMEROLModel(bottle)
-
-		self.LoadPLIPData(bottle)
+		
+		if self.show_plip:
+			self.LoadPLIPData(bottle)
 
 	def LoadPLIPData(self, bottle):
 		# self.plip_data = PLIP(bottle, "data_NOT_ROT.h5")
-		try:
-			self.plip_data = PLIP("data_vh-+.h5")
-		except:
-			print("WARNING: error while loading plip data. Check file path, formating of the hdf5 file, etc")
+		# try:
+		# self.plip_data = PLIP("20221120_184022_3_pola_data.h5")
+		if 'plip_data_file' not in bottle.input_parameters:
+			print('Warning: no plip data file specified in the input file. Add a plip_data_file entry.')
+			return
+			
+		self.plip_data = PLIP(bottle.input_parameters['plip_data_file'])
+		print('PLIP data loaded successfully!')
+		# except:
+		# 	print("WARNING: error while loading plip data. Check file path, formating of the hdf5 file, etc")
+		
+
 		
 	def LoadMagData(self, bottle):
 		self.mag_data = MagData.FromBottle(bottle)
@@ -209,7 +134,11 @@ class Mixer:
 			print("EISCAT data valid? ", self.eiscat_data.valid)
 
 	def LoadCurrentData(self, bottle):
-		self.eq_currents = EqCurrent(bottle, file_type=None)
+		input_file = None
+		if 'eq_current_file' in bottle.input_parameters.keys():
+			input_file = bottle.input_parameters['eq_current_file']
+		self.eq_currents = EqCurrent(bottle = bottle, file = input_file, file_type = None)
+		
 		# print("Equivalent current is valid? ", bool(self.eq_currents.valid))
 		
 		if not self.eq_currents.valid:
@@ -375,138 +304,6 @@ class Mixer:
 					pass
 					# addF, addD, addA = 0, 0, 0
 
-	def MakeXAxis(self, bottle):
-
-		self.divisor = 1.
-		delta = bottle.data['Times'].iloc[-1] - bottle.data['Times'].iloc[0]
-		if delta > dt.timedelta(hours=2):
-			self.divisor = 3600.
-			if   self.langue == "en" : self.xlabel = "Time (hours)"
-			elif self.langue == "fr" : self.xlabel = "Durée (heure)"
-		elif delta > dt.timedelta(minutes=2):
-			self.divisor = 60.
-			if   self.langue == "en" : self.xlabel = "Time (minutes)"
-			elif self.langue == "fr" : self.xlabel = "Durée (minutes)"
-		else:
-			if   self.langue == "en" : self.xlabel = "Time (seconds)"
-			elif self.langue == "fr" : self.xlabel = "Durée (secondes)"
-
-		# self.x_axis_list = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
-		norm = bottle.data['Times'].iloc[0].total_seconds()
-		self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.data['Times']]) / self.divisor
-
-		if self.use_24h_time_format and bottle.observation_type == "fixed":
-			self.x_axis_list = bottle.DateTime("start", format=self.time_format) + bottle.data['Times']
-			# day = self.x_axis_list[0].day
-			# GetHour = lambda t: t.hour + t.minute / 60. + t.second / 3600.
-			# GetDay = lambda d: d.day
-			# self.x_axis_list = np.where(np.vectorize(GetDay)(self.x_axis_list) > day, np.vectorize(GetHour)(self.x_axis_list)+24, np.vectorize(GetHour)(self.x_axis_list))
-			# self.x_axis_list = np.array([GetHour(t) for t in self.x_axis_list])
-			self.xlabel = self.time_label
-
-			if self.divisor == 3600.:
-				self.xaxis_time_format = '%H:%M'
-			else:
-				self.xaxis_time_format = '%H:%M:%S'
-
-			# plt.rcParams['axes.xmargin'] = 0
-
-
-		self.x_time_list = self.x_axis_list
-
-		if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_continue_rotation":
-			### Treat continue rotations differently to have all rotations appear the same length. x axis is coded by azimuth, not time. So if the rotations are done by hand, they will appear to have all the same length!
-			self.x_axis_list = np.array(())
-			self.x_time_ticks_label = [bottle.DateTime("start", format=self.time_format)]
-			self.x_time_ticks_pos = [0]
-			for ir in range(bottle.nb_continue_rotation):
-				start 	= dt.timedelta(minutes=bottle.continue_rotation_times[ir])
-				end 	= dt.timedelta(minutes=bottle.continue_rotation_times[ir+1])
-				nb_points = len([t for t in bottle.data['Times'] if start <= t <= end ])
-
-				self.x_axis_list = np.append(self.x_axis_list, np.linspace(360 * ir, 360 * (ir+1), nb_points))
-
-				self.x_time_ticks_pos.append(360 * (ir+1))
-				# self.x_time_ticks_pos.append(self.x_time_ticks_pos[-1] + 360)
-				self.x_time_ticks_label.append(bottle.DateTime("start", format=self.time_format, delta=end))
-
-			self.x_time_ticks_label = [x.strftime("%H:%M:%S") for x in self.x_time_ticks_label]
-
-			# print(len(self.x_axis_list), len(bottle.data['Times']))
-			self.xlabel = "Azimuth"
-
-			if bottle.nb_continue_rotation <= 2:
-				self.x_axis_ticks_pos = np.arange(0, 360 * bottle.nb_continue_rotation, 45)
-				self.x_axis_ticks_label = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] *  bottle.nb_continue_rotation
-			else:
-				self.x_axis_ticks_pos = np.arange(0, 360 * bottle.nb_continue_rotation, 90)
-				self.x_axis_ticks_label = ["N", "E", "S", "W"] *  bottle.nb_continue_rotation
-
-
-		else:
-			# delta = bottle.data['Times'].iloc[-1] - bottle.data['Times'].iloc[0]
-			# if delta > dt.timedelta(hours=2):
-			# 	self.divisor = 3600.
-			# 	self.xlabel = "Time (hours)"
-			# elif delta > dt.timedelta(minutes=2):
-			# 	self.divisor = 60.
-			# 	self.xlabel = "Time (minutes)"
-			# else:
-			# 	self.xlabel = "Time (seconds)"
-			#
-			# # self.x_axis_list 	   = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
-			# norm = bottle.data['Times'].iloc[0].total_seconds()
-			# # self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.data['Times']]) / self.divisor
-			# self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.data['Times']]) / self.divisor
-
-			if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_discrete_rotation":
-				self.xlabel = "Azimuth (°)"
-				self.x_axis_ticks_pos = bottle.discrete_rotation_times[::9]
-				self.x_axis_ticks_label = np.round(bottle.discrete_rotation_azimuts * RtoD % 360)[::9]
-				self.x_axis_ticks_label = [int(x) for x in self.x_axis_ticks_label]
-
-				self.x_time_ticks_pos = []
-				self.x_time_ticks_label = []
-				for it, t in enumerate(self.x_axis_ticks_pos):
-					self.x_time_ticks_pos.append(t)
-					self.x_time_ticks_label.append(bottle.DateTime("start", format=self.time_format) + dt.timedelta(minutes=t))
-
-				self.x_time_ticks_label = [x.strftime("%H:%M:%S") for x in self.x_time_ticks_label]
-
-		if self.max_error_bars:
-			self.error_step = len(self.x_axis_list) // self.max_error_bars + 1
-		else:
-			self.error_step = 1
-
-	def MakeFigure(self):
-		if self.mode == "default":
-			self.f1, (self.ax1, self.ax2, self.ax3) = plt.subplots(3, sharex=True, figsize=(16, 8))
-			# f1, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex=True, figsize=(16, 8))
-
-			self.ax1_lines = []
-			self.ax2_lines = []
-			self.ax3_lines = []
-
-			self.ax1.set_ylabel("Flux (AU)")
-			self.ax2.set_ylabel("DoLP (%)")
-			self.ax3.set_ylabel("AoLP (°)")
-			# ax4.set_ylabel("Temperature (Celsius)")
-
-			# ax1.set_xlabel(self.xlabel)
-			# ax2.set_xlabel(self.xlabel)
-			self.ax3.set_xlabel(self.xlabel)
-
-			if self.show_grid_lines:
-				for ax in [self.ax1, self.ax2, self.ax3]:
-					ax.set_axisbelow(True)
-					ax.grid(True, zorder=-10)
-
-			if self.use_24h_time_format:
-				# self.ax3.xaxis.set_major_locator(mpl.dates.DayLocator())
-				# self.ax3.xaxis.set_minor_locator(mpl.dates.HourLocator(range(0, 25, 1)))
-				# self.ax3.xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m-%d'))
-				self.f1.autofmt_xdate()
-
 	def SetGraphParameter(self, bottle, comp = False):
 		"""
 		Use the attributes defined here to combine your plots, hide them, add error bars or other instrument data.
@@ -546,18 +343,18 @@ class Mixer:
 
 		self.show_allsky = False # If available, plot the allsky camera flux over the cru flux.
 
-		self.show_plip = False
+		self.show_plip = 0
 
-		self.show_eiscat = 1 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
+		self.show_eiscat = 0 # If available, plot the eiscat Ne over the Cru flux. Over things are possible if you want, just search for "PlotEiscat" function (called in the Mixer.MakePlot()) and have fun :)
 		self.eiscat_type = "uhf_v" #Initally for March 2022 data. Choose the type of hdf5 files containing eiscat data (Possibilities for VHF mode: tromso, sodankyla, kiruna. For UHF mode: uhf, uhf_v)
 
-		self.show_mag_data 	= 1 # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
+		self.show_mag_data 	= 0 # If available, plot the magnetometer data. (field strength or its derivative, or orientation)
 		self.B_component	= 'Horiz' # B field component to plot (Dec, Horiz, Vert, 'Incl' or 'Total')
 		self.show_AoBapp 	= 0 # If True, show the apparent angle of the magnetic field computed in bottle.py from CHAOS model
 		self.show_AoRD	 	= 0 # If True, show the AoLP produced by a point source defined in the input.in file.
 
 		self.show_currents	= 1 # If available, show the apparent angle of the equivalent currents from Magnar.
-		self.compute_Jup	= "" #False, "para" or "perp". Will add a vertical component to the equivalent current so that it match the AoLP. If para: the AoLP is parallel to the current. If perp, the AoLP is perpendicular to the current.
+		self.compute_Jup	= False #False, "para" or "perp". Will add a vertical component to the equivalent current so that it match the AoLP. If para: the AoLP is parallel to the current. If perp, the AoLP is perpendicular to the current.
 
 		self.show_grid_lines = True # Just to have a nicer grpah. self explainatory
 
@@ -818,7 +615,11 @@ class Mixer:
 		# plt.tight_layout(pad=0, h_pad=None, w_pad=None, rect=None)
 
 	def TriangulateAoLP(self, bottle, comp_bottles):
-		
+		"""
+		Compute a 'current' from the AoLP of two (or more) cru observations, given as bottle and comp. If len(comp) > 1, may be bugged, but every pair of bottles is computed.
+		bottle: a CRU data object.
+		comp: [list] list of comparison bottle (for example determined by the -b argument given when running main.py).
+		"""
 		all_bottles = comp_bottles.copy()
 		all_bottles.append(bottle)
 		all_bottles.sort(key=lambda b: len(b))
@@ -943,6 +744,233 @@ class Mixer:
 		
 		# return perp_intersections_azel
 		
+
+	def GetDataFromTxt(self, filename, t_name=None, I_name=None, DoLP_name=None, AoLP_name=None, **kwargs):
+
+		data = pd.read_csv(filename, **kwargs)
+		# print("DEBUG NEW")
+		# print(data)
+		# print(data.columns)
+		if t_name:
+			t = data[t_name]
+			if "time" in t_name:
+				try:
+					t = np.array([dt.datetime.strptime(t, "%Y%m%d-%H%M%S") for t in t])
+				except:
+					pass
+
+		if I_name: 		I = data[I_name]
+		if DoLP_name: 	DoLP = data[DoLP_name]
+		if AoLP_name: 	AoLP = data[AoLP_name]
+
+		# if len(t) == 1:
+		# 	t = self.x_axis_list
+		# 	I = np.array([I[0]] * len(t))
+		# 	DoLP = np.array([DoLP[0]] * len(t))
+		# 	AoLP = np.array([AoLP[0]] * len(t))
+
+		return t, I, DoLP, AoLP
+
+
+	def GetVParamFromLightParam(self, I0, DoLP, AoLP):
+		"""Returns  the V parameters for a given radiant flux (any unit), a DoLP (between 0 and 1) and an AoLP in radians"""
+		V = I0 / 2.
+		Vcos = I0 * DoLP * np.cos(2 * AoLP) / 4.
+		Vsin = I0 * DoLP * np.sin(2 * AoLP) / 4.
+		return V, Vcos, Vsin
+
+	def GetLightParameters(self, V, Vcos, Vsin):
+		"""Given V, Vcos, Vsin, returns the initial intensity, DoLP and AoLP. This method is shared for spp and ptcu. It is also a static method, that can be called outside of the object. This way it can be used everywhere, each time you need I0, DoLP, AoLP to decrease the chances of making a mistake."""
+		I0 = 2 * V
+		DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V
+		AoLP = np.arctan2(Vsin, Vcos) / 2
+		return abs(I0), abs(DoLP), AoLP
+
+	def AddLights(self, I1, D1, A1, I2, D2, A2, t1 = None, t2 = None):
+
+		V1, Vc1, Vs1 = self.GetVParamFromLightParam(I1, D1, A1)
+		V2, Vc2, Vs2 = self.GetVParamFromLightParam(I2, D2, A2)
+
+		if t1 is None and t2 is None:
+			return self.GetLightParameters(V1+V2, Vc1+Vc2, Vs1+Vs2)
+		elif t1 is None:
+			V1  = V1  + np.zeros_like(V2)
+			Vc1 = Vc1 + np.zeros_like(Vc2)
+			Vs1 = Vs1 + np.zeros_like(Vs2)
+		elif t2 is None:
+			V2  = V2  + np.zeros_like(V1)
+			Vc2 = Vc2 + np.zeros_like(Vc1)
+			Vs2 = Vs2 + np.zeros_like(Vs1)
+		else:
+			V2  = np.interp(t1, t2, V2)
+			Vc2 = np.interp(t1, t2, Vc2)
+			Vs2 = np.interp(t1, t2, Vs2)
+
+		return self.GetLightParameters(V1+V2, Vc1+Vc2, Vs1+Vs2)
+
+	def SubtractModel(self, bottle, model):
+		# x_axis = self.x_axis_list
+		#
+		# m_V = np.interp(x_axis, model.x_axis, model["RSV"])
+		# m_Vcos = np.interp(x_axis, model.x_axis, model["RSVcos"])
+		# m_Vsin = np.interp(x_axis, model.x_axis, model["RSVsin"])
+		#
+		# diff_V = bottle.smooth_V - m_V
+		# diff_Vcos = bottle.smooth_Vcos - m_Vcos
+		# diff_Vsin = bottle.smooth_Vsin - m_Vsin
+
+		x_axis = model.x_axis
+
+		b_V = np.interp(x_axis, self.x_axis_list, bottle.smooth_V)
+		b_Vcos = np.interp(x_axis, self.x_axis_list, bottle.smooth_Vcos)
+		b_Vsin = np.interp(x_axis, self.x_axis_list, bottle.smooth_Vsin)
+
+		diff_V = b_V - model["RSV"]
+		diff_Vcos = b_Vcos - model["Vcos"]
+		diff_Vsin = b_Vsin - model["Vsin"]
+
+		diff_I0, diff_DoLP, diff_AoLP = Rotation.GetLightParameters(diff_V, diff_Vcos, diff_Vsin)
+
+		f, axs = plt.subplots(3, sharex = True)
+		axs[0].plot(x_axis, diff_I0, "k")
+		axs[1].plot(x_axis, diff_DoLP, "b")
+		axs[2].plot(x_axis, diff_AoLP * RtoD, "r")
+
+
+
+
+	# def MakeXAxis(self, bottle):
+
+	# 	self.divisor = 1.
+	# 	delta = bottle.data['Times'].iloc[-1] - bottle.data['Times'].iloc[0]
+	# 	if delta > dt.timedelta(hours=2):
+	# 		self.divisor = 3600.
+	# 		if   self.langue == "en" : self.xlabel = "Time (hours)"
+	# 		elif self.langue == "fr" : self.xlabel = "Durée (heure)"
+	# 	elif delta > dt.timedelta(minutes=2):
+	# 		self.divisor = 60.
+	# 		if   self.langue == "en" : self.xlabel = "Time (minutes)"
+	# 		elif self.langue == "fr" : self.xlabel = "Durée (minutes)"
+	# 	else:
+	# 		if   self.langue == "en" : self.xlabel = "Time (seconds)"
+	# 		elif self.langue == "fr" : self.xlabel = "Durée (secondes)"
+
+	# 	# self.x_axis_list = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
+	# 	norm = bottle.data['Times'].iloc[0].total_seconds()
+	# 	self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.data['Times']]) / self.divisor
+
+	# 	if self.use_24h_time_format and bottle.observation_type == "fixed":
+	# 		self.x_axis_list = bottle.DateTime("start", format=self.time_format) + bottle.data['Times']
+	# 		# day = self.x_axis_list[0].day
+	# 		# GetHour = lambda t: t.hour + t.minute / 60. + t.second / 3600.
+	# 		# GetDay = lambda d: d.day
+	# 		# self.x_axis_list = np.where(np.vectorize(GetDay)(self.x_axis_list) > day, np.vectorize(GetHour)(self.x_axis_list)+24, np.vectorize(GetHour)(self.x_axis_list))
+	# 		# self.x_axis_list = np.array([GetHour(t) for t in self.x_axis_list])
+	# 		self.xlabel = self.time_label
+
+	# 		if self.divisor == 3600.:
+	# 			self.xaxis_time_format = '%H:%M'
+	# 		else:
+	# 			self.xaxis_time_format = '%H:%M:%S'
+
+	# 		# plt.rcParams['axes.xmargin'] = 0
+
+
+	# 	self.x_time_list = self.x_axis_list
+
+	# 	if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_continue_rotation":
+	# 		### Treat continue rotations differently to have all rotations appear the same length. x axis is coded by azimuth, not time. So if the rotations are done by hand, they will appear to have all the same length!
+	# 		self.x_axis_list = np.array(())
+	# 		self.x_time_ticks_label = [bottle.DateTime("start", format=self.time_format)]
+	# 		self.x_time_ticks_pos = [0]
+	# 		for ir in range(bottle.nb_continue_rotation):
+	# 			start 	= dt.timedelta(minutes=bottle.continue_rotation_times[ir])
+	# 			end 	= dt.timedelta(minutes=bottle.continue_rotation_times[ir+1])
+	# 			nb_points = len([t for t in bottle.data['Times'] if start <= t <= end ])
+
+	# 			self.x_axis_list = np.append(self.x_axis_list, np.linspace(360 * ir, 360 * (ir+1), nb_points))
+
+	# 			self.x_time_ticks_pos.append(360 * (ir+1))
+	# 			# self.x_time_ticks_pos.append(self.x_time_ticks_pos[-1] + 360)
+	# 			self.x_time_ticks_label.append(bottle.DateTime("start", format=self.time_format, delta=end))
+
+	# 		self.x_time_ticks_label = [x.strftime("%H:%M:%S") for x in self.x_time_ticks_label]
+
+	# 		# print(len(self.x_axis_list), len(bottle.data['Times']))
+	# 		self.xlabel = "Azimuth"
+
+	# 		if bottle.nb_continue_rotation <= 2:
+	# 			self.x_axis_ticks_pos = np.arange(0, 360 * bottle.nb_continue_rotation, 45)
+	# 			self.x_axis_ticks_label = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] *  bottle.nb_continue_rotation
+	# 		else:
+	# 			self.x_axis_ticks_pos = np.arange(0, 360 * bottle.nb_continue_rotation, 90)
+	# 			self.x_axis_ticks_label = ["N", "E", "S", "W"] *  bottle.nb_continue_rotation
+
+
+	# 	else:
+	# 		# delta = bottle.data['Times'].iloc[-1] - bottle.data['Times'].iloc[0]
+	# 		# if delta > dt.timedelta(hours=2):
+	# 		# 	self.divisor = 3600.
+	# 		# 	self.xlabel = "Time (hours)"
+	# 		# elif delta > dt.timedelta(minutes=2):
+	# 		# 	self.divisor = 60.
+	# 		# 	self.xlabel = "Time (minutes)"
+	# 		# else:
+	# 		# 	self.xlabel = "Time (seconds)"
+	# 		#
+	# 		# # self.x_axis_list 	   = np.array([t.total_seconds() for t in bottle.all_times_since_start]) / self.divisor
+	# 		# norm = bottle.data['Times'].iloc[0].total_seconds()
+	# 		# # self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.data['Times']]) / self.divisor
+	# 		# self.x_axis_list = np.array([t.total_seconds() - norm for t in bottle.data['Times']]) / self.divisor
+
+	# 		if self.xaxis_azimut and bottle.observation_type == "fixed_elevation_discrete_rotation":
+	# 			self.xlabel = "Azimuth (°)"
+	# 			self.x_axis_ticks_pos = bottle.discrete_rotation_times[::9]
+	# 			self.x_axis_ticks_label = np.round(bottle.discrete_rotation_azimuts * RtoD % 360)[::9]
+	# 			self.x_axis_ticks_label = [int(x) for x in self.x_axis_ticks_label]
+
+	# 			self.x_time_ticks_pos = []
+	# 			self.x_time_ticks_label = []
+	# 			for it, t in enumerate(self.x_axis_ticks_pos):
+	# 				self.x_time_ticks_pos.append(t)
+	# 				self.x_time_ticks_label.append(bottle.DateTime("start", format=self.time_format) + dt.timedelta(minutes=t))
+
+	# 			self.x_time_ticks_label = [x.strftime("%H:%M:%S") for x in self.x_time_ticks_label]
+
+	# 	if self.max_error_bars:
+	# 		self.error_step = len(self.x_axis_list) // self.max_error_bars + 1
+	# 	else:
+	# 		self.error_step = 1
+
+	# def MakeFigure(self):
+	# 	if self.mode == "default":
+	# 		self.f1, (self.ax1, self.ax2, self.ax3) = plt.subplots(3, sharex=True, figsize=(16, 8))
+	# 		# f1, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex=True, figsize=(16, 8))
+
+	# 		self.ax1_lines = []
+	# 		self.ax2_lines = []
+	# 		self.ax3_lines = []
+
+	# 		self.ax1.set_ylabel("Flux (AU)")
+	# 		self.ax2.set_ylabel("DoLP (%)")
+	# 		self.ax3.set_ylabel("AoLP (°)")
+	# 		# ax4.set_ylabel("Temperature (Celsius)")
+
+	# 		# ax1.set_xlabel(self.xlabel)
+	# 		# ax2.set_xlabel(self.xlabel)
+	# 		self.ax3.set_xlabel(self.xlabel)
+
+	# 		if self.show_grid_lines:
+	# 			for ax in [self.ax1, self.ax2, self.ax3]:
+	# 				ax.set_axisbelow(True)
+	# 				ax.grid(True, zorder=-10)
+
+	# 		if self.use_24h_time_format:
+	# 			# self.ax3.xaxis.set_major_locator(mpl.dates.DayLocator())
+	# 			# self.ax3.xaxis.set_minor_locator(mpl.dates.HourLocator(range(0, 25, 1)))
+	# 			# self.ax3.xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m-%d'))
+	# 			self.f1.autofmt_xdate()
+
 
 	# def SetColors(self, bottle, comp = False):
 
@@ -2236,96 +2264,3 @@ class Mixer:
 	# 	else:
 	# 		plt.savefig("/".join(b1.data_file_name.split("/")[:-1]) + "/" + b1.saving_name + 'bottle_comparison.png', bbox_inches='tight')
 
-
-
-	def GetDataFromTxt(self, filename, t_name=None, I_name=None, DoLP_name=None, AoLP_name=None, **kwargs):
-
-		data = pd.read_csv(filename, **kwargs)
-		# print("DEBUG NEW")
-		# print(data)
-		# print(data.columns)
-		if t_name:
-			t = data[t_name]
-			if "time" in t_name:
-				try:
-					t = np.array([dt.datetime.strptime(t, "%Y%m%d-%H%M%S") for t in t])
-				except:
-					pass
-
-		if I_name: 		I = data[I_name]
-		if DoLP_name: 	DoLP = data[DoLP_name]
-		if AoLP_name: 	AoLP = data[AoLP_name]
-
-		# if len(t) == 1:
-		# 	t = self.x_axis_list
-		# 	I = np.array([I[0]] * len(t))
-		# 	DoLP = np.array([DoLP[0]] * len(t))
-		# 	AoLP = np.array([AoLP[0]] * len(t))
-
-		return t, I, DoLP, AoLP
-
-
-	def GetVParamFromLightParam(self, I0, DoLP, AoLP):
-		"""Returns  the V parameters for a given radiant flux (any unit), a DoLP (between 0 and 1) and an AoLP in radians"""
-		V = I0 / 2.
-		Vcos = I0 * DoLP * np.cos(2 * AoLP) / 4.
-		Vsin = I0 * DoLP * np.sin(2 * AoLP) / 4.
-		return V, Vcos, Vsin
-
-	def GetLightParameters(self, V, Vcos, Vsin):
-		"""Given V, Vcos, Vsin, returns the initial intensity, DoLP and AoLP. This method is shared for spp and ptcu. It is also a static method, that can be called outside of the object. This way it can be used everywhere, each time you need I0, DoLP, AoLP to decrease the chances of making a mistake."""
-		I0 = 2 * V
-		DoLP = 2 * np.sqrt(Vcos**2 + Vsin**2) / V
-		AoLP = np.arctan2(Vsin, Vcos) / 2
-		return abs(I0), abs(DoLP), AoLP
-
-	def AddLights(self, I1, D1, A1, I2, D2, A2, t1 = None, t2 = None):
-
-		V1, Vc1, Vs1 = self.GetVParamFromLightParam(I1, D1, A1)
-		V2, Vc2, Vs2 = self.GetVParamFromLightParam(I2, D2, A2)
-
-		if t1 is None and t2 is None:
-			return self.GetLightParameters(V1+V2, Vc1+Vc2, Vs1+Vs2)
-		elif t1 is None:
-			V1  = V1  + np.zeros_like(V2)
-			Vc1 = Vc1 + np.zeros_like(Vc2)
-			Vs1 = Vs1 + np.zeros_like(Vs2)
-		elif t2 is None:
-			V2  = V2  + np.zeros_like(V1)
-			Vc2 = Vc2 + np.zeros_like(Vc1)
-			Vs2 = Vs2 + np.zeros_like(Vs1)
-		else:
-			V2  = np.interp(t1, t2, V2)
-			Vc2 = np.interp(t1, t2, Vc2)
-			Vs2 = np.interp(t1, t2, Vs2)
-
-		return self.GetLightParameters(V1+V2, Vc1+Vc2, Vs1+Vs2)
-
-	def SubtractModel(self, bottle, model):
-		# x_axis = self.x_axis_list
-		#
-		# m_V = np.interp(x_axis, model.x_axis, model["RSV"])
-		# m_Vcos = np.interp(x_axis, model.x_axis, model["RSVcos"])
-		# m_Vsin = np.interp(x_axis, model.x_axis, model["RSVsin"])
-		#
-		# diff_V = bottle.smooth_V - m_V
-		# diff_Vcos = bottle.smooth_Vcos - m_Vcos
-		# diff_Vsin = bottle.smooth_Vsin - m_Vsin
-
-
-		x_axis = model.x_axis
-
-		b_V = np.interp(x_axis, self.x_axis_list, bottle.smooth_V)
-		b_Vcos = np.interp(x_axis, self.x_axis_list, bottle.smooth_Vcos)
-		b_Vsin = np.interp(x_axis, self.x_axis_list, bottle.smooth_Vsin)
-
-		diff_V = b_V - model["RSV"]
-		diff_Vcos = b_Vcos - model["Vcos"]
-		diff_Vsin = b_Vsin - model["Vsin"]
-
-		diff_I0, diff_DoLP, diff_AoLP = Rotation.GetLightParameters(diff_V, diff_Vcos, diff_Vsin)
-
-		f, axs = plt.subplots(3, sharex = True)
-		axs[0].plot(x_axis, diff_I0, "k")
-		axs[1].plot(x_axis, diff_DoLP, "b")
-		axs[2].plot(x_axis, diff_AoLP * RtoD, "r")
