@@ -28,7 +28,7 @@
 import mysql.connector as mysql
 import sys
 import os.path
-from pathlib import Path 
+from pathlib import Path, PurePosixPath
 import numpy as np
 
 import input
@@ -198,7 +198,7 @@ for id in IDConfiguration:
 
 
 	# ### For saving nice titles.
-	folder = "ptcu" + date.strftime("%Y%m%d") + "_" + lieu
+	folder = Path("ptcu") / (date.strftime("%Y%m%d") + "_" + lieu)
 	# subfolder = "_".join(title[2+i:])
 	subfolder = f"{filters}_{az}_{el}_{int(speed)}hz"
 
@@ -221,8 +221,8 @@ for id in IDConfiguration:
 	# input_file.SetPollutionSource(lieu = lieu)
 	input_file.SetObservationType(observation_type, el = el)
 	input_file.Update({	"instrument_name": instrument,
-					"data_files": folder + subfolder,
-					"saving_name": "_".join((folder.replace("/", "_"), subfolder)),
+					"data_files": folder / subfolder,
+					"saving_name": "_".join((str(PurePosixPath(folder)).replace("/", "_"), subfolder)),
 					"observation_type": observation_type,
 					"rotation_per_sec": speed
 				})

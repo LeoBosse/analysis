@@ -56,7 +56,7 @@ This process is tedious, but can be automatized using the `recolte.py` script.
 This script goes to the SQL database, download the data you want and save them in the appropriate format based on the observation name you gave when lauching the measurments.
 So if the observation with an IDConfiguration of 9999 is called `20190307_Skibotn_botm_a180_e90_blabla`, you can execute in a terminal the line:  
 
-        $python recolte.py 9999
+        $python recolte.py gdcu 9999
 
 And it will create the folders for you.
 It should look like this:  
@@ -74,7 +74,7 @@ It should look like this:
 
 You can also download several observations at once with:
         
-        $python recolte.py 100 200
+        $python recolte.py gdcu 100 200
         
 This will download all data with IDConfiguration between 100 and 200 (included). A primitive filter is applied, so data with no valid data points will not download for example.
 

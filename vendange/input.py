@@ -32,7 +32,7 @@ class Input:
 
 		# print(self.path, self.file_name)
 
-		self.dictionnary, self.comments = self.ReadInputFile(self.path + self.file_name)
+		self.dictionnary, self.comments = self.ReadInputFile(self.path / self.file_name)
 
 	def Update(self, dict):
 		for key, value in dict.items():
@@ -62,7 +62,7 @@ class Input:
 			# print("file_name", file_name)
 			# file_name += ".in"
 
-		with open(folder + file_name + ".in", "w") as f_in:
+		with open(folder / (file_name + ".in"), "w") as f_in:
 			for key, value in self.dictionnary.items():
 				f_in.write(" ".join((key, str(value))))
 				if self.comments.__contains__(key):

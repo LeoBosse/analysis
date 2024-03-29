@@ -522,7 +522,7 @@ class Taster:
 		Q = self.mixer.plip_data.data["Vcos"][0, :, l, c]
 		U = self.mixer.plip_data.data["Vsin"][0, :, l, c]
 		sigmaQ = self.mixer.plip_data.data["sQ_binned"][0, :, l, c]
-		sigmaU = self.mixer.plip_data.data["sU_binned"] [0, :, l, c]
+		sigmaU = self.mixer.plip_data.data["sU_binned"]	[0, :, l, c]
 
 		sigma_DOLP = np.sqrt(Q**2 * sigmaQ**2 / D**2 + U**2 * sigmaU**2 / D**2)
 		DoLP = np.sqrt(D**2 - sigma_DOLP**2) #Debiasage de dolp
@@ -536,7 +536,7 @@ class Taster:
 		axA.plot(self.mixer.plip_data.data['times'], A * RtoD, marker = self.mixer.marker, linestyle = self.mixer.linestyle, markersize=self.mixer.marker_size*10, zorder=1, **kwargs)
 		
 		# if bottle is not None:
-		#   self.SaveGraph(bottle, name_extention = 'plip')
+		# 	self.SaveGraph(bottle, name_extention = 'plip')
 
 
 	def PlotFlux(self, ax, bottle, ax_lines=[]):
