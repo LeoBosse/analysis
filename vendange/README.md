@@ -22,8 +22,11 @@ Run:
 Geomagic takes care of all complex geometry calculation (angles, distances, heights for a spherical Earth).
 
 
-Open `vendange_configuration.py` and change all paths definition with your own computer setup. 
+You might want to run these lines as well if you get an error about modules not found:
 
+        $export PYTHONPATH=~/[PATH-OF-THE-CODE]/analysis/src/pomerol
+        $export PYTHONPATH=~/[PATH-OF-THE-CODE]/analysis/src/vendange
+        $export PYTHONPATH=~/[PATH-OF-THE-CODE]/analysis/src/geomagic
 
 ***
 # Cru data management
