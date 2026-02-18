@@ -665,7 +665,7 @@ class Bottle:
         data = pd.DataFrame({'X':X_arr,
                              'Y':Y_arr})
 
-        corr = data['X'].rolling(window_size, center=True).corr(data['Y'],method='pearson')
+        corr = data['X'].rolling(window_size, center=True).corr(data['Y'])
 
         # print('DEBUG ROLLING CORR', window_size)
         # print(corr[window_size:window_size+100])
